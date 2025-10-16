@@ -1,0 +1,18 @@
+{
+  "updated_at": "2025-10-16T00:00:00Z",
+  "currency": "INR",
+  "sales": [
+    {
+      "date": "2025-10-15",
+      "product": "AI SEO Booster",
+      "amount": 499,
+      "quantity": 2
+    },
+    {
+      "date": "2025-10-15",
+      "product": "Popup Manager",
+      "amount": 499,
+      "quantity": 1
+    }
+  ]
+}

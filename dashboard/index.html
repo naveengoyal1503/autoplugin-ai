@@ -1,0 +1,23 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AutoPlugin.AI Dashboard</title>
+<style>
+body{background:#0f1220;color:#e8eeff;font-family:sans-serif;margin:0;padding:20px;}
+h1{color:#7c5cff;}
+.card{background:#151935;padding:20px;border-radius:10px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+<h1>AutoPlugin.AI Dashboard</h1>
+<div id="stats" class="card">Loading analytics...</div>
+<script>
+fetch('../data/plugins.json').then(r=>r.json()).then(d=>{
+  const totalDownloads = d.plugins.reduce((a,b)=>a+(b.downloads||0),0);
+  document.getElementById('stats').innerHTML = `<b>Total Plugins:</b> ${d.plugins.length}<br><b>Total Downloads:</b> ${totalDownloads}`;
+});
+</script>
+</body>
+</html>
