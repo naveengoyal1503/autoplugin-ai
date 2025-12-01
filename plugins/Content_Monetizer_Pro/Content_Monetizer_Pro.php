@@ -1,39 +1,74 @@
 <?php
 /*
 Plugin Name: Content Monetizer Pro
-Plugin URI: https://example.com/content-monetizer-pro
-Description: Auto-detects top blog posts and monetizes via affiliate links, ad placements, and paywalls.
+Description: Multi-strategy content monetization plugin for WordPress.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Content_Monetizer_Pro.php
-License: GPL2
 */
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class ContentMonetizerPro {
-    private $option_name = 'cmp_top_posts';
+    private static $instance = null;
+    private $plugin_slug = 'content-monetizer-pro';
+    private $options;
 
-    public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_filter('the_content', array($this, 'inject_monetization'));
-        add_action('wp_ajax_cmp_fetch_top_posts', array($this, 'ajax_fetch_top_posts'));
-        add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
+    public static function get_instance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
-    public function admin_scripts($hook) {
-        if ($hook !== 'settings_page_content_monetizer_pro') return;
-        wp_enqueue_script('cmp-admin-js', plugin_dir_url(__FILE__) . 'cmp-admin.js', array('jquery'), '1.0', true);
-        wp_localize_script('cmp-admin-js', 'cmp_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('cmp-ajax-nonce')));
+    private function __construct() {
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+
+        add_filter('the_content', array($this, 'inject_affiliate_links'));
+
+        add_shortcode('cmp_subscribe_button', array($this, 'subscribe_button_shortcode'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+
+        add_action('wp_ajax_cmp_microtransaction', array($this, 'handle_microtransaction'));
+        add_action('wp_ajax_nopriv_cmp_microtransaction', array($this, 'handle_microtransaction'));
     }
 
     public function add_admin_menu() {
-        add_options_page('Content Monetizer Pro', 'Content Monetizer', 'manage_options', 'content_monetizer_pro', array($this, 'settings_page'));
+        add_menu_page('Content Monetizer Pro', 'Content Monetizer', 'manage_options', $this->plugin_slug, array($this, 'settings_page'), 'dashicons-chart-line');
     }
 
     public function register_settings() {
-        register_setting('cmp_settings_group', 'cmp_settings');
+        register_setting($this->plugin_slug.'_settings_group', $this->plugin_slug.'_options');
+        add_settings_section('cmp_main_section', 'Main Settings', null, $this->plugin_slug);
+
+        add_settings_field('affiliate_domains', 'Affiliate Domains (comma separated)', array($this, 'affiliate_domains_callback'), $this->plugin_slug, 'cmp_main_section');
+        add_settings_field('sponsored_post_keyword', 'Sponsored Content Keyword', array($this, 'sponsored_post_keyword_callback'), $this->plugin_slug, 'cmp_main_section');
+        add_settings_field('microtransaction_amount', 'Microtransaction Amount (USD)', array($this, 'microtransaction_amount_callback'), $this->plugin_slug, 'cmp_main_section');
+        add_settings_field('subscription_enabled', 'Enable Subscriptions', array($this, 'subscription_enabled_callback'), $this->plugin_slug, 'cmp_main_section');
+    }
+
+    public function affiliate_domains_callback() {
+        $options = get_option($this->plugin_slug.'_options');
+        echo '<input type="text" name="'.$this->plugin_slug.'_options[affiliate_domains]" value="'.esc_attr($options['affiliate_domains'] ?? '').'" style="width: 300px;" placeholder="example.com,shop.com" />';
+    }
+
+    public function sponsored_post_keyword_callback() {
+        $options = get_option($this->plugin_slug.'_options');
+        echo '<input type="text" name="'.$this->plugin_slug.'_options[sponsored_post_keyword]" value="'.esc_attr($options['sponsored_post_keyword'] ?? '').'" style="width: 300px;" placeholder="sponsored" />';
+        echo '<p class="description">Posts containing this keyword in title will be marked as sponsored automatically.</p>';
+    }
+
+    public function microtransaction_amount_callback() {
+        $options = get_option($this->plugin_slug.'_options');
+        echo '<input type="number" step="0.01" min="0" name="'.$this->plugin_slug.'_options[microtransaction_amount]" value="'.esc_attr($options['microtransaction_amount'] ?? '0').'" style="width: 100px;" />';
+        echo '<p class="description">Users can pay this amount to unlock micro-content.</p>';
+    }
+
+    public function subscription_enabled_callback() {
+        $options = get_option($this->plugin_slug.'_options');
+        $checked = isset($options['subscription_enabled']) && $options['subscription_enabled'] == 1 ? 'checked' : '';
+        echo '<input type="checkbox" name="'.$this->plugin_slug.'_options[subscription_enabled]" value="1" '.$checked.' /> Enable subscription features';
     }
 
     public function settings_page() {
@@ -41,132 +76,80 @@ class ContentMonetizerPro {
         <div class="wrap">
             <h1>Content Monetizer Pro Settings</h1>
             <form method="post" action="options.php">
-                <?php settings_fields('cmp_settings_group'); ?>
-                <?php $options = get_option('cmp_settings'); ?>
-
-                <table class="form-table" role="presentation">
-                    <tr>
-                        <th scope="row"><label for="cmp_affiliate_id">Affiliate ID</label></th>
-                        <td><input name="cmp_settings[affiliate_id]" type="text" id="cmp_affiliate_id" value="<?php echo esc_attr($options['affiliate_id'] ?? ''); ?>" class="regular-text"></td>
-                    </tr>
-
-                    <tr>
-                        <th scope="row"><label for="cmp_enable_ads">Enable Auto Ad Placements</label></th>
-                        <td><input name="cmp_settings[enable_ads]" type="checkbox" id="cmp_enable_ads" value="1" <?php checked(1, $options['enable_ads'] ?? 0); ?>></td>
-                    </tr>
-
-                    <tr>
-                        <th scope="row"><label for="cmp_paywall_percentage">Paywall Content Percentage</label></th>
-                        <td><input name="cmp_settings[paywall_percentage]" type="number" id="cmp_paywall_percentage" min="0" max="100" value="<?php echo intval($options['paywall_percentage'] ?? 30); ?>"> %</td>
-                    </tr>
-                </table>
-
-                <?php submit_button('Save Settings'); ?>
+                <?php
+                settings_fields($this->plugin_slug.'_settings_group');
+                do_settings_sections($this->plugin_slug);
+                submit_button();
+                ?>
             </form>
-
-            <h2>Top Performing Posts</h2>
-            <button id="cmp-refresh">Refresh Top Posts</button>
-            <div id="cmp-top-posts">
-                <em>Click refresh to load top posts by views (last 30 days).</em>
-            </div>
+            <h2>Usage</h2>
+            <p>Affiliate links in posts will be automatically linked to domains specified in settings.</p>
+            <p>Add <code>[cmp_subscribe_button]</code> shortcode to display subscription button.</p>
+            <p>Microtransaction unlock can be triggered via AJAX through frontend UI integration.</p>
         </div>
-        <script>
-        jQuery(document).ready(function($){
-            $('#cmp-refresh').click(function(){
-                var data = {
-                    action: 'cmp_fetch_top_posts',
-                    security: '<?php echo wp_create_nonce('cmp-ajax-nonce'); ?>'
-                };
-                $('#cmp-top-posts').html('Loading...');
-                $.post(ajaxurl, data, function(response){
-                    if(response.success) {
-                        var html = '<ol>';
-                        $.each(response.data, function(i, post){
-                            html += '<li><a href="' + post.url + '" target="_blank">' + post.title + '</a> (' + post.views + ' views)</li>';
-                        });
-                        html += '</ol>';
-                        $('#cmp-top-posts').html(html);
-                    } else {
-                        $('#cmp-top-posts').html('Error fetching posts.');
-                    }
-                });
-            });
-        });
-        </script>
         <?php
     }
 
-    public function ajax_fetch_top_posts() {
-        check_ajax_referer('cmp-ajax-nonce', 'security');
+    public function inject_affiliate_links($content) {
+        $options = get_option($this->plugin_slug.'_options');
+        if (empty($options['affiliate_domains'])) return $content;
 
-        global $wpdb;
-        // Use postmeta view count meta key '_cmp_view_count' as example
-        // In real setup, better integrate with analytics or use more reliable method
+        $domains = array_map('trim', explode(',', $options['affiliate_domains']));
+        if (empty($domains)) return $content;
 
-        $results = $wpdb->get_results("SELECT p.ID, p.post_title, pm.meta_value AS views FROM {$wpdb->posts} p
-            INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
-            WHERE p.post_status = 'publish' AND p.post_type = 'post' AND pm.meta_key = '_cmp_view_count'
-            ORDER BY pm.meta_value+0 DESC
-            LIMIT 5");
-
-        if (!$results) wp_send_json_error();
-
-        $data = array();
-        foreach ($results as $post) {
-            $data[] = array(
-                'title' => $post->post_title,
-                'views' => intval($post->views),
-                'url' => get_permalink($post->ID),
-            );
-        }
-        wp_send_json_success($data);
-    }
-
-    public function inject_monetization($content) {
-        if (!is_single() || !is_main_query()) return $content;
-
-        $options = get_option('cmp_settings');
-
-        $affiliate_id = $options['affiliate_id'] ?? '';
-        $enable_ads = !empty($options['enable_ads']);
-        $paywall_percentage = intval($options['paywall_percentage'] ?? 30);
-
-        // Insert affiliate links: very basic example replacing keywords 'buy' with affiliate link
-        if ($affiliate_id) {
-            $content = preg_replace_callback('/\b(buy|purchase|order)\b/i', function($matches) use ($affiliate_id) {
-                $word = $matches;
-                $url = esc_url('https://affiliate.example.com/?id=' . urlencode($affiliate_id));
-                return '<a href="' . $url . '" target="_blank" rel="nofollow">' . $word . '</a>';
-            }, $content);
+        foreach ($domains as $domain) {
+            // Simple link detection and replacement
+            $pattern = '/https?:\/\/(www\.)?'.preg_quote($domain, '/').'[\S]*/i';
+            $replacement = '<a href="$0?ref=cmp" target="_blank" rel="nofollow noopener">$0</a>';
+            $content = preg_replace($pattern, $replacement, $content);
         }
 
-        // Insert ads block
-        if ($enable_ads) {
-            $ad_code = '<div style="margin:20px 0; padding:10px; background:#eee; text-align:center;">' .
-                        '<strong>Advertisement:</strong> <a href="https://ads.example.com">Check this out!</a></div>';
-
-            // Inject ad block roughly at middle of content
-            $mid_point = intval(strlen($content) / 2);
-            $content = substr_replace($content, $ad_code, $mid_point, 0);
-        }
-
-        // Implement paywall: show only first $paywall_percentage% content then prompt
-        if ($paywall_percentage > 0 && $paywall_percentage < 100) {
-            $text_length = strlen(strip_tags($content));
-            $paywall_cutoff = intval($text_length * ($paywall_percentage / 100));
-
-            // Limit to HTML tags handling approximately by substring - simple version
-            $visible_content = wp_html_excerpt($content, $paywall_cutoff, '...');
-
-            if (!is_user_logged_in()) {
-                $paywall_notice = '<div style="background:#fffae6; padding:15px; margin-top:20px; border:1px solid #ffd42a; font-weight:bold;">' .
-                                  'Subscribe or log in to read the full content.</div>';
-                return $visible_content . $paywall_notice;
+        // Mark sponsored posts
+        if (!empty($options['sponsored_post_keyword']) && is_single()) {
+            global $post;
+            $keyword = trim($options['sponsored_post_keyword']);
+            if (stripos($post->post_title, $keyword) !== false) {
+                $content = '<div style="border:2px solid #ffae42;padding:10px;margin-bottom:20px;background:#fff9e6;"><strong>Sponsored Content</strong></div>'.$content;
             }
         }
 
         return $content;
     }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('cmp_script', plugin_dir_url(__FILE__).'cmp-script.js', array('jquery'), '1.0', true);
+        wp_localize_script('cmp_script', 'cmpAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+    }
+
+    public function subscribe_button_shortcode() {
+        $options = get_option($this->plugin_slug.'_options');
+        if (empty($options['subscription_enabled'])) return '<p>Subscription feature is disabled.</p>';
+
+        if (is_user_logged_in()) {
+            return '<button id="cmp-subscribe-btn">Subscribe for Premium Access</button><div id="cmp-subscribe-msg"></div><script>jQuery(document).ready(function($){$("#cmp-subscribe-btn").click(function(){
+    $.post(cmpAjax.ajaxurl, {action: "cmp_microtransaction"}, function(response){
+        $("#cmp-subscribe-msg").html(response.data.message);
+    });
+});});</script>';
+        } else {
+            return '<p>Please log in to subscribe.</p>';
+        }
+    }
+
+    public function handle_microtransaction() {
+        // This is a stub for microtransaction processing
+        // In real use, should integrate payment gateway (Stripe, PayPal, etc.)
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'You must be logged in to subscribe.'));
+        }
+
+        $user_id = get_current_user_id();
+        // Simulate successful transaction
+        // Ideally store subscription status, expire date, etc.
+        update_user_meta($user_id, 'cmp_subscribed', 1);
+
+        wp_send_json_success(array('message' => 'Thank you for subscribing! Premium access granted.'));
+    }
 }
 
-new ContentMonetizerPro();
+ContentMonetizerPro::get_instance();
