@@ -1,32 +1,27 @@
 # WP Coupon Vault
 
+WP Coupon Vault is a WordPress plugin that lets you create, manage, and display exclusive coupon codes from brands. Boost affiliate revenue and user engagement by offering valuable discounts on your site.
+
 ## Features
-- Create and manage exclusive coupons and deals for affiliate products.
-- Display coupons in a grid layout using a shortcode.
-- Set expiry dates and store names for each coupon.
-- Easy integration with affiliate links.
-- Responsive design for all devices.
-- Admin settings page for future premium features.
+- Create and manage coupon codes as custom posts
+- Set expiry dates for coupons
+- Display coupons using a shortcode
+- Easy admin settings page
 
 ## Installation
-1. Upload the `wp-coupon-vault` folder to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Coupons > Add New to start creating coupons.
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to Coupons > Add New to create your first coupon
 
 ## Setup
-- Add a new coupon by filling in the title, description, coupon code, affiliate URL, expiry date, and store name.
-- Use the shortcode `[wcv_coupons limit="10" store="Amazon"]` to display coupons on any page or post. Adjust the `limit` and `store` attributes as needed.
+- Add coupon details (title, description, code, expiry)
+- Use the `[coupon_vault limit="5"]` shortcode to display coupons on any page or post
+- Customize display settings in Coupons > Settings
 
 ## Usage
-- Place the shortcode in your desired page or post to display coupons.
-- Customize the appearance by editing the CSS file in the uploads directory.
-- Manage coupons and their details from the Coupons section in the admin dashboard.
-
-## Premium Features (Coming Soon)
-- Advanced analytics for coupon performance.
-- Bulk import/export of coupons.
-- Custom styling options.
-- Integration with popular affiliate networks.
+- Insert the shortcode in pages, posts, or widgets
+- Manage coupons and expiry dates from the admin dashboard
+- Engage users with exclusive deals and track performance
 
 ## Support
-For support and feature requests, visit the plugin's official website.
+For support and feature requests, visit our website or contact support.
