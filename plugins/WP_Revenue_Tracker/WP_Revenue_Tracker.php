@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP Revenue Tracker
-Description: Track and visualize revenue from ads, affiliate links, memberships, and digital product sales.
+Description: Track and visualize revenue from ads, affiliate links, and digital product sales.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Tracker.php
@@ -27,16 +27,15 @@ class WP_Revenue_Tracker {
     }
 
     public function enqueue_scripts($hook) {
-        if ($hook != 'toplevel_page_wp-revenue-tracker') return;
+        if ($hook !== 'toplevel_page_wp-revenue-tracker') return;
         wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
     }
 
     public function render_dashboard() {
-        // Sample revenue data
+        // Sample data
         $revenue_data = array(
             'ads' => 1200,
             'affiliate' => 800,
-            'memberships' => 1500,
             'products' => 2000
         );
         ?>
@@ -49,26 +48,23 @@ class WP_Revenue_Tracker {
                     var chart = new Chart(ctx, {
                         type: 'bar',
                         data: {
-                            labels: ['Ads', 'Affiliate', 'Memberships', 'Products'],
+                            labels: ['Ads', 'Affiliate', 'Products'],
                             datasets: [{
                                 label: 'Revenue ($)',
                                 data: [
                                     <?php echo $revenue_data['ads']; ?>,
                                     <?php echo $revenue_data['affiliate']; ?>,
-                                    <?php echo $revenue_data['memberships']; ?>,
                                     <?php echo $revenue_data['products']; ?>
                                 ],
                                 backgroundColor: [
                                     'rgba(255, 99, 132, 0.2)',
                                     'rgba(54, 162, 235, 0.2)',
-                                    'rgba(255, 206, 86, 0.2)',
-                                    'rgba(75, 192, 192, 0.2)'
+                                    'rgba(255, 206, 86, 0.2)'
                                 ],
                                 borderColor: [
                                     'rgba(255, 99, 132, 1)',
                                     'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)'
+                                    'rgba(255, 206, 86, 1)'
                                 ],
                                 borderWidth: 1
                             }]
