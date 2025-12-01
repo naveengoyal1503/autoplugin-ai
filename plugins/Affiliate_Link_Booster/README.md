@@ -1,38 +1,39 @@
 # Affiliate Link Booster
 
-Affiliate Link Booster enhances the performance of your affiliate marketing by automatically adding **coupons, price comparison info, and click tracking** to your affiliate links.
+Affiliate Link Booster is a WordPress plugin designed to **automatically cloak, track, and optimize your affiliate links** to help increase affiliate revenue through better conversion management.
 
 ## Features
 
-- Automatically detects and enhances affiliate links in your posts (Amazon, ClickBank, eBay, ShareASale).
-- Adds custom coupon codes alongside links.
-- Displays price comparison snippets to increase buyer confidence.
-- Tracks clicks on affiliate links via AJAX for basic analytics.
-- Lightweight, single-file plugin for easy deployment.
+- Automatic cloaking of affiliate links to clean URLs
+- Click tracking with detailed logging
+- Optional A/B testing for affiliate URLs to optimize conversions
+- Geotargeting support to redirect users by country
+- Easy-to-use settings page to add affiliate domains
+- Free core plugin with optional subscription for premium features (A/B testing, detailed analytics, geotargeting)
 
 ## Installation
 
-1. Upload the `affiliate-link-booster.php` file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. No configuration required for basic usage.
+1. Upload the `affiliate-link-booster.php` file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the WordPress Admin Plugins page.
+3. Go to "Affiliate Booster" menu in admin to configure affiliate domains and enable features.
+4. The plugin will automatically cloak affiliate links from configured domains.
 
 ## Setup
 
-- Currently, the plugin uses static coupon and price data for demonstration.
-- Future premium versions may include automatic coupon fetching and detailed analytics.
+- Enter all your affiliate domains (comma separated) in the settings.
+- Enable A/B testing to split traffic between affiliate URLs (premium feature).
+- Enable geotargeting to redirect users based on location (premium feature).
 
 ## Usage
 
-- Add affiliate links in your posts as usual.
-- The plugin will automatically detect and enhance supported affiliate links.
-- Clicks on links are tracked and stored in WordPress options.
-- To view click data, consider exporting the `alb_clicks` option via a custom admin interface (not included in the free version).
+- Insert affiliate links normally in your posts and pages.
+- The plugin automatically rewrites affiliate links to cloaked URLs.
+- Track performance and clicks from your dashboard (premium feature).
 
 ## Monetization
 
-This plugin adopts a **freemium model**:
+The core plugin is free, providing automatic cloaking and basic click tracking. Monetization comes from a **subscription upgrade** unlocking advanced features like A/B testing, geotargeting, and deeper analytics, providing predictable recurring revenue.
 
-- Free: Basic link enhancement, static coupon/pricing info, click tracking.
-- Premium Upgrade: Automatic coupon retrieval, advanced analytics dashboard, A/B testing of affiliate links.
+---
 
-Enhance your affiliate revenue strategically with Affiliate Link Booster!
+This plugin targets affiliate marketers and content creators who want to maximize their commissions through smart link management and conversion optimization.
