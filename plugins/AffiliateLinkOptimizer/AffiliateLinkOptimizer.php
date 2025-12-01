@@ -1,125 +1,144 @@
-<?php
 /*
-Plugin Name: AffiliateLinkOptimizer
-Description: Automatically optimize and track affiliate links for higher conversions and revenue.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=AffiliateLinkOptimizer.php
 */
+<?php
+/**
+ * Plugin Name: AffiliateLinkOptimizer
+ * Plugin URI: https://example.com/affiliatelinkoptimizer
+ * Description: Automatically optimize and track affiliate links for higher conversions and revenue.
+ * Version: 1.0
+ * Author: Your Name
+ * Author URI: https://example.com
+ * License: GPL2
+ */
 
 // Prevent direct access
 define('ABSPATH') or die('No script kiddies please!');
 
-// Register settings
-function aflo_register_settings() {
-    register_setting('aflo_options', 'aflo_affiliate_id');
-    register_setting('aflo_options', 'aflo_tracking_enabled');
-}
-add_action('admin_init', 'aflo_register_settings');
+// Register activation and deactivation hooks
+register_activation_hook(__FILE__, 'alo_activate');
+register_deactivation_hook(__FILE__, 'alo_deactivate');
 
-// Add menu
-function aflo_add_menu() {
-    add_options_page('Affiliate Link Optimizer', 'Affiliate Optimizer', 'manage_options', 'affiliate-link-optimizer', 'aflo_options_page');
+function alo_activate() {
+    // Create database table for link tracking
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'affiliate_links';
+    $charset_collate = $wpdb->get_charset_collate();
+    $sql = "CREATE TABLE $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        url text NOT NULL,
+        clicks int(11) DEFAULT '0',
+        conversions int(11) DEFAULT '0',
+        created_at datetime DEFAULT '0000-00-00 00:00:00',
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
 }
-add_action('admin_menu', 'aflo_add_menu');
 
-// Options page
-function aflo_options_page() {
-    if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.'));
-    }
+function alo_deactivate() {
+    // Optional: Clean up on deactivation
+}
+
+// Add admin menu
+add_action('admin_menu', 'alo_admin_menu');
+function alo_admin_menu() {
+    add_menu_page(
+        'Affiliate Link Optimizer',
+        'Affiliate Links',
+        'manage_options',
+        'affiliate-link-optimizer',
+        'alo_admin_page',
+        'dashicons-chart-bar'
+    );
+}
+
+// Admin page
+function alo_admin_page() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'affiliate_links';
+    $links = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
     ?>
     <div class="wrap">
         <h1>Affiliate Link Optimizer</h1>
-        <form method="post" action="options.php">
-            <?php settings_fields('aflo_options'); ?>
-            <?php do_settings_sections('aflo_options'); ?>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Affiliate ID</th>
-                    <td><input type="text" name="aflo_affiliate_id" value="<?php echo esc_attr(get_option('aflo_affiliate_id')); ?>" /></td>
+        <p>Track and optimize your affiliate links for better conversions.</p>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>URL</th>
+                    <th>Clicks</th>
+                    <th>Conversions</th>
+                    <th>Created</th>
                 </tr>
-                <tr valign="top">
-                    <th scope="row">Enable Tracking</th>
-                    <td><input type="checkbox" name="aflo_tracking_enabled" value="1" <?php checked(1, get_option('aflo_tracking_enabled'), true); ?> /></td>
+            </thead>
+            <tbody>
+                <?php foreach ($links as $link): ?>
+                <tr>
+                    <td><?php echo $link->id; ?></td>
+                    <td><a href="<?php echo esc_url($link->url); ?>" target="_blank">View</a></td>
+                    <td><?php echo $link->clicks; ?></td>
+                    <td><?php echo $link->conversions; ?></td>
+                    <td><?php echo $link->created_at; ?></td>
                 </tr>
-            </table>
-            <?php submit_button(); ?>
-        </form>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
     <?php
 }
 
-// Process content and optimize affiliate links
-function aflo_optimize_links($content) {
-    $affiliate_id = get_option('aflo_affiliate_id');
-    $tracking_enabled = get_option('aflo_tracking_enabled');
+// Shortcode to display affiliate link
+add_shortcode('affiliate_link', 'alo_shortcode');
+function alo_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'url' => '',
+        'text' => 'Click here'
+    ), $atts, 'affiliate_link');
 
-    if (empty($affiliate_id)) return $content;
+    if (empty($atts['url'])) return '';
 
-    // Example: Replace affiliate links with optimized ones
-    $pattern = '/(https?:\/\/[^\s]+\?)([^\s]*)/i';
-    $replacement = '$1$2&ref=' . $affiliate_id;
-    if ($tracking_enabled) {
-        $replacement .= '&utm_source=affiliate&utm_medium=link';
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'affiliate_links';
+    $wpdb->insert(
+        $table_name,
+        array(
+            'url' => $atts['url'],
+            'created_at' => current_time('mysql')
+        )
+    );
+    $link_id = $wpdb->insert_id;
+
+    $link = home_url("/?alo_id=$link_id");
+    return '<a href="' . esc_url($link) . '" target="_blank">' . esc_html($atts['text']) . '</a>';
+}
+
+// Handle link redirection and tracking
+add_action('init', 'alo_track_click');
+function alo_track_click() {
+    if (isset($_GET['alo_id'])) {
+        $link_id = intval($_GET['alo_id']);
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'affiliate_links';
+        $link = $wpdb->get_row($wpdb->prepare("SELECT url FROM $table_name WHERE id = %d", $link_id));
+        if ($link) {
+            $wpdb->update(
+                $table_name,
+                array('clicks' => $wpdb->get_var($wpdb->prepare("SELECT clicks FROM $table_name WHERE id = %d", $link_id)) + 1),
+                array('id' => $link_id)
+            );
+            wp_redirect($link->url);
+            exit;
+        }
     }
-    $content = preg_replace($pattern, $replacement, $content);
-
-    return $content;
 }
-add_filter('the_content', 'aflo_optimize_links');
 
-// Shortcode for manual link optimization
-function aflo_optimize_shortcode($atts, $content = null) {
-    $affiliate_id = get_option('aflo_affiliate_id');
-    $tracking_enabled = get_option('aflo_tracking_enabled');
-
-    if (empty($affiliate_id) || empty($content)) return $content;
-
-    $url = $content;
-    $separator = strpos($url, '?') !== false ? '&' : '?';
-    $url .= $separator . 'ref=' . $affiliate_id;
-    if ($tracking_enabled) {
-        $url .= '&utm_source=affiliate&utm_medium=shortcode';
-    }
-    return '<a href="' . esc_url($url) . '" target="_blank">' . $content . '</a>';
+// Add settings link on plugin page
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'alo_plugin_action_links');
+function alo_plugin_action_links($links) {
+    $settings_link = '<a href="admin.php?page=affiliate-link-optimizer">Settings</a>';
+    array_unshift($links, $settings_link);
+    return $links;
 }
-add_shortcode('aflo', 'aflo_optimize_shortcode');
-
-// Add admin notice if affiliate ID is not set
-function aflo_admin_notice() {
-    if (!get_option('aflo_affiliate_id')) {
-        echo '<div class="notice notice-warning is-dismissible"><p>Affiliate Link Optimizer: Please set your affiliate ID in the plugin settings.</p></div>';
-    }
-}
-add_action('admin_notices', 'aflo_admin_notice');
-
-// Enqueue admin styles
-function aflo_admin_styles() {
-    wp_enqueue_style('aflo-admin-style', plugins_url('admin.css', __FILE__));
-}
-add_action('admin_enqueue_scripts', 'aflo_admin_styles');
-
-// Create admin CSS
-function aflo_create_admin_css() {
-    $css = "
-        .aflo-admin-container { padding: 20px; }
-        .aflo-admin-container h1 { margin-bottom: 20px; }
-    ";
-    file_put_contents(plugin_dir_path(__FILE__) . 'admin.css', $css);
-}
-aflo_create_admin_css();
-
-// Activation hook
-function aflo_activate() {
-    // Do activation tasks
-}
-register_activation_hook(__FILE__, 'aflo_activate');
-
-// Deactivation hook
-function aflo_deactivate() {
-    // Do deactivation tasks
-}
-register_deactivation_hook(__FILE__, 'aflo_deactivate');
-
 ?>
