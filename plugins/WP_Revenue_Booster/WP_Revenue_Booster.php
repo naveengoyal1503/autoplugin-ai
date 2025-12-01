@@ -5,95 +5,157 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Description: Automates affiliate links, ad placements, and premium content gating for maximum revenue.
+ * Description: Maximize revenue by rotating and optimizing affiliate links, ads, and sponsored content.
  * Version: 1.0
- * Author: WP Revenue Team
+ * Author: Your Company
  */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_footer', array($this, 'output_revenue_booster')); // Output the booster logic
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_head', array($this, 'inject_ad_code'));
-        add_action('the_content', array($this, 'gate_premium_content'));
-        add_action('the_content', array($this, 'inject_affiliate_links'));
+        add_action('admin_init', array($this, 'settings_init'));
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('wp-revenue-booster', plugin_dir_url(__FILE__) . 'revenue-booster.js', array('jquery'), '1.0', true);
+        wp_localize_script('wp-revenue-booster', 'wpRevenueBooster', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('wp_revenue_booster_nonce')
+        ));
+    }
+
+    public function output_revenue_booster() {
+        // This is where the magic happens: rotate and optimize links/ads
+        // For simplicity, this is a placeholder
+        echo '<div id="wp-revenue-booster-placeholder" style="display:none;"></div>';
     }
 
     public function add_admin_menu() {
-        add_options_page(
+        add_menu_page(
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
             'wp-revenue-booster',
-            array($this, 'admin_page')
+            array($this, 'options_page')
         );
     }
 
-    public function admin_page() {
-        if (isset($_POST['save_settings'])) {
-            update_option('wp_revenue_booster_ad_code', sanitize_textarea_field($_POST['ad_code']));
-            update_option('wp_revenue_booster_affiliate_links', sanitize_text_field($_POST['affiliate_links']));
-            update_option('wp_revenue_booster_premium_keyword', sanitize_text_field($_POST['premium_keyword']));
-            echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
-        }
-        $ad_code = get_option('wp_revenue_booster_ad_code', '');
-        $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
-        $premium_keyword = get_option('wp_revenue_booster_premium_keyword', 'premium');
+    public function settings_init() {
+        register_setting('wpRevenueBooster', 'wp_revenue_booster_settings');
+
+        add_settings_section(
+            'wpRevenueBooster_section',
+            'Settings',
+            null,
+            'wpRevenueBooster'
+        );
+
+        add_settings_field(
+            'affiliate_links',
+            'Affiliate Links',
+            array($this, 'affiliate_links_render'),
+            'wpRevenueBooster',
+            'wpRevenueBooster_section'
+        );
+
+        add_settings_field(
+            'ad_codes',
+            'Ad Codes',
+            array($this, 'ad_codes_render'),
+            'wpRevenueBooster',
+            'wpRevenueBooster_section'
+        );
+
+        add_settings_field(
+            'sponsored_content',
+            'Sponsored Content',
+            array($this, 'sponsored_content_render'),
+            'wpRevenueBooster',
+            'wpRevenueBooster_section'
+        );
+    }
+
+    public function affiliate_links_render() {
+        $options = get_option('wp_revenue_booster_settings');
         ?>
-        <div class="wrap">
-            <h1>WP Revenue Booster</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th><label for="ad_code">Ad Code (HTML)</label></th>
-                        <td><textarea name="ad_code" id="ad_code" rows="5" cols="50"><?php echo esc_textarea($ad_code); ?></textarea></td>
-                    </tr>
-                    <tr>
-                        <th><label for="affiliate_links">Affiliate Links (comma-separated)</label></th>
-                        <td><input type="text" name="affiliate_links" id="affiliate_links" value="<?php echo esc_attr($affiliate_links); ?>" size="50" /></td>
-                    </tr>
-                    <tr>
-                        <th><label for="premium_keyword">Premium Content Keyword</label></th>
-                        <td><input type="text" name="premium_keyword" id="premium_keyword" value="<?php echo esc_attr($premium_keyword); ?>" /></td>
-                    </tr>
-                </table>
-                <p class="submit">
-                    <input type="submit" name="save_settings" class="button-primary" value="Save Settings" />
-                </p>
-            </form>
-        </div>
+        <textarea cols='40' rows='5' name='wp_revenue_booster_settings[affiliate_links]'><?php echo $options['affiliate_links']; ?></textarea>
+        <p class='description'>Enter affiliate links, one per line.</p>
         <?php
     }
 
-    public function inject_ad_code() {
-        $ad_code = get_option('wp_revenue_booster_ad_code', '');
-        if (!empty($ad_code)) {
-            echo $ad_code;
-        }
+    public function ad_codes_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        ?>
+        <textarea cols='40' rows='5' name='wp_revenue_booster_settings[ad_codes]'><?php echo $options['ad_codes']; ?></textarea>
+        <p class='description'>Enter ad codes, one per line.</p>
+        <?php
     }
 
-    public function inject_affiliate_links($content) {
-        $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
-        if (!empty($affiliate_links)) {
-            $links = explode(',', $affiliate_links);
-            foreach ($links as $link) {
-                $link = trim($link);
-                if (!empty($link)) {
-                    $content = str_replace('href="' . $link . '"', 'href="' . $link . '?ref=wp-revenue-booster"', $content);
-                }
-            }
-        }
-        return $content;
+    public function sponsored_content_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        ?>
+        <textarea cols='40' rows='5' name='wp_revenue_booster_settings[sponsored_content]'><?php echo $options['sponsored_content']; ?></textarea>
+        <p class='description'>Enter sponsored content, one per line.</p>
+        <?php
     }
 
-    public function gate_premium_content($content) {
-        $premium_keyword = get_option('wp_revenue_booster_premium_keyword', 'premium');
-        if (strpos($content, '[' . $premium_keyword . ']') !== false && !current_user_can('manage_options')) {
-            $content = str_replace('[' . $premium_keyword . ']', '<div class="premium-content">This content is premium. <a href="/subscribe">Subscribe to unlock.</a></div>', $content);
-        }
-        return $content;
+    public function options_page() {
+        ?>
+        <form action='options.php' method='post'>
+            <h2>WP Revenue Booster</h2>
+            <?php
+            settings_fields('wpRevenueBooster');
+            do_settings_sections('wpRevenueBooster');
+            submit_button();
+            ?>
+        </form>
+        <?php
     }
 }
 
 new WP_Revenue_Booster();
+
+// JavaScript for the plugin (revenue-booster.js)
+// This would be in a separate file, but for simplicity, it's included here as a comment
+/*
+jQuery(document).ready(function($) {
+    // Example: Rotate affiliate links, ads, and sponsored content
+    // This is a simplified example
+    $.post(wpRevenueBooster.ajax_url, {
+        action: 'wp_revenue_booster_rotate',
+        nonce: wpRevenueBooster.nonce
+    }, function(response) {
+        $('#wp-revenue-booster-placeholder').html(response);
+    });
+});
+*/
+
+// AJAX handler for rotating content
+add_action('wp_ajax_wp_revenue_booster_rotate', 'wp_revenue_booster_rotate');
+add_action('wp_ajax_nopriv_wp_revenue_booster_rotate', 'wp_revenue_booster_rotate');
+function wp_revenue_booster_rotate() {
+    check_ajax_referer('wp_revenue_booster_nonce', 'nonce');
+
+    $options = get_option('wp_revenue_booster_settings');
+    $affiliate_links = explode('\n', $options['affiliate_links']);
+    $ad_codes = explode('\n', $options['ad_codes']);
+    $sponsored_content = explode('\n', $options['sponsored_content']);
+
+    // Simple random rotation
+    $affiliate_link = trim($affiliate_links[array_rand($affiliate_links)]);
+    $ad_code = trim($ad_codes[array_rand($ad_codes)]);
+    $sponsored = trim($sponsored_content[array_rand($sponsored_content)]);
+
+    // Output the rotated content
+    echo '<div class="wp-revenue-booster-content">
+        <p><a href="' . $affiliate_link . '" target="_blank">Affiliate Link</a></p>
+        <div>' . $ad_code . '</div>
+        <p>' . $sponsored . '</p>
+    </div>';
+
+    wp_die();
+}
 ?>
