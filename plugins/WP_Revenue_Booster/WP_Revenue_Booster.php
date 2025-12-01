@@ -5,17 +5,68 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Description: Boost your WordPress site's revenue with smart ad, affiliate, and coupon optimization.
+ * Plugin URI: https://example.com/wp-revenue-booster
+ * Description: Maximize revenue by rotating monetization methods based on visitor behavior and content context.
  * Version: 1.0
- * Author: WP Revenue Team
+ * Author: Revenue Labs
+ * Author URI: https://example.com
  */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_footer', array($this, 'render_monetization')); 
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_footer', array($this, 'inject_optimized_content'));
         add_action('admin_init', array($this, 'settings_init'));
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'style.css');
+    }
+
+    public function render_monetization() {
+        if (is_admin() || !is_main_query()) return;
+
+        $methods = get_option('wp_revenue_booster_methods', array());
+        if (empty($methods)) return;
+
+        $method = $this->select_method($methods);
+        if (!$method) return;
+
+        echo '<div class="wp-revenue-booster">';
+        switch ($method['type']) {
+            case 'ad':
+                echo '<div class="ad-unit">' . esc_html($method['content']) . '</div>';
+                break;
+            case 'affiliate':
+                echo '<div class="affiliate-link"><a href="' . esc_url($method['url']) . '" target="_blank">' . esc_html($method['label']) . '</a></div>';
+                break;
+            case 'donation':
+                echo '<div class="donation-button"><button onclick="alert(\'Donate now!\')">' . esc_html($method['label']) . '</button></div>';
+                break;
+            case 'membership':
+                echo '<div class="membership-offer">' . esc_html($method['content']) . '</div>';
+                break;
+        }
+        echo '</div>';
+    }
+
+    private function select_method($methods) {
+        $weights = array();
+        foreach ($methods as $method) {
+            $weights[] = $method['weight'];
+        }
+        $total = array_sum($weights);
+        $rand = mt_rand(1, $total);
+        $current = 0;
+        foreach ($methods as $method) {
+            $current += $method['weight'];
+            if ($rand <= $current) {
+                return $method;
+            }
+        }
+        return null;
     }
 
     public function add_admin_menu() {
@@ -23,93 +74,70 @@ class WP_Revenue_Booster {
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
-            'wp_revenue_booster',
+            'wp-revenue-booster',
             array($this, 'options_page')
         );
     }
 
     public function settings_init() {
-        register_setting('wp_revenue_booster', 'wp_revenue_booster_settings');
-
-        add_settings_section(
-            'wp_revenue_booster_section',
-            'Revenue Booster Settings',
-            null,
-            'wp_revenue_booster'
-        );
-
-        add_settings_field(
-            'ads_enabled',
-            'Enable Ad Optimization',
-            array($this, 'ads_enabled_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-
-        add_settings_field(
-            'affiliate_enabled',
-            'Enable Affiliate Link Optimization',
-            array($this, 'affiliate_enabled_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-
-        add_settings_field(
-            'coupons_enabled',
-            'Enable Coupon Optimization',
-            array($this, 'coupons_enabled_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-    }
-
-    public function ads_enabled_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        ?>
-        <input type='checkbox' name='wp_revenue_booster_settings[ads_enabled]' <?php checked($options['ads_enabled'] ?? 0, 1); ?> value='1'>
-        <?php
-    }
-
-    public function affiliate_enabled_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        ?>
-        <input type='checkbox' name='wp_revenue_booster_settings[affiliate_enabled]' <?php checked($options['affiliate_enabled'] ?? 0, 1); ?> value='1'>
-        <?php
-    }
-
-    public function coupons_enabled_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        ?>
-        <input type='checkbox' name='wp_revenue_booster_settings[coupons_enabled]' <?php checked($options['coupons_enabled'] ?? 0, 1); ?> value='1'>
-        <?php
+        register_setting('wp_revenue_booster', 'wp_revenue_booster_methods');
     }
 
     public function options_page() {
+        $methods = get_option('wp_revenue_booster_methods', array());
         ?>
-        <form action='options.php' method='post'>
-            <?php
-            settings_fields('wp_revenue_booster');
-            do_settings_sections('wp_revenue_booster');
-            submit_button();
-            ?>
-        </form>
+        <div class="wrap">
+            <h1>WP Revenue Booster</h1>
+            <form method="post" action="options.php">
+                <?php settings_fields('wp_revenue_booster'); ?>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Monetization Methods</th>
+                        <td>
+                            <div id="methods-container">
+                                <?php foreach ($methods as $method): ?>
+                                <div class="method-row">
+                                    <select name="wp_revenue_booster_methods[][type]">
+                                        <option value="ad" <?php selected($method['type'], 'ad'); ?>>Ad</option>
+                                        <option value="affiliate" <?php selected($method['type'], 'affiliate'); ?>>Affiliate</option>
+                                        <option value="donation" <?php selected($method['type'], 'donation'); ?>>Donation</option>
+                                        <option value="membership" <?php selected($method['type'], 'membership'); ?>>Membership</option>
+                                    </select>
+                                    <input type="text" name="wp_revenue_booster_methods[][label]" value="<?php echo esc_attr($method['label']); ?>" placeholder="Label">
+                                    <input type="text" name="wp_revenue_booster_methods[][url]" value="<?php echo esc_attr($method['url']); ?>" placeholder="URL (if affiliate)">
+                                    <textarea name="wp_revenue_booster_methods[][content]" placeholder="Content (if ad or membership)"><?php echo esc_textarea($method['content']); ?></textarea>
+                                    <input type="number" name="wp_revenue_booster_methods[][weight]" value="<?php echo esc_attr($method['weight']); ?>" placeholder="Weight" min="1">
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button type="button" onclick="addMethodRow()">Add Method</button>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+        </div>
+        <script>
+            function addMethodRow() {
+                const container = document.getElementById('methods-container');
+                const row = document.createElement('div');
+                row.className = 'method-row';
+                row.innerHTML = ` 
+                    <select name="wp_revenue_booster_methods[][type]">
+                        <option value="ad">Ad</option>
+                        <option value="affiliate">Affiliate</option>
+                        <option value="donation">Donation</option>
+                        <option value="membership">Membership</option>
+                    </select>
+                    <input type="text" name="wp_revenue_booster_methods[][label]" placeholder="Label">
+                    <input type="text" name="wp_revenue_booster_methods[][url]" placeholder="URL (if affiliate)">
+                    <textarea name="wp_revenue_booster_methods[][content]" placeholder="Content (if ad or membership)"></textarea>
+                    <input type="number" name="wp_revenue_booster_methods[][weight]" placeholder="Weight" min="1">
+                `;
+                container.appendChild(row);
+            }
+        </script>
         <?php
-    }
-
-    public function inject_optimized_content() {
-        $options = get_option('wp_revenue_booster_settings');
-
-        if ($options['ads_enabled'] ?? 0) {
-            echo '<div class="wp-revenue-ads">Smart Ad Placement</div>';
-        }
-
-        if ($options['affiliate_enabled'] ?? 0) {
-            echo '<div class="wp-revenue-affiliate">Optimized Affiliate Links</div>';
-        }
-
-        if ($options['coupons_enabled'] ?? 0) {
-            echo '<div class="wp-revenue-coupons">Best Coupon Offers</div>';
-        }
     }
 }
 
