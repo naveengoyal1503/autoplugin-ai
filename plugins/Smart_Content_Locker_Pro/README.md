@@ -1,70 +1,88 @@
 # Smart Content Locker Pro
 
-A powerful WordPress plugin that monetizes content through intelligent paywalls, email gates, and membership integration.
+A powerful WordPress plugin to lock premium content behind paywalls and create tiered membership levels to monetize your WordPress site.
 
 ## Features
 
-- **Multiple Lock Types**: Email capture, membership walls, and donation gates
-- **Easy Shortcode Integration**: Use `[content_locker]` to protect any content
-- **Subscriber Management**: Built-in database to store and manage email subscribers
-- **Analytics Dashboard**: Track locked content performance and revenue
-- **Payment Integration**: Support for PayPal and Stripe
-- **Cookie-Based Tracking**: Remember unlocked content per visitor
-- **Responsive Design**: Mobile-friendly locker interface
-- **AJAX Unlocking**: Seamless user experience without page reloads
-- **Security**: Built-in nonce verification and sanitization
+- **Content Locking**: Lock individual posts and pages with flexible locking options
+- **Membership Tiers**: Create multiple membership levels with custom pricing
+- **Flexible Lock Types**: Choose between partial locks (show excerpt) or full locks
+- **User Authentication**: Integrated login system for members
+- **Analytics Dashboard**: Track locked content performance and member engagement
+- **Payment Processing**: Stripe integration for secure payment processing
+- **Billing Management**: Automated recurring billing with subscription management
+- **Member Portal**: Members can manage their subscriptions and view access history
+- **Email Notifications**: Automated emails for signups, renewals, and expiration
+- **Shortcode Support**: Easy integration with `[scl_login_form]` shortcode
+- **Freemium Model**: Basic features free, premium features in pro version
 
 ## Installation
 
-1. Download the plugin files
-2. Upload to `/wp-content/plugins/smart-content-locker-pro/`
-3. Activate the plugin in WordPress admin
-4. Navigate to Content Locker > Settings to configure
+1. Download the plugin files and upload to `/wp-content/plugins/smart-content-locker/`
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Navigate to Content Locker settings to configure your membership tiers
+4. Begin locking your premium content
 
 ## Setup
 
-1. Go to **Content Locker Pro** in the admin menu
-2. Click **Settings**
-3. Choose your payment method (PayPal or Stripe)
-4. Configure your unlock message and terms
-5. Save your settings
+### Creating Membership Tiers
+
+1. Go to **Content Locker > Membership Tiers**
+2. Click **Add New Tier**
+3. Enter tier name (e.g., "Premium", "Gold")
+4. Set the monthly or yearly price
+5. Add a description of tier benefits
+6. Save the tier
+
+### Configuring Payment Processing
+
+1. Go to **Content Locker > Settings**
+2. Add your Stripe API keys
+3. Set the currency for transactions
+4. Configure email notification templates
+5. Save settings
 
 ## Usage
 
-### Email Gate
+### Locking Content
 
-Wrap content you want to protect:
+1. When creating or editing a post/page, scroll to the **Lock This Content** meta box
+2. Check "Lock this content"
+3. Choose your lock type:
+   - **Partial**: Shows the excerpt to non-members
+   - **Full**: Requires login to see any content
+4. Select the required membership tier (or "Any tier" for all members)
+5. Publish or update the post
 
+### Adding Login Form to Pages
 
-[content_locker type="email" message="Subscribe to read this exclusive article"]
-Your premium content here
-[/content_locker]
+Use the shortcode `[scl_login_form]` on any page or post to display a login form for members.
 
+### Member Management
 
-### Membership Gate
+1. Go to **Content Locker > Members**
+2. View all active members and their subscription status
+3. Manually adjust member access or tier levels
+4. View payment history and subscription details
 
+## Monetization Options
 
-[content_locker type="membership" message="Members only content"]
-Exclusive member content
-[/content_locker]
+- **Monthly Subscriptions**: $9.99/month for premium features
+- **Annual Billing**: Offer discounts for yearly subscriptions
+- **Tiered Pricing**: Multiple membership levels at different price points
+- **Custom Plans**: Create custom membership tiers for corporate clients
 
+## Requirements
 
-### Donation Gate
-
-
-[content_locker type="donation" message="Support our work with a donation"]
-Donation-supported content
-[/content_locker]
-
-
-## Monetization Benefits
-
-- **Build Email Lists**: Capture emails from your audience for marketing
-- **Recurring Revenue**: Membership subscriptions provide predictable income
-- **Support Community**: Accept donations to fund your content creation
-- **Premium Content Strategy**: Offer exclusive content to paying members
-- **Freemium Model**: Combine free and paid content tiers
+- WordPress 5.0 or higher
+- PHP 7.2 or higher
+- MySQL 5.6 or higher
+- Stripe account (for payment processing)
 
 ## Support
 
-For issues or feature requests, please contact support or visit our documentation.
+For support, visit https://smartcontentlocker.com/support or email support@smartcontentlocker.com
+
+## License
+
+This plugin is licensed under the GPL2 License.
