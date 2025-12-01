@@ -1,37 +1,33 @@
 # Affiliate Booster Pro
 
-## Description
-Affiliate Booster Pro is a powerful WordPress plugin designed for affiliate marketers and bloggers. It enhances your affiliate marketing efforts by automatically tracking affiliate link clicks, inserting customizable coupon codes, and dynamically displaying personalized deals within your posts to maximize conversions and revenue.
+Affiliate Booster Pro is a powerful WordPress plugin designed for affiliate marketers and bloggers who want to create, manage, and display affiliate coupon deals and special discounts with ease to boost affiliate revenue.
 
 ## Features
-- Easy-to-use shortcode `[abp_coupon]` to display coupon codes with descriptions and affiliate links.
-- Automatic insertion of randomized coupon blocks inside post content to boost conversions.
-- Real-time click tracking on affiliate links using AJAX.
-- Admin settings page to manage multiple coupons with associated affiliate URLs.
-- Copy-to-clipboard functionality for coupon codes.
-- Lightweight and self-contained with client-side JS included.
+
+- Custom post type for managing affiliate coupons
+- Add coupon codes, descriptions, and affiliate URLs
+- Frontend shortcode `[abp_coupons]` to display coupons attractively
+- Tracks user clicks on affiliate coupon links
+- Lightweight JavaScript handles click tracking and redirection
+- Responsive and minimal styling
 
 ## Installation
-1. Upload `affiliate-booster-pro.php` to the `/wp-content/plugins/` directory.
+
+1. Upload the plugin PHP file to your `/wp-content/plugins/` directory or install via WordPress admin interface if packaged as a zip.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to the 'Affiliate Booster' menu item in the admin sidebar.
-4. Add your coupon codes, descriptions, and affiliate URLs.
-5. Use shortcode `[abp_coupon code="CODE" description="Description" url="https://affiliate-link"]` in posts if desired.
+3. You will see a new 'Coupons' menu in the WordPress admin sidebar.
 
 ## Setup
-- Add one or more coupons with coupon code, description, and affiliate URL in settings.
-- The plugin will automatically insert one random coupon block before the last paragraph of each post.
-- Coupon codes can be clicked to copy instantly to clipboard.
-- Affiliate link clicks are tracked for performance insights (advanced analytics in premium).
+
+1. Go to **Coupons > Add New** to create your first coupon.
+2. Enter the coupon title (deal title), description, coupon code, and set the affiliate URL as a custom field named `_abp_affiliate_link`.
+3. Publish the coupon.
 
 ## Usage
-- Use the shortcode to manually add coupons anywhere in posts or pages.
-- Coupons will be automatically shown dynamically inside post content if enabled.
-- Monitor your coupon usage via the admin area (basic stats in free version).
 
-## Monetization
-This plugin implements a freemium model: basic tracking and coupon display are free, while a paid subscription unlocks advanced analytics, smart link cloaking, link suggestions, and personalized deal displays.
+- Insert the shortcode `[abp_coupons count="5"]` in any post or page to show the latest 5 coupons.
+- Clicking the coupon button tracks the click and opens the affiliate link in a new tab.
 
 ---
 
-Developed to empower affiliate marketers by increasing user engagement and driving more affiliate revenue through smart automation.
+This plugin can be extended with premium features such as advanced analytics, automatic fetching of deals from affiliate networks, and multi-network integration to increase monetization potential.
