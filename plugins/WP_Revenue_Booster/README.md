@@ -1,26 +1,50 @@
 # WP Revenue Booster
 
-Automatically optimize ad placement, affiliate links, and upsells to maximize revenue on your WordPress site.
+Automatically suggests and inserts high-converting affiliate links, coupons, and sponsored content into your posts based on context and audience behavior.
 
 ## Features
-- Smart ad injection after the first paragraph
-- Easy affiliate link placement at the end of content
-- Customizable upsell text section
-- Lightweight and non-intrusive
-- Simple admin settings panel
+- Auto-inject affiliate links into posts
+- Insert coupon codes and discounts
+- Add sponsored content blocks
+- Easy admin settings for managing monetization elements
 
 ## Installation
-1. Upload the `wp-revenue-booster.php` file to your `/wp-content/plugins/` directory.
+1. Upload the plugin file to your WordPress plugins directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure your ad code, affiliate link, and upsell text.
+3. Go to Settings > Revenue Booster to configure your affiliate links, coupons, and sponsored content.
 
 ## Setup
-- Enter your ad code (e.g., Google AdSense) in the Ad Code field.
-- Add your affiliate link in the Affiliate Link field.
-- Customize your upsell message in the Upsell Text field.
+- Enter your affiliate links, coupons, and sponsored content in JSON format in the settings page.
+- The plugin will automatically inject these into your posts.
 
 ## Usage
-Once configured, the plugin will automatically inject your ad, affiliate link, and upsell text into your posts and pages. No additional coding required.
+- Write and publish your posts as usual.
+- The plugin will append monetization elements at the end of each post.
 
-## Support
-For support or feature requests, visit https://example.com/wp-revenue-booster
+## Example JSON Format
+
+[
+  {
+    "url": "https://example.com/affiliate",
+    "text": "Buy now with our affiliate link"
+  }
+]
+
+
+For coupons:
+
+[
+  {
+    "code": "SAVE10",
+    "discount": "10% off"
+  }
+]
+
+
+For sponsored content:
+
+[
+  {
+    "html": "<p>This section is sponsored by Example Inc.</p>"
+  }
+]
