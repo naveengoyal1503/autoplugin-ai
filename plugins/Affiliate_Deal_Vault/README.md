@@ -1,47 +1,46 @@
 # Affiliate Deal Vault
 
-Affiliate Deal Vault is a WordPress plugin designed to help affiliate marketers and bloggers easily aggregate, organize, and display exclusive affiliate coupons and deal offers. This increases affiliate revenue by providing visitors with timely and attractive discounts automatically.
+Affiliate Deal Vault is a WordPress plugin to easily create and manage affiliate coupons and deals on your website, helping you increase affiliate conversions and engage visitors with attractive offers.
 
 ## Features
 
-- Automatic hourly fetching and caching of affiliate deals from multiple sources (e.g., Amazon, eBay)
-- Admin dashboard to configure affiliate APIs and deal sources
-- Shortcode `[affiliate_deals]` to display curated deals anywhere on your site
-- Fully self-contained single-file plugin for easy installation
-- Freemium-ready structure for future premium enhancements
+- Custom post type for Affiliate Deals with title, description, coupon code, affiliate URL, expiry date, and activation status.
+- Frontend shortcode `[affiliate_deals]` to display all active, non-expired deals.
+- Click tracking on affiliate links to monitor performance.
+- Copy-to-clipboard button for coupon codes.
+- Simple URL redirection to affiliate links with tracking.
+- Responsive and minimalistic design, easily style with custom CSS.
 
 ## Installation
 
-1. Upload the `affiliate-deal-vault.php` file to the `/wp-content/plugins/` directory.
+1. Upload the plugin file to your WordPress `/wp-content/plugins/` directory or install via WordPress Plugin uploader.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to 'Affiliate Deal Vault' in the admin menu to configure your API keys and select deal sources.
-4. The plugin will automatically fetch deals hourly, or you can save settings to fetch immediately.
+3. You will see a new menu called 'Affiliate Deals' in your WordPress admin.
 
 ## Setup
 
-- Enter your affiliate API keys (Amazon, eBay, etc.) in the settings page.
-- Check the deal sources you want to enable.
-- Save changes to trigger the first fetch of deals.
+1. In the WordPress admin, go to **Affiliate Deals → Add New** to create a new deal.
+2. Enter the deal title, details, and set the affiliate URL (required).
+3. Optionally, add a coupon code and expiry date.
+4. Check 'Active' to publish the deal immediately.
+5. Publish the deal.
 
 ## Usage
 
-- Insert the shortcode `[affiliate_deals]` into any post, page, or widget where you want the deal list displayed.
-- Deals will be shown as linked titles with discount highlights.
+- Place the shortcode `[affiliate_deals]` on any post or page to display the list of active affiliate deals.
+- Visitors can copy coupon codes with one click and use the 'Use Deal' button to visit the affiliate link.
+- Link clicks are tracked and stored in post meta for performance review (available in DB; extend plugin for admin UI if needed).
 
-*Example:*
+## Monetization
 
+The plugin can be extended with premium features such as:
 
-[affiliate_deals]
+- Advanced analytics dashboard.
+- Deal scheduling and automated activations.
+- Priority support and updates through subscription or license.
 
-
-## Changelog
-
-### 1.0
-- Initial release with Amazon and eBay deal aggregation simulation
-- Admin settings for API keys and sources
-- Shortcode for front-end display
-- Hourly cron-based deal refresh
+This freemium model targets affiliate marketers and website owners looking for an easy affiliate deal management solution.
 
 ---
 
-Released on December 1, 2025.
+Thank you for using Affiliate Deal Vault! Your feedback and support help us improve.
