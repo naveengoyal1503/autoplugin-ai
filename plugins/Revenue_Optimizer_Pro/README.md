@@ -1,137 +1,127 @@
 # Revenue Optimizer Pro
 
-## Description
-
-Revenue Optimizer Pro is a comprehensive WordPress plugin that analyzes your site's content, traffic, and audience to automatically recommend and help implement the most profitable monetization strategies. This intelligent plugin takes the guesswork out of earning money with your WordPress site.
+An all-in-one WordPress monetization management and optimization plugin designed to help content creators and website owners track, manage, and maximize revenue from multiple income streams.
 
 ## Features
 
-- **Site Analysis**: Automatically analyzes your post count, content length, engagement metrics, and audience size
-- **Smart Recommendations**: Provides tailored monetization strategy recommendations based on your site's characteristics
-- **Revenue Potential Calculator**: Estimates your potential earnings across different monetization methods
-- **Multiple Monetization Methods**: Support for display ads, affiliate marketing, memberships, digital products, sponsored content, and services
-- **Easy Dashboard**: Intuitive admin dashboard for managing all monetization activities
-- **Strategy Management**: Organized interface for setting up and managing different revenue streams
-- **Analytics Tracking**: Built-in database tracking for monitoring your monetization performance
-- **Shortcode Support**: Easy integration with shortcodes like `[revopt_signup]`
-- **Premium Features**: Freemium model with advanced analytics and A/B testing in premium tier
+### Core Monetization Management
+- **Multi-Stream Tracking**: Manage all revenue sources in one dashboard (ads, affiliate links, memberships, sponsored content)
+- **Revenue Stream Organization**: Categorize and organize different monetization strategies
+- **Configuration Management**: Store and manage settings for each revenue stream
+
+### Analytics & Insights
+- **Performance Tracking**: Monitor impressions, clicks, conversions, and revenue by date
+- **Revenue Summary**: View total revenue and conversion metrics over custom time periods
+- **Trend Analysis**: Track performance over 7, 30, 60, or 90-day periods
+- **Stream Comparison**: Compare performance across different monetization methods
+
+### Administrative Tools
+- **Intuitive Dashboard**: Clean admin interface for managing all monetization activities
+- **Revenue Goals Post Type**: Create and track revenue objectives
+- **RESTful API**: Programmatic access to revenue data and streams
+- **Shortcodes**: Display revenue goals on your website using `[rop_revenue_goal]`
+
+### Data Management
+- **Database-Driven**: Efficient storage in custom database tables
+- **Historical Data**: Complete audit trail of all revenue and analytics data
+- **Data Integrity**: Unique constraints on stream-date analytics combinations
 
 ## Installation
 
-1. Download the plugin files
-2. Upload the plugin folder to `/wp-content/plugins/` directory
-3. Activate the plugin through the 'Plugins' menu in WordPress
-4. Navigate to 'Revenue Optimizer' in the admin menu to begin
+1. Download the Revenue Optimizer Pro plugin
+2. Upload the plugin folder to `/wp-content/plugins/`
+3. Activate the plugin through the WordPress admin panel
+4. Navigate to "Revenue Optimizer" in the left menu
 
 ## Setup
 
-1. Go to **Revenue Optimizer > Settings**
-2. Enable the plugin and select your preferred monetization strategies
-3. Click "Analyze My Site Now" to get personalized recommendations
-4. Review the recommended strategies in the "Strategies" section
-5. Implement strategies using the provided guides and integrations
+### Initial Configuration
+1. Go to Revenue Optimizer > Dashboard
+2. Click "Add New Revenue Stream"
+3. Select your monetization type (Display Ads, Affiliate Marketing, Membership, Sponsored Content, etc.)
+4. Enter stream name and description
+5. Configure stream-specific settings
+6. Click "Save Stream"
+
+### Supported Revenue Stream Types
+- Display Advertising (Google AdSense, Mediavine, etc.)
+- Affiliate Marketing (Amazon Associates, CJ Affiliate, etc.)
+- Membership/Subscriptions
+- Sponsored Content
+- Digital Product Sales
+- Services & Consulting
+- Donations
+- Ticketed Events
 
 ## Usage
 
-### Dashboard
+### Managing Revenue Streams
+1. Navigate to "Revenue Streams" tab
+2. View all active and inactive streams
+3. Edit stream configuration by clicking on any stream
+4. Toggle active status to enable/disable streams
+5. Delete streams you no longer use
 
-The main dashboard provides:
-- Quick site analysis with one click
-- Revenue potential estimates (conservative, moderate, optimistic)
-- Visual analytics charts (with Chart.js integration)
-- Recommended monetization strategies
+### Viewing Analytics
+1. Go to "Analytics" tab
+2. Select date range (7, 30, 60, or 90 days)
+3. View total revenue and conversion metrics
+4. See breakdown by individual revenue stream
+5. Export data for further analysis
 
-### Strategies Section
+### Creating Revenue Goals
+1. Go to WordPress Admin > Revenue Goals
+2. Click "Add New"
+3. Create goal post with title and description
+4. Note the goal ID
+5. Use shortcode `[rop_revenue_goal goal_id="123"]` on any page or post to display
 
-Browse available monetization methods:
-- **Display Ads**: Google AdSense, Mediavine, or similar platforms
-- **Affiliate Marketing**: Promote products and earn commissions
-- **Digital Products**: Sell themes, plugins, courses, or templates
-- **Memberships**: Create subscription tiers with premium content
-- **Sponsored Content**: Partner with brands for paid posts
-- **Services/Consulting**: Offer your expertise directly
+### API Endpoints
 
-### Settings
+**Get Revenue Streams**
 
-Configure:
-- Plugin enabled/disabled status
-- Active monetization strategies
-- Tracking preferences
-- Access to premium features
-
-### Shortcodes
-
-**`[revopt_signup]`** - Displays a signup form to build your email list for your monetization efforts
+GET /wp-json/rop/v1/revenue-streams
 
 
-[revopt_signup]
+**Create New Revenue Stream**
+
+POST /wp-json/rop/v1/revenue-streams
+Body: {
+  "type": "affiliate_marketing",
+  "name": "Amazon Associates",
+  "description": "Main affiliate program",
+  "config": {"commission_rate": 4}
+}
 
 
-## Monetization Models
+**Get Analytics Data**
 
-### Free Version Includes
-- Site analysis and recommendations
-- Basic strategy guides
-- Revenue potential calculator
-- Standard dashboard access
+GET /wp-json/rop/v1/analytics?days=30
 
-### Premium Version ($9.99/month)
-- Advanced analytics and detailed reports
-- A/B testing for different monetization approaches
-- Integration with popular monetization platforms
-- Priority support
-- Weekly optimization recommendations
 
-## Data Stored
+## Monetization Model
 
-The plugin creates a database table `wp_revopt_analytics` to track:
-- Analysis timestamps
-- Metric types (site_analysis, etc.)
-- Metric values for analytics
-
-## Recommended Plugins to Pair With
-
-For maximum effectiveness, consider complementary plugins:
-- **WooCommerce** - For selling products
-- **AffiliateWP** - For managing affiliate programs
-- **MemberPress** - For membership management
-- **Gravity Forms** - For service/consultation forms
-- **Pretty Links** - For affiliate link management
-- **Easy Google AdSense** - For ad management
+- **Free Version**: Core revenue tracking and management
+- **Premium Tier** ($9.99/month): Advanced analytics, A/B testing, revenue forecasting, competitor analysis, automated optimization recommendations
 
 ## Requirements
-
 - WordPress 5.0 or higher
 - PHP 7.2 or higher
 - MySQL 5.6 or higher
 
-## FAQ
-
-**Q: Will this slow down my site?**
-A: No. Revenue Optimizer runs efficiently in the admin area and tracks metrics minimally.
-
-**Q: Can I use multiple monetization strategies together?**
-A: Absolutely! Most successful sites combine 2-3 complementary strategies.
-
-**Q: How quickly will I see revenue?**
-A: Revenue timelines depend on your traffic and chosen strategy. Display ads can generate income within days, while memberships may take weeks to build momentum.
-
-**Q: Is there a setup fee?**
-A: No. The plugin is free to use. Premium features are optional and subscription-based.
-
 ## Support
 
-For issues, questions, or feature requests, visit the plugin documentation or contact support.
+For issues, feature requests, or support, visit our website or contact support@revenueoptimizer.example
 
 ## License
 
-GPL v2 or later - See LICENSE file for details
+GNU General Public License v2 or later
 
 ## Changelog
 
 ### Version 1.0.0
 - Initial release
-- Site analysis functionality
-- Strategy recommendations engine
-- Admin dashboard
+- Revenue stream management
 - Basic analytics tracking
+- Admin dashboard
+- RESTful API
