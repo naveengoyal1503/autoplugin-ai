@@ -1,158 +1,150 @@
 <?php
 /*
 Plugin Name: Affiliate Deal Booster
-Description: Auto-aggregates and displays niche-specific affiliate coupons and deals to boost conversions.
+Description: Auto-curates and displays affiliate coupons with tracking to boost affiliate earnings.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Deal_Booster.php
 */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
-class AffiliateDealBooster {
-    private $option_name = 'adb_settings';
+class Affiliate_Deal_Booster {
+
+    private $options;
 
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'settings_init'));
         add_shortcode('affiliate_deals', array($this, 'display_deals_shortcode'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
     public function add_admin_menu() {
-        add_menu_page('Affiliate Deal Booster', 'Aff. Deal Booster', 'manage_options', 'affiliate_deal_booster', array($this, 'options_page'), 'dashicons-cart');
+        add_menu_page('Affiliate Deal Booster', 'Affiliate Deal Booster', 'manage_options', 'affiliate_deal_booster', array($this, 'options_page'));
     }
 
     public function settings_init() {
-        register_setting('adb_plugin', $this->option_name);
+        register_setting('affiliateDealBooster', 'affiliate_deal_booster_options');
 
         add_settings_section(
-            'adb_plugin_section',
-            __('Settings for Affiliate Deal Booster', 'adb'),
+            'affiliate_deal_booster_section',
+            __('Settings for fetching and displaying affiliate deals', 'affiliate-deal-booster'),
             null,
-            'adb_plugin'
+            'affiliateDealBooster'
         );
 
         add_settings_field(
-            'keywords',
-            __('Deal Keywords (comma-separated)', 'adb'),
-            array($this, 'keywords_render'),
-            'adb_plugin',
-            'adb_plugin_section'
-        );
-
-        add_settings_field(
-            'max_deals',
-            __('Max Deals to Show', 'adb'),
-            array($this, 'max_deals_render'),
-            'adb_plugin',
-            'adb_plugin_section'
-        );
-
-        add_settings_field(
-            'aff_id',
-            __('Affiliate ID', 'adb'),
-            array($this, 'aff_id_render'),
-            'adb_plugin',
-            'adb_plugin_section'
+            'affiliate_networks',
+            __('Affiliate Network APIs (JSON URLs)', 'affiliate-deal-booster'),
+            array($this, 'affiliate_networks_render'),
+            'affiliateDealBooster',
+            'affiliate_deal_booster_section'
         );
     }
 
-    public function keywords_render() {
-        $options = get_option($this->option_name);
+    public function affiliate_networks_render() {
+        $options = get_option('affiliate_deal_booster_options');
         ?>
-        <input type='text' name='<?php echo $this->option_name; ?>[keywords]' value='<?php echo isset($options['keywords']) ? esc_attr($options['keywords']) : ''; ?>' placeholder='e.g. tech,gadgets,software'>
-        <p class='description'>Comma separated keywords to find relevant deals</p>
+        <textarea cols='60' rows='5' name='affiliate_deal_booster_options[affiliate_networks]'><?php echo isset($options['affiliate_networks']) ? esc_textarea($options['affiliate_networks']) : ''; ?></textarea>
+        <p class='description'>Enter one JSON API URL per line providing coupons/deals data. Example format: [{"title":"10% Off","code":"SAVE10","url":"https://example.com"}, ...]</p>
         <?php
     }
 
-    public function max_deals_render() {
-        $options = get_option($this->option_name);
-        $val = isset($options['max_deals']) ? intval($options['max_deals']) : 5;
-        ?>
-        <input type='number' name='<?php echo $this->option_name; ?>[max_deals]' value='<?php echo $val; ?>' min='1' max='20'>
-        <?php
+    // Fetch and merge coupons from APIs
+    private function fetch_coupons() {
+        $options = get_option('affiliate_deal_booster_options');
+        if(empty($options['affiliate_networks'])) return [];
+
+        $urls = preg_split('/\r?\n/', $options['affiliate_networks']);
+        $all_coupons = [];
+
+        foreach($urls as $url) {
+            $url = trim($url);
+            if(empty($url)) continue;
+
+            $response = wp_remote_get($url, ['timeout' => 5]);
+            if (is_wp_error($response)) continue;
+
+            $body = wp_remote_retrieve_body($response);
+            $data = json_decode($body, true);
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) continue;
+
+            foreach ($data as $item) {
+                if (isset($item['title'], $item['code'], $item['url'])) {
+                    $all_coupons[] = [
+                        'title' => sanitize_text_field($item['title']),
+                        'code' => sanitize_text_field($item['code']),
+                        'url' => esc_url_raw($item['url'])
+                    ];
+                }
+            }
+        }
+
+        return $all_coupons;
     }
 
-    public function aff_id_render() {
-        $options = get_option($this->option_name);
-        ?>
-        <input type='text' name='<?php echo $this->option_name; ?>[aff_id]' value='<?php echo isset($options['aff_id']) ? esc_attr($options['aff_id']) : ''; ?>' placeholder='YourAffiliateID'>
-        <?php
+    public function display_deals_shortcode($atts) {
+        $coupons = $this->fetch_coupons();
+        if (empty($coupons)) return '<p>No affiliate deals available now.</p>';
+
+        $output = '<div class="aff-deal-booster">';
+        foreach ($coupons as $index => $coupon) {
+            $title = esc_html($coupon['title']);
+            $code = esc_html($coupon['code']);
+            $url = esc_url($coupon['url']);
+
+            // Track clicks via redirect (basic example)
+            $redirect_url = add_query_arg([
+                'affdb_redirect' => '1',
+                'target' => urlencode($url),
+                'coupon' => urlencode($code),
+            ], site_url());
+
+            $output .= "<div class='aff-deal-item' style='margin-bottom:10px;padding:10px;border:1px solid #ddd;'>";
+            $output .= "<strong>$title</strong><br>";
+            $output .= "<button class='copy-code' data-code='$code' style='cursor:pointer;margin:5px 0;padding:5px;'>Copy Code: $code</button><br>";
+            $output .= "<a href='$redirect_url' target='_blank' rel='nofollow noopener'>Get Deal</a>";
+            $output .= "</div>";
+        }
+        $output .= '</div>';
+
+        $output .= "<script>document.addEventListener('click',function(e){if(e.target.classList.contains('copy-code')){var code=e.target.getAttribute('data-code');navigator.clipboard.writeText(code).then(()=>{alert('Copied code '+code);});}});</script>";
+
+        return $output;
+    }
+
+    public function handle_redirect() {
+        if (isset($_GET['affdb_redirect'], $_GET['target'])) {
+            $target = esc_url_raw($_GET['target']);
+            // Here you can implement click tracking logic, e.g. store in DB or external analytics
+            // For simplicity redirect directly
+
+            wp_redirect($target);
+            exit;
+        }
+    }
+
+    public function enqueue_scripts() {
+        // No additional scripts for now (inline JS used)
     }
 
     public function options_page() {
         ?>
         <form action='options.php' method='post'>
-            <h1>Affiliate Deal Booster Settings</h1>
+            <h2>Affiliate Deal Booster Settings</h2>
             <?php
-            settings_fields('adb_plugin');
-            do_settings_sections('adb_plugin');
-            submit_button();
+            settings_fields('affiliateDealBooster');
+            do_settings_sections('affiliateDealBooster');
+            submit_button('Save Settings');
             ?>
+            <h3>Usage</h3>
+            <p>Place the shortcode <code>[affiliate_deals]</code> in any post or page to display the curated affiliate deals.</p>
         </form>
         <?php
     }
-
-    private function get_sample_deals($keywords, $affiliate_id) {
-        // In a real plugin, here you would call external affiliate APIs or scrape deals.
-        // For demo purposes, returning static dummy deals filtered by keywords.
-
-        $all_deals = array(
-            array('title' => '50% off Tech Gadget ABC', 'url' => 'https://affiliateshop.com/product/abc?aff_id=' . $affiliate_id),
-            array('title' => 'Save $20 on Software XYZ', 'url' => 'https://affiliateshop.com/product/xyz?aff_id=' . $affiliate_id),
-            array('title' => 'Buy one get one free Gadget DEF', 'url' => 'https://affiliateshop.com/product/def?aff_id=' . $affiliate_id),
-            array('title' => '30% discount on Laptop Accessories', 'url' => 'https://affiliateshop.com/product/laptop-accessories?aff_id=' . $affiliate_id),
-            array('title' => 'Free Shipping on Orders over $50', 'url' => 'https://affiliateshop.com/free-shipping?aff_id=' . $affiliate_id),
-            array('title' => 'Exclusive 15% off Home Electronics', 'url' => 'https://affiliateshop.com/home-electronics?aff_id=' . $affiliate_id),
-        );
-
-        if (empty($keywords)) {
-            return array_slice($all_deals, 0, 5);
-        }
-
-        $keywords = array_map('trim', explode(',', strtolower($keywords)));
-
-        $filtered = array();
-        foreach ($all_deals as $deal) {
-            foreach ($keywords as $kw) {
-                if (stripos(strtolower($deal['title']), $kw) !== false) {
-                    $filtered[] = $deal;
-                    break;
-                }
-            }
-        }
-
-        if (count($filtered) === 0) {
-            $filtered = array_slice($all_deals, 0, 5);
-        }
-
-        return $filtered;
-    }
-
-    public function display_deals_shortcode() {
-        $options = get_option($this->option_name);
-        $keywords = isset($options['keywords']) ? $options['keywords'] : '';
-        $max = isset($options['max_deals']) ? intval($options['max_deals']) : 5;
-        $aff_id = isset($options['aff_id']) ? $options['aff_id'] : 'default-aff';
-
-        $deals = $this->get_sample_deals($keywords, $aff_id);
-        $deals = array_slice($deals, 0, $max);
-
-        if (empty($deals)) {
-            return '<p>No affiliate deals found.</p>';
-        }
-
-        $html = '<ul class="affiliate-deal-list" style="list-style:none;padding-left:0;">';
-        foreach ($deals as $deal) {
-            $title = esc_html($deal['title']);
-            $url = esc_url($deal['url']);
-            $html .= "<li style='margin-bottom:10px;'><a href='$url' target='_blank' rel='nofollow noopener noreferrer' style='color:#0073aa;text-decoration:none;'>$title</a></li>";
-        }
-        $html .= '</ul>';
-        return $html;
-    }
 }
 
-new AffiliateDealBooster();
+// Initialize
+$affdb = new Affiliate_Deal_Booster();
+add_action('init', array($affdb, 'handle_redirect'));
