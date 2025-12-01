@@ -1,39 +1,45 @@
 # Affiliate Link Booster
 
-Affiliate Link Booster is a WordPress plugin designed to **increase your affiliate marketing revenue** by automatically adding contextual Call-To-Action buttons next to your affiliate links, tracking click performance, and dynamically inserting coupon deals.
+## Description
+Affiliate Link Booster automatically inserts affiliate links into your WordPress posts by matching keywords you specify. It tracks clicks on these links to help optimize your affiliate marketing strategy.
 
 ## Features
-
-- Automatically detects affiliate links containing "affid" parameter
-- Inserts customizable "Grab Deal" CTA buttons next to affiliate links
-- Tracks clicks on affiliate links via AJAX and stores counts in WordPress options
-- Opens affiliate links in new tabs when CTAs are clicked
-- Lightweight and self-contained with minimal dependencies
-- Freemium-ready for future expansions like advanced analytics and coupon auto-updates
+- Automatically link keywords with your affiliate URLs
+- Click tracking with analytics dashboard in WordPress admin
+- No manual link insertion needed
+- One-click setup of keyword-URL pairs
+- Open affiliate links in new tab with nofollow attributes
+- Lightweight and fast, no external dependencies
 
 ## Installation
-
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory
-2. Activate the plugin through the WordPress admin panel
-3. Ensure your affiliate links include the parameter `affid` for detection
+1. Upload the plugin file `affiliate-link-booster.php` to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Link Booster** to add your keyword and affiliate URL pairs.
 
 ## Setup
-
-No configuration needed for the basic version. Affiliate links containing "affid" in the URL will automatically receive the CTA buttons.
-
-Future premium versions will offer:
-
-- Custom CTA text
-- Automatic coupon retrieval and insertion
-- Detailed click analytics and reports
-- A/B testing for link conversions
+- In the settings page, enter each affiliate keyword and its corresponding affiliate URL, one pair per line, separated by a comma.
+- Example:
+  
+  widget, https://affiliate.example.com/widget
+  gadget, https://affiliate.example.com/gadget
+  
+- Save changes.
 
 ## Usage
+- The plugin will automatically hyperlink the first occurrence of each keyword in your post content to its affiliate URL.
+- Clicks on these links are tracked and displayed under the settings page as a clicks report.
+- Use the click data to identify your best-performing affiliate keywords and optimize accordingly.
 
-- Add affiliate links normally in your posts (must contain `affid` parameter)
-- The plugin automatically appends a "Grab Deal" button after each detected affiliate link
-- Clicks on these buttons are tracked and counted in the WordPress database
-- Monitor clicks by querying the option `alb_click_counts` through custom code or using a future admin dashboard
+## FAQ
+**Q: Can I customize how many links per post?**
+A: Currently, only the first occurrence of each keyword in the content is linked.
 
+**Q: Does this plugin interfere with existing links?**
+A: No, it skips keywords that are already inside links.
 
-Start boosting your affiliate revenue today with minimal effort using Affiliate Link Booster!
+**Q: Is the plugin compatible with all themes?**
+A: Yes, since it filters post content before output, it is theme-independent.
+
+## Changelog
+### 1.0
+- Initial release with keyword-based affiliate linking and click tracking.
