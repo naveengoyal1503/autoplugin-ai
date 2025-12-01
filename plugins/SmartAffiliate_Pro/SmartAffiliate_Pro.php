@@ -1,189 +1,178 @@
 <?php
 /*
 Plugin Name: SmartAffiliate Pro
-Plugin URI: https://smartaffiliatepro.com
-Description: Intelligent affiliate marketing management with real-time analytics and performance tracking
+Description: Intelligent affiliate link management and optimization for WordPress
 Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=SmartAffiliate_Pro.php
 License: GPL v2 or later
-Text Domain: smartaffiliate-pro
 */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
-
-define('SMARTAFFILIATE_VERSION', '1.0.0');
-define('SMARTAFFILIATE_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('SMARTAFFILIATE_PLUGIN_URL', plugin_dir_url(__FILE__));
+if (!defined('ABSPATH')) exit;
 
 class SmartAffiliatePro {
-    private static $instance = null;
-
-    public static function getInstance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
+    private $plugin_dir;
+    private $plugin_url;
+    private $db_version = '1.0.0';
 
     public function __construct() {
-        $this->initHooks();
-        $this->createTables();
-    }
-
-    private function initHooks() {
-        add_action('admin_menu', array($this, 'addAdminMenu'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueueAdminAssets'));
-        add_shortcode('affiliate_link', array($this, 'handleAffiliateShortcode'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueueFrontendAssets'));
+        $this->plugin_dir = plugin_dir_path(__FILE__);
+        $this->plugin_url = plugin_dir_url(__FILE__);
+        
+        add_action('plugins_loaded', array($this, 'init'));
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
-    public function addAdminMenu() {
+    public function init() {
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+        add_action('wp_footer', array($this, 'auto_inject_affiliate_links'));
+        add_shortcode('affiliate_link', array($this, 'affiliate_link_shortcode'));
+    }
+
+    public function activate() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'smartaffiliate_links';
+        
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+            $charset_collate = $wpdb->get_charset_collate();
+            $sql = "CREATE TABLE $table_name (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                keyword VARCHAR(255) NOT NULL,
+                affiliate_url VARCHAR(500) NOT NULL,
+                commission_rate DECIMAL(5,2),
+                clicks INT DEFAULT 0,
+                conversions INT DEFAULT 0,
+                created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
+            ) $charset_collate;";
+            
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+            
+            add_option('smartaffiliate_db_version', $this->db_version);
+        }
+    }
+
+    public function deactivate() {
+        // Cleanup on deactivation
+    }
+
+    public function add_admin_menu() {
         add_menu_page(
             'SmartAffiliate Pro',
-            'SmartAffiliate Pro',
+            'SmartAffiliate',
             'manage_options',
-            'smartaffiliate-pro',
-            array($this, 'renderDashboard'),
-            'dashicons-chart-line',
-            30
+            'smartaffiliate',
+            array($this, 'admin_page'),
+            'dashicons-attach'
         );
-
+        
         add_submenu_page(
-            'smartaffiliate-pro',
-            'Manage Links',
-            'Manage Links',
+            'smartaffiliate',
+            'Affiliate Links',
+            'Links',
             'manage_options',
-            'smartaffiliate-links',
-            array($this, 'renderLinksPage')
+            'smartaffiliate',
+            array($this, 'admin_page')
         );
-
+        
         add_submenu_page(
-            'smartaffiliate-pro',
-            'Analytics',
-            'Analytics',
-            'manage_options',
-            'smartaffiliate-analytics',
-            array($this, 'renderAnalyticsPage')
-        );
-
-        add_submenu_page(
-            'smartaffiliate-pro',
+            'smartaffiliate',
             'Settings',
             'Settings',
             'manage_options',
             'smartaffiliate-settings',
-            array($this, 'renderSettingsPage')
+            array($this, 'settings_page')
+        );
+        
+        add_submenu_page(
+            'smartaffiliate',
+            'Analytics',
+            'Analytics',
+            'manage_options',
+            'smartaffiliate-analytics',
+            array($this, 'analytics_page')
         );
     }
 
-    public function renderDashboard() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'smartaffiliate_links';
-        $total_links = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
-        $total_clicks = $wpdb->get_var("SELECT SUM(clicks) FROM {$table_name}");
-        ?>
-        <div class="wrap">
-            <h1>SmartAffiliate Pro Dashboard</h1>
-            <div class="sap-dashboard">
-                <div class="sap-stat-box">
-                    <h3>Total Affiliate Links</h3>
-                    <p class="sap-stat-number"><?php echo intval($total_links); ?></p>
-                </div>
-                <div class="sap-stat-box">
-                    <h3>Total Clicks</h3>
-                    <p class="sap-stat-number"><?php echo intval($total_clicks); ?></p>
-                </div>
-            </div>
-        </div>
-        <?php
+    public function register_settings() {
+        register_setting('smartaffiliate_options', 'smartaffiliate_settings');
+        register_setting('smartaffiliate_options', 'smartaffiliate_auto_inject');
     }
 
-    public function renderLinksPage() {
+    public function admin_page() {
         global $wpdb;
         $table_name = $wpdb->prefix . 'smartaffiliate_links';
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-            if ($_POST['action'] === 'add' && isset($_POST['affiliate_url'])) {
-                $wpdb->insert(
-                    $table_name,
-                    array(
-                        'link_name' => sanitize_text_field($_POST['link_name']),
-                        'affiliate_url' => esc_url_raw($_POST['affiliate_url']),
-                        'short_code' => sanitize_title($_POST['link_name']),
-                        'created_at' => current_time('mysql')
-                    )
-                );
-            }
+        
+        if (isset($_POST['add_link']) && check_admin_referer('smartaffiliate_add')) {
+            $keyword = sanitize_text_field($_POST['keyword']);
+            $url = esc_url($_POST['affiliate_url']);
+            $commission = floatval($_POST['commission_rate']);
+            
+            $wpdb->insert(
+                $table_name,
+                array(
+                    'keyword' => $keyword,
+                    'affiliate_url' => $url,
+                    'commission_rate' => $commission
+                )
+            );
+            echo '<div class="notice notice-success"><p>Affiliate link added successfully!</p></div>';
         }
-
-        $links = $wpdb->get_results("SELECT * FROM {$table_name}");
+        
+        if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
+            $wpdb->delete($table_name, array('id' => intval($_GET['delete'])));
+            echo '<div class="notice notice-success"><p>Affiliate link deleted.</p></div>';
+        }
+        
+        $links = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_date DESC");
         ?>
         <div class="wrap">
-            <h1>Manage Affiliate Links</h1>
-            <form method="post" class="sap-form">
+            <h1>SmartAffiliate Pro - Manage Links</h1>
+            
+            <form method="POST">
+                <?php wp_nonce_field('smartaffiliate_add'); ?>
                 <table class="form-table">
                     <tr>
-                        <th><label for="link_name">Link Name</label></th>
-                        <td><input type="text" id="link_name" name="link_name" required></td>
+                        <th><label for="keyword">Keyword</label></th>
+                        <td><input type="text" name="keyword" id="keyword" required></td>
                     </tr>
                     <tr>
                         <th><label for="affiliate_url">Affiliate URL</label></th>
-                        <td><input type="url" id="affiliate_url" name="affiliate_url" required></td>
+                        <td><input type="url" name="affiliate_url" id="affiliate_url" required></td>
+                    </tr>
+                    <tr>
+                        <th><label for="commission_rate">Commission Rate (%)</label></th>
+                        <td><input type="number" name="commission_rate" id="commission_rate" step="0.01"></td>
                     </tr>
                 </table>
-                <input type="hidden" name="action" value="add">
-                <p class="submit"><input type="submit" class="button button-primary" value="Add Link"></p>
+                <p><input type="submit" name="add_link" class="button button-primary" value="Add Affiliate Link"></p>
             </form>
+            
+            <h2>Your Affiliate Links</h2>
             <table class="widefat">
                 <thead>
                     <tr>
-                        <th>Link Name</th>
+                        <th>Keyword</th>
+                        <th>URL</th>
+                        <th>Commission</th>
                         <th>Clicks</th>
-                        <th>Created</th>
+                        <th>Conversions</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($links as $link): ?>
-                        <tr>
-                            <td><?php echo esc_html($link->link_name); ?></td>
-                            <td><?php echo intval($link->clicks); ?></td>
-                            <td><?php echo esc_html($link->created_at); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <?php
-    }
-
-    public function renderAnalyticsPage() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'smartaffiliate_links';
-        $top_links = $wpdb->get_results("SELECT * FROM {$table_name} ORDER BY clicks DESC LIMIT 10");
-        ?>
-        <div class="wrap">
-            <h1>Analytics</h1>
-            <h2>Top Performing Links</h2>
-            <table class="widefat">
-                <thead>
                     <tr>
-                        <th>Link</th>
-                        <th>Clicks</th>
-                        <th>Performance</th>
+                        <td><?php echo esc_html($link->keyword); ?></td>
+                        <td><a href="<?php echo esc_url($link->affiliate_url); ?>" target="_blank"><?php echo esc_html(substr($link->affiliate_url, 0, 50)); ?>...</a></td>
+                        <td><?php echo esc_html($link->commission_rate); ?>%</td>
+                        <td><?php echo esc_html($link->clicks); ?></td>
+                        <td><?php echo esc_html($link->conversions); ?></td>
+                        <td><a href="?page=smartaffiliate&delete=<?php echo $link->id; ?>" onclick="return confirm('Delete this link?')">Delete</a></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($top_links as $link): ?>
-                        <tr>
-                            <td><?php echo esc_html($link->link_name); ?></td>
-                            <td><?php echo intval($link->clicks); ?></td>
-                            <td><div class="sap-progress" style="width: <?php echo (intval($link->clicks) / 100) * 10; ?>%;"></div></td>
-                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -191,72 +180,96 @@ class SmartAffiliatePro {
         <?php
     }
 
-    public function renderSettingsPage() {
+    public function settings_page() {
+        $settings = get_option('smartaffiliate_settings', array());
         ?>
         <div class="wrap">
-            <h1>Settings</h1>
-            <form method="post">
+            <h1>SmartAffiliate Pro - Settings</h1>
+            <form method="POST" action="options.php">
+                <?php settings_fields('smartaffiliate_options'); ?>
                 <table class="form-table">
                     <tr>
-                        <th><label for="tracking_enabled">Enable Click Tracking</label></th>
-                        <td><input type="checkbox" id="tracking_enabled" name="tracking_enabled" checked></td>
+                        <th><label for="auto_inject">Auto-inject Affiliate Links</label></th>
+                        <td>
+                            <input type="checkbox" name="smartaffiliate_auto_inject" id="auto_inject" value="1" <?php checked(get_option('smartaffiliate_auto_inject'), 1); ?>> Enable automatic link injection
+                        </td>
                     </tr>
                 </table>
-                <p class="submit"><input type="submit" class="button button-primary" value="Save Settings"></p>
+                <?php submit_button(); ?>
             </form>
         </div>
         <?php
     }
 
-    public function handleAffiliateShortcode($atts) {
+    public function analytics_page() {
         global $wpdb;
         $table_name = $wpdb->prefix . 'smartaffiliate_links';
-        $atts = shortcode_atts(array('name' => ''), $atts);
-        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table_name} WHERE link_name = %s", $atts['name']));
+        $links = $wpdb->get_results("SELECT * FROM $table_name ORDER BY clicks DESC LIMIT 10");
+        ?>
+        <div class="wrap">
+            <h1>SmartAffiliate Pro - Analytics</h1>
+            <h2>Top Performing Links</h2>
+            <table class="widefat">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Total Clicks</th>
+                        <th>Conversions</th>
+                        <th>Conversion Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($links as $link): 
+                        $rate = $link->clicks > 0 ? round(($link->conversions / $link->clicks) * 100, 2) : 0;
+                    ?>
+                    <tr>
+                        <td><?php echo esc_html($link->keyword); ?></td>
+                        <td><?php echo esc_html($link->clicks); ?></td>
+                        <td><?php echo esc_html($link->conversions); ?></td>
+                        <td><?php echo esc_html($rate); ?>%</td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
 
+    public function affiliate_link_shortcode($atts) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'smartaffiliate_links';
+        
+        $atts = shortcode_atts(array('keyword' => ''), $atts);
+        $keyword = sanitize_text_field($atts['keyword']);
+        
+        $link = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $table_name WHERE keyword = %s",
+            $keyword
+        ));
+        
         if ($link) {
             $wpdb->update($table_name, array('clicks' => $link->clicks + 1), array('id' => $link->id));
-            return '<a href="' . esc_url($link->affiliate_url) . '" class="sap-affiliate-link" target="_blank" rel="noopener noreferrer">' . esc_html($link->link_name) . '</a>';
+            return '<a href="' . esc_url($link->affiliate_url) . '" target="_blank" rel="noopener noreferrer">' . esc_html($keyword) . '</a>';
         }
         return '';
     }
 
-    public function enqueueAdminAssets() {
-        wp_enqueue_style('smartaffiliate-admin', SMARTAFFILIATE_PLUGIN_URL . 'css/admin.css', array(), SMARTAFFILIATE_VERSION);
-    }
-
-    public function enqueueFrontendAssets() {
-        wp_enqueue_style('smartaffiliate-frontend', SMARTAFFILIATE_PLUGIN_URL . 'css/frontend.css', array(), SMARTAFFILIATE_VERSION);
-    }
-
-    private function createTables() {
+    public function auto_inject_affiliate_links($content) {
+        if (!get_option('smartaffiliate_auto_inject')) return;
+        
         global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
         $table_name = $wpdb->prefix . 'smartaffiliate_links';
-
-        $sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            link_name varchar(255) NOT NULL,
-            affiliate_url text NOT NULL,
-            short_code varchar(100) NOT NULL,
-            clicks int(11) DEFAULT 0,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            UNIQUE KEY short_code (short_code)
-        ) {$charset_collate};";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
-
-    public function activate() {
-        $this->createTables();
-    }
-
-    public function deactivate() {
-        // Cleanup if needed
+        $links = $wpdb->get_results("SELECT keyword, affiliate_url FROM $table_name");
+        
+        foreach ($links as $link) {
+            $pattern = '/\b' . preg_quote($link->keyword, '/') . '\b/i';
+            $replacement = '<a href="' . esc_url($link->affiliate_url) . '" target="_blank" rel="noopener noreferrer">' . esc_html($link->keyword) . '</a>';
+            $content = preg_replace($pattern, $replacement, $content, 1);
+        }
+        
+        return $content;
     }
 }
 
-SmartAffiliatePro::getInstance();
+new SmartAffiliatePro();
 ?>
