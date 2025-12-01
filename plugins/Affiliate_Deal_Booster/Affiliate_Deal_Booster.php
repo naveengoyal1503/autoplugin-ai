@@ -1,129 +1,125 @@
+<?php
 /*
+Plugin Name: Affiliate Deal Booster
+Description: Automatically create and display affiliate discount coupons to boost affiliate sales.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Deal_Booster.php
 */
-<?php
-/**
- * Plugin Name: Affiliate Deal Booster
- * Description: Auto-aggregates and displays niche-specific affiliate coupons and deals with real-time tracking to maximize affiliate revenue.
- * Version: 1.0
- * Author: Your Name
- * License: GPLv2 or later
- */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
 class AffiliateDealBooster {
-    private $option_name = 'adb_settings';
+
+    private $coupon_post_type = 'adb_coupon';
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-        add_shortcode('affiliate_deals', array($this, 'render_deals_shortcode'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('init', [$this, 'register_coupon_post_type']);
+        add_shortcode('adb_coupons', [$this, 'display_coupons']);
+        add_action('admin_menu', [$this, 'add_admin_menu']);
+        add_action('admin_init', [$this, 'register_settings']);
+        add_action('save_post_' . 'adb_coupon', [$this, 'validate_coupon_meta'], 10, 3);
+    }
+
+    public function register_coupon_post_type() {
+        $labels = [
+            'name' => 'ADB Coupons',
+            'singular_name' => 'ADB Coupon',
+            'add_new_item' => 'Add New Coupon',
+            'edit_item' => 'Edit Coupon',
+            'new_item' => 'New Coupon',
+            'view_item' => 'View Coupon',
+            'search_items' => 'Search Coupons',
+        ];
+
+        $args = [
+            'labels' => $labels,
+            'public' => false,
+            'show_ui' => true,
+            'supports' => ['title', 'editor'],
+            'menu_position' => 25,
+            'menu_icon' => 'dashicons-tickets-alt',
+            'capability_type' => 'post',
+            'capabilities' => ['edit_posts', 'edit_others_posts', 'publish_posts', 'read_post'],
+            'map_meta_cap' => true,
+        ];
+
+        register_post_type($this->coupon_post_type, $args);
     }
 
     public function add_admin_menu() {
-        add_menu_page(
-            'Affiliate Deal Booster',
-            'Affiliate Deal Booster',
-            'manage_options',
-            'affiliate_deal_booster',
-            array($this, 'options_page')
-        );
+        add_submenu_page('edit.php?post_type=' . $this->coupon_post_type, 'Settings', 'Settings', 'manage_options', 'adb_settings', [$this, 'settings_page']);
     }
 
-    public function settings_init() {
-        register_setting('adbSettings', $this->option_name);
-
-        add_settings_section(
-            'adb_section',
-            __('Settings for Affiliate Deal Booster', 'adb'),
-            null,
-            'adbSettings'
-        );
-
-        add_settings_field(
-            'adb_affiliate_id',
-            __('Your Affiliate ID', 'adb'),
-            array($this, 'affiliate_id_render'),
-            'adbSettings',
-            'adb_section'
-        );
-
-        add_settings_field(
-            'adb_niche_keyword',
-            __('Niche Keyword', 'adb'),
-            array($this, 'niche_keyword_render'),
-            'adbSettings',
-            'adb_section'
-        );
+    public function register_settings() {
+        register_setting('adb_settings_group', 'adb_affiliate_id');
+        register_setting('adb_settings_group', 'adb_default_prefix');
     }
 
-    public function affiliate_id_render() {
-        $options = get_option($this->option_name);
+    public function settings_page() {
+        if (!current_user_can('manage_options')) return;
+
         ?>
-        <input type='text' name='<?php echo $this->option_name; ?>[affiliate_id]' value='<?php echo isset($options['affiliate_id']) ? esc_attr($options['affiliate_id']) : ''; ?>' placeholder='e.g. myaffiliate123'>
-        <?php
-    }
-
-    public function niche_keyword_render() {
-        $options = get_option($this->option_name);
-        ?>
-        <input type='text' name='<?php echo $this->option_name; ?>[niche_keyword]' value='<?php echo isset($options['niche_keyword']) ? esc_attr($options['niche_keyword']) : ''; ?>' placeholder='e.g. fitness, gardening'>
-        <?php
-    }
-
-    public function options_page() {
-        ?>
-        <form action='options.php' method='post'>
+        <div class="wrap">
             <h1>Affiliate Deal Booster Settings</h1>
-            <?php
-            settings_fields('adbSettings');
-            do_settings_sections('adbSettings');
-            submit_button();
-            ?>
-        </form>
-        <p><strong>Usage:</strong> Insert shortcode <code>[affiliate_deals]</code> into your posts or pages to display curated affiliate coupons and deals based on your niche.</p>
+            <form method="post" action="options.php">
+                <?php settings_fields('adb_settings_group'); ?>
+                <?php do_settings_sections('adb_settings_group'); ?>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Affiliate ID (Your Affiliate Tracker)</th>
+                        <td><input type="text" name="adb_affiliate_id" value="<?php echo esc_attr(get_option('adb_affiliate_id', '')); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Default Coupon Prefix</th>
+                        <td><input type="text" name="adb_default_prefix" value="<?php echo esc_attr(get_option('adb_default_prefix', 'SAVE')); ?>" class="regular-text" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+            <p><strong>How to use:</strong></p>
+            <ol>
+                <li>Create new coupons under ‘ADB Coupons’ in admin.</li>
+                <li>Set coupon title as deal name (e.g., 20% OFF SOFTWARE).</li>
+                <li>In content, put affiliate URL with [affiliate_url] shortcode placeholder, or direct URLs.</li>
+                <li>Use shortcode <code>[adb_coupons]</code> to display active coupons on any post/page.</li>
+            </ol>
+        </div>
         <?php
     }
 
-    public function enqueue_scripts() {
-        if (is_singular() && has_shortcode(get_post()->post_content, 'affiliate_deals')) {
-            wp_enqueue_style('adb-style', plugin_dir_url(__FILE__) . 'style.css');
-            wp_enqueue_script('adb-script', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), false, true);
-        }
+    public function validate_coupon_meta($post_id, $post, $update) {
+        // Can add future validations or auto modifications if needed
     }
 
-    private function fetch_deals($keyword, $affiliate_id) {
-        // Simulation: In a real plugin this would call external affiliate APIs or scrape approved deal sources.
-        // For this standalone plugin file, we generate mock deals.
-        $mockDeals = array(
-            array('title' => '50% OFF on ' . ucfirst($keyword) . ' Gear', 'link' => 'https://affiliate.example.com/product1?aff=' . $affiliate_id, 'expires' => date('Y-m-d', strtotime('+7 days'))),
-            array('title' => 'Buy 1 Get 1 Free ' . ucfirst($keyword) . ' Supplements', 'link' => 'https://affiliate.example.com/product2?aff=' . $affiliate_id, 'expires' => date('Y-m-d', strtotime('+14 days'))),
-            array('title' => 'Save $20 on ' . ucfirst($keyword) . ' Coaching Sessions', 'link' => 'https://affiliate.example.com/product3?aff=' . $affiliate_id, 'expires' => date('Y-m-d', strtotime('+5 days'))),
-        );
-        return $mockDeals;
-    }
+    public function display_coupons($atts) {
+        $args = [
+            'post_type' => $this->coupon_post_type,
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+        ];
+        $coupons = get_posts($args);
+        if (!$coupons) return '<p>No coupons available currently.</p>';
 
-    public function render_deals_shortcode($atts) {
-        $options = get_option($this->option_name);
-        $affiliate_id = isset($options['affiliate_id']) ? sanitize_text_field($options['affiliate_id']) : '';
-        $keyword = isset($options['niche_keyword']) ? sanitize_text_field($options['niche_keyword']) : '';
-        if (!$affiliate_id || !$keyword) {
-            return '<p>Please configure your Affiliate Deal Booster settings to show deals.</p>';
-        }
+        $affiliate_id = get_option('adb_affiliate_id', '');
+        $default_prefix = get_option('adb_default_prefix', 'SAVE');
+        $output = '<div class="adb-coupons">';
 
-        $deals = $this->fetch_deals($keyword, $affiliate_id);
-
-        $output = '<div class="adb-deal-list">';
-        foreach ($deals as $deal) {
-            $output .= '<div class="adb-deal">
-                <a href="' . esc_url($deal['link']) . '" target="_blank" rel="nofollow noopener">' . esc_html($deal['title']) . '</a><br />
-                <small>Expires: ' . esc_html($deal['expires']) . '</small>
-            </div>';
+        foreach ($coupons as $coupon) {
+            $content = apply_filters('the_content', $coupon->post_content);
+            // Replace [affiliate_url] placeholder with affiliate ID if present
+            $aff_url = '';
+            // Extract any URLs from content
+            if (preg_match('/\[affiliate_url\]/', $content)) {
+                // Create a dummy affiliate URL for demo
+                $aff_url = esc_url('https://example.com/?aff=' . urlencode($affiliate_id));
+                $content = str_replace('[affiliate_url]', $aff_url, $content);
+            }
+            $output .= '<div class="adb-coupon-item" style="border:1px solid #ddd;padding:10px;margin-bottom:10px;">
+                <h3>' . esc_html($default_prefix . ' - ' . $coupon->post_title) . '</h3>
+                <div>' . $content . '</div>
+                <p><a href="' . esc_url($aff_url) . '" target="_blank" rel="nofollow noopener" style="background:#0073aa;color:#fff;padding:6px 12px;text-decoration:none;border-radius:3px;">Grab Deal</a></p>
+                </div>';
         }
         $output .= '</div>';
 
