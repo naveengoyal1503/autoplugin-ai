@@ -1,33 +1,37 @@
 # WP Paywall Pro
 
-Monetize your WordPress content with paywalls, subscriptions, and affiliate tracking.
+Monetize your WordPress content with flexible paywalls, subscriptions, and one-time payments.
 
 ## Features
-- Flexible paywall for posts and custom content
-- Subscription and one-time payment options
-- Affiliate tracking and referral stats
-- Easy-to-use shortcode for custom paywalls
-- Admin settings for price, currency, and paywall status
+- Enable/disable paywall globally
+- Choose between subscription, one-time payment, or tiered access modes
+- Shortcode support for custom paywall placement
+- Admin settings page
+- Frontend paywall message and payment button
+- Premium add-ons available (Stripe/PayPal, analytics, etc.)
 
 ## Installation
-1. Upload the `wp-paywall-pro` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Paywall Pro to configure your paywall
+1. Upload the `wp-paywall-pro` folder to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to Settings > WP Paywall Pro to configure the plugin.
 
 ## Setup
-- Enable/disable paywall
-- Set price and currency
-- Use shortcode `[paywall price="10" currency="USD"]Your content[/paywall]` for custom paywalls
-- Track affiliate referrals in the Affiliate Stats page
+- Enable the paywall and select your preferred mode (subscription, one-time, tiered).
+- The paywall will automatically lock content for non-paying users.
+- Use the `[paywall]` shortcode to wrap specific content.
 
 ## Usage
-- Posts with paywall enabled will show a payment form to unlock content
-- Users can pay to access locked content
-- Affiliate links with `?affiliate_id=123` will be tracked
+- All posts and pages will be protected based on your settings.
+- Customize the paywall message and button in the plugin's assets/style.css file.
+- Upgrade to premium for advanced payment gateways and analytics.
 
 ## Requirements
-- WordPress 5.0+
-- PHP 7.2+
+- WordPress 5.0 or higher
+- PHP 7.0 or higher
 
 ## Support
-For support, visit https://example.com/wp-paywall-pro
+For support and feature requests, visit the plugin page or contact the developer.
+
+---
+
+**Note:** This is a basic version. Premium features require additional development and integration.
