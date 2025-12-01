@@ -1,28 +1,34 @@
 # AffiliateLink Manager Pro
 
-AffiliateLink Manager Pro is a powerful WordPress plugin that helps bloggers and site owners manage, track, and optimize affiliate links with advanced analytics and automated link cloaking.
+AffiliateLink Manager Pro is a WordPress plugin designed to help bloggers and affiliate marketers manage, track, and optimize their affiliate links with advanced analytics and automated link cloaking.
 
 ## Features
-- Add and manage affiliate links with custom slugs
-- Track clicks on each affiliate link
-- Cloak affiliate links for a cleaner look
-- Display affiliate links using shortcodes
-- Simple admin interface for managing links
+- Create and manage affiliate links as custom post types
+- Cloak affiliate links for a cleaner, branded appearance
+- Track clicks and conversions for each link
+- Display analytics in the WordPress admin
+- Use shortcodes to insert cloaked affiliate links in posts and pages
+- Easy setup and integration
 
 ## Installation
-1. Upload the `affiliate-link-manager-pro` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to the 'Affiliate Links' menu in your admin panel to start adding links
+1. Download the plugin ZIP file.
+2. Go to your WordPress admin dashboard.
+3. Navigate to Plugins > Add New > Upload Plugin.
+4. Upload the ZIP file and activate the plugin.
 
 ## Setup
-- Add your affiliate links in the admin panel with a custom slug
-- Use the shortcode `[affiliate_link slug="your-slug"]` to display a link on your posts/pages
-- Cloaked links are available at `/go/your-slug`
+1. After activation, go to Affiliate Links in your WordPress admin menu.
+2. Add a new affiliate link by entering the affiliate URL and optionally enabling cloaking.
+3. Use the shortcode `[affiliate_link id="123"]` in your posts or pages to display the cloaked link.
 
 ## Usage
-- Add new affiliate links via the admin panel
-- Track clicks and performance
-- Use shortcodes or cloaked URLs to promote your affiliate links
+- To cloak a link, check the "Cloak Link" option when editing an affiliate link.
+- Cloaked links will be accessible via `/go/slug`.
+- Track clicks and conversions in the Analytics submenu.
+- Use the conversion tracking by appending `?conversion=slug` to your affiliate URLs.
 
 ## Support
-For support, please visit our website or contact us directly.
+For support and feature requests, visit our website or contact us directly.
+
+## License
+This plugin is released under the GPL v2 or later.
