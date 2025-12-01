@@ -1,38 +1,28 @@
 # Affiliate Deal Booster
 
 ## Description
-Affiliate Deal Booster is a WordPress plugin that automatically detects affiliate links inside your posts and replaces them with exclusive, personalized coupon codes and cashback offers from partner merchants. This increases user engagement and boosts your affiliate conversion rates.
+Affiliate Deal Booster is a WordPress plugin designed to help affiliate marketers, bloggers, and niche websites dynamically display exclusive coupons and deals, thereby increasing affiliate sales and commissions.
 
 ## Features
-- Automatically scans post content for affiliate links
-- Replaces affiliate links with styled offers showing coupon codes and cashback
-- Supports major affiliate merchants like Amazon and eBay
-- Lightweight and simple to set up
-- Freemium-ready architecture for premium personalization and analytics (future updates)
+- Simple shortcode `[affiliate_deals]` to display a curated list of affiliate deals anywhere.
+- Option to enter your Affiliate ID to append automatically to deal URLs.
+- Responsive and clean design compatible with most themes.
+- Basic free version with static deals; premium upgrades can enable automatic deal fetching and detailed analytics.
 
 ## Installation
-1. Upload the `affiliate-deal-booster.php` file to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Visit your posts/pages with affiliate links to see them automatically enhanced.
+1. Upload the `affiliate-deal-booster.php` file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Deal Booster** to enter your Affiliate ID.
 
 ## Setup
-No setup required for the free version.
+- Enter your primary affiliate tracking ID in the settings page to ensure your links get credited properly.
+- Insert the shortcode `[affiliate_deals]` into any post or page where you want the deals to appear.
 
 ## Usage
-- Add affiliate links as usual in your posts or pages.
-- The plugin automatically detects and decorates these links with coupon and cashback details when displayed.
-- Upgrade in future for premium features (not included in v1).
+- The deals list will display clickable deal titles with coupon codes.
+- Visitors clicking on links will be referred to merchants with your affiliate ID applied.
+- Consider upgrading to premium for dynamic deal updates and revenue analytics.
 
-## FAQs
-**Q: Can I customize the coupons shown?**
-A: Currently, coupons are auto-assigned based on partner domain. Premium version will allow custom coupons.
+---
 
-**Q: Does this affect SEO or link structure?**
-A: No link href is changed, only additional info appended for better user conversion.
-
-**Q: Does it track conversions?**
-A: Basic version does not. Premium plans will introduce analytics.
-
-## Changelog
-### 1.0
-- Initial release with affiliate link detection and coupon/cashback display
+Make your affiliate marketing easier and more profitable with Affiliate Deal Booster!
