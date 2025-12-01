@@ -1,32 +1,36 @@
 # Content Monetizer Pro
 
-Content Monetizer Pro helps WordPress site owners automatically identify top-performing posts and maximize earnings by suggesting relevant affiliate products and managing optimized ad placements with A/B testing support (basic included).
+Content Monetizer Pro is a powerful WordPress plugin that enables site owners and content creators to monetize their digital content via direct sales, subscription upgrades, and integrated affiliate promotions.
 
 ## Features
 
-- Automatically tracks and ranks your top posts based on views.
-- Suggests relevant affiliate products linked to post content keywords.
-- Injects affiliate banners and ads within post content at strategic locations.
-- Simple ad placement with room for expansion to A/B testing.
-- Admin dashboard to review top posts, views, and affiliate suggestions.
-- Lightweight and easy to use with minimal configuration.
+- Custom post type for sellable content (articles, videos, music, podcasts).
+- Simple shortcode `[cmp_sale_button]` to embed purchase buttons on content.
+- AJAX-powered purchase simulation with user access management.
+- Freemium model: basic sales functionality for free.
+- Ability to extend with premium features like subscriptions and affiliate integrations (future).
+- Easy integration into any WordPress theme.
 
 ## Installation
 
-1. Download the plugin PHP file and upload it to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the WordPress 'Plugins' menu.
-3. Visit the 'Monetizer Pro' menu item in your WordPress admin dashboard.
+1. Upload the `content-monetizer-pro.php` file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to "Sales" in the WordPress admin menu to add content you want to sell.
 
 ## Setup
 
-- Use the admin dashboard button to refresh and view your site’s top posts by views.
-- Review auto-suggested affiliate products and links for each top post.
-- Customize affiliate links in the plugin PHP code or extend via filters (for advanced users).
+1. Create new sale items under the "Sales" post type.
+2. Set the price for each item as a custom field with key `_cmp_price`.
+3. Add the shortcode `[cmp_sale_button]` inside your post or page content to show a buy button.
 
 ## Usage
 
-- The plugin automatically counts post views and injects affiliate banners and ads inside posts.
-- Use the dashboard to monitor which posts perform best and their suggested monetization opportunities.
-- Upgrade or extend with premium add-ons for advanced affiliate network integrations and finer ad control.
+- Visitors can click the "Buy Now" button to purchase content. (Note: The current version simulates purchase; integrate a payment gateway for real transactions.)
+- After purchase, access to content can be managed via user meta or cookies.
+- Extend with premium add-ons for subscriptions, affiliate marketing, and analytics.
 
-Enjoy automated content-driven monetization that helps you increase revenue without manual guesswork!
+This plugin provides a foundation for WordPress content monetization with an easy setup and flexibility for future growth.
+
+---
+
+Developed for content creators who want to turn their digital assets into revenue efficiently and effectively.
