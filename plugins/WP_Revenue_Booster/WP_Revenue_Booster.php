@@ -1,93 +1,139 @@
-<?php
 /*
-Plugin Name: WP Revenue Booster
-Description: Boost your WordPress site's revenue with automated affiliate links, smart ad placement, and dynamic coupon offers.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
+<?php
+/**
+ * Plugin Name: WP Revenue Booster
+ * Description: Maximize your site's revenue by rotating affiliate links, displaying targeted ads, and promoting exclusive offers.
+ * Version: 1.0
+ * Author: Your Name
+ */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_footer', array($this, 'inject_smart_ads'));
-        add_filter('the_content', array($this, 'inject_affiliate_links'));
-        add_shortcode('wp_revenue_coupons', array($this, 'coupon_shortcode'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_footer', array($this, 'display_offer'));
+        add_shortcode('wp_revenue_booster', array($this, 'shortcode'));
     }
 
-    public function add_admin_menu() {
-        add_options_page(
-            'WP Revenue Booster',
-            'Revenue Booster',
-            'manage_options',
-            'wp-revenue-booster',
-            array($this, 'admin_page')
-        );
+    public function enqueue_scripts() {
+        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'style.css');
     }
 
-    public function admin_page() {
-        if (!current_user_can('manage_options')) return;
-        if (isset($_POST['save_revenue_settings'])) {
-            update_option('wp_revenue_affiliate_links', $_POST['affiliate_links']);
-            update_option('wp_revenue_ad_code', $_POST['ad_code']);
-            update_option('wp_revenue_coupons', $_POST['coupons']);
-            echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
-        }
-        $affiliate_links = get_option('wp_revenue_affiliate_links', []);
-        $ad_code = get_option('wp_revenue_ad_code', '');
-        $coupons = get_option('wp_revenue_coupons', []);
-        ?>
-        <div class="wrap">
-            <h1>WP Revenue Booster</h1>
-            <form method="post">
-                <h2>Affiliate Links</h2>
-                <textarea name="affiliate_links" rows="5" cols="50"><?php echo esc_textarea(implode("\n", $affiliate_links)); ?></textarea>
-                <p>Enter one affiliate link per line.</p>
-
-                <h2>Ad Code</h2>
-                <textarea name="ad_code" rows="5" cols="50"><?php echo esc_textarea($ad_code); ?></textarea>
-                <p>Paste your ad code (e.g., Google AdSense).</p>
-
-                <h2>Coupons</h2>
-                <textarea name="coupons" rows="5" cols="50"><?php echo esc_textarea(implode("\n", $coupons)); ?></textarea>
-                <p>Enter one coupon per line (format: code|description|brand).</p>
-
-                <input type="submit" name="save_revenue_settings" class="button button-primary" value="Save Settings">
-            </form>
-        </div>
-        <?php
+    public function display_offer() {
+        if (is_user_logged_in()) return; // Only show to guests
+        $offers = get_option('wp_revenue_booster_offers', array());
+        if (empty($offers)) return;
+        $offer = $offers[array_rand($offers)];
+        echo '<div class="wp-revenue-booster-offer">';
+        echo '<p>' . esc_html($offer['text']) . '</p>';
+        echo '<a href="' . esc_url($offer['url']) . '" target="_blank" rel="nofollow">' . esc_html($offer['cta']) . '</a>';
+        echo '</div>';
     }
 
-    public function inject_smart_ads() {
-        $ad_code = get_option('wp_revenue_ad_code', '');
-        if (!empty($ad_code)) {
-            echo '<div class="wp-revenue-ad">' . $ad_code . '</div>';
-        }
-    }
-
-    public function inject_affiliate_links($content) {
-        $affiliate_links = get_option('wp_revenue_affiliate_links', []);
-        if (!empty($affiliate_links)) {
-            $link = $affiliate_links[array_rand($affiliate_links)];
-            $content .= '<p><strong>Recommended:</strong> <a href="' . esc_url($link) . '" target="_blank">Check this out</a></p>';
-        }
-        return $content;
-    }
-
-    public function coupon_shortcode($atts) {
-        $coupons = get_option('wp_revenue_coupons', []);
-        if (empty($coupons)) return '<p>No coupons available.</p>';
-        $output = '<div class="wp-revenue-coupons"><h3>Exclusive Coupons</h3><ul>';
-        foreach ($coupons as $coupon) {
-            $parts = explode('|', $coupon);
-            if (count($parts) === 3) {
-                $output .= '<li><strong>' . esc_html($parts) . '</strong> - ' . esc_html($parts[1]) . ' (' . esc_html($parts[2]) . ')</li>';
-            }
-        }
-        $output .= '</ul></div>';
-        return $output;
+    public function shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'id' => '',
+        ), $atts, 'wp_revenue_booster');
+        $offers = get_option('wp_revenue_booster_offers', array());
+        if (empty($offers)) return '';
+        $offer = $offers[array_rand($offers)];
+        return '<div class="wp-revenue-booster-offer-shortcode">
+            <p>' . esc_html($offer['text']) . '</p>
+            <a href="' . esc_url($offer['url']) . '" target="_blank" rel="nofollow">' . esc_html($offer['cta']) . '</a>
+        </div>';
     }
 }
 
 new WP_Revenue_Booster();
+
+// Admin settings page
+add_action('admin_menu', function() {
+    add_options_page(
+        'WP Revenue Booster',
+        'Revenue Booster',
+        'manage_options',
+        'wp-revenue-booster',
+        function() {
+            if (isset($_POST['submit'])) {
+                $offers = array();
+                foreach ($_POST['offer_text'] as $i => $text) {
+                    if (!empty($text) && !empty($_POST['offer_url'][$i]) && !empty($_POST['offer_cta'][$i])) {
+                        $offers[] = array(
+                            'text' => sanitize_text_field($text),
+                            'url' => esc_url_raw($_POST['offer_url'][$i]),
+                            'cta' => sanitize_text_field($_POST['offer_cta'][$i])
+                        );
+                    }
+                }
+                update_option('wp_revenue_booster_offers', $offers);
+                echo '<div class="updated"><p>Offers updated.</p></div>';
+            }
+            $offers = get_option('wp_revenue_booster_offers', array());
+            ?>
+            <div class="wrap">
+                <h1>WP Revenue Booster</h1>
+                <form method="post">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">Offers</th>
+                            <td>
+                                <div id="offers-container">
+                                    <?php foreach ($offers as $offer): ?>
+                                        <p>
+                                            <input type="text" name="offer_text[]" value="<?php echo esc_attr($offer['text']); ?>" placeholder="Offer text" style="width: 30%;" />
+                                            <input type="url" name="offer_url[]" value="<?php echo esc_url($offer['url']); ?>" placeholder="URL" style="width: 30%;" />
+                                            <input type="text" name="offer_cta[]" value="<?php echo esc_attr($offer['cta']); ?>" placeholder="Call to action" style="width: 20%;" />
+                                            <button type="button" onclick="this.parentNode.remove()">Remove</button>
+                                        </p>
+                                    <?php endforeach; ?>
+                                </div>
+                                <button type="button" onclick="addOffer()">Add Offer</button>
+                            </td>
+                        </tr>
+                    </table>
+                    <p class="submit">
+                        <input type="submit" name="submit" class="button-primary" value="Save Offers" />
+                    </p>
+                </form>
+            </div>
+            <script>
+                function addOffer() {
+                    const container = document.getElementById('offers-container');
+                    const p = document.createElement('p');
+                    p.innerHTML = '<input type="text" name="offer_text[]" placeholder="Offer text" style="width: 30%;" />' +
+                                  '<input type="url" name="offer_url[]" placeholder="URL" style="width: 30%;" />' +
+                                  '<input type="text" name="offer_cta[]" placeholder="Call to action" style="width: 20%;" />' +
+                                  '<button type="button" onclick="this.parentNode.remove()">Remove</button>';
+                    container.appendChild(p);
+                }
+            </script>
+            <?php
+        }
+    );
+});
+
+// Style
+add_action('wp_head', function() {
+    echo '<style>
+        .wp-revenue-booster-offer, .wp-revenue-booster-offer-shortcode {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .wp-revenue-booster-offer a, .wp-revenue-booster-offer-shortcode a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #0073aa;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+    </style>';
+});
+?>
