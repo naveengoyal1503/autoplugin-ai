@@ -1,35 +1,32 @@
 # Content Monetizer Pro
 
-A powerful, all-in-one WordPress plugin designed to help website owners generate income by combining affiliate link automation, sponsored content tagging, microtransactions, and subscription management.
+Content Monetizer Pro helps WordPress site owners automatically identify top-performing posts and maximize earnings by suggesting relevant affiliate products and managing optimized ad placements with A/B testing support (basic included).
 
 ## Features
 
-- **Automatic Affiliate Link Injection:** Specify affiliate domains to auto-convert plain URLs in posts into affiliate links with your referral tag.
-- **Sponsored Content Highlighting:** Auto-label posts as sponsored based on keyword in the post title.
-- **Microtransaction Support:** Allow visitors to pay small amounts to unlock premium content (payment gateway integration can be added).
-- **Subscription Management:** Enable subscription buttons via shortcode; subscribers can get premium access.
-- **Admin Settings Page:** Easy configuration for your affiliate domains, sponsored keywords, transaction amounts, and subscription toggling.
+- Automatically tracks and ranks your top posts based on views.
+- Suggests relevant affiliate products linked to post content keywords.
+- Injects affiliate banners and ads within post content at strategic locations.
+- Simple ad placement with room for expansion to A/B testing.
+- Admin dashboard to review top posts, views, and affiliate suggestions.
+- Lightweight and easy to use with minimal configuration.
 
 ## Installation
 
-1. Upload the `content-monetizer-pro.php` file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Content Monetizer** in the WordPress admin menu to configure your settings.
+1. Download the plugin PHP file and upload it to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the WordPress 'Plugins' menu.
+3. Visit the 'Monetizer Pro' menu item in your WordPress admin dashboard.
 
 ## Setup
 
-1. Enter affiliate domains as comma-separated values (e.g., `amazon.com, example-shop.com`). The plugin will turn matching URLs in your posts into affiliate links automatically.
-2. Set a keyword like "sponsored" to automatically label specific posts.
-3. Define the microtransaction amount visitors can pay to unlock content.
-4. Enable subscription if you want users to subscribe for premium access.
+- Use the admin dashboard button to refresh and view your site’s top posts by views.
+- Review auto-suggested affiliate products and links for each top post.
+- Customize affiliate links in the plugin PHP code or extend via filters (for advanced users).
 
 ## Usage
 
-- Use the shortcode `[cmp_subscribe_button]` on any page or post to display a subscription button.
-- Write posts with affiliate links pointing to your specified domains; they transform automatically.
-- Add the sponsored keyword in post titles to highlight sponsored content.
-- Microtransactions and subscription features simulate payment and unlock processes; integrate with payment processors for full functionality.
+- The plugin automatically counts post views and injects affiliate banners and ads inside posts.
+- Use the dashboard to monitor which posts perform best and their suggested monetization opportunities.
+- Upgrade or extend with premium add-ons for advanced affiliate network integrations and finer ad control.
 
-## Support
-
-For support or feature requests, please contact the plugin author through the WordPress support forums or your support channel.
+Enjoy automated content-driven monetization that helps you increase revenue without manual guesswork!
