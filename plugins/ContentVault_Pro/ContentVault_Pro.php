@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: ContentVault Pro
-Plugin URI: https://contentvault.example.com
-Description: Monetize WordPress content with flexible subscription and membership management
+Plugin URI: https://contentvaultpro.com
+Description: Premium membership and content gating plugin for WordPress
 Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=ContentVault_Pro.php
@@ -14,308 +14,314 @@ Domain Path: /languages
 
 if (!defined('ABSPATH')) exit;
 
-define('CONTENTVAULT_VERSION', '1.0.0');
-define('CONTENTVAULT_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('CONTENTVAULT_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('CVP_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('CVP_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('CVP_VERSION', '1.0.0');
 
-class ContentVault {
+class ContentVaultPro {
     private static $instance = null;
-
-    public static function getInstance() {
+    
+    public static function get_instance() {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-
+    
     public function __construct() {
-        $this->init_hooks();
-        $this->load_dependencies();
-    }
-
-    private function init_hooks() {
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_scripts'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
-        add_shortcode('contentvault_protected', array($this, 'protected_content_shortcode'));
-        add_action('the_content', array($this, 'filter_protected_content'));
+        
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+        add_action('init', array($this, 'register_custom_post_types'));
+        add_shortcode('cvp_membership_form', array($this, 'render_membership_form'));
+        add_shortcode('cvp_gated_content', array($this, 'render_gated_content'));
+        add_filter('the_content', array($this, 'gate_post_content'));
     }
-
-    private function load_dependencies() {
-        require_once CONTENTVAULT_PLUGIN_DIR . 'includes/class-database.php';
-        require_once CONTENTVAULT_PLUGIN_DIR . 'includes/class-subscription.php';
-        require_once CONTENTVAULT_PLUGIN_DIR . 'includes/class-payment.php';
-    }
-
+    
     public function activate() {
-        $db = new CV_Database();
-        $db->create_tables();
-        flush_rewrite_rules();
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        
+        $sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}cvp_members (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) NOT NULL,
+            tier_id bigint(20) NOT NULL,
+            status varchar(20) NOT NULL DEFAULT 'active',
+            subscription_start datetime DEFAULT CURRENT_TIMESTAMP,
+            subscription_end datetime,
+            payment_method varchar(50),
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY user_id (user_id),
+            KEY tier_id (tier_id)
+        ) $charset_collate;";
+        
+        $sql .= "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}cvp_tiers (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            name varchar(100) NOT NULL,
+            description longtext,
+            price decimal(10,2) NOT NULL,
+            billing_period varchar(20) DEFAULT 'monthly',
+            features longtext,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+        
+        add_option('cvp_db_version', CVP_VERSION);
+        add_option('cvp_license', 'free');
     }
-
+    
     public function deactivate() {
-        flush_rewrite_rules();
+        wp_clear_scheduled_hook('cvp_check_subscriptions');
     }
-
-    public function init() {
-        load_plugin_textdomain('contentvault-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
-    }
-
-    public function admin_menu() {
+    
+    public function add_admin_menu() {
         add_menu_page(
             'ContentVault Pro',
             'ContentVault Pro',
             'manage_options',
-            'contentvault-dashboard',
+            'cvp-dashboard',
             array($this, 'render_dashboard'),
-            'dashicons-lock',
-            30
+            'dashicons-lock'
         );
-
+        
         add_submenu_page(
-            'contentvault-dashboard',
-            'Manage Tiers',
-            'Manage Tiers',
+            'cvp-dashboard',
+            'Membership Tiers',
+            'Membership Tiers',
             'manage_options',
-            'contentvault-tiers',
+            'cvp-tiers',
             array($this, 'render_tiers_page')
         );
-
+        
         add_submenu_page(
-            'contentvault-dashboard',
-            'Subscribers',
-            'Subscribers',
+            'cvp-dashboard',
+            'Members',
+            'Members',
             'manage_options',
-            'contentvault-subscribers',
-            array($this, 'render_subscribers_page')
+            'cvp-members',
+            array($this, 'render_members_page')
+        );
+        
+        add_submenu_page(
+            'cvp-dashboard',
+            'Settings',
+            'Settings',
+            'manage_options',
+            'cvp-settings',
+            array($this, 'render_settings_page')
         );
     }
-
+    
+    public function register_settings() {
+        register_setting('cvp_settings', 'cvp_stripe_key');
+        register_setting('cvp_settings', 'cvp_paypal_email');
+        register_setting('cvp_settings', 'cvp_redirect_url');
+    }
+    
+    public function register_custom_post_types() {
+        register_post_type('cvp_gated_post', array(
+            'label' => 'Gated Content',
+            'public' => true,
+            'supports' => array('title', 'editor', 'excerpt'),
+            'has_archive' => false,
+            'show_in_rest' => true
+        ));
+    }
+    
     public function render_dashboard() {
-        $subscription_model = new CV_Subscription();
-        $stats = $subscription_model->get_dashboard_stats();
+        global $wpdb;
+        $active_members = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}cvp_members WHERE status = 'active'");
+        $total_tiers = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}cvp_tiers");
         ?>
         <div class="wrap">
             <h1>ContentVault Pro Dashboard</h1>
-            <div class="contentvault-stats">
-                <div class="stat-box">
-                    <h3>Total Subscribers</h3>
-                    <p class="stat-number"><?php echo esc_html($stats['total_subscribers']); ?></p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px;">
+                <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+                    <h3>Active Members</h3>
+                    <p style="font-size: 32px; font-weight: bold;"><?php echo $active_members; ?></p>
                 </div>
-                <div class="stat-box">
-                    <h3>Monthly Revenue</h3>
-                    <p class="stat-number">$<?php echo esc_html($stats['monthly_revenue']); ?></p>
-                </div>
-                <div class="stat-box">
-                    <h3>Active Subscriptions</h3>
-                    <p class="stat-number"><?php echo esc_html($stats['active_subscriptions']); ?></p>
-                </div>
-                <div class="stat-box">
-                    <h3>Churn Rate</h3>
-                    <p class="stat-number"><?php echo esc_html($stats['churn_rate']); ?>%</p>
+                <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+                    <h3>Membership Tiers</h3>
+                    <p style="font-size: 32px; font-weight: bold;"><?php echo $total_tiers; ?></p>
                 </div>
             </div>
         </div>
         <?php
     }
-
+    
     public function render_tiers_page() {
+        global $wpdb;
         ?>
         <div class="wrap">
-            <h1>Manage Subscription Tiers</h1>
-            <p>Manage your subscription tiers and pricing models here.</p>
-        </div>
-        <?php
-    }
-
-    public function render_subscribers_page() {
-        $subscription_model = new CV_Subscription();
-        $subscribers = $subscription_model->get_all_subscribers();
-        ?>
-        <div class="wrap">
-            <h1>Subscribers</h1>
+            <h1>Membership Tiers</h1>
+            <a href="<?php echo admin_url('admin.php?page=cvp-tiers&action=new'); ?>" class="button button-primary">Add New Tier</a>
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
-                        <th>Email</th>
-                        <th>Tier</th>
-                        <th>Join Date</th>
-                        <th>Status</th>
+                        <th>Tier Name</th>
+                        <th>Price</th>
+                        <th>Billing Period</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($subscribers as $subscriber): ?>
-                        <tr>
-                            <td><?php echo esc_html($subscriber['email']); ?></td>
-                            <td><?php echo esc_html($subscriber['tier']); ?></td>
-                            <td><?php echo esc_html($subscriber['join_date']); ?></td>
-                            <td><?php echo esc_html($subscriber['status']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <?php
+                    $tiers = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}cvp_tiers ORDER BY id DESC");
+                    foreach ($tiers as $tier) {
+                        echo '<tr>';
+                        echo '<td>' . esc_html($tier->name) . '</td>';
+                        echo '<td>$' . esc_html($tier->price) . '</td>';
+                        echo '<td>' . esc_html($tier->billing_period) . '</td>';
+                        echo '<td><a href="#" class="button">Edit</a> <a href="#" class="button">Delete</a></td>';
+                        echo '</tr>';
+                    }
+                    ?>
                 </tbody>
             </table>
         </div>
         <?php
     }
-
-    public function protected_content_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'tier' => 'basic',
-            'message' => 'This content is protected. Please subscribe to view.'
-        ), $atts);
-
-        $subscription = new CV_Subscription();
-        if ($subscription->user_has_access(get_current_user_id(), $atts['tier'])) {
-            return $atts['content'];
-        }
-        return '<div class="contentvault-locked">' . esc_html($atts['message']) . '</div>';
+    
+    public function render_members_page() {
+        global $wpdb;
+        ?>
+        <div class="wrap">
+            <h1>Members</h1>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Tier</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $members = $wpdb->get_results("
+                        SELECT m.*, u.user_login, t.name as tier_name
+                        FROM {$wpdb->prefix}cvp_members m
+                        JOIN {$wpdb->prefix}users u ON m.user_id = u.ID
+                        JOIN {$wpdb->prefix}cvp_tiers t ON m.tier_id = t.id
+                        ORDER BY m.created_at DESC
+                    ");
+                    foreach ($members as $member) {
+                        echo '<tr>';
+                        echo '<td>' . esc_html($member->user_login) . '</td>';
+                        echo '<td>' . esc_html($member->tier_name) . '</td>';
+                        echo '<td>' . esc_html($member->status) . '</td>';
+                        echo '<td>' . esc_html($member->subscription_start) . '</td>';
+                        echo '<td>' . esc_html($member->subscription_end) . '</td>';
+                        echo '</tr>';
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
     }
-
-    public function filter_protected_content($content) {
-        if (is_single() && has_post_meta(get_the_ID(), '_contentvault_protected')) {
-            $required_tier = get_post_meta(get_the_ID(), '_contentvault_required_tier', true);
-            $subscription = new CV_Subscription();
-            
-            if (!$subscription->user_has_access(get_current_user_id(), $required_tier)) {
-                return '<div class="contentvault-locked"><p>This content is protected. Please <a href="#subscribe">subscribe</a> to view.</p></div>';
-            }
+    
+    public function render_settings_page() {
+        ?>
+        <div class="wrap">
+            <h1>ContentVault Pro Settings</h1>
+            <form method="post" action="options.php">
+                <?php settings_fields('cvp_settings'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="cvp_stripe_key">Stripe API Key</label></th>
+                        <td><input type="password" id="cvp_stripe_key" name="cvp_stripe_key" value="<?php echo esc_attr(get_option('cvp_stripe_key')); ?>" class="regular-text"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="cvp_paypal_email">PayPal Email</label></th>
+                        <td><input type="email" id="cvp_paypal_email" name="cvp_paypal_email" value="<?php echo esc_attr(get_option('cvp_paypal_email')); ?>" class="regular-text"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="cvp_redirect_url">Redirect URL After Purchase</label></th>
+                        <td><input type="url" id="cvp_redirect_url" name="cvp_redirect_url" value="<?php echo esc_attr(get_option('cvp_redirect_url')); ?>" class="regular-text"></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+        </div>
+        <?php
+    }
+    
+    public function render_membership_form() {
+        global $wpdb;
+        $tiers = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}cvp_tiers ORDER BY price ASC");
+        
+        ob_start();
+        ?>
+        <div class="cvp-membership-form">
+            <h3>Choose Your Plan</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <?php foreach ($tiers as $tier): ?>
+                    <div style="border: 2px solid #ddd; padding: 20px; border-radius: 5px; text-align: center;">
+                        <h4><?php echo esc_html($tier->name); ?></h4>
+                        <p style="font-size: 24px; font-weight: bold;">$<?php echo esc_html($tier->price); ?>/<?php echo esc_html($tier->billing_period); ?></p>
+                        <p><?php echo esc_html($tier->description); ?></p>
+                        <button class="button button-primary cvp-subscribe-btn" data-tier-id="<?php echo esc_attr($tier->id); ?>">Subscribe Now</button>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.cvp-subscribe-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        var tierId = this.getAttribute('data-tier-id');
+                        if (!<?php echo (is_user_logged_in() ? 'true' : 'false'); ?>) {
+                            window.location.href = '<?php echo wp_login_url(); ?>';
+                        } else {
+                            alert('Subscription for tier ' + tierId + ' initiated');
+                        }
+                    });
+                });
+            });
+        </script>
+        <?php
+        return ob_get_clean();
+    }
+    
+    public function render_gated_content($atts) {
+        $atts = shortcode_atts(array('tier_id' => 0), $atts);
+        
+        if (!is_user_logged_in()) {
+            return '<p><a href="' . wp_login_url() . '">Log in to access this content.</a></p>';
+        }
+        
+        global $wpdb;
+        $user_id = get_current_user_id();
+        $tier_id = (int) $atts['tier_id'];
+        
+        $member = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}cvp_members WHERE user_id = %d AND tier_id = %d AND status = 'active'",
+            $user_id,
+            $tier_id
+        ));
+        
+        if (!$member) {
+            return '<p>You do not have access to this content. <a href="#">Subscribe now</a></p>';
+        }
+        
+        return 'Content unlocked!';
+    }
+    
+    public function gate_post_content($content) {
+        if (get_post_type() === 'cvp_gated_post' && !is_user_logged_in()) {
+            return '<p><a href="' . wp_login_url() . '">Log in to read this article.</a></p>';
         }
         return $content;
     }
-
-    public function enqueue_frontend_scripts() {
-        wp_enqueue_style('contentvault-frontend', CONTENTVAULT_PLUGIN_URL . 'assets/css/frontend.css');
-        wp_enqueue_script('contentvault-frontend', CONTENTVAULT_PLUGIN_URL . 'assets/js/frontend.js', array('jquery'), CONTENTVAULT_VERSION);
-    }
-
-    public function enqueue_admin_scripts() {
-        wp_enqueue_style('contentvault-admin', CONTENTVAULT_PLUGIN_URL . 'assets/css/admin.css');
-        wp_enqueue_script('contentvault-admin', CONTENTVAULT_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), CONTENTVAULT_VERSION);
-    }
 }
 
-class CV_Database {
-    public function create_tables() {
-        global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
-
-        $tiers_table = $wpdb->prefix . 'contentvault_tiers';
-        $subscribers_table = $wpdb->prefix . 'contentvault_subscribers';
-        $transactions_table = $wpdb->prefix . 'contentvault_transactions';
-
-        $sql = "CREATE TABLE IF NOT EXISTS $tiers_table (
-            id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            description LONGTEXT,
-            price DECIMAL(10, 2) NOT NULL,
-            billing_cycle VARCHAR(50),
-            features LONGTEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        ) $charset_collate;
-
-        CREATE TABLE IF NOT EXISTS $subscribers_table (
-            id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            user_id BIGINT(20) UNSIGNED,
-            tier_id BIGINT(20) UNSIGNED NOT NULL,
-            email VARCHAR(255) NOT NULL,
-            status VARCHAR(50) DEFAULT 'active',
-            started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            expires_at DATETIME,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (tier_id) REFERENCES $tiers_table(id)
-        ) $charset_collate;
-
-        CREATE TABLE IF NOT EXISTS $transactions_table (
-            id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            subscriber_id BIGINT(20) UNSIGNED NOT NULL,
-            amount DECIMAL(10, 2) NOT NULL,
-            currency VARCHAR(10) DEFAULT 'USD',
-            status VARCHAR(50) DEFAULT 'pending',
-            transaction_id VARCHAR(255),
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (subscriber_id) REFERENCES $subscribers_table(id)
-        ) $charset_collate;";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
-}
-
-class CV_Subscription {
-    private $table;
-
-    public function __construct() {
-        global $wpdb;
-        $this->table = $wpdb->prefix . 'contentvault_subscribers';
-    }
-
-    public function get_dashboard_stats() {
-        global $wpdb;
-        $total = $wpdb->get_var("SELECT COUNT(*) FROM $this->table WHERE status = 'active'");
-        $revenue = $wpdb->get_var("SELECT SUM(amount) FROM " . $wpdb->prefix . "contentvault_transactions WHERE status = 'completed' AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')");
-        $subscriptions = $wpdb->get_var("SELECT COUNT(*) FROM $this->table WHERE status = 'active'");
-        $churn = $wpdb->get_var("SELECT COUNT(*) FROM $this->table WHERE status = 'cancelled'");
-        $churn_rate = ($total > 0) ? round(($churn / $total) * 100, 2) : 0;
-
-        return array(
-            'total_subscribers' => intval($total),
-            'monthly_revenue' => floatval($revenue) ?? 0,
-            'active_subscriptions' => intval($subscriptions),
-            'churn_rate' => $churn_rate
-        );
-    }
-
-    public function get_all_subscribers() {
-        global $wpdb;
-        return $wpdb->get_results(
-            "SELECT * FROM $this->table ORDER BY created_at DESC",
-            ARRAY_A
-        );
-    }
-
-    public function user_has_access($user_id, $tier) {
-        if (current_user_can('manage_options')) {
-            return true;
-        }
-        global $wpdb;
-        $result = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT * FROM $this->table WHERE user_id = %d AND tier_id = (SELECT id FROM " . $wpdb->prefix . "contentvault_tiers WHERE name = %s) AND status = 'active' AND (expires_at IS NULL OR expires_at > NOW())",
-                $user_id,
-                $tier
-            )
-        );
-        return !empty($result);
-    }
-}
-
-class CV_Payment {
-    public function process_payment($amount, $user_id, $tier_id) {
-        global $wpdb;
-        $transactions_table = $wpdb->prefix . 'contentvault_transactions';
-        
-        $wpdb->insert(
-            $transactions_table,
-            array(
-                'subscriber_id' => $user_id,
-                'amount' => $amount,
-                'currency' => 'USD',
-                'status' => 'pending'
-            ),
-            array('%d', '%f', '%s', '%s')
-        );
-        return $wpdb->insert_id;
-    }
-}
-
-function cv_get_instance() {
-    return ContentVault::getInstance();
-}
-
-cv_get_instance();
+ContentVaultPro::get_instance();
 ?>
