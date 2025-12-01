@@ -1,28 +1,25 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by intelligently rotating and optimizing affiliate links, ads, and sponsored content based on user behavior and conversion rates.
+Automatically optimize ad placement, affiliate links, and upsell offers to maximize revenue on every page.
 
 ## Features
-- Rotates affiliate links, ad codes, and sponsored content
-- Tracks clicks and conversions for each type
-- Simple admin interface for managing content
-- Lightweight and easy to use
+- Inject custom ad code after content
+- Add affiliate links to posts
+- Insert upsell text for premium offers
+- Simple admin settings panel
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to the 'Revenue Booster' menu in your admin panel to configure your affiliate links, ad codes, and sponsored content.
+1. Upload the plugin file to your WordPress plugins directory
+2. Activate the plugin through the WordPress admin
+3. Go to Settings > Revenue Booster to configure your ad code, affiliate link, and upsell text
 
 ## Setup
-- Enter your affiliate links (one per line) in the 'Affiliate Links' field.
-- Enter your ad codes (one per line) in the 'Ad Codes' field.
-- Enter your sponsored content (one per line) in the 'Sponsored Content' field.
+- Enter your ad code (HTML) in the Ad Code field
+- Add your affiliate link in the Affiliate Link field
+- Enter upsell text in the Upsell Text field
 
 ## Usage
-The plugin will automatically rotate and display one of your configured items on each page load. Clicks are tracked and can be viewed in the admin panel.
-
-## Monetization
-The free version includes basic rotation and tracking. The premium version adds advanced analytics, A/B testing, and automation features.
+Once configured, the plugin will automatically inject your ad code, affiliate link, and upsell text into every single post. Customize as needed for different campaigns.
 
 ## Support
-For support, please contact us at support@revenueboost.com.
+For support or feature requests, contact revenue@labs.com
