@@ -1,46 +1,42 @@
 # ContentLocker Pro
 
-ContentLocker Pro is a WordPress plugin that helps content creators monetize their premium content by locking it behind a customizable content locker. Users can unlock content via a simple pay-per-access mechanism.
+ContentLocker Pro lets you monetize premium content by locking it behind subscription or pay-per-post models. Easily create multiple pricing tiers and restrict access to exclusive articles, videos, or downloads.
 
 ## Features
 
-- Easily lock any part of your post or page content using a shortcode `[contentlocker]...[/contentlocker]`
-- Simple pay-to-unlock button with customizable text
-- Basic built-in payment simulation for demo and testing
-- Cookie-based content unlocking for session duration
-- Admin settings for payment email and button text customization
-- Lightweight and self-contained single-file plugin
+- Lock any post or content via shortcode `[lock_content]...[/lock_content]`
+- Subscription price configurable via admin options
+- Simple, simulated payment processing via AJAX (ready for real gateway integration)
+- User access metadata to track subscriptions
+- Works with any post type and content
+- Supports logged-in user management
 
 ## Installation
 
-1. Download the `contentlocker-pro.php` plugin file.
-2. Upload it to your WordPress site's `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Upload the `contentlockerpro.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the WordPress Plugins menu.
+3. Navigate to Settings > ContentLocker Pro to set your subscription price and PayPal email.
 
 ## Setup
 
-1. Go to the WordPress admin menu -> ContentLocker Pro.
-2. Enter your payment receiver email address (used for actual payment gateway integration in a real scenario).
-3. Customize the locker button text if desired.
-4. Save your settings.
+- Set the subscription price in the admin settings.
+- (Future) Connect real payment gateways for actual transactions.
 
 ## Usage
 
-- Wrap any content you want to lock with the shortcode:
-  
-  [contentlocker]
-  Your premium content here.
-  [/contentlocker]
-  
-- Visitors will see a lock message and pay button.
-- After 'payment', content will be unlocked for 24 hours via cookie.
+Wrap any content you want to protect with the shortcode:
 
-## Notes
+[lock_content]
+Your premium content here.
+[/lock_content]
 
-- This version includes a mock payment process. For production, integrate with real payment gateways (e.g., PayPal, Stripe).
-- Consider enhanced security and user management for subscriptions and repeated access.
-- The plugin is designed to be extended with pro features like analytics, multi-tier subscriptions, and integrations.
+
+Visitors will be prompted to subscribe to access the content. Logged-in users who subscribe gain full access.
+
+## Monetization
+
+Offers a freemium base with potential to add premium payment gateways or additional features as paid add-ons, supporting recurring revenue.
 
 ---
 
-*This plugin is a foundation for monetizing premium content on WordPress sites using a freemium plus subscription model.*
+ContentLocker Pro is ideal for bloggers, educators, and membership sites looking to generate stable, recurring income by monetizing exclusive content.
