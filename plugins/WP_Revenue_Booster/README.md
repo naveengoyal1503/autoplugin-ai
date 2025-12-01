@@ -1,28 +1,26 @@
 # WP Revenue Booster
 
-Automatically optimize your WordPress site's revenue by dynamically placing ads, affiliate links, and membership calls-to-action based on visitor behavior.
+Automatically optimize ad placement, affiliate links, and upsell offers to maximize your WordPress site's revenue.
 
 ## Features
-- Smart placement of monetization elements
-- Easy admin settings for ad code, affiliate links, and membership CTAs
-- Cookie-based visitor tracking
-- Lightweight and non-intrusive
+- Injects ad code after the first paragraph of single posts.
+- Adds affiliate upsell links at the end of single posts.
+- Simple admin settings for ad code and affiliate link management.
+- Lightweight and non-intrusive.
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory.
-2. Activate the plugin from the WordPress admin panel.
-3. Go to Settings > Revenue Booster to configure your monetization elements.
+1. Upload the `wp-revenue-booster.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to Settings > Revenue Booster to configure your ad code and affiliate link.
 
 ## Setup
-- Enter your ad code (e.g., Google AdSense)
-- Add your affiliate link
-- Set your membership call-to-action text
+- Enter your ad code (e.g., Google AdSense) in the Ad Code field.
+- Enter your affiliate link in the Affiliate Link field.
+- Save changes.
 
 ## Usage
-Once configured, the plugin will automatically show the most relevant monetization element to each visitor:
-- New visitors see ads
-- Returning visitors see affiliate links
-- Engaged visitors see membership CTAs
+- The plugin will automatically inject your ad code and affiliate upsell on single posts.
+- For advanced analytics and automation, upgrade to the premium version.
 
 ## Support
-For questions or feature requests, contact support@cozmoslabs.com.
+For support, visit https://example.com/support
