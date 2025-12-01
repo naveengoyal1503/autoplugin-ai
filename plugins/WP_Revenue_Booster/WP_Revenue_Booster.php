@@ -5,9 +5,9 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Description: Automatically optimizes ad placements, affiliate links, and premium content access to maximize revenue.
+ * Description: Maximize revenue by rotating and optimizing affiliate links, ads, and sponsored content.
  * Version: 1.0
- * Author: WP Revenue Team
+ * Author: RevenueBoost Team
  */
 
 if (!defined('ABSPATH')) {
@@ -18,90 +18,117 @@ class WP_Revenue_Booster {
 
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_head', array($this, 'inject_ad_code'));
-        add_action('the_content', array($this, 'inject_affiliate_links'));
-        add_action('template_redirect', array($this, 'handle_premium_content'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_shortcode('revenue_booster', array($this, 'revenue_booster_shortcode'));
+        add_action('wp_ajax_save_conversion', array($this, 'save_conversion'));
+        add_action('wp_ajax_nopriv_save_conversion', array($this, 'save_conversion'));
     }
 
     public function add_admin_menu() {
-        add_options_page(
-            'WP Revenue Booster',
+        add_menu_page(
+            'Revenue Booster',
             'Revenue Booster',
             'manage_options',
             'wp-revenue-booster',
-            array($this, 'admin_page')
+            array($this, 'admin_page'),
+            'dashicons-chart-bar'
         );
     }
 
     public function admin_page() {
-        if (isset($_POST['save_settings'])) {
-            update_option('wp_revenue_booster_ad_code', sanitize_textarea_field($_POST['ad_code']));
-            update_option('wp_revenue_booster_affiliate_links', sanitize_textarea_field($_POST['affiliate_links']));
-            update_option('wp_revenue_booster_premium_content', sanitize_textarea_field($_POST['premium_content']));
-            echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
-        }
-        $ad_code = get_option('wp_revenue_booster_ad_code', '');
-        $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
-        $premium_content = get_option('wp_revenue_booster_premium_content', '');
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form method="post">
+            <form method="post" action="options.php">
+                <?php settings_fields('wp_revenue_booster'); ?>
+                <?php do_settings_sections('wp_revenue_booster'); ?>
                 <table class="form-table">
-                    <tr>
-                        <th>Ad Code</th>
-                        <td><textarea name="ad_code" rows="5" cols="50"><?php echo esc_textarea($ad_code); ?></textarea></td>
+                    <tr valign="top">
+                        <th scope="row">Affiliate Links</th>
+                        <td><textarea name="affiliate_links" rows="5" cols="50"><?php echo esc_textarea(get_option('affiliate_links')); ?></textarea><br />
+                        One link per line. Format: URL|Description</td>
                     </tr>
-                    <tr>
-                        <th>Affiliate Links (one per line: keyword|url)</th>
-                        <td><textarea name="affiliate_links" rows="5" cols="50"><?php echo esc_textarea($affiliate_links); ?></textarea></td>
+                    <tr valign="top">
+                        <th scope="row">Ad Codes</th>
+                        <td><textarea name="ad_codes" rows="5" cols="50"><?php echo esc_textarea(get_option('ad_codes')); ?></textarea><br />
+                        One ad code per line.</td>
                     </tr>
-                    <tr>
-                        <th>Premium Content (comma-separated post IDs)</th>
-                        <td><input type="text" name="premium_content" value="<?php echo esc_attr($premium_content); ?>" /></td>
+                    <tr valign="top">
+                        <th scope="row">Sponsored Content</th>
+                        <td><textarea name="sponsored_content" rows="5" cols="50"><?php echo esc_textarea(get_option('sponsored_content')); ?></textarea><br />
+                        One content block per line.</td>
                     </tr>
                 </table>
-                <p class="submit">
-                    <input type="submit" name="save_settings" class="button-primary" value="Save Settings" />
-                </p>
+                <?php submit_button(); ?>
             </form>
+            <div id="conversion-stats">
+                <h2>Conversion Stats</h2>
+                <div id="stats-content"></div>
+            </div>
         </div>
+        <script>
+            jQuery(document).ready(function($) {
+                $.post(ajaxurl, {action: 'get_conversion_stats'}, function(response) {
+                    $('#stats-content').html(response);
+                });
+            });
+        </script>
         <?php
     }
 
-    public function inject_ad_code() {
-        $ad_code = get_option('wp_revenue_booster_ad_code', '');
-        if (!empty($ad_code)) {
-            echo $ad_code;
-        }
+    public function enqueue_scripts() {
+        wp_enqueue_script('jquery');
     }
 
-    public function inject_affiliate_links($content) {
-        $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
-        if (empty($affiliate_links)) return $content;
+    public function revenue_booster_shortcode($atts) {
+        $options = shortcode_atts(array(
+            'type' => 'affiliate',
+        ), $atts);
 
-        $lines = explode("\n", $affiliate_links);
-        foreach ($lines as $line) {
-            $parts = explode('|', $line);
-            if (count($parts) == 2) {
-                $keyword = trim($parts);
-                $url = trim($parts[1]);
-                $content = preg_replace('/\b' . preg_quote($keyword, '/') . '\b/i', '<a href="' . esc_url($url) . '" target="_blank">' . $keyword . '</a>', $content, 1);
-            }
+        $output = '';
+        if ($options['type'] === 'affiliate') {
+            $links = explode('\n', get_option('affiliate_links'));
+            $link = $this->get_best_performing($links);
+            $output = '<a href="' . esc_url($link['url']) . '" target="_blank" onclick="recordConversion(\'' . $link['url'] . '\')">' . esc_html($link['desc']) . '</a>';
+        } elseif ($options['type'] === 'ad') {
+            $ads = explode('\n', get_option('ad_codes'));
+            $ad = $this->get_best_performing($ads);
+            $output = $ad;
+        } elseif ($options['type'] === 'sponsored') {
+            $contents = explode('\n', get_option('sponsored_content'));
+            $content = $this->get_best_performing($contents);
+            $output = $content;
         }
-        return $content;
+
+        return $output;
     }
 
-    public function handle_premium_content() {
-        if (is_single()) {
-            $premium_content = get_option('wp_revenue_booster_premium_content', '');
-            $post_id = get_the_ID();
-            $premium_ids = array_map('trim', explode(',', $premium_content));
-            if (in_array($post_id, $premium_ids) && !current_user_can('edit_posts')) {
-                wp_die('This content is premium. Please <a href="/wp-login.php">log in</a> or <a href="/subscribe">subscribe</a> to access.');
-            }
+    private function get_best_performing($items) {
+        // Simple round-robin for free version
+        $index = array_rand($items);
+        $item = $items[$index];
+        if (strpos($item, '|') !== false) {
+            list($url, $desc) = explode('|', $item, 2);
+            return array('url' => $url, 'desc' => $desc);
         }
+        return $item;
+    }
+
+    public function save_conversion() {
+        $url = sanitize_text_field($_POST['url']);
+        $conversions = get_option('conversion_stats', array());
+        if (!isset($conversions[$url])) {
+            $conversions[$url] = 0;
+        }
+        $conversions[$url]++;
+        update_option('conversion_stats', $conversions);
+        wp_die('Conversion recorded');
     }
 }
 
+function recordConversion(url) {
+    jQuery.post(ajaxurl, {action: 'save_conversion', url: url});
+}
+
 new WP_Revenue_Booster();
+?>
