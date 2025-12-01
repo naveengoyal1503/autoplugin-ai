@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: WP Revenue Booster
  * Plugin URI: https://example.com/wp-revenue-booster
- * Description: Automatically optimizes and manages multiple monetization streams (ads, affiliate links, coupons, memberships) from a single dashboard.
+ * Description: Boost your WordPress site revenue with smart affiliate, coupon, and sponsored content placement.
  * Version: 1.0
  * Author: Your Name
  * Author URI: https://example.com
@@ -17,105 +17,134 @@ class WP_Revenue_Booster {
 
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_footer', array($this, 'inject_monetization_code'));
-        add_shortcode('wp_revenue_booster', array($this, 'shortcode_handler'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('the_content', array($this, 'inject_monetization_content'));
+        add_action('admin_init', array($this, 'settings_init'));
     }
 
     public function add_admin_menu() {
-        add_menu_page(
+        add_options_page(
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
-            'wp-revenue-booster',
-            array($this, 'admin_page'),
-            'dashicons-chart-line',
-            6
+            'wp_revenue_booster',
+            array($this, 'options_page')
         );
     }
 
-    public function admin_page() {
+    public function settings_init() {
+        register_setting('wpRevenueBooster', 'wp_revenue_booster_settings');
+
+        add_settings_section(
+            'wp_revenue_booster_section',
+            'Monetization Settings',
+            null,
+            'wpRevenueBooster'
+        );
+
+        add_settings_field(
+            'affiliate_links',
+            'Affiliate Links (JSON)',
+            array($this, 'affiliate_links_render'),
+            'wpRevenueBooster',
+            'wp_revenue_booster_section'
+        );
+
+        add_settings_field(
+            'coupons',
+            'Coupons (JSON)',
+            array($this, 'coupons_render'),
+            'wpRevenueBooster',
+            'wp_revenue_booster_section'
+        );
+
+        add_settings_field(
+            'sponsored_content',
+            'Sponsored Content (JSON)',
+            array($this, 'sponsored_content_render'),
+            'wpRevenueBooster',
+            'wp_revenue_booster_section'
+        );
+    }
+
+    public function affiliate_links_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        echo '<textarea cols="60" rows="5" name="wp_revenue_booster_settings[affiliate_links]">' . (isset($options['affiliate_links']) ? esc_attr($options['affiliate_links']) : '') . '</textarea>';
+    }
+
+    public function coupons_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        echo '<textarea cols="60" rows="5" name="wp_revenue_booster_settings[coupons]">' . (isset($options['coupons']) ? esc_attr($options['coupons']) : '') . '</textarea>';
+    }
+
+    public function sponsored_content_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        echo '<textarea cols="60" rows="5" name="wp_revenue_booster_settings[sponsored_content]">' . (isset($options['sponsored_content']) ? esc_attr($options['sponsored_content']) : '') . '</textarea>';
+    }
+
+    public function options_page() {
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('wp_revenue_booster_options'); ?>
-                <?php do_settings_sections('wp-revenue-booster'); ?>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">AdSense Code</th>
-                        <td><textarea name="wp_revenue_booster_adsense" rows="4" cols="50"><?php echo esc_textarea(get_option('wp_revenue_booster_adsense')); ?></textarea></td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Affiliate Link</th>
-                        <td><input type="text" name="wp_revenue_booster_affiliate" value="<?php echo esc_attr(get_option('wp_revenue_booster_affiliate')); ?>" /></td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Coupon Code</th>
-                        <td><input type="text" name="wp_revenue_booster_coupon" value="<?php echo esc_attr(get_option('wp_revenue_booster_coupon')); ?>" /></td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Membership Link</th>
-                        <td><input type="text" name="wp_revenue_booster_membership" value="<?php echo esc_attr(get_option('wp_revenue_booster_membership')); ?>" /></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
+            <form action="options.php" method="post">
+                <?php
+                settings_fields('wpRevenueBooster');
+                do_settings_sections('wpRevenueBooster');
+                submit_button();
+                ?>
             </form>
         </div>
         <?php
     }
 
-    public function inject_monetization_code() {
-        $adsense = get_option('wp_revenue_booster_adsense', '');
-        $affiliate = get_option('wp_revenue_booster_affiliate', '');
-        $coupon = get_option('wp_revenue_booster_coupon', '');
-        $membership = get_option('wp_revenue_booster_membership', '');
-
-        if (!empty($adsense)) {
-            echo '<div class="wp-revenue-adsense">' . $adsense . '</div>';
-        }
-        if (!empty($affiliate)) {
-            echo '<div class="wp-revenue-affiliate">Check out our <a href="' . esc_url($affiliate) . '" target="_blank">affiliate link</a>.</div>';
-        }
-        if (!empty($coupon)) {
-            echo '<div class="wp-revenue-coupon">Use coupon code: <strong>' . esc_html($coupon) . '</strong></div>';
-        }
-        if (!empty($membership)) {
-            echo '<div class="wp-revenue-membership">Join our <a href="' . esc_url($membership) . '" target="_blank">membership</a>.</div>';
-        }
+    public function enqueue_scripts() {
+        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'style.css');
     }
 
-    public function shortcode_handler($atts) {
-        $atts = shortcode_atts(array(
-            'type' => 'all'
-        ), $atts, 'wp_revenue_booster');
+    public function inject_monetization_content($content) {
+        $options = get_option('wp_revenue_booster_settings');
+        $affiliate_links = isset($options['affiliate_links']) ? json_decode($options['affiliate_links'], true) : array();
+        $coupons = isset($options['coupons']) ? json_decode($options['coupons'], true) : array();
+        $sponsored_content = isset($options['sponsored_content']) ? json_decode($options['sponsored_content'], true) : array();
 
-        $output = '';
-        if ($atts['type'] == 'all' || $atts['type'] == 'adsense') {
-            $adsense = get_option('wp_revenue_booster_adsense', '');
-            if (!empty($adsense)) {
-                $output .= '<div class="wp-revenue-adsense">' . $adsense . '</div>';
+        $monetization_html = '';
+
+        if (!empty($affiliate_links)) {
+            $monetization_html .= '<div class="wp-revenue-booster-affiliate">
+                <h3>Recommended Products</h3>
+                <ul>';
+            foreach ($affiliate_links as $link) {
+                $monetization_html .= '<li><a href="' . esc_url($link['url']) . '" target="_blank">' . esc_html($link['title']) . '</a></li>';
             }
+            $monetization_html .= '</ul></div>';
         }
-        if ($atts['type'] == 'all' || $atts['type'] == 'affiliate') {
-            $affiliate = get_option('wp_revenue_booster_affiliate', '');
-            if (!empty($affiliate)) {
-                $output .= '<div class="wp-revenue-affiliate">Check out our <a href="' . esc_url($affiliate) . '" target="_blank">affiliate link</a>.</div>';
+
+        if (!empty($coupons)) {
+            $monetization_html .= '<div class="wp-revenue-booster-coupons">
+                <h3>Exclusive Coupons</h3>
+                <ul>';
+            foreach ($coupons as $coupon) {
+                $monetization_html .= '<li><strong>' . esc_html($coupon['code']) . '</strong>: ' . esc_html($coupon['description']) . '</li>';
             }
+            $monetization_html .= '</ul></div>';
         }
-        if ($atts['type'] == 'all' || $atts['type'] == 'coupon') {
-            $coupon = get_option('wp_revenue_booster_coupon', '');
-            if (!empty($coupon)) {
-                $output .= '<div class="wp-revenue-coupon">Use coupon code: <strong>' . esc_html($coupon) . '</strong></div>';
+
+        if (!empty($sponsored_content)) {
+            $monetization_html .= '<div class="wp-revenue-booster-sponsored">
+                <h3>Sponsored Content</h3>';
+            foreach ($sponsored_content as $content_item) {
+                $monetization_html .= '<p>' . esc_html($content_item['text']) . '</p>';
             }
+            $monetization_html .= '</div>';
         }
-        if ($atts['type'] == 'all' || $atts['type'] == 'membership') {
-            $membership = get_option('wp_revenue_booster_membership', '');
-            if (!empty($membership)) {
-                $output .= '<div class="wp-revenue-membership">Join our <a href="' . esc_url($membership) . '" target="_blank">membership</a>.</div>';
-            }
+
+        if (!empty($monetization_html)) {
+            $content .= '<div class="wp-revenue-booster-container">' . $monetization_html . '</div>';
         }
-        return $output;
+
+        return $content;
     }
 }
 
 new WP_Revenue_Booster();
+?>
