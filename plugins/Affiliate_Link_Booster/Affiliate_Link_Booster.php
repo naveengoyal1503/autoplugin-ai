@@ -1,88 +1,176 @@
-<?php
 /*
-Plugin Name: Affiliate Link Booster
-Description: Enhance affiliate links with coupons, price comparisons, and track clicks to boost your affiliate revenue.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Link_Booster.php
 */
+<?php
+/**
+ * Plugin Name: Affiliate Link Booster
+ * Description: Automatically cloak, track, and optimize your affiliate links for better conversions.
+ * Version: 1.0.0
+ * Author: YourName
+ * License: GPLv2 or later
+ */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class Affiliate_Link_Booster {
+    private $option_name = 'alb_options';
 
     public function __construct() {
-        add_filter('the_content', array($this, 'enhance_affiliate_links'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_alb_track_click', array($this, 'track_click'));
-        add_action('wp_ajax_nopriv_alb_track_click', array($this, 'track_click'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'settings_init'));
+        add_filter('the_content', array($this, 'auto_cloak_links'));
+        add_action('wp_ajax_alb_track_click', array($this, 'track_click')); 
+        add_action('init', array($this, 'redirect_affiliate'));
     }
 
-    // Enqueue necessary JS for click tracking
-    public function enqueue_scripts() {
-        wp_enqueue_script('alb-script', plugin_dir_url(__FILE__) . 'alb-script.js', array('jquery'), '1.0', true);
-        wp_localize_script('alb-script', 'alb_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
+    public function add_admin_menu() {
+        add_menu_page('Affiliate Link Booster', 'Affiliate Booster', 'manage_options', 'affiliate_link_booster', array($this, 'options_page'));
     }
 
-    // Enhance affiliate links in the post content
-    public function enhance_affiliate_links($content) {
-        // Regex to find typical affiliate URLs (e.g., amazon, clickbank, etc.)
-        $pattern = '/(https?:\/\/(?:www\.)?(?:amazon|clickbank|ebay|shareasale)\.com[^"\'\s<]+)/i';
+    public function settings_init() {
+        register_setting('alb_settings', $this->option_name);
 
-        $content = preg_replace_callback($pattern, array($this, 'augment_link'), $content);
+        add_settings_section('alb_section', __('Settings', 'alb'), null, 'alb_settings');
+
+        add_settings_field(
+            'alb_affiliate_domains',
+            __('Affiliate Domains (comma separated)', 'alb'),
+            array($this, 'affiliate_domains_render'),
+            'alb_settings',
+            'alb_section'
+        );
+
+        add_settings_field(
+            'alb_enable_ab_testing',
+            __('Enable A/B Testing', 'alb'),
+            array($this, 'enable_ab_testing_render'),
+            'alb_settings',
+            'alb_section'
+        );
+
+        add_settings_field(
+            'alb_geotargeting',
+            __('Enable Geotargeting', 'alb'),
+            array($this, 'geotargeting_render'),
+            'alb_settings',
+            'alb_section'
+        );
+    }
+
+    public function affiliate_domains_render() {
+        $options = get_option($this->option_name);
+        ?>
+        <input type='text' name='<?php echo $this->option_name; ?>[affiliate_domains]' value='<?php echo esc_attr($options['affiliate_domains'] ?? ''); ?>' style='width: 300px;'>
+        <p class='description'>Enter affiliate domains to cloak, e.g. example.com,affiliateprogram.com</p>
+        <?php
+    }
+
+    public function enable_ab_testing_render() {
+        $options = get_option($this->option_name);
+        ?>
+        <input type='checkbox' name='<?php echo $this->option_name; ?>[enable_ab_testing]' <?php checked(isset($options['enable_ab_testing']) ? $options['enable_ab_testing'] : 0, 1); ?> value='1'> Enable
+        <p class='description'>Split traffic between multiple affiliate URLs for conversion optimization</p>
+        <?php
+    }
+
+    public function geotargeting_render() {
+        $options = get_option($this->option_name);
+        ?>
+        <input type='checkbox' name='<?php echo $this->option_name; ?>[geotargeting]' <?php checked(isset($options['geotargeting']) ? $options['geotargeting'] : 0, 1); ?> value='1'> Enable
+        <p class='description'>Redirect users based on their country to region-specific affiliate URLs</p>
+        <?php
+    }
+
+    public function options_page() {
+        ?>
+        <form action='options.php' method='post'>
+            <h2>Affiliate Link Booster Settings</h2>
+            <?php
+            settings_fields('alb_settings');
+            do_settings_sections('alb_settings');
+            submit_button();
+            ?>
+        </form>
+        <?php
+    }
+
+    public function auto_cloak_links($content) {
+        $options = get_option($this->option_name);
+        if (empty($options['affiliate_domains'])) return $content;
+
+        $domains = array_map('trim', explode(',', $options['affiliate_domains']));
+        if (empty($domains)) return $content;
+
+        // Regex to find links
+        $pattern = '/<a[^>]+href=["\']([^"\']+)["\'][^>]*>/i';
+
+        $content = preg_replace_callback($pattern, function($matches) use ($domains, $options) {
+            $url = $matches[1];
+            foreach ($domains as $domain) {
+                if (stripos($url, $domain) !== false) {
+                    // Generate cloaked link
+                    $cloaked_url = site_url('/alb-r/?url=' . urlencode(base64_encode($url)));
+                    $full_link = str_replace($url, esc_attr($cloaked_url), $matches);
+                    return $full_link;
+                }
+            }
+            return $matches;
+        }, $content);
 
         return $content;
     }
 
-    // Callback to add coupons, price comparison, and tracking
-    private function augment_link($matches) {
-        $url = esc_url($matches);
+    public function redirect_affiliate() {
+        if (isset($_GET['alb-r']) || isset($_GET['url'])) {
+            $encoded_url = $_GET['url'] ?? '';
+            if ($encoded_url) {
+                $dest_url = base64_decode(urldecode($encoded_url));
+                if ($this->is_valid_url($dest_url)) {
+                    // Track the click
+                    $this->record_click($dest_url);
 
-        // For demonstration, attach dummy coupon and price info
-        $coupon = 'SAVE10';
-        $price_comparison = '$19.99 vs $21.49 elsewhere';
+                    // Geotargeting and A/B testing could be implemented here if enabled
 
-        // Create enhanced link with data attributes
-        $enhanced_link = '<a href="' . $url . '" class="alb-affiliate-link" data-url="' . esc_attr($url) . '" data-coupon="' . esc_attr($coupon) . '" target="_blank" rel="nofollow noopener">' . $url . '</a>';
-
-        // Append coupon and price info
-        $info = '<span class="alb-info" style="font-size:0.9em;color:#090;margin-left:5px;">Coupon: ' . $coupon . ' | Price: ' . $price_comparison . '</span>';
-
-        return $enhanced_link . $info;
+                    wp_redirect($dest_url, 301);
+                    exit;
+                }
+            }
+            wp_die('Invalid affiliate redirect URL');
+        }
     }
 
-    // AJAX function to track clicks
-    public function track_click() {
-        if (!isset($_POST['url'])) {
-            wp_send_json_error('Missing URL');
-        }
+    private function record_click($url) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'alb_clicks';
+        $wpdb->query($wpdb->prepare(
+            "INSERT INTO $table (affiliate_url, clicked_at, ip_address) VALUES (%s, NOW(), %s)",
+            $url,
+            $_SERVER['REMOTE_ADDR']
+        ));
+    }
 
-        $url = esc_url_raw($_POST['url']);
+    private function is_valid_url($url) {
+        return filter_var($url, FILTER_VALIDATE_URL) !== false;
+    }
 
-        // Store click count in options (for demo; use custom DB table in production)
-        $clicks = get_option('alb_clicks', array());
-        $clicks[$url] = isset($clicks[$url]) ? $clicks[$url] + 1 : 1;
-        update_option('alb_clicks', $clicks);
+    public function install() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'alb_clicks';
+        $charset_collate = $wpdb->get_charset_collate();
 
-        wp_send_json_success(array('message' => 'Click tracked', 'count' => $clicks[$url]));
+        $sql = "CREATE TABLE IF NOT EXISTS $table (
+            id BIGINT(20) NOT NULL AUTO_INCREMENT,
+            affiliate_url TEXT NOT NULL,
+            clicked_at DATETIME NOT NULL,
+            ip_address VARCHAR(45) NOT NULL,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
     }
 }
 
-new Affiliate_Link_Booster();
-
-// JavaScript for click tracking inline to keep single file
-add_action('wp_footer', function() {
-    ?>
-    <script type="text/javascript">
-    jQuery(document).ready(function($) {
-        $('.alb-affiliate-link').on('click', function(e) {
-            var url = $(this).data('url');
-            $.post(alb_ajax.ajaxurl, {
-                action: 'alb_track_click',
-                url: url
-            });
-        });
-    });
-    </script>
-    <?php
-});
+$affiliate_link_booster = new Affiliate_Link_Booster();
+register_activation_hook(__FILE__, array($affiliate_link_booster, 'install'));
