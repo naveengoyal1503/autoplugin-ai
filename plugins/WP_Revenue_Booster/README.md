@@ -1,28 +1,31 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by intelligently rotating and optimizing affiliate links, ads, and sponsored content based on user behavior and conversion data.
+Maximize your WordPress site's revenue with smart affiliate link rotation, targeted ads, and exclusive offer promotion.
 
 ## Features
-- Rotates affiliate links, ads, and sponsored content to maximize conversions.
-- Tracks conversion data for each item.
-- Easy-to-use shortcode for embedding revenue-boosting content.
-- Admin settings for enabling/disabling conversion tracking.
+- Rotates affiliate links, ads, and exclusive deals on your site
+- Displays offers in banners and via shortcodes
+- Admin interface to manage offers
+- Supports affiliate, ad, and deal types
 
 ## Installation
-1. Upload the `wp-revenue-booster.php` file to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure the plugin.
+1. Upload the plugin folder to your `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to Settings > Revenue Booster to add your offers
 
 ## Setup
-- Enable conversion tracking in the plugin settings if desired.
-- Use the `[revenue_booster]` shortcode in your posts or pages to display rotating content.
+- Add offers (affiliate links, ads, exclusive deals) in the admin panel
+- Choose the type for each offer
+- Save your settings
 
 ## Usage
+- Offers will automatically rotate in the site footer (for guests)
+- Use the shortcode `[wp_revenue_booster type="affiliate"]` to display a random affiliate link
+- Use `[wp_revenue_booster type="ad"]` for ads, and `[wp_revenue_booster type="deal"]` for exclusive deals
 
-[revenue_booster type="affiliate" links="https://example.com/affiliate1,https://example.com/affiliate2" ads="<img src=\"ad1.jpg\">,<img src=\"ad2.jpg\">" sponsored="<a href=\"sponsored1.com\">Sponsored 1</a>,<a href=\"sponsored2.com\">Sponsored 2</a>"]
-
-
-This will display a randomly selected item from the provided links, ads, or sponsored content, helping to maximize your revenue.
+## Requirements
+- WordPress 5.0 or higher
+- PHP 7.0 or higher
 
 ## Support
-For support, please visit our website or contact us at support@example.com.
+For support, please open an issue on the plugin's GitHub repository.
