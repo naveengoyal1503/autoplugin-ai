@@ -1,146 +1,87 @@
-<?php
 /*
-Plugin Name: Affiliate Booster Pro
-Description: Manage and display affiliate coupons, discounts, and track clicks to boost affiliate revenue.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Booster_Pro.php
-Text Domain: affiliate-booster-pro
 */
+<?php
+/**
+ * Plugin Name: Affiliate Booster Pro
+ * Description: Auto-replace product mentions with affiliate links and optimize your affiliate revenue.
+ * Version: 1.0
+ * Author: PluginDev
+ */
 
-// Prevent direct access
-if(!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) exit;
 
 class AffiliateBoosterPro {
+    private $affiliate_keywords = array(
+        'camera' => 'https://example-affiliate.com/product/camera?affid=123',
+        'laptop' => 'https://example-affiliate.com/product/laptop?affid=123'
+        // Add more keywords and affiliate URLs here or via settings
+    );
+
     public function __construct() {
-        add_action('init', array($this, 'register_coupon_post_type'));
-        add_shortcode('abp_coupons', array($this, 'display_coupons_shortcode'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_abp_track_click', array($this, 'track_click')); // Ajax tracking
-        add_action('wp_ajax_nopriv_abp_track_click', array($this, 'track_click'));
+        add_filter('the_content', array($this, 'replace_affiliate_links'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('wp_ajax_abp_save_settings', array($this, 'save_settings'));
     }
 
-    public function register_coupon_post_type() {
-        $labels = array(
-            'name' => __('Coupons', 'affiliate-booster-pro'),
-            'singular_name' => __('Coupon', 'affiliate-booster-pro'),
-            'add_new' => __('Add New Coupon', 'affiliate-booster-pro'),
-            'add_new_item' => __('Add New Coupon', 'affiliate-booster-pro'),
-            'edit_item' => __('Edit Coupon', 'affiliate-booster-pro'),
-            'new_item' => __('New Coupon', 'affiliate-booster-pro'),
-            'view_item' => __('View Coupon', 'affiliate-booster-pro'),
-            'search_items' => __('Search Coupons', 'affiliate-booster-pro'),
-            'not_found' => __('No coupons found', 'affiliate-booster-pro'),
-            'not_found_in_trash' => __('No coupons found in Trash', 'affiliate-booster-pro'),
-            'menu_name' => __('Coupons', 'affiliate-booster-pro')
-        );
+    public function replace_affiliate_links($content) {
+        $keywords = get_option('abp_affiliate_keywords', $this->affiliate_keywords);
 
-        $args = array(
-            'labels' => $labels,
-            'public' => true,
-            'has_archive' => true,
-            'menu_position' => 20,
-            'supports' => array('title','editor'),
-            'rewrite' => array('slug' => 'coupons'),
-            'show_in_rest' => true,
-        );
+        foreach ($keywords as $keyword => $url) {
+            // Use regex to replace first occurrence of keyword with affiliate link
+            $pattern = '/\b(' . preg_quote($keyword, '/') . ')\b/i';
+            $replacement = '<a href="' . esc_url($url) . '" target="_blank" rel="nofollow noopener">$1</a>';
+            $content = preg_replace($pattern, $replacement, $content, 1);
+        }
 
-        register_post_type('abp_coupon', $args);
+        return $content;
     }
 
-    public function enqueue_scripts() {
-        wp_enqueue_script('abp-main-js', plugin_dir_url(__FILE__). 'abp-main.js', array('jquery'), '1.0', true);
-        wp_localize_script('abp-main-js', 'abp_ajax_obj', array('ajax_url' => admin_url('admin-ajax.php')));
-        wp_enqueue_style('abp-style', plugin_dir_url(__FILE__). 'abp-style.css');
+    public function admin_menu() {
+        add_options_page('Affiliate Booster Pro', 'Affiliate Booster Pro', 'manage_options', 'affiliate-booster-pro', array($this, 'settings_page'));
     }
 
-    public function display_coupons_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'count' => 5
-        ), $atts);
+    public function settings_page() {
+        if (!current_user_can('manage_options')) wp_die('Unauthorized');
 
-        $args = array(
-            'post_type' => 'abp_coupon',
-            'posts_per_page' => intval($atts['count']),
-            'post_status' => 'publish'
-        );
-        $coupons = get_posts($args);
+        $keywords = get_option('abp_affiliate_keywords', $this->affiliate_keywords);
 
-        if(!$coupons) return '<p>No coupons available.</p>';
+        echo '<div class="wrap"><h2>Affiliate Booster Pro Settings</h2>';
+        echo '<form method="post" action="options.php">';
+        settings_fields('abp_settings_group');
+        do_settings_sections('abp_settings_group');
 
-        ob_start();
-        echo '<div class="abp-coupons">';
-        foreach($coupons as $coupon) {
-            $link = get_post_meta($coupon->ID, '_abp_affiliate_link', true);
-            $code = get_post_meta($coupon->ID, '_abp_coupon_code', true);
-            $desc = $coupon->post_content ? wp_trim_words($coupon->post_content, 20, '...') : '';
-            echo '<div class="abp-coupon">';
-            echo '<h3>' . esc_html($coupon->post_title) . '</h3>';
-            if($desc) echo '<p>' . esc_html($desc) . '</p>';
-            if($code) echo '<p><strong>Coupon Code:</strong> ' . esc_html($code) . '</p>';
-            if($link) {
-                $url = esc_url($link);
-                echo '<a href="#" class="abp-link" data-id="' . esc_attr($coupon->ID) . '" data-url="' . $url . '" target="_blank" rel="nofollow noopener">Use Coupon</a>';
+        echo '<table class="form-table" id="keywords-table">';
+        echo '<tr><th>Keyword</th><th>Affiliate URL</th></tr>';
+        foreach ($keywords as $keyword => $url) {
+            echo '<tr><td><input type="text" name="abp_keywords[' . esc_attr($keyword) . ']" value="' . esc_attr($keyword) . '" readonly style="background:#eee"></td>';
+            echo '<td><input type="url" name="abp_urls[' . esc_attr($keyword) . ']" value="' . esc_attr($url) . '" style="width:100%"></td></tr>';
+        }
+        echo '</table>';
+        echo '<p><input type="submit" class="button-primary" value="Save Changes"></p>';
+        echo '</form></div>';
+    }
+
+    public function save_settings() {
+        if (!current_user_can('manage_options')) wp_die('Unauthorized');
+        if (!isset($_POST['abp_urls'])) wp_die('No data');
+
+        $keywords = array_keys($this->affiliate_keywords);
+        $urls = $_POST['abp_urls'];
+        $new_data = array();
+        foreach ($keywords as $keyword) {
+            if (!empty($urls[$keyword]) && filter_var($urls[$keyword], FILTER_VALIDATE_URL)) {
+                $new_data[$keyword] = esc_url_raw($urls[$keyword]);
+            } else {
+                $new_data[$keyword] = $this->affiliate_keywords[$keyword];
             }
-            echo '</div>';
-        }
-        echo '</div>';
-        return ob_get_clean();
-    }
-
-    public function track_click() {
-        if(empty($_POST['coupon_id']) || !is_numeric($_POST['coupon_id'])) {
-            wp_send_json_error('Invalid coupon ID');
         }
 
-        $coupon_id = intval($_POST['coupon_id']);
-        $clicks = get_post_meta($coupon_id, '_abp_clicks', true);
-        $clicks = $clicks ? intval($clicks) + 1 : 1;
-        update_post_meta($coupon_id, '_abp_clicks', $clicks);
-
-        if(!empty($_POST['redirect_url'])) {
-            wp_send_json_success(array('redirect_url' => esc_url_raw($_POST['redirect_url'])));
-        } else {
-            wp_send_json_success();
-        }
+        update_option('abp_affiliate_keywords', $new_data);
+        wp_redirect(admin_url('options-general.php?page=affiliate-booster-pro&status=1'));
+        exit;
     }
 }
 
 new AffiliateBoosterPro();
-
-// Inline JavaScript and CSS files content below - dummy placeholders for simplicity:
-// You can alternatively add these contents as separate files in production.
-
-add_action('wp_footer', function() {
-    ?>
-    <script>
-    jQuery(document).ready(function($){
-        $('.abp-link').on('click', function(e){
-            e.preventDefault();
-            var couponId = $(this).data('id');
-            var redirectURL = $(this).data('url');
-            $.post(
-                '<?php echo admin_url('admin-ajax.php'); ?>',
-                {
-                    action: 'abp_track_click',
-                    coupon_id: couponId,
-                    redirect_url: redirectURL
-                },
-                function(response){
-                    if(response.success && response.data.redirect_url) {
-                        window.open(response.data.redirect_url, '_blank');
-                    }
-                }
-            );
-        });
-    });
-    </script>
-    <style>
-    .abp-coupons { display: flex; flex-wrap: wrap; gap: 1rem; }
-    .abp-coupon { border: 1px solid #ddd; padding: 1rem; width: 100%; max-width: 300px; background: #f9f9f9; border-radius: 4px;}
-    .abp-coupon h3 { margin-top: 0; }
-    .abp-coupon a.abp-link { display: inline-block; margin-top: 0.5em; padding: 0.4em 0.8em; background: #0073aa; color: #fff; text-decoration: none; border-radius: 3px; }
-    .abp-coupon a.abp-link:hover { background: #005177; }
-    </style>
-    <?php
-});
