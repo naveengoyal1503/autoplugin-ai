@@ -1,39 +1,29 @@
 # Affiliate Deal Booster
 
-## Description
-Affiliate Deal Booster is a powerful WordPress plugin that lets you add a dedicated deals and coupon aggregator to your site. It supports affiliate links and tracks deal clicks to help you optimize your monetization.
+Affiliate Deal Booster is a WordPress plugin designed to help affiliate marketers and bloggers easily create, manage, and display dynamic coupon and deal listings with affiliate links to boost commission revenue.
 
 ## Features
-- Display a curated list of affiliate coupons and deals with descriptions.
-- Click tracking stored in your WordPress database.
-- Admin dashboard page shows top clicked deals.
-- Easy shortcode `[affiliate_deals]` to place deals anywhere.
-- Styles included for neat deal boxes.
-- Lightweight and simple setup.
+
+- Add and manage affiliate deals and coupons via admin page
+- Automatically hide expired deals
+- Display deals using a shortcode `[adb_deals]` anywhere on your site
+- Widget available to show current deals in sidebars or widget areas
+- Clean, simple admin interface
 
 ## Installation
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the WordPress admin.
-3. Create the accompanying JS (`adb_main.js`) and CSS (`adb_styles.css`) files as outlined in the plugin code comments.
-4. Use shortcode `[affiliate_deals]` in posts, pages, or widgets to display deals.
+
+1. Upload the plugin file to your `/wp-content/plugins/` directory
+2. Activate the plugin through the WordPress admin dashboard
+3. Go to the "Affiliate Deals" menu in your dashboard to add deals
 
 ## Setup
-- Edit the PHP file or extend it to add your own affiliate deals or integrate automatic import from affiliate networks (premium feature).
-- Visit the "Affiliate Deals" menu in the admin to view click statistics.
+
+- To add a deal, fill in the title, description, affiliate URL, and optional expiration date
+- Save deals; they will appear on your site where the shortcode or widget is placed
 
 ## Usage
-- Place `[affiliate_deals]` shortcode where you want deals to appear.
-- Visitors can click deals; their clicks are tracked.
-- Review click performance in the admin dashboard page.
-- Use data to optimize affiliate campaigns.
 
-## Monetization
-Basic plugin is free; you can sell premium extensions that add:
-- Automatic deal imports via APIs.
-- Advanced analytics and reporting.
-- Custom deal categories and filters.
-- Email notifications on top-performing deals.
+- Insert `[adb_deals]` shortcode in any page, post, or custom post type to display deals list
+- Use the "Affiliate Deal Booster Widget" in your widgets area to display deals in sidebars or footers
 
----
-
-This plugin provides a strong foundation for affiliate marketers to increase conversions by showcasing attractive deals while tracking user engagement effectively.
+By leveraging this plugin, site owners can convert their content traffic into affiliate revenue by showcasing attractive, time-sensitive deals with tracked affiliate links.
