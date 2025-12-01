@@ -1,9 +1,9 @@
 # WP Revenue Tracker
 
-Track and visualize revenue from multiple monetization sources including ads, affiliate links, memberships, and digital product sales.
+Track and visualize revenue from multiple sources including ads, affiliate links, digital product sales, and sponsored content.
 
 ## Features
-- Add revenue entries with source, amount, and date
+- Add revenue entries for different sources
 - Visualize revenue data with interactive charts
 - Easy-to-use admin interface
 
@@ -13,12 +13,12 @@ Track and visualize revenue from multiple monetization sources including ads, af
 3. Access the Revenue Tracker from the admin menu
 
 ## Setup
-- No additional setup required. Start adding revenue data immediately.
+- No additional setup required. Start adding revenue data right away.
 
 ## Usage
-- Go to Revenue Tracker in your admin panel
-- Fill in the source, amount, and date
-- Click 'Save Revenue'
+- Go to Revenue Tracker in the admin menu
+- Fill in the revenue source, amount, and date
+- Click 'Save Revenue' to record the entry
 - View your revenue chart below
 
 ## Requirements
