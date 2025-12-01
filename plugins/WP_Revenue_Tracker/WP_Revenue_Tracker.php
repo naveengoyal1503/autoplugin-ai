@@ -12,8 +12,8 @@ class WP_Revenue_Tracker {
     public function __construct() {
         add_action('admin_menu', array($this, 'add_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_save_revenue', array($this, 'save_revenue'));
-        add_action('wp_ajax_get_revenue', array($this, 'get_revenue'));
+        add_action('wp_ajax_save_revenue_data', array($this, 'save_revenue_data'));
+        add_action('wp_ajax_get_revenue_data', array($this, 'get_revenue_data'));
     }
 
     public function add_menu() {
@@ -30,89 +30,51 @@ class WP_Revenue_Tracker {
 
     public function enqueue_scripts($hook) {
         if ($hook != 'toplevel_page_wp-revenue-tracker') return;
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
+        wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
+        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'assets/js/script.js', array('jquery'), '1.0', true);
+        wp_localize_script('wp-revenue-tracker-js', 'wpRevenueTracker', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('wp-revenue-tracker-nonce')
+        ));
+        wp_enqueue_style('wp-revenue-tracker-css', plugin_dir_url(__FILE__) . 'assets/css/style.css', array(), '1.0');
     }
 
     public function render_dashboard() {
-        if (!current_user_can('manage_options')) return;
         ?>
         <div class="wrap">
             <h1>WP Revenue Tracker</h1>
             <div id="revenue-form">
-                <label>Revenue Type: 
+                <label>Revenue Type:
                     <select id="revenue-type">
                         <option value="ads">Ads</option>
                         <option value="affiliate">Affiliate</option>
-                        <option value="products">Products</option>
+                        <option value="digital">Digital Products</option>
                     </select>
                 </label>
                 <label>Amount: <input type="number" id="revenue-amount" step="0.01" /></label>
+                <label>Date: <input type="date" id="revenue-date" /></label>
                 <button id="save-revenue">Save Revenue</button>
             </div>
             <canvas id="revenue-chart" width="400" height="200"></canvas>
         </div>
-        <script>
-            jQuery(document).ready(function($) {
-                $('#save-revenue').on('click', function() {
-                    $.post(ajaxurl, {
-                        action: 'save_revenue',
-                        type: $('#revenue-type').val(),
-                        amount: $('#revenue-amount').val()
-                    }, function(response) {
-                        loadChart();
-                    });
-                });
-
-                function loadChart() {
-                    $.post(ajaxurl, {action: 'get_revenue'}, function(data) {
-                        var ctx = document.getElementById('revenue-chart').getContext('2d');
-                        if (window.revenueChart) window.revenueChart.destroy();
-                        window.revenueChart = new Chart(ctx, {
-                            type: 'bar',
-                            data: data,
-                            options: {responsive: true}
-                        });
-                    });
-                }
-                loadChart();
-            });
-        </script>
         <?php
     }
 
-    public function save_revenue() {
-        if (!current_user_can('manage_options')) wp_die('Unauthorized');
+    public function save_revenue_data() {
+        check_ajax_referer('wp-revenue-tracker-nonce', 'nonce');
         $type = sanitize_text_field($_POST['type']);
         $amount = floatval($_POST['amount']);
-        $date = date('Y-m-d');
-        $revenue = get_option('wp_revenue_tracker_data', array());
-        if (!isset($revenue[$date])) $revenue[$date] = array('ads' => 0, 'affiliate' => 0, 'products' => 0);
-        $revenue[$date][$type] += $amount;
-        update_option('wp_revenue_tracker_data', $revenue);
+        $date = sanitize_text_field($_POST['date']);
+        $data = get_option('wp_revenue_tracker_data', array());
+        $data[] = array('type' => $type, 'amount' => $amount, 'date' => $date);
+        update_option('wp_revenue_tracker_data', $data);
         wp_die();
     }
 
-    public function get_revenue() {
-        $revenue = get_option('wp_revenue_tracker_data', array());
-        $labels = array();
-        $ads = array();
-        $affiliate = array();
-        $products = array();
-        foreach ($revenue as $date => $data) {
-            $labels[] = $date;
-            $ads[] = $data['ads'];
-            $affiliate[] = $data['affiliate'];
-            $products[] = $data['products'];
-        }
-        wp_send_json(array(
-            'labels' => $labels,
-            'datasets' => array(
-                array('label' => 'Ads', 'data' => $ads, 'backgroundColor' => '#4CAF50'),
-                array('label' => 'Affiliate', 'data' => $affiliate, 'backgroundColor' => '#2196F3'),
-                array('label' => 'Products', 'data' => $products, 'backgroundColor' => '#FF9800')
-            )
-        ));
+    public function get_revenue_data() {
+        check_ajax_referer('wp-revenue-tracker-nonce', 'nonce');
+        $data = get_option('wp_revenue_tracker_data', array());
+        wp_send_json($data);
     }
 }
 
