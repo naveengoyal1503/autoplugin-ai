@@ -1,53 +1,35 @@
 # Affiliate Booster Pro
 
-## Description
-Affiliate Booster Pro is a powerful WordPress plugin designed for affiliate marketers, bloggers, and content creators who want to automatically insert, cloak, and track affiliate links within their site content. Save time, increase conversions, and gain valuable insights into link performance.
+Affiliate Booster Pro is a WordPress plugin designed to **automate affiliate link management**, **integrate coupon codes effortlessly**, and provide **performance tracking features** for affiliate marketers and content creators.
 
 ## Features
 
-- Manage affiliate links via an easy JSON input interface in the admin.
-- Automatically insert cloaked affiliate links contextually in your posts.
-- Link cloaking via redirect through WordPress built-in AJAX endpoint.
-- Simple click tracking to monitor affiliate link performance.
-- Categorize affiliate links for organized management.
-- Premium-ready architecture for future upgrades (e.g., A/B testing, multi-user support).
+- Automatically convert affiliate domain URLs in posts into clickable, tracked affiliate links.
+- Append a customizable list of exclusive coupon codes to posts, enhancing user engagement and conversions.
+- Simple settings panel for adding affiliate domains and managing coupon codes.
+- Freemium-ready architecture allows for future upgrades with advanced analytics, link cloaking, and auto coupon imports.
 
 ## Installation
 
-1. Upload the plugin file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the ‘Plugins’ menu in WordPress.
-3. Go to the **Affiliate Booster** menu in the WordPress admin dashboard.
+1. Upload the `affiliate-booster-pro.php` file to your `/wp-content/plugins/` directory or install via WordPress admin.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to 'Affiliate Booster' in the admin menu.
+4. Enter your affiliate domains (comma separated).
+5. Add coupon codes in the format `CODE|Description` one per line.
+6. Save settings.
 
 ## Setup
 
-1. In the plugin settings page, add your affiliate links as JSON. Example format:
-
-
-[
-  {
-    "slug": "amazon",
-    "url": "https://www.amazon.com/dp/exampleproduct",
-    "category": "shopping"
-  },
-  {
-    "slug": "ebay",
-    "url": "https://www.ebay.com/itm/exampleproduct",
-    "category": "auctions"
-  }
-]
-
-
-2. Save the links.
-3. When you use keywords (matching the slug) in your posts, the plugin will automatically replace the first occurrence with your cloaked affiliate link.
+- In the settings page, add affiliate network domains to watch for auto-linking (e.g., `exampleaffiliatesite.com, anotheraff.com`).
+- Add coupon codes you want to display for products linked.
+- Optionally customize the fixed affiliate ID in the code for your tracking.
 
 ## Usage
 
-- Simply add affiliate links via JSON as described.
-- Write posts mentioning your affiliate product keywords matching slugs.
-- The plugin automatically links those keywords to your affiliate URLs securely.
-- Monitor click counts via the WordPress options table or extend functionality with premium modules.
+- Write your posts normally including affiliate URLs from the configured domains.
+- The plugin will automatically convert plain URLs from those domains to tracked affiliate links.
+- Coupon codes will display at the end of each post automatically.
 
+This simple yet powerful tool helps maximize your affiliate marketing revenue with minimal effort.
 
-Enjoy boosted affiliate revenue with minimal effort!
-
----
+**Upgrade to premium coming soon with enhanced features!**
