@@ -1,29 +1,26 @@
 # WP Smart Affiliate Link Manager
 
-Automatically manage, track, and optimize affiliate links across your WordPress site with smart rotation, geo-targeting, and performance analytics.
+Automatically manages, tracks, and optimizes affiliate links on your WordPress site with AI-powered suggestions and real-time analytics.
 
 ## Features
-- Create and manage affiliate links with custom slugs
-- Track clicks on each link
-- Geo-target links by country
-- Display links via shortcode with random or specific selection
-- Simple admin dashboard for link management
+- Auto-replace keywords with affiliate links
+- Real-time click tracking
+- Simple admin interface for managing links
+- Easy integration with any WordPress site
 
 ## Installation
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to 'Smart Affiliate Links' in the admin menu to start adding links
+1. Upload the plugin file to your WordPress plugins directory (`/wp-content/plugins/`).
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to the 'Affiliate Links' menu to add your affiliate links.
 
 ## Setup
-- Add your affiliate links in the admin dashboard
-- Assign optional slugs and country targeting
-- Use the shortcode to display links on your site
+- Enter your affiliate links in the format: `keyword|url` (one per line).
+- The plugin will automatically replace occurrences of the keyword in your content with the affiliate link.
 
 ## Usage
-- `[smart_affiliate_link id="1"]` - Display link by ID
-- `[smart_affiliate_link slug="my-link"]` - Display link by slug
-- `[smart_affiliate_link country="US"]` - Display link for specific country
-- `[smart_affiliate_link random="true"]` - Display random link
+- Visit your site and click on any auto-generated affiliate link to track clicks.
+- View analytics in the plugin admin panel.
 
-## Support
-For premium features and support, visit our website.
+## Monetization
+- Free version includes basic link management and tracking.
+- Premium version offers advanced analytics, AI-powered suggestions, and more.
