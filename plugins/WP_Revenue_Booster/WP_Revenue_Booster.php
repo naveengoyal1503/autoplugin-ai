@@ -5,19 +5,22 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Description: Automatically optimizes ad, affiliate, and coupon placements for maximum revenue.
+ * Description: Automatically optimizes ad placements, affiliate links, and premium content access to maximize revenue.
  * Version: 1.0
- * Author: Revenue Labs
+ * Author: WP Revenue Team
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 class WP_Revenue_Booster {
 
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_footer', array($this, 'inject_optimized_content'));
-        add_action('admin_init', array($this, 'settings_init'));
+        add_action('wp_head', array($this, 'inject_ad_code'));
+        add_action('the_content', array($this, 'inject_affiliate_links'));
+        add_action('template_redirect', array($this, 'handle_premium_content'));
     }
 
     public function add_admin_menu() {
@@ -25,97 +28,80 @@ class WP_Revenue_Booster {
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
-            'wp_revenue_booster',
-            array($this, 'options_page')
+            'wp-revenue-booster',
+            array($this, 'admin_page')
         );
     }
 
-    public function settings_init() {
-        register_setting('wp_revenue_booster', 'wp_revenue_booster_settings');
-
-        add_settings_section(
-            'wp_revenue_booster_section',
-            'Revenue Booster Settings',
-            null,
-            'wp_revenue_booster'
-        );
-
-        add_settings_field(
-            'ads_enabled',
-            'Enable Ad Optimization',
-            array($this, 'ads_enabled_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-
-        add_settings_field(
-            'affiliate_enabled',
-            'Enable Affiliate Optimization',
-            array($this, 'affiliate_enabled_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-
-        add_settings_field(
-            'coupons_enabled',
-            'Enable Coupon Optimization',
-            array($this, 'coupons_enabled_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-    }
-
-    public function ads_enabled_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        ?>
-        <input type='checkbox' name='wp_revenue_booster_settings[ads_enabled]' <?php checked($options['ads_enabled'], 1); ?> value='1'>
-        <?php
-    }
-
-    public function affiliate_enabled_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        ?>
-        <input type='checkbox' name='wp_revenue_booster_settings[affiliate_enabled]' <?php checked($options['affiliate_enabled'], 1); ?> value='1'>
-        <?php
-    }
-
-    public function coupons_enabled_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        ?>
-        <input type='checkbox' name='wp_revenue_booster_settings[coupons_enabled]' <?php checked($options['coupons_enabled'], 1); ?> value='1'>
-        <?php
-    }
-
-    public function options_page() {
-        ?>
-        <form action='options.php' method='post'>
-            <h2>WP Revenue Booster</h2>
-            <?php
-            settings_fields('wp_revenue_booster');
-            do_settings_sections('wp_revenue_booster');
-            submit_button();
-            ?>
-        </form>
-        <?php
-    }
-
-    public function inject_optimized_content() {
-        $options = get_option('wp_revenue_booster_settings');
-        if (!$options) return;
-
-        if (!empty($options['ads_enabled'])) {
-            echo '<div class="wp-revenue-ads">Ad placeholder optimized by WP Revenue Booster</div>';
+    public function admin_page() {
+        if (isset($_POST['save_settings'])) {
+            update_option('wp_revenue_booster_ad_code', sanitize_textarea_field($_POST['ad_code']));
+            update_option('wp_revenue_booster_affiliate_links', sanitize_textarea_field($_POST['affiliate_links']));
+            update_option('wp_revenue_booster_premium_content', sanitize_textarea_field($_POST['premium_content']));
+            echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
         }
+        $ad_code = get_option('wp_revenue_booster_ad_code', '');
+        $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
+        $premium_content = get_option('wp_revenue_booster_premium_content', '');
+        ?>
+        <div class="wrap">
+            <h1>WP Revenue Booster</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Ad Code</th>
+                        <td><textarea name="ad_code" rows="5" cols="50"><?php echo esc_textarea($ad_code); ?></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Affiliate Links (one per line: keyword|url)</th>
+                        <td><textarea name="affiliate_links" rows="5" cols="50"><?php echo esc_textarea($affiliate_links); ?></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Premium Content (comma-separated post IDs)</th>
+                        <td><input type="text" name="premium_content" value="<?php echo esc_attr($premium_content); ?>" /></td>
+                    </tr>
+                </table>
+                <p class="submit">
+                    <input type="submit" name="save_settings" class="button-primary" value="Save Settings" />
+                </p>
+            </form>
+        </div>
+        <?php
+    }
 
-        if (!empty($options['affiliate_enabled'])) {
-            echo '<div class="wp-revenue-affiliate">Affiliate link placeholder optimized by WP Revenue Booster</div>';
+    public function inject_ad_code() {
+        $ad_code = get_option('wp_revenue_booster_ad_code', '');
+        if (!empty($ad_code)) {
+            echo $ad_code;
         }
+    }
 
-        if (!empty($options['coupons_enabled'])) {
-            echo '<div class="wp-revenue-coupons">Coupon section optimized by WP Revenue Booster</div>';
+    public function inject_affiliate_links($content) {
+        $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
+        if (empty($affiliate_links)) return $content;
+
+        $lines = explode("\n", $affiliate_links);
+        foreach ($lines as $line) {
+            $parts = explode('|', $line);
+            if (count($parts) == 2) {
+                $keyword = trim($parts);
+                $url = trim($parts[1]);
+                $content = preg_replace('/\b' . preg_quote($keyword, '/') . '\b/i', '<a href="' . esc_url($url) . '" target="_blank">' . $keyword . '</a>', $content, 1);
+            }
+        }
+        return $content;
+    }
+
+    public function handle_premium_content() {
+        if (is_single()) {
+            $premium_content = get_option('wp_revenue_booster_premium_content', '');
+            $post_id = get_the_ID();
+            $premium_ids = array_map('trim', explode(',', $premium_content));
+            if (in_array($post_id, $premium_ids) && !current_user_can('edit_posts')) {
+                wp_die('This content is premium. Please <a href="/wp-login.php">log in</a> or <a href="/subscribe">subscribe</a> to access.');
+            }
         }
     }
 }
 
 new WP_Revenue_Booster();
-?>
