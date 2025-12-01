@@ -1,142 +1,109 @@
 <?php
 /*
 Plugin Name: Affiliate Coupon Hub
-Plugin URI: https://example.com/affiliate-coupon-hub
-Description: Create and display custom coupons and deals with affiliate tracking to increase affiliate earnings.
+Description: Display and manage exclusive coupons linked to affiliate programs to boost conversions.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Coupon_Hub.php
 */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
 
-class Affiliate_Coupon_Hub {
+class AffiliateCouponHub {
     public function __construct() {
-        add_action('init', array($this, 'register_coupon_post_type'));
-        add_shortcode('affiliate_coupons', array($this, 'display_coupons_shortcode'));
-        add_action('add_meta_boxes', array($this, 'add_coupon_meta_boxes'));
-        add_action('save_post', array($this, 'save_coupon_meta'));    
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+        add_action('admin_menu', array($this, 'ach_add_admin_menu'));
+        add_action('admin_init', array($this, 'ach_settings_init'));
+        add_shortcode('affiliate_coupons', array($this, 'ach_shortcode_display_coupons'));
+        add_action('wp_enqueue_scripts', array($this, 'ach_enqueue_scripts'));
     }
 
-    public function register_coupon_post_type() {
-        $labels = array(
-            'name' => 'Affiliate Coupons',
-            'singular_name' => 'Affiliate Coupon',
-            'add_new' => 'Add New Coupon',
-            'add_new_item' => 'Add New Affiliate Coupon',
-            'edit_item' => 'Edit Affiliate Coupon',
-            'new_item' => 'New Affiliate Coupon',
-            'view_item' => 'View Coupon',
-            'search_items' => 'Search Coupons',
-            'not_found' => 'No coupons found',
-            'not_found_in_trash' => 'No coupons found in Trash',
-            'menu_name' => 'Affiliate Coupons'
+    public function ach_add_admin_menu() {
+        add_menu_page('Affiliate Coupon Hub', 'Coupon Hub', 'manage_options', 'affiliate_coupon_hub', array($this, 'ach_options_page'), 'dashicons-tickets-alt');
+    }
+
+    public function ach_settings_init() {
+        register_setting('achPage', 'ach_settings');
+
+        add_settings_section(
+            'ach_achPage_section', 
+            __('Manage Coupons', 'wordpress'), 
+            null, 
+            'achPage'
         );
 
-        $args = array(
-            'labels' => $labels,
-            'public' => true,
-            'has_archive' => true,
-            'supports' => array('title', 'editor'),
-            'menu_position' => 20,
-            'menu_icon' => 'dashicons-tickets-alt',
-            'show_in_rest' => true
+        add_settings_field(
+            'ach_coupons', 
+            __('Coupons JSON', 'wordpress'), 
+            array($this, 'ach_coupons_render'), 
+            'achPage', 
+            'ach_achPage_section'
         );
-
-        register_post_type('affiliate_coupon', $args);
     }
 
-    public function add_coupon_meta_boxes() {
-        add_meta_box('coupon_details', 'Coupon Details', array($this, 'render_coupon_meta_box'), 'affiliate_coupon', 'normal', 'high');
+    public function ach_coupons_render() {
+        $options = get_option('ach_settings');
+        ?>
+        <textarea cols='60' rows='10' name='ach_settings[ach_coupons]'><?php echo isset($options['ach_coupons']) ? esc_textarea($options['ach_coupons']) : ''; ?></textarea>
+        <p>Enter coupons as JSON array. Each coupon needs: <code>title</code>, <code>code</code>, <code>description</code>, <code>affiliate_url</code></p>
+        <pre>[
+  {
+    "title": "10% off Shoes",
+    "code": "SHOES10",
+    "description": "Get 10% discount on all shoes.",
+    "affiliate_url": "https://affiliate.example.com/?product=shoes&ref=123"
+  }
+]</pre>
+        <?php
     }
 
-    public function render_coupon_meta_box($post) {
-        wp_nonce_field('save_coupon_meta', 'coupon_meta_nonce');
-        $affiliate_link = get_post_meta($post->ID, '_affiliate_link', true);
-        $expiration_date = get_post_meta($post->ID, '_expiration_date', true);
-        $discount_code = get_post_meta($post->ID, '_discount_code', true);
-
-        echo '<p><label for="affiliate_link">Affiliate URL:</label><br />';
-        echo '<input type="url" id="affiliate_link" name="affiliate_link" value="' . esc_attr($affiliate_link) . '" style="width:100%;" placeholder="https://affiliate.example.com/?ref=yourid" /></p>';
-
-        echo '<p><label for="discount_code">Discount Code (optional):</label><br />';
-        echo '<input type="text" id="discount_code" name="discount_code" value="' . esc_attr($discount_code) . '" style="width:100%;" /></p>';
-
-        echo '<p><label for="expiration_date">Expiration Date (optional):</label><br />';
-        echo '<input type="date" id="expiration_date" name="expiration_date" value="' . esc_attr($expiration_date) . '" /></p>';
+    public function ach_options_page() {
+        ?>
+        <form action='options.php' method='post'>
+            <h2>Affiliate Coupon Hub</h2>
+            <?php
+            settings_fields('achPage');
+            do_settings_sections('achPage');
+            submit_button();
+            ?>
+        </form>
+        <?php
     }
 
-    public function save_coupon_meta($post_id) {
-        if (!isset($_POST['coupon_meta_nonce']) || !wp_verify_nonce($_POST['coupon_meta_nonce'], 'save_coupon_meta')) {
-            return;
+    public function ach_shortcode_display_coupons() {
+        $options = get_option('ach_settings');
+        if (empty($options['ach_coupons'])) {
+            return '<p>No coupons available at the moment.</p>';
         }
 
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-
-        if (!current_user_can('edit_post', $post_id)) return;
-
-        if (isset($_POST['affiliate_link'])) {
-            update_post_meta($post_id, '_affiliate_link', esc_url_raw($_POST['affiliate_link']));
+        $coupons = json_decode($options['ach_coupons'], true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($coupons)) {
+            return '<p>Invalid coupon data.</p>';
         }
 
-        if (isset($_POST['expiration_date'])) {
-            update_post_meta($post_id, '_expiration_date', sanitize_text_field($_POST['expiration_date']));
-        }
-
-        if (isset($_POST['discount_code'])) {
-            update_post_meta($post_id, '_discount_code', sanitize_text_field($_POST['discount_code']));
-        }
-    }
-
-    public function display_coupons_shortcode($atts) {
-        $args = array('post_type' => 'affiliate_coupon', 'posts_per_page' => -1, 'post_status' => 'publish');
-        $coupons = get_posts($args);
-        if (empty($coupons)) {
-            return '<p>No coupons available currently.</p>';
-        }
-
-        $output = '<div class="affiliate-coupon-hub">';
-
+        $output = '<div class="ach-coupons">';
         foreach ($coupons as $coupon) {
-            $link = get_post_meta($coupon->ID, '_affiliate_link', true);
-            $expiration = get_post_meta($coupon->ID, '_expiration_date', true);
-            $discount_code = get_post_meta($coupon->ID, '_discount_code', true);
+            $title = esc_html($coupon['title'] ?? '');
+            $code = esc_html($coupon['code'] ?? '');
+            $desc = esc_html($coupon['description'] ?? '');
+            $affiliate_url = esc_url($coupon['affiliate_url'] ?? '#');
 
-            // Check expiration
-            if ($expiration && strtotime($expiration) < time()) continue;
-
-            $output .= '<div class="coupon-item" style="border:1px solid #ddd; padding:15px; margin-bottom:15px; border-radius:4px;">';
-            $output .= '<h3>' . esc_html($coupon->post_title) . '</h3>';
-            $output .= '<div class="description">' . wp_kses_post(wpautop($coupon->post_content)) . '</div>';
-
-            if ($discount_code) {
-                $output .= '<p><strong>Use code:</strong> <code>' . esc_html($discount_code) . '</code></p>';
-            }
-
-            if ($link) {
-                $output .= '<p><a href="' . esc_url($link) . '" target="_blank" rel="nofollow noopener" class="button" style="display:inline-block;margin-top:10px;padding:10px 20px;background:#0073aa;color:#fff;text-decoration:none;border-radius:3px;">Redeem Offer</a></p>';
-            }
-            if ($expiration) {
-                $output .= '<small>Expires on ' . esc_html(date('F j, Y', strtotime($expiration))) . '</small>';
-            }
-
+            $output .= '<div class="ach-coupon" style="border:1px solid #ccc;padding:10px;margin-bottom:10px;">';
+            $output .= '<h3>' . $title . '</h3>';
+            $output .= '<p>' . $desc . '</p>';
+            $output .= '<p><strong>Coupon Code: </strong><span style="background:#eee;padding:2px 6px;cursor:pointer;" onclick="navigator.clipboard.writeText(\'' . $code . '\');alert(\'Coupon code copied!\')">' . $code . '</span></p>';
+            $output .= '<p><a href="' . $affiliate_url . '" target="_blank" rel="nofollow noopener noreferrer" class="button">Shop Now</a></p>';
             $output .= '</div>';
         }
-
         $output .= '</div>';
 
         return $output;
     }
 
-    public function enqueue_styles() {
-        wp_enqueue_style('affiliate-coupon-hub-styles', plugin_dir_url(__FILE__) . 'styles.css');
+    public function ach_enqueue_scripts() {
+        wp_enqueue_style('ach-style', plugins_url('/style.css', __FILE__)); // Placeholder if CSS is added
     }
 }
 
-new Affiliate_Coupon_Hub();
-
-// Fallback style for embedded CSS in case styles.css file missing
-add_action('wp_head', function() {
-    echo '<style>.affiliate-coupon-hub .coupon-item{border:1px solid #ddd;padding:15px;margin-bottom:15px;border-radius:4px;}.affiliate-coupon-hub .button{display:inline-block;margin-top:10px;padding:10px 20px;background:#0073aa;color:#fff;text-decoration:none;border-radius:3px;}</style>';
-});
+new AffiliateCouponHub();
