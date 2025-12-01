@@ -1,35 +1,59 @@
 # AffiliateCouponBooster
 
-AffiliateCouponBooster is a WordPress plugin designed to help bloggers, affiliate marketers, and e-commerce websites easily create and display affiliate coupons and deals with built-in click tracking.
+AffiliateCouponBooster is a WordPress plugin designed to boost your affiliate sales by aggregating and displaying exclusive coupons and deals dynamically. Ideal for affiliate marketers, niche bloggers, and ecommerce sites.
 
 ## Features
 
-- Custom post type for managing coupons with affiliate URLs
-- Add coupon codes, expiry dates, and descriptions for each coupon
-- Track clicks on affiliate links automatically
-- Display coupons anywhere using a simple `[affiliate_coupons]` shortcode
-- Automatically hides expired coupons
-- Custom admin columns for quick coupon overview
-- User-friendly interface for managing coupons
+- Display a customizable, easy-to-manage list of coupons with codes and affiliate URLs.
+- Simple JSON-based coupon management in the admin area.
+- Responsive and clean coupon display using shortcode.
+- Freemium-ready for future expansion with premium add-ons.
 
 ## Installation
 
-1. Upload the `affiliatecouponbooster.php` file to your `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Add new coupons via the "Affiliate Coupons" menu in your WordPress admin
+1. Upload the plugin PHP file to your `/wp-content/plugins/` directory or install via WordPress admin plugin uploader.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to the 'AffiliateCouponBooster' menu in the admin dashboard.
 
 ## Setup
 
-- When adding a new coupon, enter the affiliate destination URL, optional coupon code, and expiry date.
-- Use the shortcode `[affiliate_coupons count="5"]` to display the latest 5 coupons on any page or post.
-- Customize styles via your theme or add CSS to target `.acb-coupon-list` and `.acb-coupon-item` classes.
+1. Access the AffiliateCouponBooster settings page.
+2. Enter your coupons as a JSON array with the following fields:
+   - `title` - Name of the coupon/deal
+   - `description` - Short details about the coupon
+   - `code` - Coupon code users can apply
+   - `affiliate_url` - Affiliate product link
+
+Example:
+
+[
+  {
+    "title": "10% off Widget A",
+    "description": "Save 10% on Widget A",
+    "code": "WIDGET10",
+    "affiliate_url": "https://affiliate.example.com/product/widget-a"
+  }
+]
+
+
+3. Save changes.
 
 ## Usage
 
-- Insert the shortcode `[affiliate_coupons]` in posts, pages, or widgets to display active coupons.
-- Visitors click "Get Deal" buttons and are redirected through the plugin, increasing click tracking accuracy.
+- Add the shortcode `[acb_coupons]` to any post or page where you want the coupon list to appear.
+- Coupons will display with title, description, coupon code, and a styled affiliate link.
 
-## Changelog
+## Future Enhancements
 
-### 1.0
-- Initial release with coupon custom post type, click tracking, shortcode display, and expiry filtering.
+- Automatic coupon fetching from major affiliate networks.
+- Premium analytics dashboard.
+- Scheduled coupon expiry and alerts.
+- Multi-layout display options.
+
+## Support
+
+Contact the plugin author via the support forum or website.
+
+## License
+
+GPL v2 or later
