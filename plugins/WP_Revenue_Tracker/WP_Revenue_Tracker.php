@@ -5,12 +5,9 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Tracker
- * Plugin URI: https://example.com/wp-revenue-tracker
  * Description: Track and visualize revenue from ads, affiliate links, digital products, and memberships.
  * Version: 1.0
- * Author: Your Name
- * Author URI: https://example.com
- * License: GPL2
+ * Author: Your Company
  */
 
 define('WP_REVENUE_TRACKER_VERSION', '1.0');
@@ -22,7 +19,6 @@ register_activation_hook(__FILE__, 'wp_revenue_tracker_activate');
 register_deactivation_hook(__FILE__, 'wp_revenue_tracker_deactivate');
 
 function wp_revenue_tracker_activate() {
-    // Create table for storing revenue data
     global $wpdb;
     $table_name = $wpdb->prefix . 'revenue_tracker';
     $charset_collate = $wpdb->get_charset_collate();
@@ -32,7 +28,6 @@ function wp_revenue_tracker_activate() {
         source varchar(50) NOT NULL,
         amount decimal(10,2) NOT NULL,
         date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-        description text,
         PRIMARY KEY  (id)
     ) $charset_collate;";
 
@@ -41,12 +36,11 @@ function wp_revenue_tracker_activate() {
 }
 
 function wp_revenue_tracker_deactivate() {
-    // Optional: Clean up on deactivation
+    // Optional: Cleanup or scheduling tasks
 }
 
 // Add admin menu
 add_action('admin_menu', 'wp_revenue_tracker_menu');
-
 function wp_revenue_tracker_menu() {
     add_menu_page(
         'Revenue Tracker',
@@ -64,39 +58,28 @@ function wp_revenue_tracker_dashboard() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'revenue_tracker';
 
-    // Handle form submission
     if (isset($_POST['add_revenue'])) {
         $source = sanitize_text_field($_POST['source']);
         $amount = floatval($_POST['amount']);
-        $description = sanitize_textarea_field($_POST['description']);
         $date = sanitize_text_field($_POST['date']);
-
-        $wpdb->insert(
-            $table_name,
-            array(
-                'source' => $source,
-                'amount' => $amount,
-                'date' => $date,
-                'description' => $description
-            )
-        );
+        $wpdb->insert($table_name, array(
+            'source' => $source,
+            'amount' => $amount,
+            'date' => $date
+        ));
     }
 
-    // Fetch revenue data
-    $revenue_data = $wpdb->get_results("SELECT * FROM $table_name ORDER BY date DESC");
-    $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM $table_name");
-
-    // Display dashboard
+    $revenues = $wpdb->get_results("SELECT * FROM $table_name ORDER BY date DESC");
+    $total = $wpdb->get_var("SELECT SUM(amount) FROM $table_name");
     ?>
     <div class="wrap">
         <h1>WP Revenue Tracker</h1>
-        <p>Total Revenue: $<?php echo number_format($total_revenue, 2); ?></p>
         <form method="post">
             <table class="form-table">
                 <tr>
                     <th><label for="source">Source</label></th>
                     <td>
-                        <select name="source" id="source" required>
+                        <select name="source" id="source">
                             <option value="ads">Ads</option>
                             <option value="affiliate">Affiliate</option>
                             <option value="digital_products">Digital Products</option>
@@ -112,16 +95,13 @@ function wp_revenue_tracker_dashboard() {
                     <th><label for="date">Date</label></th>
                     <td><input type="date" name="date" id="date" required /></td>
                 </tr>
-                <tr>
-                    <th><label for="description">Description</label></th>
-                    <td><textarea name="description" id="description"></textarea></td>
-                </tr>
             </table>
             <p class="submit">
                 <input type="submit" name="add_revenue" class="button-primary" value="Add Revenue" />
             </p>
         </form>
-        <h2>Revenue History</h2>
+        <h2>Revenue Overview</h2>
+        <p><strong>Total Revenue: $<?php echo number_format($total, 2); ?></strong></p>
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
@@ -129,17 +109,15 @@ function wp_revenue_tracker_dashboard() {
                     <th>Source</th>
                     <th>Amount</th>
                     <th>Date</th>
-                    <th>Description</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($revenue_data as $row): ?>
+                <?php foreach ($revenues as $rev): ?>
                 <tr>
-                    <td><?php echo $row->id; ?></td>
-                    <td><?php echo ucfirst($row->source); ?></td>
-                    <td>$<?php echo number_format($row->amount, 2); ?></td>
-                    <td><?php echo $row->date; ?></td>
-                    <td><?php echo $row->description; ?></td>
+                    <td><?php echo $rev->id; ?></td>
+                    <td><?php echo ucfirst($rev->source); ?></td>
+                    <td>$<?php echo number_format($rev->amount, 2); ?></td>
+                    <td><?php echo $rev->date; ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -148,66 +126,29 @@ function wp_revenue_tracker_dashboard() {
     <?php
 }
 
-// Enqueue admin styles and scripts
-add_action('admin_enqueue_scripts', 'wp_revenue_tracker_enqueue');
+// Shortcode to display total revenue on frontend
+add_shortcode('wp_revenue_total', 'wp_revenue_total_shortcode');
+function wp_revenue_total_shortcode() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'revenue_tracker';
+    $total = $wpdb->get_var("SELECT SUM(amount) FROM $table_name");
+    return '<p>Total Revenue: $' . number_format($total, 2) . '</p>';
+}
 
-function wp_revenue_tracker_enqueue($hook) {
+// Enqueue admin scripts and styles
+add_action('admin_enqueue_scripts', 'wp_revenue_tracker_admin_enqueue');
+function wp_revenue_tracker_admin_enqueue($hook) {
     if ('toplevel_page_wp-revenue-tracker' !== $hook) {
         return;
     }
     wp_enqueue_style('wp-revenue-tracker-admin', WP_REVENUE_TRACKER_PLUGIN_URL . 'admin.css');
 }
 
-// Add shortcode for displaying total revenue on frontend
-add_shortcode('wp_revenue_total', 'wp_revenue_total_shortcode');
-
-function wp_revenue_total_shortcode($atts) {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'revenue_tracker';
-    $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM $table_name");
-    return '<p>Total Revenue: $' . number_format($total_revenue, 2) . '</p>';
-}
-
-// Add widget for displaying revenue on dashboard
-add_action('wp_dashboard_setup', 'wp_revenue_tracker_dashboard_widget');
-
-function wp_revenue_tracker_dashboard_widget() {
-    wp_add_dashboard_widget(
-        'wp_revenue_tracker_widget',
-        'Revenue Tracker',
-        'wp_revenue_tracker_widget_display'
-    );
-}
-
-function wp_revenue_tracker_widget_display() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'revenue_tracker';
-    $total_revenue = $wpdb->get_var("SELECT SUM(amount) FROM $table_name");
-    echo '<p><strong>Total Revenue:</strong> $' . number_format($total_revenue, 2) . '</p>';
-}
-
-// Add REST API endpoint for revenue data (for future premium features)
-add_action('rest_api_init', function () {
-    register_rest_route('wp-revenue-tracker/v1', '/revenue', array(
-        'methods' => 'GET',
-        'callback' => 'wp_revenue_tracker_api_get_revenue',
-        'permission_callback' => '__return_true',
-    ));
-});
-
-function wp_revenue_tracker_api_get_revenue($request) {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'revenue_tracker';
-    $revenue_data = $wpdb->get_results("SELECT * FROM $table_name ORDER BY date DESC");
-    return rest_ensure_response($revenue_data);
-}
-
-// Add premium features notice (for freemium model)
+// Optional: Add premium features notice
 add_action('admin_notices', 'wp_revenue_tracker_premium_notice');
-
 function wp_revenue_tracker_premium_notice() {
-    if (current_user_can('manage_options')) {
-        echo '<div class="notice notice-info"><p>Upgrade to <strong>WP Revenue Tracker Premium</strong> for advanced analytics, export, and integration features!</p></div>';
+    if (isset($_GET['page']) && $_GET['page'] === 'wp-revenue-tracker') {
+        echo '<div class="notice notice-info"><p>Upgrade to Premium for advanced analytics, integrations, and export features.</p></div>';
     }
 }
 ?>
