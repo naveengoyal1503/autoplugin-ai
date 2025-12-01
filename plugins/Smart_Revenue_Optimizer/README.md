@@ -1,164 +1,161 @@
 # Smart Revenue Optimizer
 
-An intelligent WordPress plugin that analyzes your site's traffic patterns and automatically recommends the most profitable monetization strategies tailored to your specific audience and content.
+## Description
+
+Smart Revenue Optimizer is a powerful WordPress plugin designed to help content creators, bloggers, and website owners maximize their monetization revenue. This intelligent plugin automatically optimizes ad placements, affiliate link positioning, and sponsored content recommendations based on real-time user behavior analysis and engagement patterns.
 
 ## Features
 
-- **Intelligent Monetization Recommendations**: AI-powered analysis suggests revenue strategies based on your traffic patterns, content type, and audience engagement
-- **Multi-Channel Revenue Tracking**: Track earnings from multiple sources including ads, affiliate marketing, memberships, and digital products
-- **Unified Dashboard**: Manage all monetization streams from a single, intuitive control panel
-- **Revenue Analytics**: Detailed reports showing which monetization methods perform best for your site
-- **Plugin Integration Guides**: Built-in recommendations for complementary WordPress plugins (WooCommerce, AffiliateWP, MemberPress, etc.)
-- **REST API**: Programmatically access revenue data and analytics
-- **WordPress Dashboard Widget**: Quick revenue overview directly on your WordPress admin dashboard
-- **Revenue Shortcode**: Display revenue statistics anywhere on your site with `[sro_revenue_stats]`
+### Core Features
+- **Automatic Ad Optimization**: Intelligently places ads in high-engagement zones based on user scroll depth and interaction patterns
+- **Affiliate Link Management**: Optimizes affiliate link placement and visibility for maximum click-through rates
+- **User Engagement Tracking**: Monitors clicks, scroll depth, and time on page to understand reader behavior
+- **Sponsored Content Recommendations**: Suggests optimal placement for sponsored posts and branded content
+- **Revenue Dashboard**: Real-time analytics showing total revenue, engagement scores, and optimization metrics
+- **RESTful API**: Extensible REST API for third-party integrations
+- **Multi-language Support**: Internationalization ready with translation support
+
+### Premium Features (Freemium)
+- Advanced analytics with custom date ranges
+- AI-powered revenue recommendations
+- Multi-channel monetization management
+- Priority support
+- Monthly subscription: $9.99/month
 
 ## Installation
 
-1. Download the Smart Revenue Optimizer plugin ZIP file
-2. Go to your WordPress admin dashboard
-3. Navigate to Plugins → Add New
-4. Click "Upload Plugin" and select the ZIP file
-5. Click "Install Now" and then "Activate Plugin"
+### Manual Installation
 
-Alternatively, extract the plugin folder to `/wp-content/plugins/` and activate it through the Plugins menu.
+1. Download the plugin zip file
+2. Navigate to **WordPress Dashboard → Plugins → Add New**
+3. Click **Upload Plugin** and select the zip file
+4. Click **Install Now** and then **Activate**
+
+Alternatively:
+
+1. Extract the plugin folder to `/wp-content/plugins/` directory
+2. Activate the plugin from the Plugins page
 
 ## Setup
 
 ### Initial Configuration
 
-1. After activation, go to **Revenue Optimizer** in your WordPress admin menu
-2. Visit the **Settings** page to configure:
-   - Enable/disable revenue tracking
-   - Set your email address for notifications
-   - Choose your preferred currency
+1. Go to **Dashboard → Revenue Optimizer → Settings**
+2. Configure the following options:
+   - **Enable Ad Optimization**: Toggle to activate automatic ad placement optimization
+   - **Enable Affiliate Optimization**: Toggle to optimize affiliate link visibility
+   - **Enable User Tracking**: Enable engagement tracking for better insights
 3. Click **Save Settings**
 
-### Connecting Revenue Streams
+### Database Setup
 
-1. Go to **Revenue Streams** in the main menu
-2. For each revenue source you want to use:
-   - Click the **Configure** button
-   - Follow the integration guide for your chosen method
-   - Link your payment processors (PayPal, Stripe, etc.)
+The plugin automatically creates a database table `wp_sro_engagement` to store engagement data when activated. No additional setup is required.
 
 ## Usage
 
 ### Dashboard
 
-The main dashboard displays:
-- Revenue overview for the past 30 days
-- Personalized monetization recommendations
-- Top-performing revenue strategies
-- Quick action links to configure new streams
-
-### Revenue Tracking
-
-Track revenue automatically by:
-- Syncing with your ad networks (Google AdSense, Mediavine)
-- Connecting e-commerce platforms (WooCommerce, Shopify)
-- Linking affiliate networks
-- Manual entry for memberships or donations
+Access the main dashboard at **Dashboard → Revenue Optimizer** to view:
+- Total revenue generated
+- Current engagement score
+- Number of optimized content pieces
 
 ### Analytics
 
-View detailed reports showing:
-- Revenue by source and date range
-- Traffic-to-revenue conversion rates
-- Performance trends and seasonal patterns
-- ROI for each monetization method
+Visit **Dashboard → Revenue Optimizer → Analytics** to view:
+- 30-day engagement trends
+- Performance metrics by content
+- User interaction heatmaps
 
-### Display Revenue Statistics
+### Monetization Widget
 
-Add revenue information to any page or post using:
-
-
-[sro_revenue_stats]
+Add the monetization widget to any page or post using the shortcode:
 
 
-This shortcode displays your total revenue earned.
-
-## Monetization Strategies Supported
-
-- **Display Advertising**: Google AdSense, Mediavine, AdThrive
-- **Affiliate Marketing**: Amazon Associates, ShareASale, Commission Junction
-- **E-commerce**: WooCommerce, digital products, merchandise
-- **Memberships**: Recurring subscriptions, tiered access
-- **Sponsored Content**: Brand partnerships, paid posts
-- **Donations**: PayPal donations, Ko-fi, Buy Me a Coffee
-- **Digital Products**: Courses, templates, ebooks
-- **Events & Ticketing**: Webinars, online courses, virtual events
-
-## Recommended Companion Plugins
-
-- **WooCommerce**: For e-commerce and product sales
-- **AffiliateWP**: Comprehensive affiliate program management
-- **Paid Member Subscriptions**: Easy membership and subscription setup
-- **Gravity Forms**: Advanced form creation for services
-- **Easy Google AdSense**: Optimized ad placement
-- **Mailchimp for WordPress**: Email marketing integration
-
-## API Documentation
-
-### Get Revenue Analysis
+[sro_monetization_widget type="affiliate" limit="5"]
 
 
-GET /wp-json/sro/v1/revenue-analysis
+Parameters:
+- `type`: Widget type (affiliate, sponsored, or ads)
+- `limit`: Number of items to display (default: 5)
+
+### REST API
+
+Retrieve analytics data via REST API:
 
 
-Returns revenue data for the past 30 days grouped by source.
-
-### Get Recommendations
+GET /wp-json/sro/v1/analytics
 
 
-GET /wp-json/sro/v1/recommendations
+Requires administrator privileges.
 
+## How It Works
 
-Returns personalized monetization recommendations.
+### Engagement Tracking
+The plugin tracks user behavior including:
+- Click events on monetized content
+- Scroll depth to determine engagement level
+- Time spent on page
+- Content interaction patterns
 
-### Track Revenue
+### Optimization Algorithm
+Data is analyzed to:
+1. Identify high-engagement sections of pages
+2. Recommend optimal ad placement zones
+3. Suggest affiliate link positioning
+4. Calculate engagement scores (0-100%)
 
+### Revenue Optimization
+- Dynamically adjusts monetization strategy based on content performance
+- Suggests content types with highest conversion potential
+- Tracks affiliate link click-through rates
+- Monitors ad viewability metrics
 
-POST /wp-json/sro/v1/track-revenue
+## Performance & Compatibility
 
+### Browser Support
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
 
-Payload:
+### WordPress Compatibility
+- WordPress 5.8 and above
+- PHP 7.4 and above
+- MySQL 5.7 and above
 
-{
-  "source": "affiliate_marketing",
-  "amount": 50.00,
-  "traffic_count": 1200
-}
+### Performance Impact
+- Minimal frontend impact (< 2KB JS)
+- Asynchronous tracking to prevent page slowdown
+- Database queries optimized with indexes
 
+## FAQ
 
-## Frequently Asked Questions
+**Q: Will this plugin slow down my site?**
+A: No. The plugin uses asynchronous tracking and is highly optimized. Frontend footprint is minimal.
 
-**Q: Does this plugin slow down my site?**
-A: No. Smart Revenue Optimizer uses minimal resources and only tracks data in the background. Revenue tracking can be disabled if needed.
+**Q: How long until I see results?**
+A: The plugin begins collecting engagement data immediately. Significant insights typically appear after 7-14 days of data collection.
 
-**Q: Can I use multiple monetization methods simultaneously?**
-A: Yes! The plugin is designed to help you manage multiple revenue streams at once and shows which ones perform best.
+**Q: Can I use this with AdSense?**
+A: Yes, Smart Revenue Optimizer works alongside Google AdSense and other ad networks.
 
-**Q: Will this replace my existing monetization plugins?**
-A: No. This plugin works alongside your existing tools (WooCommerce, AffiliateWP, etc.) and provides centralized analytics and recommendations.
-
-**Q: How often are recommendations updated?**
-A: Recommendations are updated daily based on the latest traffic and revenue data.
+**Q: Is user data private?**
+A: Yes. All tracking is anonymous and stored locally in your database. No data is sent to third parties.
 
 ## Support
 
-For issues, feature requests, or support, visit the plugin documentation or contact our support team.
-
-## License
-
-This plugin is licensed under the GPL v2 or later.
+For issues, feature requests, or support, visit our support portal or contact support@revenueoptimizer.com
 
 ## Changelog
 
 ### Version 1.0.0
 - Initial release
-- Multi-channel revenue tracking
-- Intelligent recommendation engine
-- Dashboard analytics
-- REST API integration
-- Revenue statistics shortcode
+- Engagement tracking system
+- Basic analytics dashboard
+- Settings configuration
+- REST API endpoints
+
+## License
+
+GPL v2 or later. See LICENSE file for details.
