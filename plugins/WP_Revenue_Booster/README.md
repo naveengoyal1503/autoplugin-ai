@@ -1,31 +1,29 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by intelligently rotating and optimizing affiliate links, ads, and sponsored content based on user behavior and conversion rates.
+Maximize your WordPress site's revenue by rotating affiliate links, coupons, and sponsored content based on user engagement.
 
 ## Features
-- Easy management of affiliate links, ad codes, and sponsored content
-- Shortcode to display rotating content
-- Basic conversion tracking
-- Admin dashboard for stats and settings
+- Easy-to-use admin interface for managing affiliate links, coupons, and sponsored content.
+- Automatic rotation of content types to maximize user engagement and revenue.
+- Simple integration with any WordPress theme.
 
 ## Installation
 1. Upload the plugin file to your WordPress plugins directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to the 'Revenue Booster' menu to configure your links, ads, and sponsored content.
+3. Go to the 'Revenue Booster' menu in your admin panel to configure settings.
 
 ## Setup
-- Add your affiliate links, ad codes, and sponsored content in the admin panel.
-- Use the shortcode `[revenue_booster type="affiliate"]`, `[revenue_booster type="ad"]`, or `[revenue_booster type="sponsored"]` in your posts or pages.
+- Add your affiliate links, coupons, and sponsored content in the admin panel.
+- Save your settings.
 
 ## Usage
-The plugin will rotate your content and track clicks/conversions. View stats in the admin dashboard.
+The plugin will automatically display rotated content at the bottom of your site. Customize the display by editing the plugin's CSS or using the provided hooks.
 
 ## Premium Features (Coming Soon)
-- Advanced analytics
-- A/B testing
-- Automated optimization
-- Integration with popular ad networks
+- Advanced analytics and reporting.
+- A/B testing for different content types.
+- Automated rotation rules based on user behavior.
 
 ---
 
-**Note:** This is the free version. Premium features require a paid upgrade.
+**Note:** This is a basic version. For advanced features, consider upgrading to the premium version.
