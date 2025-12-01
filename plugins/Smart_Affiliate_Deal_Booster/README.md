@@ -1,56 +1,66 @@
 # Smart Affiliate Deal Booster
 
-Smart Affiliate Deal Booster automatically finds and displays the best affiliate coupons and deals tailored to your WordPress content niche, helping you boost affiliate earnings effortlessly.
-
----
+Smart Affiliate Deal Booster helps you boost affiliate conversions by personalized deal popups and banners triggered by visitor behavior on your WordPress site.
 
 ## Features
 
-- Automatically matches and displays affiliate deals relevant to your post content.
-- Simple shortcode `[smart_affiliate_deals]` to insert deals anywhere.
-- Admin settings to configure API keys, max deals, and category exclusions.
-- Freemium architecture allowing upgrade for unlimited deals and analytics.
-- Lightweight, self-contained PHP plugin file.
-
----
+- Automatic affiliate deal popups triggered by user activity
+- Easily manage multiple affiliate deals via JSON input
+- Displays customizable titles, descriptions, and call-to-action links
+- Lightweight, no bloat frontend scripts
+- Admin panel for managing affiliate deals
+- Freemium-ready architecture for future premium extensions
 
 ## Installation
 
-1. Upload the plugin file to your WordPress plugins directory `/wp-content/plugins/`.
-2. Activate the plugin from the WordPress admin Dashboard under **Plugins**.
-3. Go to **Settings > Affiliate Deal Booster** to configure options.
-
----
+1. Upload `smart-affiliate-deal-booster.php` to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Deal Booster** to configure your affiliate deals.
 
 ## Setup
 
-- Enter your affiliate network API key if you want to pull live dynamic deals (optional).
-- Set the maximum number of deals to display.
-- Specify any categories to exclude deals from by slug (comma separated).
-- Save changes.
+- In the settings page, enter your affiliate deals as a JSON array, for example:
 
----
+
+[
+  {
+    "title": "Save 20% on Product X!",
+    "url": "https://example.com/deal1",
+    "description": "Limited time 20% discount for our visitors."
+  },
+  {
+    "title": "Get 15% Off Service Y",
+    "url": "https://example.com/deal2",
+    "description": "Use our exclusive affiliate link to save!"
+  }
+]
+
+
+- Save changes. Deals will be served randomly (future premium versions will include behavior targeting).
 
 ## Usage
 
-- Insert the shortcode `[smart_affiliate_deals]` anywhere in your posts or pages where you want affiliate deals to appear.
-- The plugin will automatically find deals partially matching your content keywords.
-- Upgrade to the Pro version for frequent updates, additional deal sources, and affiliate link tracking.
+- The plugin automatically shows a popup with a deal about 15 seconds after a visitor lands on your site.
+- Visitors can close the popup at any time.
+- You can customize appearance and behavior by editing CSS or extending the plugin.
+
+## FAQ
+
+**Q: Can I integrate this with other affiliate programs?**
+
+A: Currently, you can add any affiliate URLs manually in JSON. Premium versions will support multi-network integration.
+
+**Q: Can I control popup timing or frequency?**
+
+A: Basic timing is fixed but can be customized in the included JS. Premium versions will allow more control.
+
+## Changelog
+
+### 1.0
+- Initial release with popup affiliate deal display
+- Admin UI for deal management
+- AJAX-based deal retrieval
 
 ---
 
-## Monetization & Benefits
-
-Smart Affiliate Deal Booster uses a freemium model where the free version offers basic deal display functionality, perfect for new bloggers and small sites. The Pro version unlocks advanced features like unlimited deals, automatic syncing with popular affiliate APIs, and detailed affiliate link analytics to maximize commission revenue.
-
----
-
-## Support
-
-For issues, please contact the author or visit the plugin support forum on WordPress.org.
-
----
-
-## License
-
-GPLv2 or later
+For support and feature requests, visit the plugin support page.
