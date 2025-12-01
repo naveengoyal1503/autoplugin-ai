@@ -1,78 +1,104 @@
 # ContentBoost Pro
 
 ## Description
-ContentBoost Pro is an AI-powered content optimization plugin that helps WordPress bloggers and site owners maximize their SEO rankings, content readability, and monetization potential. Analyze your blog posts with a single click and receive actionable recommendations to increase traffic and revenue.
+
+ContentBoost Pro is a comprehensive WordPress monetization management plugin designed to help content creators maximize their revenue streams. The plugin combines intelligent ad placement management, affiliate link tracking, and detailed performance analytics in one easy-to-use dashboard.
 
 ## Features
 
-- **SEO Score Analysis**: Evaluates title length, meta descriptions, header structure, and internal linking
-- **Readability Score**: Analyzes sentence length, paragraph structure, and formatting for optimal reader engagement
-- **Monetization Potential Score**: Identifies opportunities for affiliate links, CTAs, sponsored content, and other revenue streams
-- **Actionable Recommendations**: Receive specific, prioritized suggestions for improving each aspect of your content
-- **Post Meta Box Integration**: Analyze content directly from the post editor
-- **Database Storage**: Tracks all historical analyses for trend monitoring
-- **Admin Dashboard**: View overall statistics and trends across all analyzed posts
+### Free Features
+- Google AdSense integration and management
+- Customizable ad placement positions (after title, middle of content, after content)
+- Basic analytics dashboard
+- Affiliate link shortcode support
+- Simple revenue tracking
+- Plugin settings management
+
+### Premium Features (Pro Tier - $9.99/month)
+- Advanced affiliate link tracking with click and conversion metrics
+- AI-powered content recommendations for maximum monetization
+- Detailed revenue analytics and charts
+- A/B testing for ad placements
+- Automated revenue reports via email
+- Priority support
+
+### Agency Features (Agency Tier - $24.99/month)
+- Manage multiple WordPress sites from one dashboard
+- Advanced API access
+- Custom integration support
+- White-label options
+- Dedicated account manager
 
 ## Installation
 
-1. Download the plugin files
-2. Upload the `contentboost-pro` folder to `/wp-content/plugins/` directory
-3. Activate the plugin through the 'Plugins' menu in WordPress
-4. Navigate to the ContentBoost Pro menu to access the dashboard
+1. Download the ContentBoost Pro plugin file
+2. In WordPress admin panel, go to Plugins > Add New
+3. Click "Upload Plugin" and select the ContentBoost Pro file
+4. Click "Install Now" and then "Activate"
+5. Navigate to ContentBoost Pro in the admin menu to configure
 
-## Setup
+## Setup Guide
 
-No additional configuration required. The plugin automatically creates the necessary database tables upon activation.
+### Initial Configuration
+
+1. **Google AdSense Setup**
+   - Go to ContentBoost Pro > Ad Settings
+   - Enter your Google AdSense ID
+   - Select your preferred ad placement positions
+   - Click "Save Ad Settings"
+
+2. **Affiliate Link Management**
+   - Go to ContentBoost Pro > Affiliate Links (Premium feature)
+   - Add your affiliate links with product details
+   - Copy shortcodes for use in posts
+   - Track performance in real-time
+
+3. **Analytics**
+   - Navigate to ContentBoost Pro > Analytics
+   - View your revenue trends, top performing content, and conversion rates
+   - Export reports for further analysis
 
 ## Usage
 
-### Analyzing Posts
+### Adding Affiliate Links in Posts
 
-1. Open any post in the WordPress editor
-2. Look for the "ContentBoost Analysis" box in the sidebar
-3. Click "Analyze Post" button
-4. Wait for the analysis to complete
-5. Review your scores and recommendations
+Use the affiliate box shortcode in your post editor:
 
-### Understanding Your Scores
 
-- **SEO Score (0-100)**: Based on title optimization, meta descriptions, header usage, and internal linking
-- **Readability Score (0-100)**: Evaluates sentence length, paragraph structure, and content formatting
-- **Monetization Score (0-100)**: Assesses revenue opportunities including content length, affiliate links, and CTAs
+[contentboost_affiliate_box title="Product Name" url="https://affiliate-link.com" image="https://image-url.jpg" price="$29.99"]
 
-### Taking Action
 
-Each recommendation includes:
-- **Type**: Category of improvement (SEO, readability, content, or monetization)
-- **Priority**: High, medium, or low urgency
-- **Specific Suggestion**: Actionable advice for improvement
+### Manual Ad Placement
 
-## Premium Features (Roadmap)
+The plugin automatically injects ads at positions you select. For manual placement, add to your theme's `functions.php` or use the ContentBoost Pro hooks.
 
-- Advanced keyword research integration
-- Competitor content analysis
-- AI-powered content rewriting suggestions
-- Automated content scheduling
-- White-label licensing for agencies
+### Viewing Dashboard Statistics
 
-## Monetization Methods
+1. Go to ContentBoost Pro > Dashboard
+2. View your monthly revenue overview
+3. Check active ad placements
+4. Monitor tracked affiliate links
+5. Analyze top performing content
 
-- Freemium model with premium feature upsells
-- Affiliate commissions for recommended SEO and marketing tools
-- White-label licensing for WordPress agencies
-- Content marketing partnerships with SaaS platforms
+## Monetization Strategy
+
+ContentBoost Pro helps you implement multiple monetization strategies:
+
+- **Direct Monetization**: Manage membership content and digital product sales through integration
+- **Indirect Monetization**: Optimize ad placement and affiliate link performance
+- **Sponsored Content**: Track sponsored post performance
+- **Donations**: Add donation blocks to your site
 
 ## Requirements
 
-- WordPress 5.0+
-- PHP 7.2+
-- MySQL 5.7+
-- User must have 'edit_posts' capability
+- WordPress 5.0 or higher
+- PHP 7.2 or higher
+- Active Google AdSense account (for ad integration)
 
 ## Support
 
-For issues, feature requests, or support, visit our website or contact support@contentboostpro.com
+For support and feature requests, visit our website or contact our support team through the plugin dashboard.
 
 ## License
 
-GPL2 - See LICENSE file for details
+GPL v2 or later
