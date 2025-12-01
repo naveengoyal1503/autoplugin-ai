@@ -1,33 +1,29 @@
 # WP SmartPaywall
 
-WP SmartPaywall is a dynamic paywall plugin that intelligently unlocks premium content based on user engagement, subscription status, or micro-payments.
+A dynamic paywall plugin for WordPress that intelligently unlocks premium content based on user engagement, subscription status, or micro-payments.
 
 ## Features
-- Unlock content via subscription, micro-payment, or user engagement (e.g., social share)
-- Easy-to-use shortcode for locking content
-- Admin settings for configuring unlock methods and pricing
-- AJAX-powered unlocking for seamless user experience
+- Enable/disable paywall globally
+- Choose paywall mode: subscription, engagement, or micro-payment
+- Set threshold for engagement-based unlocking
+- Shortcode support for manual paywall
+- User read count tracking
+- Premium access capability for subscribers
 
 ## Installation
-1. Upload the `wp-smartpaywall` folder to the `/wp-content/plugins/` directory
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > SmartPaywall to configure the unlock method and price
+3. Go to Settings > SmartPaywall to configure options
 
 ## Setup
-- Use the `[smartpaywall]` shortcode to lock content:
-  
-  [smartpaywall method="micro" price="2.99"]Your premium content here[/smartpaywall]
-  
-- Available methods: `subscription`, `micro`, `engagement`
+- Enable the paywall and select your preferred mode
+- Set the threshold for engagement-based unlocking
+- Assign premium access to users as needed
 
 ## Usage
-- For subscription: Users must subscribe to unlock
-- For micro-payment: Users pay a set price to unlock
-- For engagement: Users unlock by sharing on social media
-
-## Requirements
-- WordPress 5.0 or higher
-- PHP 7.0 or higher
+- The paywall will automatically apply to all posts based on your settings
+- Use the `[smartpaywall]This content is behind a paywall.[/smartpaywall]` shortcode for manual paywall
+- Monitor and manage user access through user roles and capabilities
 
 ## Support
-For support, please visit https://example.com/support
+For support and feature requests, please visit the plugin website.
