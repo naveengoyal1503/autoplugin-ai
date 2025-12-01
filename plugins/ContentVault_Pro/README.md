@@ -1,158 +1,91 @@
-# ContentVault Pro - WordPress Membership & Subscription Plugin
+# ContentVault Pro - WordPress Membership Plugin
 
 ## Overview
 
-ContentVault Pro is a comprehensive WordPress membership and subscription plugin that enables site owners to monetize their content through flexible subscription models, tiered access levels, and recurring billing.
+ContentVault Pro is a powerful membership and content gating plugin that enables WordPress site owners to monetize their content through subscription-based membership tiers. Build a loyal community, manage recurring revenue, and protect premium content with ease.
 
 ## Features
 
-### Core Monetization Features
-
-- **Flexible Subscription Tiers**: Create multiple subscription levels with custom pricing and features
-- **Content Protection**: Lock posts, pages, and custom content behind subscription walls
-- **Recurring Billing**: Support for monthly, quarterly, and annual subscription cycles
-- **Freemium Model Support**: Offer free and premium tiers to maximize conversion
-- **Payment Processing**: Integrated payment gateway support for recurring transactions
-- **Subscriber Management**: Comprehensive dashboard to manage all active subscribers
-- **Revenue Analytics**: Track monthly revenue, subscriber growth, and churn rates
-- **Protected Shortcode**: Use `[contentvault_protected tier="basic"]Your content here[/contentvault_protected]` to protect specific content
-
-### User Experience
-
-- **Easy Content Locking**: Mark posts as protected with required tier level
-- **Subscription Dashboard**: Users can manage their active subscriptions
-- **Multiple Payment Methods**: Support for credit cards, PayPal, and more
-- **Email Notifications**: Automated subscription confirmations and renewal reminders
-- **Responsive Design**: Mobile-friendly subscriber interface
-
-### Admin Dashboard
-
-- **Revenue Overview**: Real-time dashboard showing total subscribers and monthly revenue
-- **Subscriber List**: View all subscribers with tier, join date, and status
-- **Tier Management**: Create and edit subscription tiers with flexible pricing
-- **Transaction History**: Track all payments and refunds
-- **Reports**: Detailed analytics on subscriber acquisition and retention
+- **Flexible Membership Tiers**: Create unlimited subscription tiers with custom pricing and billing periods
+- **Recurring Payments**: Automated recurring billing with monthly and yearly options
+- **Content Gating**: Restrict access to posts, pages, and custom content to paying members
+- **Member Management Dashboard**: View active members, subscription status, and billing history
+- **Payment Gateway Integration**: Support for Stripe and PayPal
+- **Email Integration**: Connect with Mailchimp, ConvertKit, and Constant Contact for subscriber management
+- **Shortcodes**: Simple shortcodes for membership forms and gated content
+- **Analytics**: Track member growth, retention rates, and revenue metrics
+- **Tiered Access Levels**: Offer different content access levels for different subscription tiers
+- **Freemium Model**: Free tier with 1 membership level, premium tier with unlimited features
 
 ## Installation
 
-1. Download the ContentVault Pro plugin
-2. Upload to `/wp-content/plugins/` directory or install via WordPress plugin upload
-3. Activate the plugin from WordPress admin panel
-4. Navigate to "ContentVault Pro" in the left menu
-5. Configure your subscription tiers and payment settings
+1. Upload the `contentvault-pro` folder to `/wp-content/plugins/`
+2. Activate the plugin through the WordPress admin dashboard
+3. Navigate to **ContentVault Pro** in the left menu
+4. Configure payment settings and create your first membership tier
 
 ## Setup
 
-### Step 1: Create Subscription Tiers
-
-1. Go to **ContentVault Pro > Manage Tiers**
-2. Click "Add New Tier"
-3. Enter tier name (e.g., "Basic", "Premium", "Elite")
-4. Set monthly price and billing cycle
-5. Add features available at this tier
-6. Save changes
-
-### Step 2: Connect Payment Gateway
-
-1. Go to **Settings > Payment Gateway**
-2. Select your preferred processor (Stripe, PayPal, etc.)
-3. Enter API credentials
-4. Test the connection
-5. Save settings
-
-### Step 3: Protect Content
-
-**Method 1: Posts and Pages**
-- Edit any post or page
-- Check "Protect this content" in ContentVault metabox
-- Select required subscription tier
-- Publish
-
-**Method 2: Using Shortcode**
-
-[contentvault_protected tier="premium" message="This content requires a premium subscription"]
-Your premium content goes here
-[/contentvault_protected]
-
-
-### Step 4: Customize Settings
+### Step 1: Configure Payment Methods
 
 1. Go to **ContentVault Pro > Settings**
-2. Configure trial periods (optional)
-3. Set cancellation policies
-4. Customize email templates
-5. Save preferences
+2. Enter your Stripe API Key or PayPal email address
+3. Set the redirect URL for after successful purchases
+4. Save settings
+
+### Step 2: Create Membership Tiers
+
+1. Navigate to **ContentVault Pro > Membership Tiers**
+2. Click **Add New Tier**
+3. Enter tier name, description, price, and billing period
+4. Define included features
+5. Save tier
+
+### Step 3: Gate Your Content
+
+- Use `[cvp_gated_content tier_id="1"]Your premium content here[/cvp_gated_content]` to restrict content to specific tiers
+- Or assign posts to the **Gated Content** post type for automatic gating
 
 ## Usage
 
-### For Site Owners
+### Display Membership Form
 
-- **Monitor Revenue**: View real-time statistics on the dashboard
-- **Manage Subscribers**: Access subscriber list with filtering and export options
-- **Create Promotions**: Offer limited-time discounts or special pricing
-- **Generate Reports**: Export subscriber data and revenue reports
+Add this shortcode to any page to display your membership tiers:
 
-### For Subscribers
 
-- **Browse Tiers**: View available subscription options
-- **Choose Plan**: Select tier matching their needs
-- **Manage Account**: Update payment method, pause, or cancel anytime
-- **Access Content**: Instantly access protected content upon subscription
+[cvp_membership_form]
 
-## Pricing Models Supported
 
-- **Monthly Recurring**: Charge customers every month
-- **Annual Subscriptions**: Offer yearly billing with discount incentive
-- **One-Time Payment**: Sell lifetime access to content
-- **Pay-What-You-Want**: Let customers choose their price
-- **Tiered Pricing**: Offer multiple tiers at different price points
+### Gate Specific Content
 
-## Advanced Features
+Wrap content with the gated content shortcode:
 
-### Affiliate Program Integration
 
-If AffiliateWP is installed, ContentVault Pro automatically integrates to track commissions on subscription sales.
+[cvp_gated_content tier_id="2"]
+This content is only visible to members of tier 2
+[/cvp_gated_content]
 
-### Multi-Currency Support
 
-Support for 150+ currencies with automatic conversion rates.
+### Manage Members
 
-### Email Marketing Integration
+View all members and their subscription status in **ContentVault Pro > Members**.
 
-Automatic subscriber sync with Mailchimp, ConvertKit, and other email platforms.
+## Monetization
 
-## Statistics & Performance
+ContentVault Pro uses a freemium monetization model:
 
-Based on industry data, ContentVault Pro users typically see:
+- **Free Tier**: 1 membership tier, unlimited members, basic analytics
+- **Premium Tier ($49/year)**: Unlimited tiers, advanced analytics, email integrations, priority support, API access
 
-- **65% higher retention** with monthly vs. one-time pricing models
-- **40% conversion rate** improvement using freemium strategies
-- **30% of total revenue** from complementary monetization methods
-- **50%+ stability boost** in income with subscription models vs. ads alone
-
-## Support & Documentation
-
-For detailed documentation, tutorials, and support:
-- Visit: https://contentvault.example.com/docs
-- Email: support@contentvault.example.com
-- Community Forum: https://community.contentvault.example.com
-
-## License
-
-GNU General Public License v2 or later
+Upgrade your license in the plugin settings to unlock premium features.
 
 ## Requirements
 
-- WordPress 5.0 or higher
-- PHP 7.4 or higher
-- MySQL 5.7 or higher
-- At least one payment gateway account
+- WordPress 5.0+
+- PHP 7.2+
+- MySQL 5.6+
+- Active payment processor account (Stripe or PayPal)
 
-## Changelog
+## Support
 
-### Version 1.0.0
-- Initial release
-- Core subscription management
-- Payment processing integration
-- Dashboard and reporting
-- Content protection features
+Visit our documentation at contentvaultpro.com or email support@contentvaultpro.com for assistance.
