@@ -7,150 +7,149 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  * Plugin Name: WP SmartPaywall
  * Plugin URI: https://example.com/wp-smartpaywall
  * Description: A dynamic paywall plugin that intelligently unlocks premium content based on user engagement, subscription status, or micro-payments.
- * Version: 1.0.0
+ * Version: 1.0
  * Author: Your Name
  * Author URI: https://example.com
  * License: GPL2
  */
 
-if (!defined('ABSPATH')) {
-    exit;
+// Prevent direct access
+define('ABSPATH') or die('No script kiddies please!');
+
+// Register activation and deactivation hooks
+register_activation_hook(__FILE__, 'wp_smartpaywall_activate');
+register_deactivation_hook(__FILE__, 'wp_smartpaywall_deactivate');
+
+function wp_smartpaywall_activate() {
+    // Add default options
+    add_option('wp_smartpaywall_enabled', true);
+    add_option('wp_smartpaywall_mode', 'subscription'); // subscription, engagement, micropayment
+    add_option('wp_smartpaywall_threshold', 3); // e.g., number of articles read
 }
 
-class WPSmartPaywall {
+function wp_smartpaywall_deactivate() {
+    // Cleanup if needed
+}
 
-    public function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_unlock_content', array($this, 'ajax_unlock_content'));
-        add_action('wp_ajax_nopriv_unlock_content', array($this, 'ajax_unlock_content'));
+// Add admin menu
+add_action('admin_menu', 'wp_smartpaywall_admin_menu');
+function wp_smartpaywall_admin_menu() {
+    add_options_page(
+        'WP SmartPaywall Settings',
+        'SmartPaywall',
+        'manage_options',
+        'wp-smartpaywall',
+        'wp_smartpaywall_settings_page'
+    );
+}
+
+// Settings page
+function wp_smartpaywall_settings_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+    if (isset($_POST['wp_smartpaywall_submit'])) {
+        update_option('wp_smartpaywall_enabled', isset($_POST['enabled']) ? 1 : 0);
+        update_option('wp_smartpaywall_mode', sanitize_text_field($_POST['mode']));
+        update_option('wp_smartpaywall_threshold', intval($_POST['threshold']));
+        echo '<div class="updated"><p>Settings saved.</p></div>';
+    }
+    $enabled = get_option('wp_smartpaywall_enabled', true);
+    $mode = get_option('wp_smartpaywall_mode', 'subscription');
+    $threshold = get_option('wp_smartpaywall_threshold', 3);
+    ?>
+    <div class="wrap">
+        <h1>WP SmartPaywall Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Enable SmartPaywall</th>
+                    <td><input type="checkbox" name="enabled" value="1" <?php checked($enabled, 1); ?> /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Paywall Mode</th>
+                    <td>
+                        <select name="mode">
+                            <option value="subscription" <?php selected($mode, 'subscription'); ?>>Subscription</option>
+                            <option value="engagement" <?php selected($mode, 'engagement'); ?>>Engagement</option>
+                            <option value="micropayment" <?php selected($mode, 'micropayment'); ?>>Micro-payment</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Threshold</th>
+                    <td><input type="number" name="threshold" value="<?php echo esc_attr($threshold); ?>" /></td>
+                </tr>
+            </table>
+            <?php submit_button('Save Changes', 'primary', 'wp_smartpaywall_submit'); ?>
+        </form>
+    </div>
+    <?php
+}
+
+// Apply paywall logic
+add_filter('the_content', 'wp_smartpaywall_apply_paywall');
+function wp_smartpaywall_apply_paywall($content) {
+    if (!get_option('wp_smartpaywall_enabled', true)) return $content;
+
+    $mode = get_option('wp_smartpaywall_mode', 'subscription');
+    $threshold = get_option('wp_smartpaywall_threshold', 3);
+
+    // Check if user is logged in and has premium access
+    if (is_user_logged_in() && user_can(get_current_user_id(), 'premium_access')) {
+        return $content;
     }
 
-    public function init() {
-        add_shortcode('smartpaywall', array($this, 'shortcode'));
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('wp-smartpaywall', plugin_dir_url(__FILE__) . 'js/smartpaywall.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('wp-smartpaywall', 'smartpaywall_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
-    }
-
-    public function admin_menu() {
-        add_options_page('WP SmartPaywall', 'SmartPaywall', 'manage_options', 'wp-smartpaywall', array($this, 'admin_page'));
-    }
-
-    public function admin_page() {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-        if (isset($_POST['save_settings'])) {
-            update_option('smartpaywall_unlock_method', sanitize_text_field($_POST['unlock_method']));
-            update_option('smartpaywall_price', floatval($_POST['price']));
-            echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
-        }
-        $unlock_method = get_option('smartpaywall_unlock_method', 'subscription');
-        $price = get_option('smartpaywall_price', 2.99);
-        ?>
-        <div class="wrap">
-            <h1>WP SmartPaywall Settings</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th><label for="unlock_method">Unlock Method</label></th>
-                        <td>
-                            <select name="unlock_method" id="unlock_method">
-                                <option value="subscription" <?php selected($unlock_method, 'subscription'); ?>>Subscription</option>
-                                <option value="micro" <?php selected($unlock_method, 'micro'); ?>>Micro-payment</option>
-                                <option value="engagement" <?php selected($unlock_method, 'engagement'); ?>>Engagement (e.g., social share)</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><label for="price">Price (for micro-payments)</label></th>
-                        <td><input type="number" step="0.01" name="price" id="price" value="<?php echo esc_attr($price); ?>" /></td>
-                    </tr>
-                </table>
-                <p class="submit">
-                    <input type="submit" name="save_settings" class="button-primary" value="Save Settings" />
-                </p>
-            </form>
-        </div>
-        <?php
-    }
-
-    public function shortcode($atts, $content = null) {
-        $atts = shortcode_atts(array(
-            'method' => get_option('smartpaywall_unlock_method', 'subscription'),
-            'price' => get_option('smartpaywall_price', 2.99)
-        ), $atts);
-
-        if (is_user_logged_in() && user_can(get_current_user_id(), 'read')) {
-            return $content;
-        }
-
-        if ($atts['method'] === 'engagement') {
-            return '<div class="smartpaywall-engagement">
-                        <p>This content is locked. Share this post on social media to unlock.</p>
-                        <button onclick="smartpaywall_share()">Share to Unlock</button>
-                        <div id="smartpaywall-message"></div>
-                    </div>';
-        } elseif ($atts['method'] === 'micro') {
-            return '<div class="smartpaywall-micro">
-                        <p>This content costs $' . esc_html($atts['price']) . ' to unlock.</p>
-                        <button onclick="smartpaywall_unlock(' . esc_js($atts['price']) . ')">Pay to Unlock</button>
-                        <div id="smartpaywall-message"></div>
-                    </div>';
-        } else {
-            return '<div class="smartpaywall-subscription">
-                        <p>Subscribe to unlock this content.</p>
-                        <a href="/subscribe">Subscribe Now</a>
-                    </div>';
-        }
-    }
-
-    public function ajax_unlock_content() {
-        if (!wp_verify_nonce($_POST['nonce'], 'unlock_content')) {
-            wp_die('Security check failed');
-        }
-
-        $price = floatval($_POST['price']);
-        // Simulate payment processing
-        if ($price > 0) {
+    // Apply paywall logic based on mode
+    switch ($mode) {
+        case 'engagement':
+            $read_count = get_user_meta(get_current_user_id(), 'wp_smartpaywall_read_count', true);
+            if ($read_count >= $threshold) {
+                return $content;
+            }
+            // Increment read count
+            update_user_meta(get_current_user_id(), 'wp_smartpaywall_read_count', $read_count + 1);
+            break;
+        case 'micropayment':
+            // Placeholder for micropayment logic
             // In a real plugin, integrate with a payment gateway
-            update_user_meta(get_current_user_id(), 'smartpaywall_paid', true);
-            wp_send_json_success(array('message' => 'Content unlocked!'));
-        } else {
-            wp_send_json_error(array('message' => 'Payment failed'));
-        }
+            return $content; // Simplified for demo
+        default:
+            // Subscription mode
+            return '<p>This content is behind a paywall. Please subscribe to access.</p>';
+    }
+
+    return $content;
+}
+
+// Add premium access capability
+add_action('init', 'wp_smartpaywall_add_capabilities');
+function wp_smartpaywall_add_capabilities() {
+    $role = get_role('subscriber');
+    if (!$role->has_cap('premium_access')) {
+        $role->add_cap('premium_access');
     }
 }
 
-new WPSmartPaywall;
-
-// JavaScript file: js/smartpaywall.js
-// (This would be a separate file, but for this example, it's included as a comment)
-/*
-function smartpaywall_unlock(price) {
-    jQuery.post(smartpaywall_ajax.ajax_url, {
-        action: 'unlock_content',
-        price: price,
-        nonce: '<?php echo wp_create_nonce('unlock_content'); ?>'
-    }, function(response) {
-        if (response.success) {
-            jQuery('#smartpaywall-message').html('<p>' + response.data.message + '</p>');
-            location.reload();
-        } else {
-            jQuery('#smartpaywall-message').html('<p>' + response.data.message + '</p>');
-        }
-    });
+// Shortcode for manual paywall
+add_shortcode('smartpaywall', 'wp_smartpaywall_shortcode');
+function wp_smartpaywall_shortcode($atts, $content = null) {
+    if (is_user_logged_in() && user_can(get_current_user_id(), 'premium_access')) {
+        return $content;
+    }
+    return '<p>This content is behind a paywall. Please subscribe to access.</p>';
 }
 
-function smartpaywall_share() {
-    // Simulate sharing and unlocking
-    jQuery('#smartpaywall-message').html('<p>Content unlocked via engagement!</p>');
-    location.reload();
+// Enqueue scripts and styles
+add_action('wp_enqueue_scripts', 'wp_smartpaywall_enqueue_scripts');
+function wp_smartpaywall_enqueue_scripts() {
+    wp_enqueue_style('wp-smartpaywall', plugins_url('style.css', __FILE__));
 }
-*/
+
+// Create style.css if needed
+// This is a simplified version; in reality, you'd create a separate file
+add_action('wp_head', 'wp_smartpaywall_inline_styles');
+function wp_smartpaywall_inline_styles() {
+    echo '<style>.wp-smartpaywall { background: #f0f0f0; padding: 20px; border: 1px solid #ccc; }</style>';
+}
 ?>
