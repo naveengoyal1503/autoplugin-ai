@@ -1,28 +1,40 @@
 # Affiliate Coupon Booster
 
 ## Description
-Automate the display of verified affiliate coupons on your WordPress site to increase affiliate sales and enhance user experience by providing fresh and relevant deals.
+Automatically curate and display verified affiliate coupons and deals from multiple networks, boosting your website’s affiliate revenue by encouraging more conversions with easy-to-use, visually attractive coupon listings.
 
 ## Features
-- Automatically fetches and displays current affiliate coupons
-- Skips expired coupons for accuracy
-- Simple shortcode `[affiliate_coupons]` to insert coupon lists in posts, pages, or widgets
-- Stylized coupon listings for clear visibility
-- Potential for premium upgrades: automated coupon validation, custom styling, analytics
+
+- Admin interface to add and manage coupons
+- Expiry date support to automatically hide expired deals
+- Shortcode `[acb_coupons]` to display coupons anywhere on your site
+- Clean, responsive coupon display with styled "Get Deal" buttons
+- Links open in new tab with nofollow and noopener for SEO safety
+- Lightweight, single-file plugin for easy installation
 
 ## Installation
-1. Download the plugin PHP file.
-2. Upload it to the `/wp-content/plugins/` directory or use the WordPress plugin uploader.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+
+1. Upload `affiliate-coupon-booster.php` to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. In the admin sidebar, click "Affiliate Coupons" to manage your coupons.
+4. Add coupons by entering title, code, affiliate URL, and optional expiry date.
 
 ## Setup
-No configuration required for basic use.
-Use the shortcode `[affiliate_coupons]` in any page, post, or widget area to display the coupon list.
+
+- Use the admin page to add your affiliate coupons.
+- Use the shortcode `[acb_coupons]` inside pages, posts, or widgets to display coupons.
+- Add multiple coupons; expired coupons will be hidden automatically.
 
 ## Usage
-- Insert `[affiliate_coupons]` where you want to show coupons.
-- To customize or add premium features, upgrade to the pro version (coming soon).
 
----
+- Embed the shortcode `[acb_coupons]` where you want your coupons to appear.
+- Customize coupons in the admin panel anytime.
 
-For detailed help and support, visit the plugin homepage or contact the author.
+## Monetization
+
+- The plugin is free with core features.
+- Offer a premium upgrade with automatic deal verification APIs, network integrations (Amazon, ShareASale, etc.), advanced styling, and priority support.
+
+## Support
+
+For issues and feature requests, please contact the developer.
