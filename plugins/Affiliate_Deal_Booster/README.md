@@ -1,32 +1,33 @@
 # Affiliate Deal Booster
 
 ## Description
-Affiliate Deal Booster is a WordPress plugin designed to help affiliate marketers and bloggers boost conversions by automatically fetching and displaying exclusive affiliate deals and coupons from multiple networks within a customizable widget.
+Affiliate Deal Booster is a powerful WordPress plugin designed to automatically aggregate, display, and track affiliate deals and coupon codes tailored to your site's niche. By presenting engaging and relevant offers, it helps boost your affiliate revenue through increased visitor engagement and conversion rates.
 
 ## Features
-- Connect multiple affiliate networks with API keys (Amazon, Commission Junction, Impact)
-- Automatically fetch and update deals and coupons
-- Display deals in a clean, responsive widget with shortcode `[affiliate_deals]`
-- Customize widget title and number of deals to show
-- Freemium model: basic features free, premium planned for enhanced styling, analytics, and additional networks
+- Add, edit, and remove affiliate deals easily from the WordPress admin.
+- Display deals anywhere on your site using the `[adb_deals]` shortcode.
+- Track clicks on affiliate links directly within the plugin.
+- Expiry dates for deals to automatically hide expired offers.
+- Responsive and clean deals display layout.
+- Freemium-ready: Easily extendable for premium features such as analytics and personalized recommendations.
 
 ## Installation
-1. Upload the plugin file to the `/wp-content/plugins/` directory and activate it from the WordPress admin panel.
-2. Navigate to **Settings > Affiliate Deal Booster** to enter your affiliate network API keys and configure the widget settings.
-3. Place the shortcode `[affiliate_deals]` in posts, pages, or widgets where you want the deals displayed.
+1. Upload the plugin PHP file to your `/wp-content/plugins/` directory or install it via the WordPress admin plugin installer.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to **Affiliate Deals** in the WordPress admin menu to add your deals.
 
 ## Setup
-- Enter your API keys for supported affiliate networks under the plugin settings page.
-- Customize the widget title.
-- Set how many deals to display (default is 5).
-- Save settings.
+- In the Affiliate Deals admin page, click *Add New Deal* to insert your affiliate offers.
+- Enter the deal title, affiliate URL, optional description, expiry date, and save.
+- The plugin will track the number of clicks each deal receives automatically.
 
 ## Usage
-- Insert the shortcode `[affiliate_deals]` in any post, page, or text widget to show the latest affiliate deals.
-- Use the plugin settings page to manage network connection and update intervals (future versions).
+- To display deals on any post/page or widget, insert the shortcode `[adb_deals count="3"]` where 3 is the number of deals to show (default is 5).
+- Use affiliate links provided in the plugin to allow click tracking and maximize your commission insights.
 
-**Note:** Current version uses placeholder deal data; integration with real networks requires API access and credentials.
+## Support
+For support and feature requests, please contact the plugin author via [your support email or site].
 
----
-
-For more advanced features and support, future premium versions will be available.
+## Changelog
+### 1.0
+- Initial release with deal management, shortcode display, and click tracking features.
