@@ -1,32 +1,37 @@
 # Affiliate Deal Tracker
 
-Affiliate Deal Tracker is a WordPress plugin designed for affiliate marketers and bloggers to easily manage and display affiliate coupon codes and special deals on their site with built-in click tracking and deal management.
+Affiliate Deal Tracker is a WordPress plugin designed to help affiliate marketers and bloggers create, manage, and display exclusive coupon deals and affiliate links with click tracking.
 
 ## Features
 
-- Add, edit, and delete affiliate deals with coupon codes
-- Display deals anywhere using a simple shortcode `[adt_deals]`
-- Track clicks on each affiliate deal for performance insights
-- Clean, responsive deal layout styling
-- Handles affiliate URL redirects with click counting
-- Simple admin interface for deal management
+- Custom post type for affiliate deals with coupon codes and expiry dates
+- Click tracking on affiliate links to monitor deal performance
+- Shortcode `[aff_deals]` to display latest deals anywhere on the site
+- Displays coupon codes and expiry dates with each deal
+- Simple, clean deal listing with customizable post titles and descriptions
 
 ## Installation
 
-1. Upload the `affiliate-deal-tracker.php` file to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the WordPress admin panel.
-3. Go to the 'Affiliate Deals' menu in the admin dashboard.
-4. Add your affiliate deals including title, coupon code, URL, and description.
+1. Upload the `affiliate-deal-tracker.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. You will find a new menu "Affiliate Deals" in your WordPress admin sidebar.
 
 ## Setup
 
-- To show deals on your site, insert the shortcode `[adt_deals]` on any post, page, or widget.
-- Each deal’s "Redeem Deal" button will track clicks and redirect visitors to your affiliate URL.
+1. Go to "Affiliate Deals" in your dashboard.
+2. Click "Add New" to create a new deal.
+3. Enter the deal title, description, affiliate URL, optional coupon code, and expiry date.
+4. Publish the deal.
 
 ## Usage
 
-- Navigate to the Affiliate Deals menu to add or edit deals.
-- Copy the shortcode `[adt_deals]` where you want the deals to appear.
-- Monitor click counts in the admin list to see how your deals are performing.
+- Add the shortcode `[aff_deals count="5"]` to any post or page to display the latest 5 active deals.
+- Visitors clicking the deal links will be redirected through your server to track clicks.
 
-*Upgrade to the upcoming premium version for enhanced analytics, automatic deal imports, and more display options.*
+## Monetization
+
+The plugin can be offered as a free version with basic deal creation and display functionality. A premium subscription version could add features such as automatic deal import via affiliate network APIs, detailed analytics dashboards, and advanced display templates to drive higher affiliate conversions.
+
+## Support
+
+For support or feature requests, please contact the plugin author through the WordPress support forums.
