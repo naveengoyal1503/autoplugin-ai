@@ -1,148 +1,165 @@
-<?php
 /*
-Plugin Name: Affiliate Coupon & Deal Aggregator
-Description: Aggregate affiliate coupons and deals with tracking to monetize your WordPress site.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Coupon___Deal_Aggregator.php
 */
+<?php
+/**
+ * Plugin Name: Affiliate Coupon & Deal Aggregator
+ * Plugin URI: https://example.com/plugins/affiliate-coupon-deal-aggregator
+ * Description: Aggregates coupon/deal feeds with affiliate link integration to monetize via affiliate commissions.
+ * Version: 1.0
+ * Author: Generated
+ * License: GPL2
+ */
 
-if (!defined('ABSPATH')) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
 
-class AffiliateCouponAggregator {
-    private static $instance = null;
-    private $coupons = [];
-    private $option_name = 'aca_coupons_data';
+class AffiliateCouponDealAggregator {
+    private $option_name = 'acda_coupon_feeds';
+    private $affiliate_id_option = 'acda_affiliate_id';
 
-    public static function instance() {
-        if (self::$instance == null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
+    public function __construct() {
+        add_action('admin_menu',array($this,'add_admin_menu'));
+        add_action('admin_init',array($this,'settings_init'));
+        add_shortcode('acda_coupons',array($this,'render_coupons_shortcode'));
     }
 
-    private function __construct() {
-        // Load coupons on init
-        add_action('init', [$this, 'load_coupons']);
-        // Shortcode to display coupons
-        add_shortcode('affiliate_coupons', [$this, 'render_coupons_shortcode']);
-        // Admin menu
-        add_action('admin_menu', [$this, 'admin_menu']);
-        // Register settings
-        add_action('admin_init', [$this, 'register_settings']);
+    public function add_admin_menu() {
+        add_menu_page('Affiliate Coupons','Affiliate Coupons','manage_options','acda_affiliate_coupons',array($this,'options_page'),'dashicons-tickets-alt',26);
     }
 
-    public function load_coupons() {
-        $stored = get_option($this->option_name, []);
-        if (!empty($stored)) {
-            $this->coupons = $stored;
-        }
+    public function settings_init() {
+        register_setting('acda_settings','acda_coupon_feeds');
+        register_setting('acda_settings','acda_affiliate_id');
+
+        add_settings_section('acda_section','Coupon Feeds Settings',null,'acda_settings');
+
+        add_settings_field(
+            'acda_coupon_feeds',
+            'Coupon Feed URLs (one per line)',
+            array($this,'coupon_feeds_render'),
+            'acda_settings',
+            'acda_section'
+        );
+
+        add_settings_field(
+            'acda_affiliate_id',
+            'Affiliate ID / Tracking Param',
+            array($this,'affiliate_id_render'),
+            'acda_settings',
+            'acda_section'
+        );
     }
 
-    public function admin_menu() {
-        add_menu_page('Coupon Aggregator', 'Coupon Aggregator', 'manage_options', 'aca-settings', [$this, 'settings_page'], 'dashicons-tickets-alt');
+    public function coupon_feeds_render() {
+        $value = get_option('acda_coupon_feeds','');
+        echo '<textarea cols="50" rows="8" name="acda_coupon_feeds">'.esc_textarea($value).'</textarea>';
+        echo '<p class="description">Enter one or more RSS feed URLs for coupon/deal feeds.</p>';
     }
 
-    public function register_settings() {
-        register_setting('aca_settings_group', $this->option_name, [$this, 'validate_coupons']);
+    public function affiliate_id_render() {
+        $value = get_option('acda_affiliate_id','');
+        echo '<input type="text" name="acda_affiliate_id" value="'.esc_attr($value).'" />';
+        echo '<p class="description">Your affiliate tracking parameter to append to links, e.g., ?affid=1234</p>';
     }
 
-    public function validate_coupons($input) {
-        // Sanitize coupons array
-        if (!is_array($input)) return [];
-        $clean = [];
-        foreach ($input as $coupon) {
-            $c = [];
-            $c['title'] = sanitize_text_field($coupon['title'] ?? '');
-            $c['code'] = sanitize_text_field($coupon['code'] ?? '');
-            $c['link'] = esc_url_raw($coupon['link'] ?? '');
-            $c['description'] = sanitize_text_field($coupon['description'] ?? '');
-            if ($c['title'] && $c['link']) {
-                $clean[] = $c;
-            }
-        }
-        return $clean;
-    }
-
-    public function settings_page() {
+    public function options_page() {
         ?>
         <div class="wrap">
             <h1>Affiliate Coupon & Deal Aggregator Settings</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('aca_settings_group'); ?>
-                <?php $coupons = get_option($this->option_name, []); ?>
-                <table class="form-table" id="aca-coupon-table">
-                    <thead><tr><th>Title</th><th>Code</th><th>Link</th><th>Description</th><th>Action</th></tr></thead>
-                    <tbody>
-                    <?php if (!empty($coupons)) : ?>
-                        <?php foreach ($coupons as $index => $coupon) : ?>
-                            <tr>
-                                <td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[<?php echo $index; ?>][title]" value="<?php echo esc_attr($coupon['title']); ?>" required></td>
-                                <td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[<?php echo $index; ?>][code]" value="<?php echo esc_attr($coupon['code']); ?>"></td>
-                                <td><input type="url" name="<?php echo esc_attr($this->option_name); ?>[<?php echo $index; ?>][link]" value="<?php echo esc_attr($coupon['link']); ?>" required></td>
-                                <td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[<?php echo $index; ?>][description]" value="<?php echo esc_attr($coupon['description']); ?>"></td>
-                                <td><button class="button aca-remove-row" type="button">Remove</button></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-                <p><button type="button" class="button button-primary" id="aca-add-row">Add Coupon</button></p>
-                <?php submit_button(); ?>
+            <form action="options.php" method="post">
+                <?php
+                settings_fields('acda_settings');
+                do_settings_sections('acda_settings');
+                submit_button();
+                ?>
             </form>
+            <h2>Usage</h2>
+            <p>Place the shortcode <code>[acda_coupons]</code> in any post or page to display aggregated coupons with affiliate links.</p>
         </div>
-        <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var tableBody = document.querySelector('#aca-coupon-table tbody');
-            document.getElementById('aca-add-row').addEventListener('click', function () {
-                var index = tableBody.rows.length;
-                var row = document.createElement('tr');
-                row.innerHTML =
-                    '<td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[' + index + '][title]" required></td>' +
-                    '<td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[' + index + '][code]"></td>' +
-                    '<td><input type="url" name="<?php echo esc_attr($this->option_name); ?>[' + index + '][link]" required></td>' +
-                    '<td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[' + index + '][description]"></td>' +
-                    '<td><button class="button aca-remove-row" type="button">Remove</button></td>';
-                tableBody.appendChild(row);
-            });
-
-            tableBody.addEventListener('click', function(e) {
-                if (e.target && e.target.classList.contains('aca-remove-row')) {
-                    e.target.closest('tr').remove();
-                }
-            });
-        });
-        </script>
         <?php
     }
 
     public function render_coupons_shortcode() {
-        if (empty($this->coupons)) {
-            return '<p>No coupons available at the moment. Please check back later.</p>';
+        $feeds_text = get_option('acda_coupon_feeds','');
+        if (empty($feeds_text)) {
+            return '<p>No coupon feeds configured.</p>';
         }
-        $output = '<div class="aca-coupons">
-<ul style="list-style:none;padding:0;">';
-        foreach ($this->coupons as $coupon) {
-            $title = esc_html($coupon['title']);
-            $code = esc_html($coupon['code']);
-            $desc = esc_html($coupon['description']);
-            $link = esc_url($coupon['link']);
 
-            $output .= '<li style="margin-bottom:15px;padding:10px;border:1px solid #ccc;border-radius:5px;">
-<strong>' . $title . '</strong><br />';
-            if ($desc) {
-                $output .= '<em>' . $desc . '</em><br />';
-            }
-            if ($code) {
-                $output .= 'Coupon Code: <code>' . $code . '</code><br />';
-            }
-            $output .= '<a href="' . $link . '" target="_blank" rel="nofollow noopener noreferrer" style="color:#0073aa;">Use this deal</a>
-</li>';
+        $feeds = array_filter(array_map('trim',explode("\n",$feeds_text)));
+        if (empty($feeds)) {
+            return '<p>No valid coupon feeds configured.</p>';
         }
-        $output .= '</ul></div>';
+
+        $affiliate_id = get_option('acda_affiliate_id','');
+
+        // Collect coupons from all feeds
+        $coupons = array();
+
+        foreach ($feeds as $feed_url) {
+            $feed_data = $this->fetch_feed_data($feed_url);
+            if ($feed_data) {
+                foreach ($feed_data as $item) {
+                    $coupons[] = $item;
+                    if(count($coupons) >= 20) break; // limit
+                }
+            }
+            if(count($coupons) >= 20) break;
+        }
+
+        if (empty($coupons)) {
+            return '<p>No coupons found in feeds.</p>';
+        }
+
+        // Render coupon list
+        $output = '<div class="acda-coupon-list" style="font-family:Arial,sans-serif;">';
+        foreach ($coupons as $c) {
+            $title = esc_html($c['title']);
+            $desc = esc_html($c['description']);
+            $link = esc_url($c['link']);
+            // Append affiliate id if set
+            if ($affiliate_id) {
+                $separator = (strpos($link,'?') === false) ? '?' : '&';
+                $link .= $separator . urlencode($affiliate_id);
+            }
+            $output .= '<div style="border:1px solid #ddd; margin:10px 0; padding:10px; border-radius:5px;">';
+            $output .= '<a href="' . $link . '" target="_blank" rel="nofollow noopener" style="font-weight:bold; font-size:16px; color:#0073aa;">' . $title . '</a>';
+            if ($desc) {
+                $output .= '<p style="margin:5px 0;">' . $desc . '</p>';
+            }
+            $output .= '<a href="' . $link . '" target="_blank" rel="nofollow noopener" style="display:inline-block; background:#28a745; color:#fff; padding:5px 10px; text-decoration:none; border-radius:3px; font-weight:bold;">Get Deal</a>';
+            $output .= '</div>';
+        }
+        $output .= '</div>';
         return $output;
     }
 
+    private function fetch_feed_data($feed_url) {
+        $rss = @simplexml_load_file($feed_url);
+        if (!$rss) return false;
+        $items = [];
+        foreach ($rss->channel->item as $item) {
+            $title = (string)$item->title;
+            $link = (string)$item->link;
+            $description = (string)$item->description;
+            $items[] = [
+                'title' => $title,
+                'link' => $link,
+                'description' => $this->strip_tags_custom($description)
+            ];
+            if(count($items) >= 10) break;
+        }
+        return $items;
+    }
+
+    private function strip_tags_custom($text) {
+        // Basic cleanup removing html entities and tags for safe display
+        $text = strip_tags($text);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return $text;
+    }
 }
 
-AffiliateCouponAggregator::instance();
+new AffiliateCouponDealAggregator();
