@@ -1,15 +1,11 @@
 <?php
 /*
 Plugin Name: WP Revenue Tracker
-Description: Track and visualize revenue from ads, affiliate links, and digital product sales.
+Description: Track and visualize revenue from ads, affiliate links, digital products, and memberships.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Tracker.php
 */
-
-if (!defined('ABSPATH')) exit;
-
-define('WP_REVENUE_TRACKER_VERSION', '1.0');
 
 class WP_Revenue_Tracker {
 
@@ -33,14 +29,16 @@ class WP_Revenue_Tracker {
     }
 
     public function enqueue_scripts($hook) {
-        if ($hook != 'toplevel_page_wp-revenue-tracker') return;
-        wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
-        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'js/revenue-tracker.js', array('jquery'), WP_REVENUE_TRACKER_VERSION, true);
+        if ($hook != 'toplevel_page_wp-revenue-tracker') {
+            return;
+        }
+        wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
+        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'js/revenue-tracker.js', array('jquery'), '1.0', true);
         wp_localize_script('wp-revenue-tracker-js', 'wpRevenueTracker', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wp_revenue_tracker_nonce')
+            'nonce' => wp_create_nonce('wp-revenue-tracker-nonce')
         ));
-        wp_enqueue_style('wp-revenue-tracker-css', plugin_dir_url(__FILE__) . 'css/revenue-tracker.css', array(), WP_REVENUE_TRACKER_VERSION);
+        wp_enqueue_style('wp-revenue-tracker-css', plugin_dir_url(__FILE__) . 'css/revenue-tracker.css', array(), '1.0');
     }
 
     public function render_dashboard() {
@@ -53,7 +51,8 @@ class WP_Revenue_Tracker {
                     <label>Source: <select name="source">
                         <option value="ads">Ads</option>
                         <option value="affiliate">Affiliate</option>
-                        <option value="digital_product">Digital Product</option>
+                        <option value="products">Digital Products</option>
+                        <option value="memberships">Memberships</option>
                     </select></label>
                     <label>Amount: <input type="number" name="amount" step="0.01" required></label>
                     <label>Date: <input type="date" name="date" required></label>
@@ -63,8 +62,9 @@ class WP_Revenue_Tracker {
             <div id="revenue-chart-container">
                 <canvas id="revenue-chart"></canvas>
             </div>
-            <div id="revenue-table-container">
-                <table id="revenue-table">
+            <div id="revenue-table">
+                <h2>Revenue History</h2>
+                <table id="revenue-data-table">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -80,25 +80,27 @@ class WP_Revenue_Tracker {
     }
 
     public function save_revenue_data() {
-        check_ajax_referer('wp_revenue_tracker_nonce', 'nonce');
+        check_ajax_referer('wp-revenue-tracker-nonce', 'nonce');
+
         $source = sanitize_text_field($_POST['source']);
         $amount = floatval($_POST['amount']);
         $date = sanitize_text_field($_POST['date']);
-        $data = array(
+
+        $revenue_data = get_option('wp_revenue_tracker_data', array());
+        $revenue_data[] = array(
             'source' => $source,
             'amount' => $amount,
             'date' => $date
         );
-        $entries = get_option('wp_revenue_tracker_entries', array());
-        $entries[] = $data;
-        update_option('wp_revenue_tracker_entries', $entries);
+        update_option('wp_revenue_tracker_data', $revenue_data);
+
         wp_die();
     }
 
     public function get_revenue_data() {
-        check_ajax_referer('wp_revenue_tracker_nonce', 'nonce');
-        $entries = get_option('wp_revenue_tracker_entries', array());
-        wp_send_json($entries);
+        check_ajax_referer('wp-revenue-tracker-nonce', 'nonce');
+        $data = get_option('wp_revenue_tracker_data', array());
+        wp_send_json($data);
     }
 }
 
