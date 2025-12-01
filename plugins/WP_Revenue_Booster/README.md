@@ -3,27 +3,26 @@
 Maximize your WordPress site's revenue by intelligently rotating and optimizing affiliate links, ads, and sponsored content based on user behavior and conversion rates.
 
 ## Features
-- Rotates affiliate links, ads, and sponsored content for higher conversion rates.
-- Tracks impressions for each element.
-- Easy-to-use admin interface for managing links, ads, and sponsored content.
-- Lightweight and compatible with any WordPress theme.
+- Rotates affiliate links, ad codes, and sponsored content
+- Tracks clicks and conversions for each type
+- Simple admin interface for managing content
+- Lightweight and easy to use
 
 ## Installation
-1. Download the plugin file.
-2. Upload it to your WordPress plugins directory (`/wp-content/plugins/`).
-3. Activate the plugin from the WordPress admin panel.
+1. Upload the plugin file to your WordPress plugins directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to the 'Revenue Booster' menu in your admin panel to configure your affiliate links, ad codes, and sponsored content.
 
 ## Setup
-1. Go to **Settings > Revenue Booster** in your WordPress admin.
-2. Add your affiliate links, ad codes, and sponsored content.
-3. Save your settings.
+- Enter your affiliate links (one per line) in the 'Affiliate Links' field.
+- Enter your ad codes (one per line) in the 'Ad Codes' field.
+- Enter your sponsored content (one per line) in the 'Sponsored Content' field.
 
 ## Usage
-The plugin will automatically rotate and display your affiliate links, ads, and sponsored content on your site. You can track impressions and optimize your content for better revenue.
+The plugin will automatically rotate and display one of your configured items on each page load. Clicks are tracked and can be viewed in the admin panel.
+
+## Monetization
+The free version includes basic rotation and tracking. The premium version adds advanced analytics, A/B testing, and automation features.
 
 ## Support
-For support or feature requests, please contact us at support@revenuebooster.com.
-
----
-
-**Note:** This is a basic version. The premium version includes advanced analytics, conversion tracking, and automation features.
+For support, please contact us at support@revenueboost.com.
