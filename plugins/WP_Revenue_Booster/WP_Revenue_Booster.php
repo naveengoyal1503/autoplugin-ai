@@ -1,112 +1,103 @@
+<?php
 /*
+Plugin Name: WP Revenue Booster
+Description: Boost revenue with smart affiliate, coupon, and sponsored content placement.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
-<?php
-/**
- * Plugin Name: WP Revenue Booster
- * Plugin URI: https://example.com/wp-revenue-booster
- * Description: Automatically optimizes ad placement, affiliate links, and upsell offers to maximize revenue on every page.
- * Version: 1.0
- * Author: Your Name
- * Author URI: https://example.com
- * License: GPL2
- */
 
-// Prevent direct access
-define('ABSPATH') or die('No script kiddies please!');
+class WP_Revenue_Booster {
 
-// Add admin menu
-add_action('admin_menu', 'wprb_add_admin_menu');
-function wprb_add_admin_menu() {
-    add_options_page('WP Revenue Booster', 'Revenue Booster', 'manage_options', 'wp-revenue-booster', 'wprb_options_page');
-}
-
-// Register settings
-add_action('admin_init', 'wprb_settings_init');
-function wprb_settings_init() {
-    register_setting('wprb', 'wprb_settings');
-    add_settings_section('wprb_section', 'Revenue Booster Settings', 'wprb_section_callback', 'wprb');
-    add_settings_field('wprb_ads_enabled', 'Enable Ad Optimization', 'wprb_ads_enabled_render', 'wprb', 'wprb_section');
-    add_settings_field('wprb_affiliate_enabled', 'Enable Affiliate Link Optimization', 'wprb_affiliate_enabled_render', 'wprb', 'wprb_section');
-    add_settings_field('wprb_upsell_enabled', 'Enable Upsell Offers', 'wprb_upsell_enabled_render', 'wprb', 'wprb_section');
-}
-
-function wprb_section_callback() {
-    echo '<p>Configure how WP Revenue Booster optimizes your site for maximum revenue.</p>';
-}
-
-function wprb_ads_enabled_render() {
-    $options = get_option('wprb_settings');
-    ?>
-    <input type='checkbox' name='wprb_settings[wprb_ads_enabled]' <?php checked($options['wprb_ads_enabled'], 1); ?> value='1'>
-    <?php
-}
-
-function wprb_affiliate_enabled_render() {
-    $options = get_option('wprb_settings');
-    ?>
-    <input type='checkbox' name='wprb_settings[wprb_affiliate_enabled]' <?php checked($options['wprb_affiliate_enabled'], 1); ?> value='1'>
-    <?php
-}
-
-function wprb_upsell_enabled_render() {
-    $options = get_option('wprb_settings');
-    ?>
-    <input type='checkbox' name='wprb_settings[wprb_upsell_enabled]' <?php checked($options['wprb_upsell_enabled'], 1); ?> value='1'>
-    <?php
-}
-
-// Options page
-function wprb_options_page() {
-    ?>
-    <div class="wrap">
-        <h1>WP Revenue Booster</h1>
-        <form action='options.php' method='post'>
-            <?php
-            settings_fields('wprb');
-            do_settings_sections('wprb');
-            submit_button();
-            ?>
-        </form>
-    </div>
-    <?php
-}
-
-// Content filter to inject optimized elements
-add_filter('the_content', 'wprb_optimize_content');
-function wprb_optimize_content($content) {
-    $options = get_option('wprb_settings');
-    $output = '';
-
-    if ($options['wprb_ads_enabled']) {
-        $output .= '<div class="wprb-ad">[Ad Placeholder]</div>';
+    public function __construct() {
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('the_content', array($this, 'inject_monetized_content'));
+        add_shortcode('wp_revenue_booster', array($this, 'shortcode_handler'));
     }
 
-    if ($options['wprb_affiliate_enabled']) {
-        $output .= '<div class="wprb-affiliate">[Affiliate Link Placeholder]</div>';
+    public function add_admin_menu() {
+        add_menu_page(
+            'WP Revenue Booster',
+            'Revenue Booster',
+            'manage_options',
+            'wp-revenue-booster',
+            array($this, 'admin_page'),
+            'dashicons-chart-line'
+        );
     }
 
-    if ($options['wprb_upsell_enabled']) {
-        $output .= '<div class="wprb-upsell">[Upsell Offer Placeholder]</div>';
+    public function admin_page() {
+        ?>
+        <div class="wrap">
+            <h1>WP Revenue Booster</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('wp_revenue_booster_options');
+                do_settings_sections('wp-revenue-booster');
+                submit_button();
+                ?>
+            </form>
+        </div>
+        <?php
     }
 
-    return $content . $output;
-}
+    public function enqueue_scripts() {
+        wp_enqueue_style('wp-revenue-booster', plugins_url('style.css', __FILE__));
+    }
 
-// Enqueue styles
-add_action('wp_enqueue_scripts', 'wprb_enqueue_styles');
-function wprb_enqueue_styles() {
-    wp_enqueue_style('wprb-style', plugins_url('style.css', __FILE__));
-}
+    public function inject_monetized_content($content) {
+        if (is_single()) {
+            $offer = $this->get_smart_offer();
+            if ($offer) {
+                $content .= '<div class="wp-revenue-booster-offer">' . $offer . '</div>';
+            }
+        }
+        return $content;
+    }
 
-// Create style.css if not exists
-register_activation_hook(__FILE__, 'wprb_create_style');
-function wprb_create_style() {
-    $style_path = plugin_dir_path(__FILE__) . 'style.css';
-    if (!file_exists($style_path)) {
-        $css = ".wprb-ad, .wprb-affiliate, .wprb-upsell { margin: 20px 0; padding: 10px; background: #f0f0f0; border: 1px solid #ccc; }";
-        file_put_contents($style_path, $css);
+    public function shortcode_handler($atts) {
+        $atts = shortcode_atts(array(
+            'type' => 'affiliate',
+            'id' => '',
+        ), $atts, 'wp_revenue_booster');
+
+        return $this->get_smart_offer($atts['type'], $atts['id']);
+    }
+
+    private function get_smart_offer($type = '', $id = '') {
+        // Simulate smart offer selection
+        $offers = array(
+            'affiliate' => '<p><strong>Recommended Product:</strong> <a href="https://example.com/affiliate-link" target="_blank">Check out this great tool!</a></p>',
+            'coupon' => '<p><strong>Exclusive Coupon:</strong> Use code <code>WPREVBOOST</code> for 10% off!</p>',
+            'sponsored' => '<p><strong>Sponsored Content:</strong> This section is sponsored by Example Brand.</p>'
+        );
+
+        if ($type && isset($offers[$type])) {
+            return $offers[$type];
+        }
+
+        // Randomly pick an offer for automatic injection
+        return $offers[array_rand($offers)];
     }
 }
+
+function wp_revenue_booster_init() {
+    new WP_Revenue_Booster();
+}
+add_action('plugins_loaded', 'wp_revenue_booster_init');
+
+// Style for the injected content
+function wp_revenue_booster_style() {
+    echo '<style>
+        .wp-revenue-booster-offer {
+            background: #f9f9f9;
+            border-left: 4px solid #0073aa;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+    </style>';
+}
+add_action('wp_head', 'wp_revenue_booster_style');
 ?>
