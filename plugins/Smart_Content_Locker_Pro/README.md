@@ -1,63 +1,90 @@
 # Smart Content Locker Pro
 
-A powerful WordPress monetization plugin that transforms your content into a revenue stream by locking premium content behind email subscriptions, social shares, or micropayments.
+A powerful WordPress plugin for managing content access, memberships, and recurring subscriptions. Monetize your WordPress site by creating tiered membership levels and locking premium content.
 
 ## Features
 
-- **Multiple Lock Types**: Email subscription, social media sharing, or micropayment options
-- **Easy Post-Level Control**: Enable/disable locks per post with simple meta box interface
-- **Analytics Dashboard**: Track locked content performance and unlock metrics
-- **Flexible Messaging**: Customize lock messages to match your brand voice
-- **Cookie-Based Unlocking**: 24-hour unlock periods for better user experience
-- **AJAX-Powered**: Seamless unlock experience without page reloads
-- **Database Tracking**: Monitor which posts are locked and how many times they've been unlocked
-- **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
+- **Flexible Content Locking**: Lock posts and pages behind membership tiers (Basic, Premium, Elite)
+- **Membership Management**: Create and manage multiple membership levels with custom pricing
+- **Subscription Tracking**: Automatic subscription lifecycle management with renewal dates
+- **Payment Gateway Integration**: Support for Stripe and PayPal integration
+- **Content Preview**: Show preview text before users see the lock message
+- **User Management**: View active subscribers and manage subscription status
+- **Analytics Dashboard**: Real-time tracking of active subscribers and monthly revenue
+- **Shortcode Support**: Use `[scl_locked_content level="premium"]` to lock content in posts
+- **Meta Box Interface**: Easy-to-use content locking interface in post editor
 
 ## Installation
 
 1. Download the plugin files
-2. Upload to `/wp-content/plugins/smart-content-locker-pro/`
-3. Activate the plugin through WordPress admin
-4. Navigate to Content Locker menu to view analytics
+2. Upload to `/wp-content/plugins/smart-content-locker/`
+3. Activate the plugin through WordPress admin panel
+4. Navigate to Content Locker > Settings to configure payment gateways
 
 ## Setup
 
-1. Go to any post editor
+### Step 1: Configure Payment Methods
+
+1. Go to **Content Locker > Settings**
+2. Enter your Stripe API Key for credit card payments
+3. Enter your PayPal email for PayPal integration
+4. Click Save Settings
+
+### Step 2: Create Membership Levels
+
+Membership levels are pre-configured as Basic, Premium, and Elite. Customize pricing in your settings.
+
+### Step 3: Lock Content
+
+1. Edit a post or page
 2. Scroll to "Content Locker Settings" meta box
-3. Check "Enable Content Lock"
-4. Select lock type (Email, Social, or Payment)
-5. Customize the lock message
-6. Publish or update the post
+3. Check "Lock this content"
+4. Select required membership level
+5. Add preview text (optional)
+6. Publish
 
 ## Usage
 
-**For Email Locks**: Visitors enter their email to access content. Perfect for building mailing lists.
+### Locking Individual Posts
 
-**For Social Locks**: Visitors share on social media to unlock. Great for viral growth.
+In the post editor, use the Content Locker Settings box to:
+- Enable content locking
+- Set required membership level
+- Add custom preview text
 
-**For Payment Locks**: Visitors pay a small fee ($0.99) for instant access. Ideal for premium content.
+### Using Shortcodes
 
-## Dashboard
 
-The Content Locker dashboard displays:
-- List of all locked posts
-- Lock type for each post
-- Total unlock count (engagement metric)
-- Date locked
+[scl_locked_content level="premium"]
+This content is only visible to premium members.
+[/scl_locked_content]
+
+
+### Managing Subscriptions
+
+View all active subscriptions in **Content Locker > Subscriptions**. Filter by status, user, or membership level.
+
+### Dashboard Analytics
+
+The main dashboard shows:
+- Total active subscribers
+- Monthly recurring revenue
+- Subscriber growth trends
 
 ## Requirements
 
 - WordPress 5.0+
-- PHP 7.4+
-- jQuery (included with WordPress)
+- PHP 7.2+
+- MySQL 5.7+
 
-## Monetization Strategies
+## Monetization Model
 
-- Grow your email list with gated content
-- Generate revenue through micropayments
-- Increase social sharing for organic reach
-- Track content performance and user engagement
+SmartContentLocker Pro offers multiple revenue streams:
+
+- **Freemium Version**: Basic content locking features free for all users
+- **Premium License ($99/year)**: Advanced features, priority support, and unlimited memberships
+- **White Label Solutions**: Custom branding and support
 
 ## Support
 
-For issues or feature requests, contact our support team or visit the plugin documentation.
+For issues or questions, visit the plugin support page or contact support@smartcontentlocker.com
