@@ -1,31 +1,33 @@
 # WP Revenue Tracker
 
-Track and visualize your WordPress site's revenue streams from ads, affiliate links, digital products, and memberships.
+Track and optimize your WordPress site's monetization efforts with detailed analytics, conversion tracking, and revenue insights.
 
 ## Features
-- Add and manage revenue entries by source
-- View total and detailed revenue reports
-- Shortcode to display total revenue on frontend
-- Simple and intuitive admin dashboard
-- Premium upgrade for advanced analytics and integrations
+- Track page views and conversions
+- View revenue analytics in the WordPress admin
+- Easy integration with affiliate links, ads, and digital products
+- Detailed reporting for each page
 
 ## Installation
-1. Upload the `wp-revenue-tracker` folder to the `/wp-content/plugins/` directory
+1. Upload the `wp-revenue-tracker.php` file to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to 'Revenue Tracker' in the admin menu to start tracking
+3. Visit the 'Revenue Tracker' menu in your admin dashboard to view analytics
 
 ## Setup
-- Add revenue entries by selecting source, amount, and date
-- View your revenue overview and total in the dashboard
-- Use the shortcode `[wp_revenue_total]` to display total revenue on any page or post
+- No additional setup required for basic tracking
+- To track conversions, use the following JavaScript:
+  javascript
+  jQuery.post(ajaxurl, {
+    action: 'track_conversion',
+    page: window.location.pathname,
+    revenue: 10.99 // Replace with actual revenue
+  });
+  
 
 ## Usage
-- Regularly update your revenue entries to keep accurate records
-- Use the data to optimize your monetization strategies
-- Upgrade to premium for advanced features like export, integrations, and detailed analytics
+- View revenue and conversion data in the admin dashboard
+- Use the conversion tracking code on thank you pages or after successful transactions
+- Optimize your monetization strategy based on real data
 
 ## Support
-For support and feature requests, visit our website or contact support.
-
-## License
-GPLv2 or later
+For support, please contact support@example.com
