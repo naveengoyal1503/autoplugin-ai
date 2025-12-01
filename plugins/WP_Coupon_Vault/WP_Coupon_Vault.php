@@ -5,7 +5,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Coupon Vault
- * Description: Manage and display exclusive coupons and deals for your audience.
+ * Description: Manage and display exclusive coupon codes for affiliate products.
  * Version: 1.0
  * Author: Your Name
  */
@@ -14,54 +14,65 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Register custom post type for coupons
 class WPCouponVault {
+
     public function __construct() {
-        add_action('init', array($this, 'register_coupon_post_type'));
-        add_action('add_meta_boxes', array($this, 'add_coupon_meta_box'));
-        add_action('save_post', array($this, 'save_coupon_meta'));
-        add_shortcode('coupon_vault', array($this, 'display_coupon_vault'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('init', array($this, 'register_post_type'));
+        add_action('add_meta_boxes', array($this, 'add_meta_box'));
+        add_action('save_post', array($this, 'save_meta_box_data'));
+        add_shortcode('coupon_vault', array($this, 'shortcode_handler'));
+        add_action('admin_menu', array($this, 'admin_menu'));
     }
 
-    public function register_coupon_post_type() {
-        $args = array(
-            'public' => true,
-            'label'  => 'Coupons',
-            'supports' => array('title', 'editor'),
-            'has_archive' => true,
-            'rewrite' => array('slug' => 'coupons'),
+    public function register_post_type() {
+        register_post_type('wp_coupon',
+            array(
+                'labels' => array(
+                    'name' => __('Coupons', 'textdomain'),
+                    'singular_name' => __('Coupon', 'textdomain')
+                ),
+                'public' => true,
+                'has_archive' => true,
+                'supports' => array('title', 'editor'),
+                'menu_icon' => 'dashicons-tag'
+            )
         );
-        register_post_type('coupon', $args);
     }
 
-    public function add_coupon_meta_box() {
-        add_meta_box('coupon_details', 'Coupon Details', array($this, 'coupon_meta_box_callback'), 'coupon');
+    public function add_meta_box() {
+        add_meta_box(
+            'coupon_details',
+            __('Coupon Details', 'textdomain'),
+            array($this, 'render_meta_box'),
+            'wp_coupon',
+            'normal',
+            'high'
+        );
     }
 
-    public function coupon_meta_box_callback($post) {
-        wp_nonce_field('save_coupon_meta', 'coupon_nonce');
+    public function render_meta_box($post) {
+        wp_nonce_field('save_coupon_details', 'coupon_nonce');
         $code = get_post_meta($post->ID, '_coupon_code', true);
-        $expiry = get_post_meta($post->ID, '_coupon_expiry', true);
         $url = get_post_meta($post->ID, '_coupon_url', true);
+        $expiry = get_post_meta($post->ID, '_coupon_expiry', true);
         ?>
         <p>
             <label for="coupon_code">Coupon Code:</label>
             <input type="text" id="coupon_code" name="coupon_code" value="<?php echo esc_attr($code); ?>" style="width: 100%;" />
         </p>
         <p>
-            <label for="coupon_expiry">Expiry Date:</label>
-            <input type="date" id="coupon_expiry" name="coupon_expiry" value="<?php echo esc_attr($expiry); ?>" style="width: 100%;" />
+            <label for="coupon_url">Affiliate URL:</label>
+            <input type="url" id="coupon_url" name="coupon_url" value="<?php echo esc_url($url); ?>" style="width: 100%;" />
         </p>
         <p>
-            <label for="coupon_url">Affiliate URL:</label>
-            <input type="url" id="coupon_url" name="coupon_url" value="<?php echo esc_attr($url); ?>" style="width: 100%;" />
+            <label for="coupon_expiry">Expiry Date (YYYY-MM-DD):</label>
+            <input type="date" id="coupon_expiry" name="coupon_expiry" value="<?php echo esc_attr($expiry); ?>" />
         </p>
         <?php
     }
 
-    public function save_coupon_meta($post_id) {
-        if (!isset($_POST['coupon_nonce']) || !wp_verify_nonce($_POST['coupon_nonce'], 'save_coupon_meta')) {
+    public function save_meta_box_data($post_id) {
+        if (!isset($_POST['coupon_nonce']) || !wp_verify_nonce($_POST['coupon_nonce'], 'save_coupon_details')) {
             return;
         }
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -73,18 +84,21 @@ class WPCouponVault {
         if (isset($_POST['coupon_code'])) {
             update_post_meta($post_id, '_coupon_code', sanitize_text_field($_POST['coupon_code']));
         }
-        if (isset($_POST['coupon_expiry'])) {
-            update_post_meta($post_id, '_coupon_expiry', sanitize_text_field($_POST['coupon_expiry']));
-        }
         if (isset($_POST['coupon_url'])) {
             update_post_meta($post_id, '_coupon_url', esc_url_raw($_POST['coupon_url']));
         }
+        if (isset($_POST['coupon_expiry'])) {
+            update_post_meta($post_id, '_coupon_expiry', sanitize_text_field($_POST['coupon_expiry']));
+        }
     }
 
-    public function display_coupon_vault($atts) {
-        $atts = shortcode_atts(array('limit' => 10), $atts);
+    public function shortcode_handler($atts) {
+        $atts = shortcode_atts(array(
+            'limit' => 5
+        ), $atts, 'coupon_vault');
+
         $args = array(
-            'post_type' => 'coupon',
+            'post_type' => 'wp_coupon',
             'posts_per_page' => $atts['limit'],
             'meta_query' => array(
                 array(
@@ -95,33 +109,41 @@ class WPCouponVault {
                 )
             )
         );
+
         $coupons = new WP_Query($args);
-        $output = '<div class="coupon-vault">';
+        $output = '<div class="wp-coupon-vault">
+            <h3>Exclusive Coupons</h3>
+            <ul class="coupon-list">';
+
         if ($coupons->have_posts()) {
             while ($coupons->have_posts()) {
                 $coupons->the_post();
                 $code = get_post_meta(get_the_ID(), '_coupon_code', true);
                 $url = get_post_meta(get_the_ID(), '_coupon_url', true);
-                $output .= '<div class="coupon-item">
-                    <h3>' . get_the_title() . '</h3>
-                    <p><strong>Code:</strong> ' . esc_html($code) . '</p>
-                    <p><a href="' . esc_url($url) . '" target="_blank">Get Deal</a></p>
-                </div>';
+                $output .= '<li><strong>' . get_the_title() . '</strong>: <code>' . $code . '</code> <a href="' . $url . '" target="_blank">Use Now</a></li>';
             }
+            wp_reset_postdata();
         } else {
-            $output .= '<p>No active coupons found.</p>';
+            $output .= '<li>No active coupons found.</li>';
         }
-        $output .= '</div>';
-        wp_reset_postdata();
+
+        $output .= '</ul></div>';
         return $output;
     }
 
-    public function add_admin_menu() {
-        add_menu_page('Coupon Vault', 'Coupon Vault', 'manage_options', 'coupon-vault', array($this, 'admin_page'), 'dashicons-tickets-alt');
+    public function admin_menu() {
+        add_submenu_page(
+            'edit.php?post_type=wp_coupon',
+            'Settings',
+            'Settings',
+            'manage_options',
+            'coupon-vault-settings',
+            array($this, 'settings_page')
+        );
     }
 
-    public function admin_page() {
-        echo '<div class="wrap"><h1>Coupon Vault</h1><p>Manage your coupons and deals here.</p></div>';
+    public function settings_page() {
+        echo '<div class="wrap"><h1>Coupon Vault Settings</h1><p>Manage your coupon display settings here.</p></div>';
     }
 }
 
