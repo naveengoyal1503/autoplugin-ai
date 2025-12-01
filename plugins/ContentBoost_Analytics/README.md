@@ -1,73 +1,123 @@
 # ContentBoost Analytics
 
-A powerful WordPress plugin that tracks content performance and provides AI-powered recommendations to optimize your blog posts for better SEO rankings, user engagement, and revenue generation.
+AI-powered content performance analytics and optimization tool for WordPress that tracks engagement metrics, suggests SEO improvements, and identifies monetization opportunities.
 
 ## Features
 
-### Free Tier
-- **Content Performance Tracking**: Monitor views, click-through rates, and engagement metrics for all published posts
-- **Basic Analytics Dashboard**: View top-performing content at a glance
-- **SEO Score Monitoring**: Track SEO optimization levels for each post
-- **Revenue Impact Estimation**: See which posts drive the most potential monetization value
-- **Post-by-Post Metrics**: Detailed statistics for individual blog posts including average time on page and bounce rates
+### Core Analytics
+- **Real-time Tracking**: Monitor views, engagement time, and user scroll depth on every post
+- **Dashboard Widget**: Quick summary of total views, engagement, and average scroll depth
+- **Performance Reports**: Detailed analytics showing top-performing posts and user behavior patterns
+- **Post-level Insights**: Individual metrics for each post to identify which content resonates with your audience
 
-### Premium Tier ($9.99/month)
-- **AI-Powered Recommendations**: Get intelligent suggestions for improving underperforming content
-- **Keyword Optimization Analysis**: Identify high-value keywords to target for increased traffic
-- **Content Gap Analysis**: Discover content opportunities in your niche
-- **Monetization Strategy Suggestions**: Recommendations for which posts to monetize through ads, affiliates, or subscriptions
-- **Competitor Benchmarking**: Compare your content performance against industry standards
-- **Advanced Reporting**: Export detailed analytics reports in multiple formats
+### Engagement Monitoring
+- **Scroll Depth Tracking**: Measure how far readers scroll through your content
+- **Time on Page**: Track how long visitors spend engaging with each post
+- **Click Tracking**: Monitor which elements users interact with
+- **Behavior Analysis**: Identify content sections that keep readers engaged
+
+### Monetization Intelligence
+- **Content Performance Scoring**: Identify which posts generate the most engagement
+- **Audience Insights**: Understand reader behavior patterns and preferences
+- **Optimization Recommendations**: Get suggestions for improving content performance (Premium)
+- **Revenue Opportunity Detection**: Find best candidates for premium content, sponsorships, or affiliate marketing
+
+### Premium Features
+- AI-powered content optimization recommendations
+- Advanced audience segmentation
+- Predictive analytics for monetization potential
+- Custom report generation
+- API access for integration with third-party tools
+- Priority email and chat support
 
 ## Installation
 
-1. Upload the plugin folder to `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Navigate to the new 'ContentBoost' menu in your WordPress admin dashboard
-4. Configure your tracking preferences and settings
+1. Download the ContentBoost Analytics plugin
+2. Extract the plugin folder to `/wp-content/plugins/`
+3. Activate the plugin from the WordPress admin dashboard under Plugins
+4. Navigate to ContentBoost in the admin menu to begin using the plugin
 
 ## Setup
 
-1. Go to **ContentBoost Analytics** in your WordPress admin menu
-2. Enable tracking in the Settings section
-3. The plugin will automatically start collecting data from your published posts
-4. Analytics data updates daily and displays in your dashboard within 24 hours
+### Initial Configuration
+
+1. Go to **ContentBoost > Settings** in the WordPress admin
+2. Enable tracking by checking the "Enable Tracking" option
+3. Save your settings
+4. The plugin will automatically begin collecting analytics data
+
+### Tracking Verification
+
+1. Visit any published post on your site
+2. Spend a few seconds reading and scroll down the page
+3. Return to **ContentBoost > Analytics** to verify tracking is working
+4. You should see the post listed with view and engagement data
 
 ## Usage
 
 ### Viewing Analytics
-- Open the ContentBoost Analytics dashboard to see your top-performing posts
-- Charts display views, engagement rates, and SEO scores
-- Click on individual posts to see detailed performance breakdowns
 
-### Optimizing for Revenue
-- Review which posts have high traffic but low monetization value
-- Use insights to decide which content to promote with ads or affiliate links
-- Identify posts suitable for gating behind memberships or premium subscriptions
+1. Go to **ContentBoost > Analytics** in the WordPress admin
+2. View the table showing all posts with engagement metrics:
+   - **Views**: Total number of page views
+   - **Engagement (sec)**: Total time spent reading (in seconds)
+   - **Avg Scroll Depth**: Average percentage of page users scroll through
 
-### Using AI Recommendations (Premium)
-- Click "Generate Recommendations" to receive AI-powered suggestions
-- Follow optimization tips to improve SEO rankings and engagement
-- Implement suggested changes and track performance improvements
+### Dashboard Widget
 
-## Monetization Model
+The ContentBoost Summary widget appears on your WordPress dashboard showing:
+- Total views across all posts
+- Total engagement time across all posts
+- Average scroll depth across all content
 
-ContentBoost Analytics uses a **Freemium model**:
+Click "View Full Analytics" to access detailed reports.
 
-- **Free Plan**: Basic analytics and tracking for all users
-- **Premium Plan**: $9.99/month for advanced AI recommendations and detailed reporting
-- **Affiliate Commissions**: Earn commissions when users click recommended optimization tool affiliate links
+### Making Monetization Decisions
 
-## Requirements
+**High Engagement Content**: Posts with high engagement time and scroll depth are ideal for:
+- Premium content or membership paywalls
+- Sponsored content opportunities
+- Affiliate marketing placements
 
-- WordPress 5.0 or higher
-- PHP 7.2 or higher
-- MySQL 5.6 or higher
+**Low Engagement Content**: Posts with lower metrics may benefit from:
+- Content restructuring and optimization (Premium feature)
+- Repurposing into different formats
+- Updating with new information
+
+## Monetization Strategies
+
+ContentBoost helps you identify which content to monetize:
+
+- **Affiliate Marketing**: High-engagement posts are perfect for product recommendations
+- **Sponsored Content**: Popular content attracts brand partnerships
+- **Premium/Membership**: Gate your best-performing content behind a paywall
+- **Advertising**: High-traffic posts maximize ad revenue potential
+- **Digital Products**: Use insights to create courses or resources your audience wants
+
+## Upgrade to Premium
+
+Upgrade to ContentBoost Premium for:
+- AI content optimization suggestions
+- Advanced audience segmentation
+- Predictive monetization analytics
+- Custom report generation
+- Full API access
+
+Visit **ContentBoost > Premium** to upgrade.
 
 ## Support
 
-For support, documentation, and feature requests, visit our website or contact our support team.
+For support, feature requests, or bug reports, please visit the plugin support page.
 
 ## License
 
 GPL v2 or later
+
+## Changelog
+
+### Version 1.0.0
+- Initial release
+- Real-time analytics tracking
+- Dashboard widget
+- Performance reports
+- Premium upgrade available
