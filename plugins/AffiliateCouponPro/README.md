@@ -1,50 +1,44 @@
 # AffiliateCouponPro
 
-AffiliateCouponPro is a powerful WordPress plugin designed to elevate your affiliate marketing game by automatically aggregating coupons and deals from affiliate sources and displaying them dynamically on your site.
+AffiliateCouponPro is a WordPress plugin designed to automatically manage and display affiliate coupon codes and deals on your site, helping you increase affiliate marketing revenue by providing your visitors with timely, attractive discounts.
 
 ## Features
 
-- Automatically fetch coupons from multiple affiliate programs via RSS or API.
-- Display attractive coupon lists anywhere using a simple shortcode.
-- Shuffle and limit number of coupons shown for fresh content.
-- Clean and responsive coupon display with source attribution.
-- Compatible with any WordPress theme.
-- Easy to extend for custom affiliate sources.
+- Easy coupon management inside WordPress admin
+- Add coupon title, discount info, code, expiration date, and affiliate URL
+- Activate or deactivate coupons individually
+- Automatically exclude expired or inactive coupons from display
+- Frontend shortcode `[affiliate_coupons]` to display an elegant coupon list
+- Mobile-friendly, clean styling for better user experience
+- Freemium foundation for further premium automation and analytics (future updates)
 
 ## Installation
 
-1. Download the plugin PHP file.
-2. Upload the file to your WordPress site's `/wp-content/plugins/` directory.
-3. Activate the plugin via the WordPress Plugins page.
-4. Optionally, customize affiliate sources within the plugin code or extend it.
+1. Upload the `affiliatecouponpro.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to 'AffiliateCouponPro' menu in admin sidebar.
+4. Add your coupons with title, discount details, code, expiration date, and affiliate link.
+5. Use shortcode `[affiliate_coupons]` on any page or post where you want to show the coupons.
 
 ## Setup
 
-There is no required setup out of the box. However, you may want to:
-
-- Add your own affiliate coupon feeds to the `$affiliate_links` array in the plugin code.
-- Customize styles by editing or overriding the included CSS.
+- Add as many coupons as you want.
+- Mark coupons active/inactive easily to control campaigns without deleting.
+- Set expiration dates to automate removal from display.
 
 ## Usage
 
-Use the shortcode `[affiliate_coupons]` within any post, page, or widget area to display the aggregated affiliate coupons.
+- Place `[affiliate_coupons]` shortcode in posts, pages, or widgets (with shortcode support).
+- Visitors see a styled list of available coupons with clickable affiliate links.
 
-Example:
+## Future Plans (Pro Version)
 
-
-[affiliate_coupons]
-
-
-This will render a grid of coupons dynamically fetched from configured affiliate sources.
-
-## Monetization
-
-The plugin is intended for a freemium model:
-
-- Base plugin is free.
-- Offer paid add-ons for advanced coupon management, analytics dashboard, custom branding, and priority support.
-
-This plugin can help site owners increase affiliate conversions by providing engaging, automated deals content that encourages user clicks and purchases.
+- Automated affiliate link cloaking and deeplinking
+- Scheduled coupon activation and expiration
+- Conversion tracking and analytics dashboard
+- Integration with popular affiliate networks
+- Premium support and updates
 
 ---
-*Developed for affiliate marketers and bloggers aiming to boost revenue with minimal manual effort.*
+
+Created to empower affiliate marketers and bloggers with a powerful yet simple tool to boost affiliate commissions by showcasing conversions-optimized coupons directly on WordPress sites.
