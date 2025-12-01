@@ -1,31 +1,50 @@
 # Affiliate Deal Booster
 
 ## Description
-Affiliate Deal Booster is a powerful WordPress plugin designed to help affiliate marketers and bloggers increase their affiliate revenue by automatically creating, managing, and displaying exclusive affiliate discount coupons and deals tailored to their niche.
+Affiliate Deal Booster automatically aggregates and curates affiliate coupons and deals matching your niche keywords, helping you increase conversions and affiliate revenue effortlessly.
 
 ## Features
-- Custom post type for creating and managing coupons
-- Easy shortcode `[adb_coupons]` to display active affiliate coupons anywhere
-- Settings page to enter your affiliate ID and default coupon prefix
-- Automatically replaces special shortcode placeholders with your affiliate links
-- Clean and responsive coupon display layout
-- Freemium-ready structure for future expansions
+
+- Automatically display affiliate coupons and deals tailored to your site's niche.
+- Admin settings to specify keywords, max number of deals, and affiliate ID.
+- Shortcode `[affiliate_deals]` to insert deals anywhere on your site.
+- Responsive and minimal design to match most themes.
+- Freemium-ready structure for future premium features.
 
 ## Installation
-1. Upload the plugin file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the WordPress admin dashboard.
-3. Navigate to the 'ADB Coupons' menu in the dashboard to start adding coupons.
-4. Go to 'Settings' under the plugin menu to set your affiliate ID and coupon prefix.
+
+1. Upload the `affiliate-deal-booster.php` file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to the 'Aff. Deal Booster' menu in your WP dashboard to configure settings.
 
 ## Setup
-- Create new coupons by going to the 'ADB Coupons' post type.
-- Enter a coupon title representing the deal name.
-- Put affiliate links or the placeholder `[affiliate_url]` in the coupon content.
-- Use the shortcode `[adb_coupons]` on pages or posts where you want to display your deals.
+
+- Enter comma-separated keywords related to your niche to filter deals.
+- Specify your affiliate ID to append it to deal links.
+- Set the maximum number of deals to display.
+- Save changes.
 
 ## Usage
-- Place `[adb_coupons]` shortcode in any post, page, or widget to show current active affiliate deals.
-- Customize coupon content with affiliate links or promotional text.
-- Adjust settings anytime to change affiliate tracking ID or display prefix.
 
-Increase your affiliate conversions by providing your visitors exclusive, attractive coupons seamlessly!
+- Insert the shortcode `[affiliate_deals]` into any post or page where you want to show the curated affiliate deals.
+
+Example:
+
+markdown
+Here are some exclusive deals for you:
+
+[affiliate_deals]
+
+
+Your visitors will see a list of affiliate deals relevant to your keyword filters.
+
+## Future Premium Features (planned)
+
+- Auto-update deals from multiple affiliate networks.
+- Advanced filters and categorization.
+- Integration with popular affiliate platforms.
+- Priority support and customization options.
+
+---
+
+Developed by AI Generator
