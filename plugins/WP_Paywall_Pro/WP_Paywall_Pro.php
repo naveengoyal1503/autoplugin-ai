@@ -5,145 +5,107 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Paywall Pro
- * Description: Monetize your content with flexible paywalls, subscriptions, and one-time payments.
+ * Description: Monetize your WordPress content with paywalls, subscriptions, and micropayments.
  * Version: 1.0
  * Author: WP Paywall Team
  */
 
-define('WP_PAYWALL_PRO_VERSION', '1.0');
-define('WP_PAYWALL_PRO_PATH', plugin_dir_path(__FILE__));
-define('WP_PAYWALL_PRO_URL', plugin_dir_url(__FILE__));
-
-// Register activation and deactivation hooks
-register_activation_hook(__FILE__, 'wp_paywall_pro_activate');
-register_deactivation_hook(__FILE__, 'wp_paywall_pro_deactivate');
-
-function wp_paywall_pro_activate() {
-    // Add default options
-    add_option('wp_paywall_pro_enabled', true);
-    add_option('wp_paywall_pro_mode', 'subscription'); // subscription, one-time, tiered
+if (!defined('ABSPATH')) {
+    exit;
 }
 
-function wp_paywall_pro_deactivate() {
-    // Clean up if needed
-}
+// Main plugin class
+class WPPaywallPro {
 
-// Add admin menu
-add_action('admin_menu', 'wp_paywall_pro_add_admin_menu');
-function wp_paywall_pro_add_admin_menu() {
-    add_options_page(
-        'WP Paywall Pro Settings',
-        'WP Paywall Pro',
-        'manage_options',
-        'wp-paywall-pro',
-        'wp_paywall_pro_settings_page'
-    );
-}
-
-// Settings page
-function wp_paywall_pro_settings_page() {
-    if (!current_user_can('manage_options')) {
-        return;
+    public function __construct() {
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('the_content', array($this, 'apply_paywall'));
+        add_shortcode('paywall', array($this, 'paywall_shortcode'));
     }
-    if (isset($_POST['wp_paywall_pro_submit'])) {
-        update_option('wp_paywall_pro_enabled', isset($_POST['enabled']) ? 1 : 0);
-        update_option('wp_paywall_pro_mode', sanitize_text_field($_POST['mode']));
-        echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
-    }
-    $enabled = get_option('wp_paywall_pro_enabled', true);
-    $mode = get_option('wp_paywall_pro_mode', 'subscription');
-    ?>
-    <div class="wrap">
-        <h1>WP Paywall Pro Settings</h1>
-        <form method="post">
-            <table class="form-table">
-                <tr>
-                    <th><label for="enabled">Enable Paywall</label></th>
-                    <td><input type="checkbox" id="enabled" name="enabled" <?php checked($enabled, 1); ?> /></td>
-                </tr>
-                <tr>
-                    <th><label for="mode">Paywall Mode</label></th>
-                    <td>
-                        <select id="mode" name="mode">
-                            <option value="subscription" <?php selected($mode, 'subscription'); ?>>Subscription</option>
-                            <option value="one-time" <?php selected($mode, 'one-time'); ?>>One-Time Payment</option>
-                            <option value="tiered" <?php selected($mode, 'tiered'); ?>>Tiered Access</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
-            <?php submit_button('Save Settings', 'primary', 'wp_paywall_pro_submit'); ?>
-        </form>
-    </div>
-    <?php
-}
 
-// Apply paywall to content
-add_filter('the_content', 'wp_paywall_pro_apply_paywall');
-function wp_paywall_pro_apply_paywall($content) {
-    if (!get_option('wp_paywall_pro_enabled', true)) {
+    public function add_admin_menu() {
+        add_options_page(
+            'WP Paywall Pro',
+            'Paywall Pro',
+            'manage_options',
+            'wp-paywall-pro',
+            array($this, 'admin_page')
+        );
+    }
+
+    public function admin_page() {
+        ?>
+        <div class="wrap">
+            <h1>WP Paywall Pro</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('wp-paywall-pro-settings');
+                do_settings_sections('wp-paywall-pro-settings');
+                submit_button();
+                ?>
+            </form>
+        </div>
+        <?php
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_style('wp-paywall-pro', plugin_dir_url(__FILE__) . 'css/style.css');
+        wp_enqueue_script('wp-paywall-pro', plugin_dir_url(__FILE__) . 'js/script.js', array('jquery'), '1.0', true);
+    }
+
+    public function apply_paywall($content) {
+        if (is_single() && get_post_type() === 'post') {
+            $paywall_enabled = get_option('wp_paywall_enabled', false);
+            if ($paywall_enabled) {
+                $paywall_message = get_option('wp_paywall_message', 'This content is behind a paywall. Please subscribe or purchase access.');
+                $content = '<div class="wp-paywall-message">' . esc_html($paywall_message) . '</div>';
+            }
+        }
         return $content;
     }
 
-    $mode = get_option('wp_paywall_pro_mode', 'subscription');
-    $user_has_access = wp_paywall_pro_check_access($mode);
+    public function paywall_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'message' => 'This content is behind a paywall.',
+        ), $atts, 'paywall');
 
-    if ($user_has_access) {
-        return $content;
+        return '<div class="wp-paywall-shortcode">' . esc_html($atts['message']) . '</div>';
     }
-
-    $paywall_message = '<div class="wp-paywall-pro-message">
-        <p>This content is locked. Please subscribe or make a payment to access.</p>
-        <a href="#" class="wp-paywall-pro-pay-btn">Pay Now</a>
-    </div>';
-
-    return $paywall_message;
 }
 
-// Check if user has access
-function wp_paywall_pro_check_access($mode) {
-    // For demo, always return false to show paywall
-    // In real plugin, check user roles, payments, subscriptions
-    return false;
-}
+// Initialize plugin
+new WPPaywallPro();
 
-// Enqueue frontend styles
-add_action('wp_enqueue_scripts', 'wp_paywall_pro_enqueue_styles');
-function wp_paywall_pro_enqueue_styles() {
-    wp_enqueue_style('wp-paywall-pro-style', WP_PAYWALL_PRO_URL . 'assets/style.css');
-}
+// Register settings
+add_action('admin_init', function() {
+    register_setting('wp-paywall-pro-settings', 'wp_paywall_enabled');
+    register_setting('wp-paywall-pro-settings', 'wp_paywall_message');
+});
 
-// Create assets directory and style.css if not exists
-if (!file_exists(WP_PAYWALL_PRO_PATH . 'assets')) {
-    mkdir(WP_PAYWALL_PRO_PATH . 'assets', 0755, true);
-}
-if (!file_exists(WP_PAYWALL_PRO_PATH . 'assets/style.css')) {
-    file_put_contents(WP_PAYWALL_PRO_PATH . 'assets/style.css', ".wp-paywall-pro-message { padding: 20px; background: #f0f0f0; text-align: center; }
-.wp-paywall-pro-pay-btn { display: inline-block; margin-top: 10px; padding: 10px 20px; background: #0073aa; color: white; text-decoration: none; border-radius: 4px; }" );
-}
-
-// Add shortcode for custom paywall
-add_shortcode('paywall', 'wp_paywall_pro_shortcode');
-function wp_paywall_pro_shortcode($atts, $content = null) {
-    $mode = get_option('wp_paywall_pro_mode', 'subscription');
-    $user_has_access = wp_paywall_pro_check_access($mode);
-
-    if ($user_has_access) {
-        return $content;
+// Create plugin directories and files if they don't exist
+register_activation_hook(__FILE__, function() {
+    $upload_dir = wp_upload_dir();
+    $plugin_dir = $upload_dir['basedir'] . '/wp-paywall-pro';
+    if (!file_exists($plugin_dir)) {
+        mkdir($plugin_dir, 0755, true);
     }
-
-    return '<div class="wp-paywall-pro-message">
-        <p>This content is locked. Please subscribe or make a payment to access.</p>
-        <a href="#" class="wp-paywall-pro-pay-btn">Pay Now</a>
-    </div>';
-}
-
-// Add admin notice for premium features
-add_action('admin_notices', 'wp_paywall_pro_premium_notice');
-function wp_paywall_pro_premium_notice() {
-    if (!current_user_can('manage_options')) {
-        return;
+    if (!file_exists($plugin_dir . '/css')) {
+        mkdir($plugin_dir . '/css', 0755);
     }
-    echo '<div class="notice notice-info"><p>Upgrade to WP Paywall Pro Premium for advanced features like Stripe/PayPal integration, analytics, and more.</p></div>';
-}
-?>
+    if (!file_exists($plugin_dir . '/js')) {
+        mkdir($plugin_dir . '/js', 0755);
+    }
+    file_put_contents($plugin_dir . '/css/style.css', "/* WP Paywall Pro CSS */
+.wp-paywall-message, .wp-paywall-shortcode {
+    background: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin: 20px 0;
+    text-align: center;
+}");
+    file_put_contents($plugin_dir . '/js/script.js', "// WP Paywall Pro JS
+jQuery(document).ready(function($) {
+    // Add your JS logic here
+});");
+});
