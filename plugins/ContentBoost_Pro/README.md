@@ -1,90 +1,105 @@
 # ContentBoost Pro
 
-AI-powered content performance analytics and optimization plugin for WordPress.
+AI-powered content optimization and repurposing plugin for WordPress that helps bloggers, marketers, and agencies maximize content performance and reach.
 
 ## Features
 
-- **Content Analysis**: Automatically analyze posts for SEO, readability, and engagement metrics
-- **SEO Score**: Get detailed SEO optimization suggestions
-- **Readability Analysis**: Measure and improve content readability
-- **Engagement Metrics**: Track images, headings, links, and other engagement factors
-- **Actionable Recommendations**: Receive specific suggestions to improve content quality
-- **Reading Time Estimation**: Automatically calculate reading time for each post
-- **Dashboard Overview**: View all analytics in an intuitive admin dashboard
-- **Freemium Model**: Free tier with basic features; upgrade to Pro for unlimited analysis
+### Free Version
+- **Content Analysis**: Automated analysis of blog posts for SEO optimization
+- **Reading Time Calculation**: Automatic reading time estimation
+- **SEO Score**: Get a quick SEO health score (0-100)
+- **Recommendations**: Smart recommendations for content improvement
+- **Content Metrics**: Track word count, headings, links, and images
+
+### Premium Features ($9.99/month)
+- **Multi-Format Export**: Repurpose content into multiple formats
+  - Twitter/X optimized posts
+  - LinkedIn article snippets
+  - Email newsletter content
+  - Social media templates
+- **Unlimited Exports**: Export content as many times as needed
+- **Advanced Analytics**: Track export performance and engagement
+- **Social Media Integration**: Schedule exports directly to social platforms
+- **Bulk Operations**: Analyze and export multiple posts at once
 
 ## Installation
 
-1. Download the plugin ZIP file
-2. Go to WordPress Admin > Plugins > Add New
-3. Click "Upload Plugin" and select the ZIP file
-4. Click "Install Now"
-5. Activate the plugin
+1. Upload the `contentboost-pro` folder to `/wp-content/plugins/` directory
+2. Activate the plugin through the **Plugins** menu in WordPress
+3. Navigate to **ContentBoost Pro** in the admin menu
+4. Configure your preferences in Settings
 
 ## Setup
 
-1. After activation, go to ContentBoost > Dashboard
-2. Select a post or page from the dropdown
-3. Click "Analyze" to run content analysis
-4. View your scores and recommendations
+### Initial Configuration
+
+1. After activation, go to **ContentBoost Pro > Dashboard**
+2. For premium features, visit **ContentBoost Pro > Settings** and click "Upgrade to Premium"
+3. Complete the subscription process
+4. Return to the dashboard to access all features
+
+### API Configuration
+
+For AI-powered features, configure your API key in Settings (Premium required).
 
 ## Usage
 
-### Analyzing Content
+### Basic Content Analysis
 
-1. Navigate to **ContentBoost > Dashboard**
-2. Select a post or page from the dropdown menu
-3. Click the **Analyze** button
-4. View your content scores:
-   - **SEO Score** (0-100): Measures keyword optimization and structure
-   - **Readability Score** (0-100): Evaluates sentence length and content clarity
-   - **Engagement Score** (0-100): Assesses multimedia and link integration
-   - **Reading Time**: Estimated time to read the content
+1. Go to **ContentBoost Pro > Dashboard**
+2. Select a post from the dropdown menu
+3. Click **Analyze**
+4. Review the SEO score, reading time, and recommendations
+5. Implement suggested improvements
 
-### Viewing Recommendations
+### Multi-Format Export (Premium)
 
-After analysis, you'll receive actionable recommendations to improve your content:
-- SEO optimization tips
-- Readability improvements
-- Engagement enhancement suggestions
+1. From the dashboard, select a post
+2. Click **Export** (only visible with premium subscription)
+3. Choose export format:
+   - **Twitter**: Optimized for 280-character limit
+   - **LinkedIn**: Professional format for business networks
+   - **Email**: Newsletter-ready content
+   - **Social Media**: Generic social format
+4. Copy the exported content to your clipboard
+5. Paste into your chosen platform
 
-### Upgrading to Pro
+### Quick Analysis from Post List
 
-1. Go to **ContentBoost > Upgrade to Pro**
-2. Choose your subscription plan:
-   - **Pro Plan**: $9.99/month or $79.99/year
-3. If you have a license key, enter it in the License Activation section
-4. Get unlimited access to advanced features
+1. Go to **Posts** in the WordPress admin
+2. Hover over any post and click **Boost Analysis**
+3. View analysis results in a quick preview
+4. Click to open full dashboard for detailed recommendations
 
-### Settings
+## Monetization Model
 
-Go to **ContentBoost > Settings** to:
-- Enable auto-analysis for new posts
-- Configure analysis preferences
+**Freemium Structure:**
+- **Free Tier**: Basic content analysis and recommendations (unlimited)
+- **Premium Tier**: $9.99/month for multi-format export, advanced analytics, and integration features
 
-## Monetization
+Monetization strategies include:
+- Monthly subscription fees
+- Annual billing discounts
+- Premium support add-on
+- White-label licensing for agencies
 
-This plugin uses a **freemium model**:
+## FAQ
 
-- **Free Tier**: Basic analysis with limited monthly posts
-- **Pro Tier**: $9.99/month - Unlimited analysis, advanced features, priority support
-- **Annual Plan**: $79.99/year - Save 33% with annual billing
+**Q: Do I need an API key for free features?**
+A: No, basic analysis works without any external integrations.
 
-## Rest API Endpoints
+**Q: Can I export multiple posts at once?**
+A: This feature is available in the Premium tier.
 
-- `POST /wp-json/contentboost/v1/analyze` - Analyze post content
-- `GET /wp-json/contentboost/v1/analytics/{post_id}` - Retrieve analytics
-- `POST /wp-json/contentboost/v1/activate-license` - Activate license key
+**Q: How often should I analyze my content?**
+A: Analyze whenever you publish new content or update existing posts.
 
-## Requirements
-
-- WordPress 5.0 or higher
-- PHP 7.2 or higher
-- MySQL 5.7 or higher
+**Q: Is my data secure?**
+A: All analysis is performed locally on your WordPress installation. Premium features use encrypted connections.
 
 ## Support
 
-For support, contact: support@contentboostpro.com
+For issues, feature requests, or support, please visit our website or contact support@contentboostpro.com.
 
 ## License
 
