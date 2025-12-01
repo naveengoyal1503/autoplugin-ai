@@ -1,24 +1,27 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by intelligently rotating and optimizing affiliate links, ads, and sponsored content based on user behavior and conversion data.
+Automatically optimize ad placement, affiliate links, and upsells to maximize your WordPress site's revenue.
 
 ## Features
-- Rotates affiliate links, ads, and sponsored content for higher conversion rates.
-- Easy-to-use admin interface for managing all revenue elements.
-- Lightweight and non-intrusive, designed to preserve site speed and user experience.
+- Auto-inject ad code in optimal positions
+- Display affiliate links as call-to-action buttons
+- Show customizable upsell messages
+- Easy-to-use admin settings
+- Lightweight and fast
 
 ## Installation
-1. Upload the `wp-revenue-booster.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure your affiliate links, ad codes, and sponsored content.
+1. Upload the plugin folder to your `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to Settings > Revenue Booster to configure your monetization options
 
 ## Setup
-- In the admin settings, add your affiliate links, ad codes, and sponsored content as JSON arrays.
-- The plugin will automatically rotate these elements on your site's frontend.
+- Enable the plugin
+- Paste your ad code (e.g., Google AdSense)
+- Add affiliate links (comma-separated)
+- Set your upsell message
 
 ## Usage
-- Once configured, the plugin will display a random revenue element (affiliate link, ad, or sponsored content) on each page load.
-- Monitor your analytics to see which elements perform best and adjust your settings accordingly.
+Once configured, the plugin will automatically display your monetization elements on your site. Monitor your revenue and adjust settings as needed.
 
 ## Support
-For support and feature requests, please visit our website or contact us directly.
+For questions or feature requests, contact support@revenuebooster.com
