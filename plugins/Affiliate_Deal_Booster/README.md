@@ -1,44 +1,38 @@
 # Affiliate Deal Booster
 
 ## Description
-Affiliate Deal Booster is a WordPress plugin designed to help affiliate marketers, bloggers, and WooCommerce store owners increase their affiliate sales by aggregating exclusive coupons and deals from various merchants. It auto-updates deals daily (manual refresh in this version), displays them in optimized, easy-to-integrate widgets and inline content to boost conversions.
-
----
+Affiliate Deal Booster is a WordPress plugin that helps bloggers and marketers easily create a dedicated coupon and deal aggregator on their site. It supports affiliate links and provides an easy admin interface to manage deals and coupons, helping site owners boost earnings through affiliate marketing.
 
 ## Features
-
-- Aggregate affiliate coupon deals from multiple merchants (demo includes static sample data)
-- Auto-cache deals for fast loading
-- Admin panel to refresh and manage deals
-- Shortcode `[affiliate_deals]` to display deal widgets anywhere
-- Automatic inline deal injection below the first paragraph of posts/pages
-- Clean, responsive design for maximum engagement
-- Fully extendable and lightweight single-file plugin
-
----
+- Add, edit, and remove multiple affiliate deals and coupon codes.
+- Display deals via shortcode `[affiliate_deals]` anywhere on your site.
+- Automatic filtering of expired deals.
+- Responsive, simple grid layout for deals.
+- Affiliate link support with nofollow and target blank for SEO.
+- Admin UI includes inline add/remove deal rows.
+- Freemium-ready for future extensions (analytics, scheduling).
 
 ## Installation
-
-1. Upload the `affiliate-deal-booster.php` file to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to the new "Affiliate Deal Booster" admin menu to refresh deals.
-
----
+1. Upload the plugin file to your WordPress `/wp-content/plugins/` directory.
+2. Activate the plugin through the ‘Plugins’ menu in WordPress.
+3. Navigate to the ‘Affiliate Deal Booster’ menu in the admin sidebar to add your deals.
 
 ## Setup
-
-- Use the "Refresh Deals Now" button on the plugin admin page to fetch the latest coupons and deals.
-- Place `[affiliate_deals]` shortcode in posts, pages, or widget areas to show the deals.
-- Deals are automatically injected below the first paragraph of your blog posts.
-
----
+- Go to **Affiliate Deal Booster** in the admin menu.
+- Start adding deals: title, description, affiliate URL, optional coupon code, and optional expiry date.
+- Save changes.
 
 ## Usage
+- Place the shortcode `[affiliate_deals]` in any post, page, or widget area to display your curated affiliate deals.
+- Visitors will see a neat grid of deals with coupon codes and clickable affiliate links.
 
-- Display a box of affiliate deals on any page/post using the shortcode.
-- Benefit from automatic inline deal insertion to subtly promote coupon codes within your content.
-- Customize and extend the plugin to connect with real affiliate networks and generate dynamic offers.
+## Future Enhancements (Planned)
+- Deal analytics dashboard to track clicks and conversions.
+- Link cloaking and link shortening.
+- Scheduling deals to auto-publish and expire.
+- Support for multiple affiliate networks with ease.
+- Premium upgrade for tailored deals and exclusive features.
 
----
+For support or questions, please open an issue on the plugin’s GitHub repository.
 
-For any issues or feature requests, please open a ticket on the plugin repository.
+Thank you for using Affiliate Deal Booster!
