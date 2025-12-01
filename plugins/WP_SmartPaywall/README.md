@@ -1,31 +1,28 @@
 # WP SmartPaywall
 
-WP SmartPaywall is a dynamic paywall plugin for WordPress that unlocks premium content based on user engagement, referral sources, or micro-payments.
+WP SmartPaywall is a flexible paywall plugin for WordPress that allows you to monetize your content with one-time payments or recurring subscriptions.
 
 ## Features
-- Unlock content after reading a set number of articles
-- Unlock content after referring a set number of friends
-- Unlock content by making a micro-payment
-- Admin settings to customize unlock rules
-- Simple integration with any WordPress theme
+- Enable paywalls on any post or page
+- Set custom prices for each piece of content
+- Support for one-time and subscription payment models
+- Easy shortcode integration
+- Admin settings for global configuration
 
 ## Installation
-1. Upload the `wp-smartpaywall` folder to the `/wp-content/plugins/` directory
+1. Upload the plugin folder to your `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > SmartPaywall to configure unlock rules
+3. Go to Settings > SmartPaywall to configure global options
 
 ## Setup
-- Set minimum views, referrals, and payment amounts in the plugin settings
-- The paywall will automatically appear on posts for users who haven't met the unlock criteria
+- Edit any post or page and enable the SmartPaywall option
+- Set the price and payment type (one-time or subscription)
+- Use the `[smartpaywall price="5" type="one-time"]Your content here[/smartpaywall]` shortcode to wrap protected content
 
 ## Usage
-- Users can unlock content by clicking the 'Unlock Now' button and choosing a method
-- Content is unlocked and remains accessible for that user
-- Admins can monitor and adjust rules as needed
-
-## Requirements
-- WordPress 5.0 or higher
-- PHP 7.0 or higher
+- Visitors will see a pay button to unlock content
+- After payment, content is unlocked for the user
+- Admins can manage payments and access through the plugin settings
 
 ## Support
-For support, please visit the plugin page or contact the developer.
+For support and feature requests, please visit our website or contact support@wpsmartpaywall.com.
