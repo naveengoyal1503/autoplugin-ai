@@ -1,183 +1,139 @@
+<?php
 /*
+Plugin Name: Affiliate Deal Booster
+Description: Automates creation and display of personalized affiliate coupons with tracking and user incentives.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Deal_Booster.php
+License: GPL2
 */
-<?php
-/**
- * Plugin Name: Affiliate Deal Booster
- * Description: Auto-curate and display personalized affiliate coupon deals to boost affiliate income.
- * Version: 1.0
- * Author: YourName
- * License: GPL2
- */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class AffiliateDealBooster {
-    private $option_name = 'adb_options';
-
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'register_settings'));
-        add_shortcode('affiliate_deals', array($this, 'display_deals'));
-
+        add_shortcode('affiliate_deal_booster', array($this, 'render_deals'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
-    }
-
-    public function enqueue_assets() {
-        wp_enqueue_style('adb-styles', plugin_dir_url(__FILE__) . 'style.css');
+        add_action('wp_ajax_adb_track_click', array($this, 'track_click')); 
+        add_action('wp_ajax_nopriv_adb_track_click', array($this, 'track_click'));
     }
 
     public function add_admin_menu() {
-        add_options_page('Affiliate Deal Booster', 'Affiliate Deal Booster', 'manage_options', 'affiliate-deal-booster', array($this, 'settings_page'));
+        add_menu_page('Affiliate Deal Booster', 'Affiliate Deal Booster', 'manage_options', 'affiliate-deal-booster', array($this, 'admin_page'), 'dashicons-megaphone');
     }
 
     public function register_settings() {
-        register_setting($this->option_name, $this->option_name);
-        add_settings_section('adb_main_section', 'Settings', null, $this->option_name);
-        add_settings_field('adb_affiliate_id', 'Default Affiliate ID', array($this, 'affiliate_id_field'), $this->option_name, 'adb_main_section');
-        add_settings_field('adb_coupon_sources', 'Coupon Sources', array($this, 'coupon_sources_field'), $this->option_name, 'adb_main_section');
+        register_setting('adb_settings_group', 'adb_deals');
     }
 
-    public function affiliate_id_field() {
-        $options = get_option($this->option_name);
-        $value = isset($options['affiliate_id']) ? esc_attr($options['affiliate_id']) : '';
-        echo '<input type="text" name="'.$this->option_name.'[affiliate_id]" value="'.$value.'" placeholder="e.g. myaffid123" style="width: 300px;" />';
-        echo '<p class="description">Your default affiliate ID to append to all links.</p>';
-    }
-
-    public function coupon_sources_field() {
-        $options = get_option($this->option_name);
-        $value = isset($options['coupon_sources']) ? esc_textarea($options['coupon_sources']) : "https://example-coupon-api.com/api?category=tech\nhttps://another-coupon-source.com/rss";
-        echo '<textarea name="'.$this->option_name.'[coupon_sources]" rows="5" cols="50" placeholder="One URL per line">'.$value.'</textarea>';
-        echo '<p class="description">Enter coupon feed URLs or APIs, one per line.</p>';
-    }
-
-    public function settings_page() {
+    public function admin_page() {
         ?>
         <div class="wrap">
             <h1>Affiliate Deal Booster Settings</h1>
             <form method="post" action="options.php">
-                <?php
-                settings_fields($this->option_name);
-                do_settings_sections($this->option_name);
-                submit_button();
-                ?>
+                <?php settings_fields('adb_settings_group'); ?>
+                <?php $deals = get_option('adb_deals', array()); ?>
+                <table class="form-table" id="adb-deals-table">
+                    <thead>
+                        <tr><th>Title</th><th>Aff. Link</th><th>Coupon Code</th><th>Expiry Date</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    if (is_array($deals)) {
+                        foreach ($deals as $index => $deal) {
+                            echo '<tr>';
+                            echo '<td><input type="text" name="adb_deals['.$index.'][title]" value="'.esc_attr($deal['title']).'" required></td>';
+                            echo '<td><input type="url" name="adb_deals['.$index.'][link]" value="'.esc_url($deal['link']).'" required></td>';
+                            echo '<td><input type="text" name="adb_deals['.$index.'][coupon]" value="'.esc_attr($deal['coupon']).'"></td>';
+                            echo '<td><input type="date" name="adb_deals['.$index.'][expiry]" value="'.esc_attr($deal['expiry']).'"></td>';
+                            echo '<td><button type="button" class="button adb-remove-row">Remove</button></td>';
+                            echo '</tr>';
+                        }
+                    }
+                    ?>
+                    </tbody>
+                </table>
+                <p><button type="button" class="button button-primary" id="adb-add-row">Add New Deal</button></p>
+                <?php submit_button(); ?>
             </form>
-            <p>Use shortcode <code>[affiliate_deals]</code> in pages or posts to show deals.</p>
         </div>
+        <script>
+            (function($) {
+                $('#adb-add-row').on('click', function() {
+                    var now = Date.now();
+                    var newRow = '<tr>' +
+                        '<td><input type="text" name="adb_deals['+now+'][title]" required></td>' +
+                        '<td><input type="url" name="adb_deals['+now+'][link]" required></td>' +
+                        '<td><input type="text" name="adb_deals['+now+'][coupon]"></td>' +
+                        '<td><input type="date" name="adb_deals['+now+'][expiry]"></td>' +
+                        '<td><button type="button" class="button adb-remove-row">Remove</button></td>' +
+                        '</tr>';
+                    $('#adb-deals-table tbody').append(newRow);
+                });
+
+                $(document).on('click', '.adb-remove-row', function(){
+                    $(this).closest('tr').remove();
+                });
+            })(jQuery);
+        </script>
         <?php
     }
 
-    private function get_cached_deals() {
-        $cache = get_transient('adb_cached_deals');
-        if ($cache !== false) {
-            return $cache;
-        }
-        $deals = $this->fetch_deals();
-        set_transient('adb_cached_deals', $deals, 12 * HOUR_IN_SECONDS);
-        return $deals;
+    public function enqueue_assets() {
+        wp_enqueue_style('adb-styles', plugins_url('style.css', __FILE__));
+        wp_enqueue_script('adb-script', plugins_url('script.js', __FILE__), array('jquery'), false, true);
+        wp_localize_script('adb-script', 'adb_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
     }
 
-    private function fetch_deals() {
-        $options = get_option($this->option_name);
-        if (!isset($options['coupon_sources'])) {
-            return array();
+    public function render_deals() {
+        $deals = get_option('adb_deals', array());
+        if (!$deals || empty($deals)) {
+            return '<p>No affiliate deals available at the moment.</p>';
         }
-        $sources = array_filter(array_map('trim', explode("\n", $options['coupon_sources'])));
-        $deals = array();
-        foreach ($sources as $url) {
-            $response = wp_remote_get($url, array('timeout' => 5));
-            if (is_wp_error($response)) {
-                continue;
-            }
-            $body = wp_remote_retrieve_body($response);
-            if (empty($body)) {
-                continue;
-            }
-            // Attempt JSON decoding
-            $json = json_decode($body, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($json)) {
-                foreach ($json as $item) {
-                    if (isset($item['title']) && isset($item['url'])) {
-                        $deals[] = array(
-                            'title' => sanitize_text_field($item['title']),
-                            'url'   => esc_url_raw($item['url']),
-                            'desc'  => isset($item['description']) ? sanitize_text_field($item['description']) : '',
-                            'expiry'=> isset($item['expiry']) ? sanitize_text_field($item['expiry']) : ''
-                        );
-                    }
-                }
-                continue;
-            }
-            // Try simple RSS parsing
-            if (strpos($body, '<rss') === 0 || strpos($body, '<?xml') === 0) {
-                $xml = simplexml_load_string($body);
-                if ($xml && isset($xml->channel->item)) {
-                    foreach ($xml->channel->item as $item) {
-                        $deals[] = array(
-                            'title' => (string) $item->title,
-                            'url'   => (string) $item->link,
-                            'desc'  => (string) $item->description,
-                            'expiry'=> ''
-                        );
-                    }
-                }
-            }
-        }
-        return $this->filter_and_prepare_deals($deals);
-    }
-
-    private function filter_and_prepare_deals($deals) {
-        $options = get_option($this->option_name);
-        $affid = isset($options['affiliate_id']) ? trim($options['affiliate_id']) : '';
-        $prepared = array();
-        foreach ($deals as $deal) {
-            $title = $deal['title'];
-            $desc = $deal['desc'];
-            $url = $deal['url'];
-            if ($affid) {
-                // Append affiliate ID as query param
-                $url = $this->append_affiliate_id($url, $affid);
-            }
-            $prepared[] = array('title' => $title, 'desc' => $desc, 'url' => esc_url($url));
-        }
-        return $prepared;
-    }
-
-    private function append_affiliate_id($url, $affid) {
-        $parsed = parse_url($url);
-        $query = isset($parsed['query']) ? $parsed['query'] : '';
-        parse_str($query, $params);
-        $params['aff_id'] = $affid;
-        $query_new = http_build_query($params);
-
-        $scheme = isset($parsed['scheme']) ? $parsed['scheme'] . '://' : '';
-        $host = isset($parsed['host']) ? $parsed['host'] : '';
-        $port = isset($parsed['port']) ? ':' . $parsed['port'] : '';
-        $path = isset($parsed['path']) ? $parsed['path'] : '';
-
-        return $scheme . $host . $port . $path . '?' . $query_new;
-    }
-
-    public function display_deals() {
-        $deals = $this->get_cached_deals();
-        if (empty($deals)) {
-            return '<p>No deals available at the moment. Please check back later.</p>';
-        }
-        $html = '<div class="adb-deals-container"><ul class="adb-deal-list">';
-        foreach ($deals as $deal) {
+        $output = '<div class="adb-deals-list">';
+        foreach ($deals as $id => $deal) {
             $title = esc_html($deal['title']);
-            $desc = esc_html($deal['desc']);
-            $url = esc_url($deal['url']);
-            $html .= "<li class='adb-deal-item'><a href='{$url}' target='_blank' rel='nofollow noopener'>{$title}</a>";
-            if ($desc) {
-                $html .= "<p class='adb-deal-desc'>{$desc}</p>";
-            }
-            $html .= '</li>';
+            $link = esc_url($deal['link']);
+            $coupon = isset($deal['coupon']) ? esc_html($deal['coupon']) : '';
+            $expiry = isset($deal['expiry']) ? sanitize_text_field($deal['expiry']) : '';
+
+            // Check expiry
+            if ($expiry && strtotime($expiry) < time()) continue;
+
+            $coupon_html = $coupon ? '<span class="adb-coupon">Coupon: <strong>' . $coupon . '</strong></span>' : '';
+
+            $output .= '<div class="adb-deal" data-id="' . esc_attr($id) . '">';
+            $output .= '<a href="#" class="adb-deal-link" data-url="' . $link . '">' . $title . '</a> ' . $coupon_html;
+            $output .= '</div>';
         }
-        $html .= '</ul></div>';
-        return $html;
+        $output .= '</div>';
+        $output .= '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll(".adb-deal-link").forEach(function(el){
+            el.addEventListener("click", function(e){
+              e.preventDefault();
+              var url = this.getAttribute("data-url");
+              var dealDiv = this.closest(".adb-deal");
+              var dealId = dealDiv.getAttribute("data-id");
+              fetch("' . admin_url('admin-ajax.php') . '?action=adb_track_click&deal_id=" + dealId, {method: "POST"});
+              window.open(url, "_blank");
+            });
+          });
+        });
+        </script>';
+        return $output;
+    }
+
+    public function track_click() {
+        if (!isset($_POST['deal_id'])) wp_send_json_error();
+        $deal_id = sanitize_text_field($_POST['deal_id']);
+        $counts = get_option('adb_click_counts', array());
+        if (!isset($counts[$deal_id])) $counts[$deal_id] = 0;
+        $counts[$deal_id]++;
+        update_option('adb_click_counts', $counts);
+        wp_send_json_success();
     }
 }
 
