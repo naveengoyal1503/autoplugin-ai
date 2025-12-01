@@ -1,26 +1,29 @@
 # WP Smart Affiliate Link Manager
 
-Automatically convert keywords into affiliate links, track clicks, and optimize link placement for higher conversions.
+Automatically manage, track, and optimize affiliate links across your WordPress site with smart rotation, geo-targeting, and performance analytics.
 
 ## Features
-- Automatically convert keywords into affiliate links
-- Track clicks on affiliate links
-- Easy-to-use admin interface
-- No coding required
+- Create and manage affiliate links with custom slugs
+- Track clicks on each link
+- Geo-target links by country
+- Display links via shortcode with random or specific selection
+- Simple admin dashboard for link management
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Affiliate Links to configure your keywords and affiliate URLs
+3. Go to 'Smart Affiliate Links' in the admin menu to start adding links
 
 ## Setup
-1. In the plugin settings, enter your keywords and corresponding affiliate URLs (one per line, format: keyword|affiliate_url)
-2. Save your settings
+- Add your affiliate links in the admin dashboard
+- Assign optional slugs and country targeting
+- Use the shortcode to display links on your site
 
 ## Usage
-- The plugin will automatically convert keywords in your content into affiliate links
-- Click tracking is handled automatically
-- View click statistics in the plugin settings
+- `[smart_affiliate_link id="1"]` - Display link by ID
+- `[smart_affiliate_link slug="my-link"]` - Display link by slug
+- `[smart_affiliate_link country="US"]` - Display link for specific country
+- `[smart_affiliate_link random="true"]` - Display random link
 
 ## Support
-For support, please contact support@example.com
+For premium features and support, visit our website.
