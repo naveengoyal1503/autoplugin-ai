@@ -5,9 +5,9 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Tracker
- * Description: Track and visualize revenue from ads, affiliate links, digital products, and sponsored content.
+ * Description: Track and optimize your WordPress site's revenue streams with real-time analytics and actionable insights.
  * Version: 1.0
- * Author: WP Dev Team
+ * Author: Your Name
  */
 
 if (!defined('ABSPATH')) {
@@ -18,25 +18,8 @@ class WP_Revenue_Tracker {
 
     public function __construct() {
         add_action('admin_menu', array($this, 'add_menu'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_save_revenue', array($this, 'save_revenue'));
-        add_action('wp_ajax_get_revenue_data', array($this, 'get_revenue_data'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
-    }
-
-    public function activate() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'revenue_tracker';
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            source varchar(50) NOT NULL,
-            amount decimal(10,2) NOT NULL,
-            date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-            PRIMARY KEY  (id)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        add_action('wp_dashboard_setup', array($this, 'add_dashboard_widget'));
+        add_action('admin_init', array($this, 'register_settings'));
     }
 
     public function add_menu() {
@@ -45,77 +28,96 @@ class WP_Revenue_Tracker {
             'Revenue Tracker',
             'manage_options',
             'wp-revenue-tracker',
-            array($this, 'render_dashboard'),
-            'dashicons-chart-bar',
-            6
+            array($this, 'render_admin_page'),
+            'dashicons-chart-bar'
         );
     }
 
-    public function enqueue_scripts($hook) {
-        if ($hook != 'toplevel_page_wp-revenue-tracker') {
-            return;
-        }
-        wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
-        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'js/revenue-tracker.js', array('jquery'), '1.0', true);
-        wp_localize_script('wp-revenue-tracker-js', 'wpRevenueTracker', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wp_revenue_tracker_nonce')
-        ));
-        wp_enqueue_style('wp-revenue-tracker-css', plugin_dir_url(__FILE__) . 'css/revenue-tracker.css', array(), '1.0');
+    public function add_dashboard_widget() {
+        wp_add_dashboard_widget(
+            'wp_revenue_tracker_widget',
+            'Revenue Overview',
+            array($this, 'render_dashboard_widget')
+        );
     }
 
-    public function render_dashboard() {
+    public function register_settings() {
+        register_setting('wp_revenue_tracker', 'wp_revenue_tracker_settings');
+    }
+
+    public function render_admin_page() {
+        $settings = get_option('wp_revenue_tracker_settings', array());
         ?>
         <div class="wrap">
             <h1>WP Revenue Tracker</h1>
-            <div id="revenue-form">
-                <label>Source: <input type="text" id="source" placeholder="e.g., AdSense, Affiliate, Product Sales"></label>
-                <label>Amount: <input type="number" id="amount" step="0.01" placeholder="0.00"></label>
-                <button id="save-revenue">Add Revenue</button>
-            </div>
-            <div id="revenue-chart-container">
-                <canvas id="revenue-chart"></canvas>
-            </div>
-            <div id="revenue-table">
-                <table class="widefat">
-                    <thead>
-                        <tr>
-                            <th>Source</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="revenue-data-body"></tbody>
+            <form method="post" action="options.php">
+                <?php settings_fields('wp_revenue_tracker'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th><label for="affiliate_revenue">Affiliate Revenue</label></th>
+                        <td><input type="number" name="wp_revenue_tracker_settings[affiliate_revenue]" id="affiliate_revenue" value="<?php echo esc_attr($settings['affiliate_revenue'] ?? 0); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th><label for="ads_revenue">Ads Revenue</label></th>
+                        <td><input type="number" name="wp_revenue_tracker_settings[ads_revenue]" id="ads_revenue" value="<?php echo esc_attr($settings['ads_revenue'] ?? 0); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th><label for="product_revenue">Product Revenue</label></th>
+                        <td><input type="number" name="wp_revenue_tracker_settings[product_revenue]" id="product_revenue" value="<?php echo esc_attr($settings['product_revenue'] ?? 0); ?>" /></td>
+                    </tr>
                 </table>
+                <?php submit_button(); ?>
+            </form>
+            <div class="revenue-chart">
+                <h2>Revenue Chart</h2>
+                <canvas id="revenueChart" width="400" height="200"></canvas>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Affiliate', 'Ads', 'Product'],
+                        datasets: [{
+                            label: 'Revenue ($)',
+                            data: [
+                                <?php echo esc_js($settings['affiliate_revenue'] ?? 0); ?>,
+                                <?php echo esc_js($settings['ads_revenue'] ?? 0); ?>,
+                                <?php echo esc_js($settings['product_revenue'] ?? 0); ?>
+                            ],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
         <?php
     }
 
-    public function save_revenue() {
-        check_ajax_referer('wp_revenue_tracker_nonce', 'nonce');
-        global $wpdb;
-        $source = sanitize_text_field($_POST['source']);
-        $amount = floatval($_POST['amount']);
-        $date = current_time('mysql');
-        $table_name = $wpdb->prefix . 'revenue_tracker';
-        $wpdb->insert(
-            $table_name,
-            array(
-                'source' => $source,
-                'amount' => $amount,
-                'date' => $date
-            )
-        );
-        wp_die();
-    }
-
-    public function get_revenue_data() {
-        check_ajax_referer('wp_revenue_tracker_nonce', 'nonce');
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'revenue_tracker';
-        $results = $wpdb->get_results("SELECT source, amount, date FROM $table_name ORDER BY date DESC LIMIT 100");
-        wp_send_json($results);
+    public function render_dashboard_widget() {
+        $settings = get_option('wp_revenue_tracker_settings', array());
+        $total = ($settings['affiliate_revenue'] ?? 0) + ($settings['ads_revenue'] ?? 0) + ($settings['product_revenue'] ?? 0);
+        echo '<p><strong>Total Revenue: $' . number_format($total, 2) . '</strong></p>';
     }
 }
 
