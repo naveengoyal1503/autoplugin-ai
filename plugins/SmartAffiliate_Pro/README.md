@@ -1,89 +1,102 @@
 # SmartAffiliate Pro
 
-An intelligent affiliate link management and optimization plugin for WordPress that helps bloggers and content creators maximize their affiliate marketing revenue.
+Advanced affiliate link management and optimization plugin for WordPress with built-in tracking, analytics, and commission calculations.
 
 ## Features
 
-- **Easy Link Management**: Add, edit, and organize affiliate links with keywords
-- **Auto-Injection**: Automatically convert keywords to affiliate links throughout your content
-- **Shortcode Support**: Use `[affiliate_link keyword="your_keyword"]` to insert links anywhere
-- **Performance Tracking**: Monitor clicks and conversions for each affiliate link
-- **Commission Tracking**: Record commission rates for each affiliate program
-- **Analytics Dashboard**: View top-performing affiliate links and conversion rates
-- **Freemium Model**: Basic features free with premium analytics and bulk management
-- **Nonce Security**: Built-in security for all admin operations
+- **Easy Link Management**: Create and organize multiple affiliate links with custom IDs
+- **Click Tracking**: Automatically track clicks on your affiliate links
+- **Analytics Dashboard**: Monitor performance with total clicks and estimated earnings
+- **Commission Calculator**: Track commission rates and estimate potential earnings
+- **Simple Shortcodes**: Insert affiliate links using `[affiliate_link id="link_id"]Link Text[/affiliate_link]`
+- **Organized Admin Panel**: Dedicated dashboard for all affiliate management tasks
+- **Flexible Monetization**: Perfect for bloggers using affiliate marketing as primary revenue
 
 ## Installation
 
-1. Download the SmartAffiliate Pro plugin
-2. Upload the plugin folder to `/wp-content/plugins/` directory
-3. Activate the plugin from the WordPress admin panel
-4. Navigate to SmartAffiliate in the admin menu to start managing links
+1. Download the plugin ZIP file
+2. Go to WordPress Admin Dashboard
+3. Navigate to **Plugins > Add New**
+4. Click **Upload Plugin** and select the ZIP file
+5. Click **Install Now** and then **Activate**
 
-## Setup & Configuration
+## Setup
 
-1. Go to **SmartAffiliate > Settings**
-2. Enable "Auto-inject Affiliate Links" if you want automatic link conversion
-3. Go to **SmartAffiliate > Links** to add your first affiliate link
-4. Enter the keyword, affiliate URL, and commission rate
-5. Click "Add Affiliate Link"
+### Initial Configuration
+
+1. After activation, go to **SmartAffiliate Pro** in the left menu
+2. Navigate to **Links** tab
+3. Add your first affiliate link:
+   - **Link ID**: Unique identifier (e.g., `amazon_prime`)
+   - **Program Name**: Name of the affiliate program (e.g., `Amazon Associates`)
+   - **Affiliate URL**: Your unique affiliate URL from the program
+   - **Commission Rate**: Expected commission percentage
+
+### Enable Click Tracking
+
+1. Go to **Settings** tab
+2. Check **Enable Click Tracking**
+3. Save changes
 
 ## Usage
 
-### Method 1: Shortcode
+### Adding Affiliate Links in Posts
 
-In any post or page, use:
-
-
-[affiliate_link keyword="your_keyword"]
+Use the shortcode in any post or page:
 
 
-Replace `your_keyword` with the keyword you registered in the plugin.
+[affiliate_link id="amazon_prime"]Check Amazon Prime Deals[/affiliate_link]
 
-### Method 2: Auto-Injection
 
-With auto-injection enabled, any mention of your registered keywords will automatically become affiliate links.
+The plugin will:
+- Replace the shortcode with your affiliate URL
+- Open the link in a new tab
+- Track the click for analytics
 
-### Method 3: Manual Links
+### Multiple Links
 
-You can also manually edit posts and add affiliate links directly using the standard WordPress link editor.
+Create different affiliate links for different programs:
 
-## Analytics
 
-Track your affiliate performance:
+[affiliate_link id="amazon_prime"]Amazon Prime[/affiliate_link]
+[affiliate_link id="bluehost_hosting"]Bluehost Hosting[/affiliate_link]
+[affiliate_link id="grammarly_pro"]Grammarly Pro[/affiliate_link]
 
-1. Go to **SmartAffiliate > Analytics**
-2. View your top 10 performing links sorted by clicks
-3. Check conversion rates for each link
-4. Identify which keywords drive the most sales
 
-## Monetization
+### Monitoring Performance
 
-**SmartAffiliate Pro** offers multiple revenue streams:
+1. Navigate to **Analytics** tab
+2. View total clicks per link
+3. See estimated earnings based on commission rates
+4. Identify top-performing affiliate links
 
-- **Freemium Model**: Basic link management free, premium features at $9.99/month
-- **Premium Features**: Advanced analytics, bulk link import, AI recommendations
-- **Affiliate Program**: Earn 30% commission for each referral
-- **White-Label**: Rebrand and resell to other WordPress users
+## Dashboard Features
 
-## Database
+- **Quick Stats**: Total links and clicks at a glance
+- **Links Management**: Add, view, and organize affiliate URLs
+- **Analytics View**: Track performance and earnings
+- **Settings**: Configure tracking preferences
 
-The plugin creates a table `wp_smartaffiliate_links` storing:
+## Best Practices
 
-- Affiliate keywords
-- URLs and commission rates
-- Click and conversion tracking
-- Creation timestamps
+- Use descriptive Link IDs for easy management
+- Update commission rates regularly
+- Monitor top performers and optimize placement
+- Combine with SEO plugins for better ranking
+- Test different link placement strategies
 
-## Requirements
+## Premium Version
 
-- WordPress 5.0 or higher
-- PHP 7.2 or higher
-- MySQL 5.6 or higher
+Upgrade to Premium ($49/year) for advanced features:
+- Commission forecasting
+- Automated performance reports
+- A/B testing for affiliate links
+- Network integrations
+- Priority email support
 
 ## Support
 
-For issues or feature requests, visit the plugin support page or documentation.
+For questions or issues, visit the plugin documentation or contact our support team.
 
 ## License
 
