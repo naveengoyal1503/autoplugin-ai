@@ -1,82 +1,147 @@
-<?php
 /*
-Plugin Name: Affiliate Deal Booster
-Description: Display customizable coupon widgets linked to affiliate programs to increase conversions.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Deal_Booster.php
 */
+<?php
+/**
+ * Plugin Name: Affiliate Deal Booster
+ * Plugin URI: https://example.com/affiliatdealbooster
+ * Description: Auto-aggregate and display affiliate coupon deals with optimized widgets to boost conversions.
+ * Version: 1.0
+ * Author: YourName
+ * Text Domain: affiliate-deal-booster
+ */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 class AffiliateDealBooster {
+    private $option_name = 'adb_deals_cache';
+    private $nonce_action = 'adb_refresh_deals';
+
     public function __construct() {
-        add_shortcode('affiliate_deal', array($this, 'render_deal_shortcode'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
+        add_action('admin_menu', array($this, 'adb_add_admin_menu'));
+        add_action('admin_post_adb_refresh_deals', array($this, 'adb_refresh_deals_handler'));
+        add_shortcode('affiliate_deals', array($this, 'adb_shortcode_display'));
+        add_action('wp_enqueue_scripts', array($this, 'adb_enqueue_scripts'));
+        add_filter('the_content', array($this, 'adb_inject_deals_in_content'));
     }
 
-    public function enqueue_assets() {
-        wp_register_style('adb_styles', plugin_dir_url(__FILE__) . 'adb_styles.css');
-        wp_enqueue_style('adb_styles');
-        wp_register_script('adb_script', plugin_dir_url(__FILE__) . 'adb_script.js', array('jquery'), null, true);
-        wp_enqueue_script('adb_script');
+    public function adb_add_admin_menu() {
+        add_menu_page('Affiliate Deal Booster', 'Affiliate Deal Booster', 'manage_options', 'affiliate_deal_booster', array($this, 'adb_admin_page'));
     }
 
-    public function render_deal_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'title' => 'Special Deal',
-            'coupon' => '',
-            'deal_url' => '',
-            'description' => '',
-            'expiry' => '',
-            'button_text' => 'Get Deal'
-        ), $atts);
+    public function adb_admin_page() {
+        if (!current_user_can('manage_options')) {
+            wp_die('Unauthorized user');
+        }
 
-        $expiry_notice = '';
-        if (!empty($atts['expiry'])) {
-            $expiry_time = strtotime($atts['expiry']);
-            if ($expiry_time && time() > $expiry_time) {
-                return '<div class="adb-expired">This deal has expired.</div>';
-            } elseif ($expiry_time) {
-                $expiry_notice = '<div class="adb-expiry">Expires on ' . esc_html(date('F j, Y', $expiry_time)) . '</div>';
+        $deals = get_option($this->option_name, array());
+
+        echo '<div class="wrap"><h1>Affiliate Deal Booster</h1>';
+        echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+        wp_nonce_field($this->nonce_action);
+        echo '<input type="hidden" name="action" value="adb_refresh_deals">';
+        echo '<p><input type="submit" class="button button-primary" value="Refresh Deals Now"></p>';
+        echo '</form>';
+
+        echo '<h2>Cached Deals (' . count($deals) . ' items)</h2>';
+        if (!empty($deals)) {
+            echo '<table style="width:100%;border-collapse:collapse;" border="1"><thead><tr><th>Merchant</th><th>Coupon</th><th>Description</th><th>URL</th></tr></thead><tbody>';
+            foreach ($deals as $deal) {
+                echo '<tr>';
+                echo '<td>' . esc_html($deal['merchant']) . '</td>';
+                echo '<td>' . esc_html($deal['coupon']) . '</td>';
+                echo '<td>' . esc_html($deal['description']) . '</td>';
+                echo '<td><a href="' . esc_url($deal['url']) . '" target="_blank" rel="nofollow noopener">Link</a></td>';
+                echo '</tr>';
+            }
+            echo '</tbody></table>';
+        } else {
+            echo '<p>No deals cached yet. Click "Refresh Deals Now" to fetch.</p>';
+        }
+
+        echo '<p>Use shortcode <code>[affiliate_deals]</code> to display deals on posts or pages.</p>';
+        echo '</div>';
+    }
+
+    public function adb_refresh_deals_handler() {
+        if (!current_user_can('manage_options') || !check_admin_referer($this->nonce_action)) {
+            wp_die('Permission denied');
+        }
+
+        $this->adb_fetch_and_cache_deals();
+
+        wp_redirect(admin_url('admin.php?page=affiliate_deal_booster&updated=1'));
+        exit;
+    }
+
+    private function adb_fetch_and_cache_deals() {
+        // For demo purpose, static deals. In real app, fetch via APIs or RSS from affiliate programs
+        $sample_deals = array(
+            array(
+                'merchant' => 'Amazon',
+                'coupon' => 'SAVE10',
+                'description' => 'Save 10% on electronics.',
+                'url' => 'https://www.amazon.com?tag=youraffid'
+            ),
+            array(
+                'merchant' => 'eBay',
+                'coupon' => 'EBAY20',
+                'description' => 'Get 20% off selected items.',
+                'url' => 'https://www.ebay.com?campid=youraffid'
+            ),
+            array(
+                'merchant' => 'Best Buy',
+                'coupon' => 'BEST5',
+                'description' => '5% off storewide.',
+                'url' => 'https://www.bestbuy.com?ref=youraffid'
+            ),
+        );
+
+        update_option($this->option_name, $sample_deals);
+    }
+
+    public function adb_shortcode_display($atts) {
+        $deals = get_option($this->option_name, array());
+        if (empty($deals)) {
+            return '<p>No deals available currently. Please check back later.</p>';
+        }
+
+        $output = '<div class="adb-deals-widget" style="border:1px solid #ccc;padding:10px;margin:15px 0;">';
+        $output .= '<h3 style="margin-bottom:10px;">Exclusive Deals & Coupons</h3><ul style="list-style:none;padding:0;margin:0;">';
+
+        foreach ($deals as $deal) {
+            $output .= '<li style="margin-bottom:8px;">';
+            $output .= '<strong>' . esc_html($deal['merchant']) . '</strong>: '; 
+            $output .= esc_html($deal['description']) . ' '; 
+            $output .= '<a href="' . esc_url($deal['url']) . '" target="_blank" rel="nofollow noopener" style="color:#0073aa;">Use Coupon: ' . esc_html($deal['coupon']) . '</a>';
+            $output .= '</li>';
+        }
+
+        $output .= '</ul></div>';
+
+        return $output;
+    }
+
+    public function adb_enqueue_scripts() {
+        // Optional: enqueue styles if needed
+    }
+
+    public function adb_inject_deals_in_content($content) {
+        if (is_singular() && is_main_query()) {
+            $deals_html = $this->adb_shortcode_display(array());
+            // Inject below first paragraph
+            $pos = strpos($content, '</p>');
+            if ($pos !== false) {
+                return substr_replace($content, '</p>' . $deals_html, $pos, 4);
+            } else {
+                return $content . $deals_html;
             }
         }
-
-        $coupon_html = '';
-        if (!empty($atts['coupon'])) {
-            $coupon_html = '<div class="adb-coupon">Coupon: <strong>' . esc_html($atts['coupon']) . '</strong></div>';
-        }
-
-        $escaped_url = esc_url($atts['deal_url']);
-        $escaped_button = sanitize_text_field($atts['button_text']);
-        $description_html = !empty($atts['description']) ? '<div class="adb-description">' . esc_html($atts['description']) . '</div>' : '';
-
-        ob_start();
-        ?>
-        <div class="adb-widget">
-            <div class="adb-title"><?php echo esc_html($atts['title']); ?></div>
-            <?php echo $description_html; ?>
-            <?php echo $coupon_html; ?>
-            <?php echo $expiry_notice; ?>
-            <a href="<?php echo $escaped_url; ?>" target="_blank" rel="nofollow noopener" class="adb-button"><?php echo $escaped_button; ?></a>
-        </div>
-        <?php
-        return ob_get_clean();
+        return $content;
     }
 }
 
 new AffiliateDealBooster();
-
-// Inline CSS
-add_action('wp_head', function(){ ?>
-<style>
-.adb-widget { background: #f9f9f9; border: 1px solid #ddd; padding: 15px; max-width: 320px; font-family: Arial, sans-serif; margin: 10px 0; border-radius: 5px; }
-.adb-title { font-size: 18px; font-weight: bold; margin-bottom: 8px; color: #2c3e50; }
-.adb-description { font-size: 14px; color: #34495e; margin-bottom: 10px; }
-.adb-coupon { background: #e74c3c; color: #fff; display: inline-block; padding: 5px 10px; font-weight: bold; border-radius: 3px; margin-bottom: 10px; }
-.adb-button { display: inline-block; background: #27ae60; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 4px; font-weight: bold; transition: background 0.3s ease; }
-.adb-button:hover { background: #2ecc71; }
-.adb-expiry { font-size: 12px; color: #7f8c8d; margin-top: 5px; }
-.adb-expired { color: #c0392b; font-weight: bold; font-size: 14px; }
-</style>
-<?php });
