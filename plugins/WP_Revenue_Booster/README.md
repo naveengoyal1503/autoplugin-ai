@@ -1,20 +1,27 @@
 # WP Revenue Booster
 
-Automate coupon/deal aggregation, affiliate link management, and sponsored content scheduling for WordPress sites.
+Maximize your WordPress site's revenue with smart affiliate link rotation, contextual ads, and dynamic coupon codes.
 
 ## Features
-- Add and manage coupons, affiliate links, and sponsored posts via custom post types.
-- Display coupons and affiliate links with shortcodes.
-- Easy admin interface for content management.
+- Rotates affiliate links on single posts
+- Displays contextual ads in the footer
+- Shows dynamic coupon codes based on user behavior
+- Shortcode to display brand-specific coupons
+- Easy admin configuration
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory.
-2. Activate the plugin from the WordPress admin panel.
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to Settings > Revenue Booster to configure affiliate links, ads, and coupons
 
 ## Setup
-- Go to Revenue Booster in your admin menu to add coupons, affiliate links, and sponsored posts.
+- Enter affiliate links, ads, and coupons in JSON format in the admin settings
+- Use the `[revenue_coupon brand="BrandName"]` shortcode to display specific coupons
 
 ## Usage
-- Use `[revenue_booster_coupons limit="5"]` to display up to 5 coupons.
-- Use `[revenue_booster_affiliates limit="5"]` to display up to 5 affiliate links.
-- Manage sponsored content from the admin panel.
+- Affiliate links and ads will appear automatically on single posts
+- Coupons can be displayed using the shortcode or will appear in the footer
+
+## Requirements
+- WordPress 5.0 or higher
+- PHP 7.0 or higher
