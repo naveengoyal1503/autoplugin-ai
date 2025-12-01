@@ -1,36 +1,32 @@
 # Affiliate Link Optimizer
 
 ## Features
-- Automatically detect affiliate links from specified domains in your post content
-- Cloak affiliate links to mask affiliate IDs and add nofollow/sponsored attributes
-- Track clicks on affiliate links with logging in your WordPress database
-- Admin dashboard page showing top clicked affiliate links
-- Open affiliate links in new tabs to improve user experience
+
+- Automatically detects affiliate links in post content using patterns
+- Cloaks affiliate URLs into your domain with a simple, trackable redirect
+- Tracks clicks on each affiliate link
+- Basic broken link detection with daily checking and placeholder update mechanism
+- Admin dashboard to view affiliate link stats and clicks
 
 ## Installation
+
 1. Download the plugin PHP file and upload it to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Affiliate Link Optimizer** in the WordPress admin menu.
-4. Enter your affiliate domains as a comma separated list in settings.
-5. Save settings to start cloaking and tracking affiliate links on your site.
+2. Activate the plugin through the WordPress admin Plugins menu.
+3. The plugin will automatically detect and cloak affiliate links in your posts.
 
 ## Setup
-- Specify your affiliate domains (e.g. `amazon.com, exampleaffiliate.com`) to detect links to cloak.
-- The plugin will automatically replace outbound affiliate links with cloaked redirect URLs.
-- Clicks on cloaked affiliate links will be logged in the database.
+
+No manual setup required. Links are detected dynamically when posts are loaded.
 
 ## Usage
-- Write content with your usual affiliate links included.
-- Links matching your configured affiliate domains will be cloaked automatically on display.
-- Visit the plugin settings page to see the most clicked affiliate links on your site.
-- Use data to improve your affiliate marketing strategies.
 
-## Premium Version (planned)
-- Advanced click analytics with geo-location and device info
-- Automatic keyword linking for affiliate product mentions
-- Link expiry management and affiliate ID rotation
-- Geo-targeted affiliate link redirection
+- Write your posts as usual, include affiliate URLs containing keywords like `aff=`, `ref=`, or hosted on major affiliate domains.
+- The plugin will automatically cloak those URLs to your site URL in the format `/alo-go/{hash}`.
+- Visits to cloaked links are redirected to the original affiliate URL with click tracking.
+- Visit the **Affiliate Link Optimizer** admin page to view click statistics and link statuses.
 
----
+## Monetization Strategy
 
-**Affiliate Link Optimizer** helps bloggers and affiliate marketers increase affiliate revenue by automating link cloaking and providing useful click data to optimize their campaigns.
+- Offer the plugin for free with essential features for affiliate link cloaking and tracking.
+- Provide a premium upgrade that adds automatic affiliate link updates, multi-network support, detailed analytics, integration with popular affiliate platforms, and priority support.
+- Target affiliate marketers and bloggers who want to optimize their affiliate revenue with minimal manual management.
