@@ -1,33 +1,43 @@
 # Affiliate Coupon Hub
 
-## Description
-Affiliate Coupon Hub lets you create and manage custom coupons and deals on your WordPress site, embedding affiliate links for monetization. Perfect for bloggers and affiliate marketers seeking a dedicated coupon platform to boost affiliate commissions.
+Affiliate Coupon Hub is a WordPress plugin that helps affiliate marketers, bloggers, and online store owners create and display exclusive coupons and deals linked to affiliate programs. Boost your affiliate conversions by offering your visitors easy access to discount codes.
 
 ## Features
-- Custom post type for affiliate coupons
-- Add affiliate URLs, discount codes, and expiration dates
-- Display coupons via shortcode `[affiliate_coupons]`
-- Automatically hides expired coupons
-- Clean, simple styling for coupon display
+
+- Easy management of coupons via JSON input in WordPress admin
+- Display coupons anywhere using shortcode `[affiliate_coupons]`
+- Click-to-copy coupon codes for user convenience
+- Affiliate links attached to coupons to track conversions
+- Simple and lightweight with no external dependencies
 
 ## Installation
-1. Upload `affiliate-coupon-hub.php` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the Plugins menu in WordPress
-3. Add coupons via the new 'Affiliate Coupons' menu in your dashboard
+
+1. Upload `affiliate-coupon-hub.php` to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 ## Setup
-- When adding a new coupon, enter the title, description, affiliate URL, an optional discount code, and an expiration date if applicable.
-- Save the coupon.
+
+1. Navigate to the "Coupon Hub" menu in the WordPress admin sidebar.
+2. Add your coupons in JSON format, for example:
+
+
+[
+  {
+    "title": "10% off Shoes",
+    "code": "SHOES10",
+    "description": "Get 10% discount on all shoes.",
+    "affiliate_url": "https://affiliate.example.com/?product=shoes&ref=123"
+  }
+]
+
+3. Save your changes.
 
 ## Usage
-- Use the shortcode `[affiliate_coupons]` in any post, page, or widget to display the list of active coupons.
-- Visitors can click the coupon buttons to be redirected to your affiliate offers.
 
-## Monetization
-- Earn commissions through affiliate links integrated into each coupon.
-- Encourage visitors to use provided discount codes when applicable.
+- Use the shortcode `[affiliate_coupons]` in posts, pages, or widgets to display the coupon list.
+- Visitors can click the coupon code to copy it to their clipboard.
+- The "Shop Now" button links visitors through your affiliate URL to earn commissions.
 
+---
 
-## Changelog
-### 1.0
-- Initial release with coupon management and shortcode display
+Boost your affiliate marketing earnings while providing value to your audience with Affiliate Coupon Hub!
