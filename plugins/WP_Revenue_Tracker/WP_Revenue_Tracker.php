@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP Revenue Tracker
-Description: Track and visualize revenue from ads, affiliate links, memberships, and product sales.
+Description: Track and visualize revenue from ads, affiliate links, and digital product sales.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Tracker.php
@@ -27,60 +27,63 @@ class WP_Revenue_Tracker {
     }
 
     public function enqueue_scripts($hook) {
-        if ($hook != 'toplevel_page_wp-revenue-tracker') return;
+        if ($hook !== 'toplevel_page_wp-revenue-tracker') return;
         wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
     }
 
     public function render_dashboard() {
-        // Mock data for demo
-        $revenue_data = array(
-            'ads' => 1200,
-            'affiliate' => 800,
-            'memberships' => 500,
-            'products' => 1000
-        );
+        $revenue_data = $this->get_revenue_data();
         ?>
         <div class="wrap">
             <h1>WP Revenue Tracker</h1>
             <canvas id="revenueChart" width="400" height="200"></canvas>
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var ctx = document.getElementById('revenueChart').getContext('2d');
-                    var chart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Ads', 'Affiliate', 'Memberships', 'Products'],
-                            datasets: [{
-                                label: 'Revenue ($)',
-                                data: [
-                                    <?php echo $revenue_data['ads']; ?>,
-                                    <?php echo $revenue_data['affiliate']; ?>,
-                                    <?php echo $revenue_data['memberships']; ?>,
-                                    <?php echo $revenue_data['products']; ?>
-                                ],
-                                backgroundColor: [
-                                    '#FF6384',
-                                    '#36A2EB',
-                                    '#FFCE56',
-                                    '#4BC0C0'
-                                ]
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Ads', 'Affiliate', 'Products'],
+                        datasets: [{
+                            label: 'Revenue ($)',
+                            data: [
+                                <?php echo $revenue_data['ads']; ?>,
+                                <?php echo $revenue_data['affiliate']; ?>,
+                                <?php echo $revenue_data['products']; ?>
+                            ],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
                             }
                         }
-                    });
+                    }
                 });
             </script>
         </div>
         <?php
     }
+
+    private function get_revenue_data() {
+        // Simulate revenue data
+        return array(
+            'ads' => 1200,
+            'affiliate' => 800,
+            'products' => 2500
+        );
+    }
 }
 
 new WP_Revenue_Tracker();
-?>
