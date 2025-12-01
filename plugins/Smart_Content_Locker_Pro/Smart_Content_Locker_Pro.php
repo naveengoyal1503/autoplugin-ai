@@ -1,222 +1,292 @@
+<?php
 /*
+Plugin Name: Smart Content Locker Pro
+Plugin URI: https://smartcontentlocker.com
+Description: Professional content gating and membership management for WordPress sites
+Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Smart_Content_Locker_Pro.php
+License: GPL v2 or later
+Text Domain: smart-content-locker
 */
-<?php
-/**
- * Smart Content Locker Pro
- * Version: 1.0.0
- */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 define('SCL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SCL_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('SCL_VERSION', '1.0.0');
 
 class SmartContentLocker {
-    private $db_version = '1.0.0';
-    private $db_prefix = 'scl_';
+    private static $instance = null;
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     public function __construct() {
-        register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
-        add_action('save_post', array($this, 'save_meta'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
-        add_filter('the_content', array($this, 'filter_content'));
-        add_action('wp_ajax_scl_unlock_content', array($this, 'ajax_unlock_content'));
-        add_action('wp_ajax_nopriv_scl_unlock_content', array($this, 'ajax_unlock_content'));
+        $this->initHooks();
+        $this->loadDependencies();
     }
 
-    public function activate() {
+    private function initHooks() {
+        add_action('plugins_loaded', array($this, 'initPlugin'));
+        add_action('admin_menu', array($this, 'addAdminMenu'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueueAdminScripts'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueueFrontendScripts'));
+        add_filter('the_content', array($this, 'applyContentLocking'));
+        add_shortcode('scl_locked_content', array($this, 'renderLockedContent'));
+        add_action('init', array($this, 'registerPostMeta'));
+        add_action('add_meta_boxes', array($this, 'addMetaBoxes'));
+        add_action('save_post', array($this, 'savePostMeta'));
+    }
+
+    private function loadDependencies() {
+        require_once SCL_PLUGIN_DIR . 'includes/class-database.php';
+        require_once SCL_PLUGIN_DIR . 'includes/class-subscription.php';
+    }
+
+    public function initPlugin() {
+        load_plugin_textdomain('smart-content-locker', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        $this->createTables();
+    }
+
+    public function createTables() {
         global $wpdb;
-        $table_name = $wpdb->prefix . $this->db_prefix . 'locks';
         $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            post_id bigint(20) NOT NULL,
-            lock_type varchar(20) DEFAULT 'email',
-            lock_message text,
-            unlock_count int(11) DEFAULT 0,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
+
+        $sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}scl_subscriptions (
+            id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            user_id BIGINT(20) UNSIGNED NOT NULL,
+            membership_level VARCHAR(50) NOT NULL,
+            status VARCHAR(20) NOT NULL DEFAULT 'active',
+            start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+            end_date DATETIME NULL,
+            renewal_date DATETIME NULL,
+            payment_method VARCHAR(50),
+            price DECIMAL(10, 2),
+            PRIMARY KEY  (id),
+            KEY user_id (user_id),
+            KEY status (status)
         ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta($sql);
-        update_option('scl_db_version', $this->db_version);
     }
 
-    public function deactivate() {}
-
-    public function init() {
-        add_rewrite_rule('^scl-unlock/([0-9]+)/?$', 'index.php?scl_unlock=$matches[1]', 'top');
-        flush_rewrite_rules(false);
-    }
-
-    public function admin_menu() {
+    public function addAdminMenu() {
         add_menu_page(
             'Smart Content Locker',
             'Content Locker',
             'manage_options',
             'scl-dashboard',
-            array($this, 'dashboard_page'),
-            'dashicons-lock'
+            array($this, 'renderDashboard'),
+            'dashicons-lock',
+            25
+        );
+
+        add_submenu_page(
+            'scl-dashboard',
+            'Settings',
+            'Settings',
+            'manage_options',
+            'scl-settings',
+            array($this, 'renderSettings')
+        );
+
+        add_submenu_page(
+            'scl-dashboard',
+            'Subscriptions',
+            'Subscriptions',
+            'manage_options',
+            'scl-subscriptions',
+            array($this, 'renderSubscriptions')
         );
     }
 
-    public function dashboard_page() {
+    public function renderDashboard() {
         global $wpdb;
-        $table = $wpdb->prefix . $this->db_prefix . 'locks';
-        $locks = $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC LIMIT 50");
+        $total_subscribers = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}scl_subscriptions WHERE status = 'active'");
+        $total_revenue = $wpdb->get_var("SELECT SUM(price) FROM {$wpdb->prefix}scl_subscriptions WHERE status = 'active'");
         ?>
         <div class="wrap">
-            <h1>Smart Content Locker Pro</h1>
-            <div class="scl-dashboard">
-                <h2>Locked Content Overview</h2>
-                <table class="widefat">
-                    <thead>
-                        <tr>
-                            <th>Post Title</th>
-                            <th>Lock Type</th>
-                            <th>Unlocks</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($locks as $lock): ?>
-                            <tr>
-                                <td><?php echo get_the_title($lock->post_id); ?></td>
-                                <td><?php echo ucfirst($lock->lock_type); ?></td>
-                                <td><?php echo $lock->unlock_count; ?></td>
-                                <td><?php echo $lock->created_at; ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <h1>Smart Content Locker Dashboard</h1>
+            <div class="scl-dashboard-grid">
+                <div class="scl-card">
+                    <h3>Active Subscribers</h3>
+                    <p class="scl-stat"><?php echo esc_html($total_subscribers ?: 0); ?></p>
+                </div>
+                <div class="scl-card">
+                    <h3>Monthly Revenue</h3>
+                    <p class="scl-stat"><?php echo '$' . number_format(floatval($total_revenue) ?: 0, 2); ?></p>
+                </div>
             </div>
         </div>
         <?php
     }
 
-    public function add_meta_boxes() {
-        add_meta_box(
-            'scl_lock_meta',
-            'Content Locker Settings',
-            array($this, 'meta_box_callback'),
-            'post',
-            'normal'
-        );
-    }
-
-    public function meta_box_callback($post) {
-        wp_nonce_field('scl_save_meta', 'scl_nonce');
-        $enabled = get_post_meta($post->ID, '_scl_enabled', true);
-        $lock_type = get_post_meta($post->ID, '_scl_lock_type', true) ?: 'email';
-        $lock_message = get_post_meta($post->ID, '_scl_lock_message', true) ?: 'This content is locked. Subscribe to unlock.';
+    public function renderSettings() {
+        if (isset($_POST['scl_save_settings'])) {
+            check_admin_referer('scl_settings_nonce');
+            update_option('scl_stripe_key', sanitize_text_field($_POST['stripe_key'] ?? ''));
+            update_option('scl_paypal_email', sanitize_email($_POST['paypal_email'] ?? ''));
+            echo '<div class="notice notice-success"><p>Settings saved successfully!</p></div>';
+        }
         ?>
-        <div style="padding: 10px;">
-            <label>
-                <input type="checkbox" name="scl_enabled" value="1" <?php checked($enabled, 1); ?> />
-                Enable Content Lock
-            </label>
-            <br><br>
-            <label>Lock Type:</label>
-            <select name="scl_lock_type">
-                <option value="email" <?php selected($lock_type, 'email'); ?>>Email Subscription</option>
-                <option value="social" <?php selected($lock_type, 'social'); ?>>Social Share</option>
-                <option value="payment" <?php selected($lock_type, 'payment'); ?>>Micropayment</option>
-            </select>
-            <br><br>
-            <label>Lock Message:</label>
-            <textarea name="scl_lock_message" style="width: 100%; height: 80px;"><?php echo esc_textarea($lock_message); ?></textarea>
+        <div class="wrap">
+            <h1>Content Locker Settings</h1>
+            <form method="post">
+                <?php wp_nonce_field('scl_settings_nonce'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th><label for="stripe_key">Stripe API Key</label></th>
+                        <td><input type="text" id="stripe_key" name="stripe_key" value="<?php echo esc_attr(get_option('scl_stripe_key')); ?>" class="regular-text"></td>
+                    </tr>
+                    <tr>
+                        <th><label for="paypal_email">PayPal Email</label></th>
+                        <td><input type="email" id="paypal_email" name="paypal_email" value="<?php echo esc_attr(get_option('scl_paypal_email')); ?>" class="regular-text"></td>
+                    </tr>
+                </table>
+                <?php submit_button('Save Settings', 'primary', 'scl_save_settings'); ?>
+            </form>
         </div>
         <?php
     }
 
-    public function save_meta($post_id) {
-        if (!isset($_POST['scl_nonce']) || !wp_verify_nonce($_POST['scl_nonce'], 'scl_save_meta')) return;
-        update_post_meta($post_id, '_scl_enabled', isset($_POST['scl_enabled']) ? 1 : 0);
-        update_post_meta($post_id, '_scl_lock_type', sanitize_text_field($_POST['scl_lock_type'] ?? 'email'));
-        update_post_meta($post_id, '_scl_lock_message', sanitize_textarea_field($_POST['scl_lock_message'] ?? ''));
+    public function renderSubscriptions() {
+        global $wpdb;
+        $subscriptions = $wpdb->get_results("SELECT s.*, u.user_login FROM {$wpdb->prefix}scl_subscriptions s LEFT JOIN {$wpdb->prefix}users u ON s.user_id = u.ID ORDER BY s.start_date DESC");
+        ?>
+        <div class="wrap">
+            <h1>Manage Subscriptions</h1>
+            <table class="wp-list-table widefat striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Level</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>Renewal Date</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($subscriptions as $sub): ?>
+                        <tr>
+                            <td><?php echo esc_html($sub->user_login); ?></td>
+                            <td><?php echo esc_html($sub->membership_level); ?></td>
+                            <td><span class="scl-status scl-status-<?php echo esc_attr($sub->status); ?>"><?php echo esc_html(ucfirst($sub->status)); ?></span></td>
+                            <td><?php echo esc_html(date_format(date_create($sub->start_date), 'M d, Y')); ?></td>
+                            <td><?php echo $sub->renewal_date ? esc_html(date_format(date_create($sub->renewal_date), 'M d, Y')) : 'N/A'; ?></td>
+                            <td><?php echo '$' . esc_html(number_format($sub->price, 2)); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
     }
 
-    public function enqueue_frontend_assets() {
-        wp_enqueue_style('scl-frontend', SCL_PLUGIN_URL . 'assets/frontend.css', array(), '1.0.0');
-        wp_enqueue_script('scl-frontend', SCL_PLUGIN_URL . 'assets/frontend.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('scl-frontend', 'sclAjax', array('url' => admin_url('admin-ajax.php')));
+    public function addMetaBoxes() {
+        add_meta_box(
+            'scl_content_settings',
+            'Content Locker Settings',
+            array($this, 'renderMetaBox'),
+            'post',
+            'normal',
+            'high'
+        );
     }
 
-    public function enqueue_admin_assets() {
-        wp_enqueue_style('scl-admin', SCL_PLUGIN_URL . 'assets/admin.css', array(), '1.0.0');
-        wp_enqueue_script('scl-admin', SCL_PLUGIN_URL . 'assets/admin.js', array('jquery'), '1.0.0', true);
+    public function renderMetaBox($post) {
+        $is_locked = get_post_meta($post->ID, '_scl_is_locked', true);
+        $required_level = get_post_meta($post->ID, '_scl_required_level', true);
+        $preview_text = get_post_meta($post->ID, '_scl_preview_text', true);
+        wp_nonce_field('scl_meta_nonce', 'scl_nonce');
+        ?>
+        <div class="scl-metabox">
+            <p>
+                <label><input type="checkbox" name="scl_is_locked" value="1" <?php checked($is_locked, 1); ?>> Lock this content</label>
+            </p>
+            <p>
+                <label for="scl_required_level">Required Membership Level:</label>
+                <select id="scl_required_level" name="scl_required_level">
+                    <option value="basic" <?php selected($required_level, 'basic'); ?>>Basic</option>
+                    <option value="premium" <?php selected($required_level, 'premium'); ?>>Premium</option>
+                    <option value="elite" <?php selected($required_level, 'elite'); ?>>Elite</option>
+                </select>
+            </p>
+            <p>
+                <label for="scl_preview_text">Preview Text (shown before lock):</label>
+                <textarea id="scl_preview_text" name="scl_preview_text" rows="3"><?php echo esc_textarea($preview_text); ?></textarea>
+            </p>
+        </div>
+        <?php
     }
 
-    public function filter_content($content) {
-        if (!is_singular('post') || !in_the_loop()) return $content;
-        $post_id = get_the_ID();
-        if (!get_post_meta($post_id, '_scl_enabled', true)) return $content;
-        $lock_type = get_post_meta($post_id, '_scl_lock_type', true) ?: 'email';
-        $lock_message = get_post_meta($post_id, '_scl_lock_message', true);
-        if (!isset($_COOKIE['scl_unlock_' . $post_id])) {
-            $this->log_unlock_attempt($post_id);
-            return $this->render_lock_ui($post_id, $lock_type, $lock_message, $content);
+    public function savePostMeta($post_id) {
+        if (!isset($_POST['scl_nonce']) || !wp_verify_nonce($_POST['scl_nonce'], 'scl_meta_nonce')) {
+            return;
+        }
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+        update_post_meta($post_id, '_scl_is_locked', isset($_POST['scl_is_locked']) ? 1 : 0);
+        update_post_meta($post_id, '_scl_required_level', sanitize_text_field($_POST['scl_required_level'] ?? 'basic'));
+        update_post_meta($post_id, '_scl_preview_text', wp_kses_post($_POST['scl_preview_text'] ?? ''));
+    }
+
+    public function applyContentLocking($content) {
+        if (is_single() && is_user_logged_in()) {
+            $is_locked = get_post_meta(get_the_ID(), '_scl_is_locked', true);
+            if ($is_locked) {
+                $preview = get_post_meta(get_the_ID(), '_scl_preview_text', true);
+                $required_level = get_post_meta(get_the_ID(), '_scl_required_level', true);
+                $user_level = get_user_meta(get_current_user_id(), 'scl_membership_level', true);
+                $levels = array('basic' => 1, 'premium' => 2, 'elite' => 3);
+                if ($levels[$user_level] < $levels[$required_level]) {
+                    return $preview . '<div class="scl-locked-notice"><p>This content requires a ' . esc_html($required_level) . ' membership. <a href="#upgrade">Upgrade now</a></p></div>';
+                }
+            }
         }
         return $content;
     }
 
-    private function render_lock_ui($post_id, $lock_type, $message, $content) {
-        ob_start();
-        ?>
-        <div class="scl-lock-container">
-            <div class="scl-lock-overlay">
-                <div class="scl-lock-content">
-                    <div class="scl-lock-icon">🔒</div>
-                    <h3><?php echo esc_html($message); ?></h3>
-                    <?php if ($lock_type === 'email'): ?>
-                        <form class="scl-email-form" data-post-id="<?php echo $post_id; ?>">
-                            <input type="email" name="email" placeholder="Enter your email" required>
-                            <button type="submit">Unlock Content</button>
-                        </form>
-                    <?php elseif ($lock_type === 'social'): ?>
-                        <div class="scl-social-buttons">
-                            <button class="scl-share-btn facebook">Share on Facebook</button>
-                            <button class="scl-share-btn twitter">Share on Twitter</button>
-                        </div>
-                    <?php elseif ($lock_type === 'payment'): ?>
-                        <button class="scl-payment-btn" data-post-id="<?php echo $post_id; ?>">Unlock for $0.99</button>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <div class="scl-preview"><?php echo wp_kses_post(wp_trim_words($content, 50)); ?></div>
-        </div>
-        <?php
-        return ob_get_clean();
+    public function renderLockedContent($atts) {
+        $atts = shortcode_atts(array('level' => 'premium'), $atts);
+        if (!is_user_logged_in()) {
+            return '<p>Please log in to view this content.</p>';
+        }
+        $user_level = get_user_meta(get_current_user_id(), 'scl_membership_level', true);
+        $levels = array('basic' => 1, 'premium' => 2, 'elite' => 3);
+        if (!$user_level || $levels[$user_level] < $levels[$atts['level']]) {
+            return '<p>You do not have access to this content.</p>';
+        }
+        return '';
     }
 
-    public function ajax_unlock_content() {
-        $post_id = intval($_POST['post_id'] ?? 0);
-        $email = sanitize_email($_POST['email'] ?? '');
-        if ($post_id && $email) {
-            setcookie('scl_unlock_' . $post_id, '1', time() + (24 * 60 * 60), '/'); // 24 hours
-            wp_send_json_success(array('message' => 'Content unlocked!'));
-        }
-        wp_send_json_error(array('message' => 'Unlock failed'));
+    public function enqueueAdminScripts() {
+        wp_enqueue_style('scl-admin-css', SCL_PLUGIN_URL . 'css/admin.css', array(), SCL_VERSION);
+        wp_enqueue_script('scl-admin-js', SCL_PLUGIN_URL . 'js/admin.js', array('jquery'), SCL_VERSION, true);
     }
 
-    private function log_unlock_attempt($post_id) {
-        global $wpdb;
-        $table = $wpdb->prefix . $this->db_prefix . 'locks';
-        $existing = $wpdb->get_row($wpdb->prepare("SELECT id, unlock_count FROM $table WHERE post_id = %d", $post_id));
-        if ($existing) {
-            $wpdb->update($table, array('unlock_count' => $existing->unlock_count + 1), array('id' => $existing->id));
-        } else {
-            $wpdb->insert($table, array('post_id' => $post_id, 'unlock_count' => 1));
-        }
+    public function enqueueFrontendScripts() {
+        wp_enqueue_style('scl-frontend-css', SCL_PLUGIN_URL . 'css/frontend.css', array(), SCL_VERSION);
+        wp_enqueue_script('scl-frontend-js', SCL_PLUGIN_URL . 'js/frontend.js', array('jquery'), SCL_VERSION, true);
     }
 }
 
-new SmartContentLocker();
+SmartContentLocker::getInstance();
+
+register_activation_hook(__FILE__, function() {
+    SmartContentLocker::getInstance()->createTables();
+});
+
+register_deactivation_hook(__FILE__, function() {
+    // Cleanup code if needed
+});
 ?>
