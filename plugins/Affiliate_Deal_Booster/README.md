@@ -1,50 +1,48 @@
 # Affiliate Deal Booster
 
 ## Description
-Affiliate Deal Booster automatically aggregates and curates affiliate coupons and deals matching your niche keywords, helping you increase conversions and affiliate revenue effortlessly.
+Affiliate Deal Booster is a plugin designed to help WordPress site owners increase affiliate sales by automatically curating and displaying affiliate coupons and deals aggregated from multiple affiliate networks via JSON APIs.
 
 ## Features
 
-- Automatically display affiliate coupons and deals tailored to your site's niche.
-- Admin settings to specify keywords, max number of deals, and affiliate ID.
-- Shortcode `[affiliate_deals]` to insert deals anywhere on your site.
-- Responsive and minimal design to match most themes.
-- Freemium-ready structure for future premium features.
+- Auto-imports affiliate coupons from multiple affiliate network API URLs
+- Displays coupon title, code with one-click copy, and tracked affiliate links
+- Simple shortcode `[affiliate_deals]` to display deals anywhere
+- Basic click redirect tracking placeholder for analytics
+- Easy settings panel to add and manage affiliate network API endpoints
+- Freemium ready: scalable to add premium features like advanced analytics and customizable widgets
 
 ## Installation
 
-1. Upload the `affiliate-deal-booster.php` file to the `/wp-content/plugins/` directory.
+1. Upload the `affiliate-deal-booster.php` file to your WordPress `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to the 'Aff. Deal Booster' menu in your WP dashboard to configure settings.
+3. Navigate to 'Affiliate Deal Booster' in the admin menu.
+4. Add one or more JSON API URLs from your affiliate networks (one URL per line).
+5. Save settings.
 
 ## Setup
 
-- Enter comma-separated keywords related to your niche to filter deals.
-- Specify your affiliate ID to append it to deal links.
-- Set the maximum number of deals to display.
-- Save changes.
+- Ensure the affiliate network APIs provide coupon/deal data in JSON format with keys: `title`, `code`, and `url`.
+- Example JSON format:
+  
+  [
+    {"title":"Save 10% on Shoes","code":"SHOE10","url":"https://affiliate-link.com/product"},
+    {"title":"Buy 1 Get 1 Free","code":"BOGO","url":"https://affiliate-link.com/offer"}
+  ]
+  
 
 ## Usage
 
-- Insert the shortcode `[affiliate_deals]` into any post or page where you want to show the curated affiliate deals.
+- Insert the shortcode `[affiliate_deals]` into any post, page, or widget where you want the deals to appear.
+- Visitors will see a list of deals with coupon codes they can copy and affiliate links to claim offers.
 
-Example:
+## Monetization Strategy
+The plugin can utilize a freemium model:
+- Free tier with limited affiliate APIs and basic display
+- Pro tier with unlimited API sources, customizable deal widgets, enhanced analytics, and other advanced features
 
-markdown
-Here are some exclusive deals for you:
-
-[affiliate_deals]
-
-
-Your visitors will see a list of affiliate deals relevant to your keyword filters.
-
-## Future Premium Features (planned)
-
-- Auto-update deals from multiple affiliate networks.
-- Advanced filters and categorization.
-- Integration with popular affiliate platforms.
-- Priority support and customization options.
+This empowers affiliate marketers and bloggers to increase conversions and revenue while providing end users easy access to affiliate deals.
 
 ---
 
-Developed by AI Generator
+Thank you for using Affiliate Deal Booster!
