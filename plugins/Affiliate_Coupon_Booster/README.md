@@ -1,44 +1,44 @@
 # Affiliate Coupon Booster
 
 ## Description
-Affiliate Coupon Booster automatically displays optimized affiliate coupon codes and deals from a simple JSON configuration, helping affiliate marketers and bloggers boost conversions and earn higher commissions.
+Affiliate Coupon Booster allows affiliate marketers to create and display dynamic coupon codes linked to their affiliate URLs to increase conversion rates and track performance.
 
 ## Features
-- Add and manage coupon codes directly from the WordPress admin
-- Display random or rotating affiliate coupons on any post or page using a shortcode
-- Supports unlimited coupons with affiliate URLs
-- Clean, responsive coupon box design
-- Simple JSON format for easy coupon management
-- Lightweight and self-contained in a single PHP file
+
+- Add and manage multiple affiliate coupons through a JSON input in WordPress settings.
+- Display coupons anywhere on your site with the shortcode `[affiliate_coupons]`.
+- Each coupon includes a unique code, description, and affiliate link.
+- Simple and lightweight single PHP file plugin.
 
 ## Installation
+
 1. Upload the `affiliate-coupon-booster.php` file to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to 'Affiliate Coupons' admin menu to add your coupon codes in JSON format.
+3. Go to Settings > Affiliate Coupon Booster to configure your coupons.
 
 ## Setup
-- Enter your coupon data as a JSON array in the admin settings. Example format:
-  
-  [
-    {
-      "code": "SAVE10",
-      "description": "Save 10% at Store",
-      "affiliate_url": "https://affiliatelink.com/product?affid=123"
-    },
-    {
-      "code": "FREESHIP",
-      "description": "Free Shipping on orders over $50",
-      "affiliate_url": "https://affiliatelink.com/freeshipping?affid=123"
-    }
-  ]
-  
+
+- Enter coupon details in JSON format. Example:
+
+
+[
+  {"code":"SAVE20", "affiliate_url":"https://affiliatesite.com/?ref=123", "desc":"Save 20% on all items"},
+  {"code":"FREESHIP", "affiliate_url":"https://affiliatesite.com/?ref=456", "desc":"Free Shipping on orders $50+"}
+]
+
+
+- Save settings.
 
 ## Usage
-- Use the shortcode `[affiliate_coupon_boost]` in any post or page to display one random coupon from the list.
-- Style and placement can be customized by overriding the CSS in your theme if desired.
+
+- Place the shortcode `[affiliate_coupons]` in pages, posts, or widgets where you want the coupons to appear.
+
+- Users clicking "Use Coupon" will be redirected to the affiliate link with the coupon code shown.
 
 ## Monetization
-- Freemium model with basic coupon display free.
-- Pro version can include multiple display modes, analytics integration, scheduled coupon rotation, and multi-network affiliate management.
 
-Enjoy boosting your affiliate revenue with Affiliate Coupon Booster!
+- The free version provides basic coupon management.
+- The premium version (to be released) will offer advanced affiliate link tracking, analytics dashboard, coupon expiration, and automated updates for affiliate deals.
+
+---
+*Designed to help affiliate marketers convert more visitors and boost revenue by simplifying coupon promotion.*
