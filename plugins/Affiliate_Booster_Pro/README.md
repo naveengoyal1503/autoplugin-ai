@@ -1,30 +1,44 @@
 # Affiliate Booster Pro
 
-## Description
-Affiliate Booster Pro is a powerful WordPress plugin designed to help bloggers, niche site owners, and affiliate marketers maximize revenue by automatically converting specified keywords into affiliate links, tracking clicks for analytics, and dynamically displaying affiliate deals.
+Affiliate Booster Pro is a powerful WordPress plugin that enables site owners to create and manage customized affiliate programs with automated referral tracking, tiered commissions, and real-time analytics (premium).
 
 ## Features
-- Easy keyword-to-affiliate link management via a user-friendly admin panel
-- Automatically replaces defined keywords in post content with affiliate links
-- Click tracking for every affiliate link to measure performance
-- Responsive, no impact on site speed with lightweight conversion
-- Ensures no nested links inside existing anchors
-- Open to premium expansions: coupon integration, automatic deal imports, advanced analytics, and more
+
+- Easy setup of affiliate referral tracking via URL parameters
+- Shortcode `[affiliate_referral_link]` to show logged-in users their personalized referral URL
+- Configurable default commission rate and cookie tracking duration
+- Premium mode enables advanced features like multi-tier commissions, fraud detection, and detailed analytics (coming soon)
+- Lightweight and privacy-friendly referral cookie tracking
 
 ## Installation
-1. Upload the `affiliate-booster-pro.php` file to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Navigate to 'Affiliate Booster' in the admin menu
+
+1. Download the plugin PHP file.
+2. Upload it to your WordPress site in the `/wp-content/plugins/` directory.
+3. Activate the plugin through the 'Plugins' menu in WordPress.
 
 ## Setup
-1. On the Affiliate Booster admin page, add your target keywords and corresponding affiliate URLs
-2. Save changes
-3. The plugin will automatically convert those keywords in your post content to affiliate links
+
+1. Navigate to **Affiliate Booster** menu in the WordPress admin dashboard.
+2. Set your default commission rate (percentage).
+3. Set the referral cookie lifetime in days.
+4. Optionally enable Premium Mode to access future advanced features.
 
 ## Usage
-- Simply create or edit posts/pages as normal
-- Keywords you defined in the Affiliate Booster settings will automatically be hyperlinked to your affiliate URLs
-- Clicks on these links will be tracked automatically
 
+- Instruct your affiliates to share their referral URL, which is accessible via the shortcode `[affiliate_referral_link]` placed on any page or post.
+- Visitors clicking those referral links will have a cookie set to track conversions.
+- Monitor conversions and commissions through the admin dashboard (advanced analytics in premium).
 
-For more advanced features or support, consider upgrading to the Pro version when available.
+## Monetization Model
+
+Affiliate Booster Pro uses a freemium model:
+- Free core plugin provides essential affiliate tracking and referral link generation.
+- Subscription plans unlock premium addons: multi-tier commissions, fraud detection, enhanced reporting, priority support, and premium integrations.
+
+## Support
+
+For help or feature requests, please contact support@example.com.
+
+---
+
+Affiliate Booster Pro © 2025 Your Name. All rights reserved.
