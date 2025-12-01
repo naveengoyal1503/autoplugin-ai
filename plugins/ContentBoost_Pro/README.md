@@ -1,103 +1,72 @@
 # ContentBoost Pro
 
-## Description
-
-ContentBoost Pro is a comprehensive WordPress monetization management plugin designed to help content creators maximize their revenue streams. The plugin combines intelligent ad placement management, affiliate link tracking, and detailed performance analytics in one easy-to-use dashboard.
+AI-powered content optimization and repurposing plugin for WordPress monetization.
 
 ## Features
 
-### Free Features
-- Google AdSense integration and management
-- Customizable ad placement positions (after title, middle of content, after content)
-- Basic analytics dashboard
-- Affiliate link shortcode support
-- Simple revenue tracking
-- Plugin settings management
-
-### Premium Features (Pro Tier - $9.99/month)
-- Advanced affiliate link tracking with click and conversion metrics
-- AI-powered content recommendations for maximum monetization
-- Detailed revenue analytics and charts
-- A/B testing for ad placements
-- Automated revenue reports via email
-- Priority support
-
-### Agency Features (Agency Tier - $24.99/month)
-- Manage multiple WordPress sites from one dashboard
-- Advanced API access
-- Custom integration support
-- White-label options
-- Dedicated account manager
+- **Content Analysis Dashboard**: Track total posts analyzed, content repurposed, engagement metrics, and estimated revenue
+- **Multi-Format Repurposing**: Convert blog posts into video outlines, social media posts, infographic briefs, and podcast scripts
+- **Analytics Tracking**: Monitor engagement rates and performance by content format
+- **Monetization Recommendations**: Get AI-powered suggestions based on your content performance
+- **REST API**: Full REST API support for integrations
+- **Shortcode Support**: Display content stats anywhere on your site with `[contentboost_stats]`
 
 ## Installation
 
-1. Download the ContentBoost Pro plugin file
-2. In WordPress admin panel, go to Plugins > Add New
-3. Click "Upload Plugin" and select the ContentBoost Pro file
-4. Click "Install Now" and then "Activate"
-5. Navigate to ContentBoost Pro in the admin menu to configure
+1. Upload the `contentboost-pro` folder to `/wp-content/plugins/`
+2. Activate the plugin through the WordPress admin panel
+3. Navigate to ContentBoost Pro menu to configure settings
 
-## Setup Guide
+## Setup
 
-### Initial Configuration
-
-1. **Google AdSense Setup**
-   - Go to ContentBoost Pro > Ad Settings
-   - Enter your Google AdSense ID
-   - Select your preferred ad placement positions
-   - Click "Save Ad Settings"
-
-2. **Affiliate Link Management**
-   - Go to ContentBoost Pro > Affiliate Links (Premium feature)
-   - Add your affiliate links with product details
-   - Copy shortcodes for use in posts
-   - Track performance in real-time
-
-3. **Analytics**
-   - Navigate to ContentBoost Pro > Analytics
-   - View your revenue trends, top performing content, and conversion rates
-   - Export reports for further analysis
+1. Go to **ContentBoost Pro > Settings** in the WordPress admin
+2. Configure your preferred monetization options (affiliate links, memberships, etc.)
+3. Connect your email marketing platform (Mailchimp, ConvertKit, etc.)
+4. Set up your content repurposing preferences
 
 ## Usage
 
-### Adding Affiliate Links in Posts
+### Dashboard
+Access the main dashboard at **ContentBoost Pro > Dashboard** to view:
+- Total posts analyzed
+- Content repurposing statistics
+- Average engagement lift percentage
+- Estimated revenue from monetization
 
-Use the affiliate box shortcode in your post editor:
+### Repurpose Content
+1. Go to **ContentBoost Pro > Repurpose Content**
+2. Select a post from your library
+3. Choose repurposing formats (video outline, social posts, infographics, podcasts)
+4. Click "Repurpose Content" to generate variations
+
+### Analytics
+Track performance metrics at **ContentBoost Pro > Analytics** to identify your highest-performing content formats and optimize your monetization strategy.
+
+### Shortcode
+Display content statistics on any page or post:
+
+[contentboost_stats]
 
 
-[contentboost_affiliate_box title="Product Name" url="https://affiliate-link.com" image="https://image-url.jpg" price="$29.99"]
+## Monetization Models
 
+ContentBoost Pro supports multiple revenue streams:
 
-### Manual Ad Placement
+- **Affiliate Marketing**: Track affiliate link performance by content format
+- **Sponsored Content**: Identify sponsored content opportunities based on engagement
+- **Memberships**: Repurpose premium content for membership tiers
+- **Newsletter Subscriptions**: Convert top-performing content into exclusive newsletter tiers
+- **Digital Products**: Package repurposed content as downloadable resources
 
-The plugin automatically injects ads at positions you select. For manual placement, add to your theme's `functions.php` or use the ContentBoost Pro hooks.
+## REST API Endpoints
 
-### Viewing Dashboard Statistics
-
-1. Go to ContentBoost Pro > Dashboard
-2. View your monthly revenue overview
-3. Check active ad placements
-4. Monitor tracked affiliate links
-5. Analyze top performing content
-
-## Monetization Strategy
-
-ContentBoost Pro helps you implement multiple monetization strategies:
-
-- **Direct Monetization**: Manage membership content and digital product sales through integration
-- **Indirect Monetization**: Optimize ad placement and affiliate link performance
-- **Sponsored Content**: Track sponsored post performance
-- **Donations**: Add donation blocks to your site
+- `GET /wp-json/contentboost/v1/stats` - Retrieve dashboard statistics (requires admin access)
 
 ## Requirements
 
-- WordPress 5.0 or higher
-- PHP 7.2 or higher
-- Active Google AdSense account (for ad integration)
-
-## Support
-
-For support and feature requests, visit our website or contact our support team through the plugin dashboard.
+- WordPress 5.0+
+- PHP 7.2+
+- MySQL 5.6+
 
 ## License
 
