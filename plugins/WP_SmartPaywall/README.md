@@ -1,29 +1,32 @@
 # WP SmartPaywall
 
-A dynamic paywall plugin for WordPress that intelligently unlocks premium content based on user engagement, subscription status, or micro-payments.
+WP SmartPaywall is a dynamic paywall plugin for WordPress that intelligently restricts content based on user engagement, location, and subscription status. Maximize your conversion rates and revenue with smart paywall technology.
 
 ## Features
-- Enable/disable paywall globally
-- Choose paywall mode: subscription, engagement, or micro-payment
-- Set threshold for engagement-based unlocking
-- Shortcode support for manual paywall
-- User read count tracking
-- Premium access capability for subscribers
+- Dynamic paywall based on scroll depth
+- Customizable paywall message
+- Freemium model with premium add-ons
+- Subscription-based access to advanced features
+- Easy integration with shortcodes
 
 ## Installation
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
+1. Upload the `wp-smartpaywall` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > SmartPaywall to configure options
+3. Configure settings under Settings > WP SmartPaywall
 
 ## Setup
-- Enable the paywall and select your preferred mode
-- Set the threshold for engagement-based unlocking
-- Assign premium access to users as needed
+- Enable/disable the paywall
+- Set the scroll threshold for triggering the paywall
+- Customize the paywall message
 
 ## Usage
-- The paywall will automatically apply to all posts based on your settings
-- Use the `[smartpaywall]This content is behind a paywall.[/smartpaywall]` shortcode for manual paywall
-- Monitor and manage user access through user roles and capabilities
+Use the shortcode `[smartpaywall threshold="75" message="Subscribe to unlock more content!"]Your content here[/smartpaywall]` to wrap content that should be protected by the paywall.
+
+## Premium Add-ons
+- Advanced analytics
+- Location-based paywall rules
+- Subscription management
+- Custom paywall designs
 
 ## Support
-For support and feature requests, please visit the plugin website.
+For support and feature requests, please visit our website or contact our support team.
