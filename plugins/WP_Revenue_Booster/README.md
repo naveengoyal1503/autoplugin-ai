@@ -1,28 +1,35 @@
 # WP Revenue Booster
 
-Automatically optimize and manage multiple monetization streams (ads, affiliate links, coupons, memberships) from a single dashboard.
+Boost your WordPress site revenue with smart affiliate, coupon, and sponsored content placement.
 
 ## Features
-- Centralized monetization management
-- AdSense code injection
-- Affiliate link management
-- Coupon code display
-- Membership link promotion
-- Shortcode support for flexible placement
+- Easy-to-use admin interface for managing affiliate links, coupons, and sponsored content
+- Automatic injection of monetization content into your posts
+- JSON-based configuration for flexible content management
+- Responsive design for optimal user experience
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to 'Revenue Booster' in the admin menu to configure your monetization settings.
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to Settings > Revenue Booster to configure your monetization content
 
 ## Setup
-- Enter your AdSense code, affiliate links, coupon codes, and membership links in the plugin settings.
-- Use the shortcode `[wp_revenue_booster type="all"]` or specify a type (adsense, affiliate, coupon, membership) to display monetization elements in posts or pages.
+1. In the admin panel, add your affiliate links, coupons, and sponsored content in JSON format
+2. The plugin will automatically display this content at the end of your posts
 
 ## Usage
-- Manage all monetization streams from one dashboard.
-- Customize display with shortcodes.
-- Monitor and update monetization elements as needed.
+- Use the admin interface to update your monetization content as needed
+- The plugin will automatically display the latest content on your site
 
-## License
-GPL2
+## Example JSON Format
+
+[
+  {
+    "url": "https://example.com/product",
+    "title": "Example Product"
+  }
+]
+
+
+## Support
+For support, please contact support@example.com
