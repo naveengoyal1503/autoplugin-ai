@@ -1,167 +1,130 @@
-<?php
 /*
-Plugin Name: Affiliate Coupon Manager
-Description: Create and display affiliate coupons with tracking and analytics.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Coupon_Manager.php
-License: GPL2
 */
+<?php
+/**
+ * Plugin Name: Affiliate Coupon Manager
+ * Description: Display exclusive affiliate coupons with tracking links to boost affiliate sales.
+ * Version: 1.0
+ * Author: OpenAI
+ */
 
-if (!defined('ABSPATH')) {
-    exit;
+// Register custom post type for coupons
+add_action('init', 'acm_register_coupon_cpt');
+function acm_register_coupon_cpt() {
+    $labels = array(
+        'name' => 'Coupons',
+        'singular_name' => 'Coupon',
+        'add_new_item' => 'Add New Coupon',
+        'edit_item' => 'Edit Coupon',
+        'new_item' => 'New Coupon',
+        'view_item' => 'View Coupon',
+        'search_items' => 'Search Coupons',
+        'not_found' => 'No coupons found',
+    );
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'has_archive' => false,
+        'show_in_menu' => true,
+        'supports' => array('title', 'editor', 'custom-fields'),
+        'menu_icon' => 'dashicons-tickets-alt',
+    );
+    register_post_type('acm_coupon', $args);
 }
 
-class Affiliate_Coupon_Manager {
-    public function __construct() {
-        add_action('init', array($this, 'register_coupon_post_type'));
-        add_shortcode('affiliate_coupons', array($this, 'display_coupons_shortcode'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
-        add_action('template_redirect', array($this, 'track_coupon_click'));
-        add_action('add_meta_boxes', array($this, 'add_coupon_meta_boxes'));
-        add_action('save_post_coupon', array($this, 'save_coupon_meta'), 10, 2);
-        add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
+// Add metabox for coupon settings (e.g. affiliate URL, coupon code, expiry)
+add_action('add_meta_boxes', 'acm_add_coupon_metabox');
+function acm_add_coupon_metabox() {
+    add_meta_box('acm_coupon_details', 'Coupon Details', 'acm_coupon_metabox_callback', 'acm_coupon', 'normal', 'high');
+}
+function acm_coupon_metabox_callback($post) {
+    wp_nonce_field('acm_save_coupon_details', 'acm_coupon_nonce');
+
+    $affiliate_url = get_post_meta($post->ID, '_acm_affiliate_url', true);
+    $coupon_code = get_post_meta($post->ID, '_acm_coupon_code', true);
+    $expiry_date = get_post_meta($post->ID, '_acm_expiry_date', true);
+
+    echo '<p><label>Affiliate Link URL:</label><br/><input type="url" name="acm_affiliate_url" value="' . esc_attr($affiliate_url) . '" style="width:100%;" required></p>';
+    echo '<p><label>Coupon Code:</label><br/><input type="text" name="acm_coupon_code" value="' . esc_attr($coupon_code) . '" style="width:100%;" required></p>';
+    echo '<p><label>Expiry Date (optional):</label><br/><input type="date" name="acm_expiry_date" value="' . esc_attr($expiry_date) . '" style="width:100%;"></p>';
+}
+
+// Save coupon metadata
+add_action('save_post_acm_coupon', 'acm_save_coupon_details');
+function acm_save_coupon_details($post_id) {
+    if (!isset($_POST['acm_coupon_nonce']) || !wp_verify_nonce($_POST['acm_coupon_nonce'], 'acm_save_coupon_details')) {
+        return;
+    }
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
     }
 
-    public function register_coupon_post_type() {
-        $labels = array(
-            'name' => 'Coupons',
-            'singular_name' => 'Coupon',
-            'add_new' => 'Add New Coupon',
-            'add_new_item' => 'Add New Coupon',
-            'edit_item' => 'Edit Coupon',
-            'new_item' => 'New Coupon',
-            'view_item' => 'View Coupon',
-            'search_items' => 'Search Coupons',
-            'not_found' => 'No coupons found',
-            'not_found_in_trash' => 'No coupons found in Trash',
-            'menu_name' => 'Coupons'
-        );
+    if (isset($_POST['acm_affiliate_url'])) {
+        update_post_meta($post_id, '_acm_affiliate_url', esc_url_raw($_POST['acm_affiliate_url']));
+    }
+    if (isset($_POST['acm_coupon_code'])) {
+        update_post_meta($post_id, '_acm_coupon_code', sanitize_text_field($_POST['acm_coupon_code']));
+    }
+    if (isset($_POST['acm_expiry_date'])) {
+        update_post_meta($post_id, '_acm_expiry_date', sanitize_text_field($_POST['acm_expiry_date']));
+    }
+}
 
-        $args = array(
-            'labels' => $labels,
-            'public' => false,
-            'show_ui' => true,
-            'menu_icon' => 'dashicons-tag',
-            'supports' => array('title', 'editor'),
-            'rewrite' => false,
-            'capability_type' => 'post',
-            'capabilities' => array(
-                'edit_post' => 'edit_coupon',
-                'read_post' => 'read_coupon',
-                'delete_post' => 'delete_coupon',
-                'edit_posts' => 'edit_coupons',
-                'edit_others_posts' => 'edit_others_coupons',
-                'publish_posts' => 'publish_coupons',
-                'read_private_posts' => 'read_private_coupons',
+// Shortcode to display active coupons
+add_shortcode('acm_coupons', 'acm_display_coupons_shortcode');
+function acm_display_coupons_shortcode() {
+    $args = array(
+        'post_type' => 'acm_coupon',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            'relation' => 'OR',
+            array(
+                'key' => '_acm_expiry_date',
+                'value' => date('Y-m-d'),
+                'compare' => '>=',
+                'type' => 'DATE'
             ),
-            'map_meta_cap' => true,
-        );
-        register_post_type('coupon', $args);
+            array(
+                'key' => '_acm_expiry_date',
+                'compare' => 'NOT EXISTS'
+            )
+        ),
+        'orderby' => 'date',
+        'order' => 'DESC'
+    );
+    $coupons = new WP_Query($args);
+    if (!$coupons->have_posts()) {
+        return '<p>No coupons available at this time.</p>';
     }
 
-    public function add_coupon_meta_boxes() {
-        add_meta_box('coupon_details', 'Coupon Details', array($this, 'coupon_meta_box_callback'), 'coupon', 'normal', 'default');
+    $content = '<div class="acm-coupons">';
+    while ($coupons->have_posts()) {
+        $coupons->the_post();
+        $affiliate_url = get_post_meta(get_the_ID(), '_acm_affiliate_url', true);
+        $coupon_code = get_post_meta(get_the_ID(), '_acm_coupon_code', true);
+
+        $content .= '<div class="acm-coupon" style="border:1px solid #ddd;padding:15px;margin-bottom:10px;">';
+        $content .= '<h3>' . esc_html(get_the_title()) . '</h3>';
+        $content .= '<p>' . wp_kses_post(get_the_content()) . '</p>';
+        $content .= '<p><strong>Coupon Code:</strong> <code>' . esc_html($coupon_code) . '</code></p>';
+        $content .= '<p><a href="' . esc_url($affiliate_url) . '" target="_blank" rel="noopener noreferrer" style="background:#0073aa;color:#fff;padding:8px 12px;text-decoration:none;border-radius:3px;">Use Coupon</a></p>';
+        $content .= '</div>';
     }
+    wp_reset_postdata();
+    $content .= '</div>';
 
-    public function coupon_meta_box_callback($post) {
-        wp_nonce_field('save_coupon', 'coupon_nonce');
-        $affiliate_url = get_post_meta($post->ID, '_affiliate_url', true);
-        $code = get_post_meta($post->ID, '_coupon_code', true);
-        $usage_count = get_post_meta($post->ID, '_usage_count', true);
-        if (!$usage_count) $usage_count = 0;
-        ?>
-        <p><label for="affiliate_url">Affiliate Link URL:</label><br>
-        <input type="url" id="affiliate_url" name="affiliate_url" value="<?php echo esc_attr($affiliate_url); ?>" style="width:100%;" required></p>
-
-        <p><label for="coupon_code">Coupon Code:</label><br>
-        <input type="text" id="coupon_code" name="coupon_code" value="<?php echo esc_attr($code); ?>" style="width:100%;" required></p>
-
-        <p><strong>Usage Count:</strong> <?php echo intval($usage_count); ?></p>
-        <?php
-    }
-
-    public function save_coupon_meta($post_id, $post) {
-        if (!isset($_POST['coupon_nonce']) || !wp_verify_nonce($_POST['coupon_nonce'], 'save_coupon')) {
-            return;
-        }
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-            return;
-        }
-        if ($post->post_type != 'coupon') {
-            return;
-        }
-        if (!current_user_can('edit_post', $post_id)) {
-            return;
-        }
-        if (isset($_POST['affiliate_url'])) {
-            update_post_meta($post_id, '_affiliate_url', esc_url_raw($_POST['affiliate_url']));
-        }
-        if (isset($_POST['coupon_code'])) {
-            update_post_meta($post_id, '_coupon_code', sanitize_text_field($_POST['coupon_code']));
-        }
-    }
-
-    public function enqueue_styles() {
-        wp_register_style('affiliate_coupon_manager_style', plugins_url('style.css', __FILE__));
-        wp_enqueue_style('affiliate_coupon_manager_style');
-    }
-
-    public function display_coupons_shortcode($atts) {
-        $args = array(
-            'post_type' => 'coupon',
-            'posts_per_page' => -1,
-            'post_status' => 'publish'
-        );
-        $coupons = get_posts($args);
-
-        if (!$coupons) {
-            return '<p>No coupons available at the moment.</p>';
-        }
-
-        $output = '<div class="affiliate-coupon-list">';
-        foreach ($coupons as $coupon) {
-            $code = get_post_meta($coupon->ID, '_coupon_code', true);
-            $affiliate_url = get_post_meta($coupon->ID, '_affiliate_url', true);
-            $title = esc_html(get_the_title($coupon));
-            $desc = wp_trim_words($coupon->post_content, 20, '...');
-            $output .= '<div class="affiliate-coupon">
-                <h3>' . $title . '</h3>
-                <p>' . esc_html($desc) . '</p>
-                <p><strong>Coupon Code:</strong> <span class="coupon-code">' . esc_html($code) . '</span></p>
-                <p><a href="' . esc_url(add_query_arg(array('aff_coupon' => $coupon->ID), home_url('/'))) . '" target="_blank" rel="nofollow noopener">Use Coupon</a></p>
-                </div>';
-        }
-        $output .= '</div>';
-
-        return $output;
-    }
-
-    public function track_coupon_click() {
-        if (!isset($_GET['aff_coupon'])) {
-            return;
-        }
-        $coupon_id = intval($_GET['aff_coupon']);
-        $affiliate_url = get_post_meta($coupon_id, '_affiliate_url', true);
-        if ($affiliate_url) {
-            $usage_count = get_post_meta($coupon_id, '_usage_count', true);
-            $usage_count = $usage_count ? $usage_count + 1 : 1;
-            update_post_meta($coupon_id, '_usage_count', $usage_count);
-            wp_redirect($affiliate_url);
-            exit;
-        }
-    }
-
-    public function admin_scripts($hook) {
-        if ('post.php' != $hook && 'post-new.php' != $hook) {
-            return;
-        }
-        global $post;
-        if ($post->post_type != 'coupon') {
-            return;
-        }
-        wp_enqueue_style('admin-coupon-style', plugins_url('admin-style.css', __FILE__));
-    }
+    return $content;
 }
 
-new Affiliate_Coupon_Manager();
+// Enqueue minimal styles
+add_action('wp_enqueue_scripts', 'acm_enqueue_styles');
+function acm_enqueue_styles() {
+    wp_register_style('acm-styles', false);
+    wp_enqueue_style('acm-styles');
+    wp_add_inline_style('acm-styles', ".acm-coupon code {background: #f4f4f4; padding: 2px 6px; border-radius: 2px; font-family: monospace;}");
+}
