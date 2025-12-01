@@ -1,177 +1,99 @@
+<?php
 /*
+Plugin Name: WP Revenue Tracker
+Description: Track and visualize revenue from ads, affiliate links, digital sales, and memberships.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Tracker.php
 */
-<?php
-/**
- * Plugin Name: WP Revenue Tracker
- * Description: Track and visualize revenue from ads, affiliate links, and digital product sales.
- * Version: 1.0
- * Author: Your Name
- */
 
-define('WP_REVENUE_TRACKER_VERSION', '1.0');
-define('WP_REVENUE_TRACKER_PLUGIN_DIR', plugin_dir_path(__FILE__));
+if (!defined('ABSPATH')) exit;
 
 class WP_Revenue_Tracker {
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
+        add_action('admin_menu', array($this, 'add_menu'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('wp_ajax_save_revenue_data', array($this, 'save_revenue_data'));
-        add_action('wp_ajax_nopriv_save_revenue_data', array($this, 'save_revenue_data'));
-        add_action('wp_ajax_get_revenue_chart', array($this, 'get_revenue_chart'));
-        add_action('wp_ajax_nopriv_get_revenue_chart', array($this, 'get_revenue_chart'));
+        add_action('wp_ajax_get_revenue_data', array($this, 'get_revenue_data'));
     }
 
-    public function add_admin_menu() {
+    public function add_menu() {
         add_menu_page(
             'Revenue Tracker',
             'Revenue Tracker',
             'manage_options',
             'wp-revenue-tracker',
-            array($this, 'render_admin_page'),
+            array($this, 'render_dashboard'),
             'dashicons-chart-bar'
         );
     }
 
-    public function settings_init() {
-        register_setting('wp_revenue_tracker', 'wp_revenue_tracker_options');
-
-        add_settings_section(
-            'wp_revenue_tracker_section',
-            'Revenue Sources',
-            null,
-            'wp_revenue_tracker'
-        );
-
-        add_settings_field(
-            'ads_revenue',
-            'Ads Revenue',
-            array($this, 'ads_revenue_render'),
-            'wp_revenue_tracker',
-            'wp_revenue_tracker_section'
-        );
-
-        add_settings_field(
-            'affiliate_revenue',
-            'Affiliate Revenue',
-            array($this, 'affiliate_revenue_render'),
-            'wp_revenue_tracker',
-            'wp_revenue_tracker_section'
-        );
-
-        add_settings_field(
-            'product_revenue',
-            'Product Revenue',
-            array($this, 'product_revenue_render'),
-            'wp_revenue_tracker',
-            'wp_revenue_tracker_section'
-        );
+    public function enqueue_scripts($hook) {
+        if ($hook !== 'toplevel_page_wp-revenue-tracker') return;
+        wp_enqueue_script('jquery');
+        wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
+        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'js/script.js', array('jquery'), '1.0', true);
+        wp_localize_script('wp-revenue-tracker-js', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
     }
 
-    public function ads_revenue_render() {
-        $options = get_option('wp_revenue_tracker_options');
-        ?>
-        <input type='number' name='wp_revenue_tracker_options[ads_revenue]' value='<?php echo $options['ads_revenue']; ?>'>
-        <?php
-    }
-
-    public function affiliate_revenue_render() {
-        $options = get_option('wp_revenue_tracker_options');
-        ?>
-        <input type='number' name='wp_revenue_tracker_options[affiliate_revenue]' value='<?php echo $options['affiliate_revenue']; ?>'>
-        <?php
-    }
-
-    public function product_revenue_render() {
-        $options = get_option('wp_revenue_tracker_options');
-        ?>
-        <input type='number' name='wp_revenue_tracker_options[product_revenue]' value='<?php echo $options['product_revenue']; ?>'>
-        <?php
-    }
-
-    public function render_admin_page() {
+    public function render_dashboard() {
         ?>
         <div class="wrap">
             <h1>WP Revenue Tracker</h1>
-            <form action='options.php' method='post'>
-                <?php
-                settings_fields('wp_revenue_tracker');
-                do_settings_sections('wp_revenue_tracker');
-                submit_button();
-                ?>
-            </form>
-            <div id="revenue-chart">
-                <canvas id="revenueChart"></canvas>
+            <div id="revenue-form">
+                <label>Revenue Type: 
+                    <select id="revenue_type">
+                        <option value="ads">Ads</option>
+                        <option value="affiliate">Affiliate</option>
+                        <option value="digital_sales">Digital Sales</option>
+                        <option value="memberships">Memberships</option>
+                    </select>
+                </label>
+                <label>Amount: <input type="number" id="revenue_amount" step="0.01"></label>
+                <label>Date: <input type="date" id="revenue_date"></label>
+                <button id="save_revenue">Save Revenue</button>
             </div>
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
-                jQuery(document).ready(function($) {
-                    $.post(ajaxurl, {action: 'get_revenue_chart'}, function(response) {
-                        var ctx = document.getElementById('revenueChart').getContext('2d');
-                        new Chart(ctx, {
-                            type: 'bar',
-                            data: response,
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    });
-                });
-            </script>
+            <canvas id="revenue-chart" width="400" height="200"></canvas>
         </div>
         <?php
     }
 
     public function save_revenue_data() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
-
-        $options = get_option('wp_revenue_tracker_options', array());
-        $options['ads_revenue'] = isset($_POST['ads_revenue']) ? floatval($_POST['ads_revenue']) : 0;
-        $options['affiliate_revenue'] = isset($_POST['affiliate_revenue']) ? floatval($_POST['affiliate_revenue']) : 0;
-        $options['product_revenue'] = isset($_POST['product_revenue']) ? floatval($_POST['product_revenue']) : 0;
-        update_option('wp_revenue_tracker_options', $options);
-        wp_die('Revenue data saved');
+        global $wpdb;
+        $table = $wpdb->prefix . 'revenue_tracker';
+        $data = array(
+            'type' => sanitize_text_field($_POST['type']),
+            'amount' => floatval($_POST['amount']),
+            'date' => sanitize_text_field($_POST['date'])
+        );
+        $wpdb->insert($table, $data);
+        wp_die();
     }
 
-    public function get_revenue_chart() {
-        $options = get_option('wp_revenue_tracker_options', array());
-        $labels = ['Ads', 'Affiliate', 'Product'];
-        $data = [
-            isset($options['ads_revenue']) ? $options['ads_revenue'] : 0,
-            isset($options['affiliate_revenue']) ? $options['affiliate_revenue'] : 0,
-            isset($options['product_revenue']) ? $options['product_revenue'] : 0
-        ];
-        wp_send_json(array(
-            'labels' => $labels,
-            'datasets' => array(
-                array(
-                    'label' => 'Revenue ($)',
-                    'data' => $data,
-                    'backgroundColor' => [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)'
-                    ],
-                    'borderColor' => [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)'
-                    ],
-                    'borderWidth' => 1
-                )
-            )
-        ));
+    public function get_revenue_data() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'revenue_tracker';
+        $results = $wpdb->get_results("SELECT * FROM $table ORDER BY date ASC");
+        wp_send_json($results);
+    }
+
+    public function create_table() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'revenue_tracker';
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE $table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            type varchar(50) NOT NULL,
+            amount decimal(10,2) NOT NULL,
+            date date NOT NULL,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
     }
 }
 
+register_activation_hook(__FILE__, array(new WP_Revenue_Tracker, 'create_table'));
 new WP_Revenue_Tracker();
 ?>
