@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Affiliate Coupon Booster
-Description: Aggregates affiliate coupons, displays targeted offers, and tracks conversions to maximize affiliate revenue.
+Description: Manage exclusive affiliate coupons with expiration and click tracking.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Coupon_Booster.php
@@ -10,159 +10,164 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 if (!defined('ABSPATH')) exit;
 
 class AffiliateCouponBooster {
-    private $coupons = array();
+  public function __construct() {
+    add_action('admin_menu', array($this, 'register_admin_menu'));
+    add_action('wp_ajax_acb_save_coupon', array($this, 'save_coupon'));
+    add_shortcode('affiliate_coupons', array($this, 'render_coupon_list'));
+    add_action('template_redirect', array($this, 'handle_coupon_redirect'));
+    register_activation_hook(__FILE__, array($this, 'plugin_activate'));
+  }
 
-    public function __construct() {
-        add_shortcode('affiliate_coupons', array($this, 'render_coupons'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_acb_track_click', array($this, 'track_click'));
-        add_action('wp_ajax_nopriv_acb_track_click', array($this, 'track_click'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_post_acb_save_coupon', array($this, 'save_coupon'));
-    }
+  public function plugin_activate() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'acb_coupons';
+    $charset_collate = $wpdb->get_charset_collate();
 
-    public function enqueue_scripts() {
-        wp_enqueue_script('acb-script', plugin_dir_url(__FILE__) . 'acb-script.js', array('jquery'), '1.0', true);
-        wp_localize_script('acb-script', 'acbAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
-    }
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+      id mediumint(9) NOT NULL AUTO_INCREMENT,
+      title varchar(255) NOT NULL,
+      affiliate_url text NOT NULL,
+      coupon_code varchar(100),
+      expiration_date date DEFAULT NULL,
+      clicks int DEFAULT 0,
+      created_at datetime DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY  (id)
+    ) $charset_collate;";
 
-    // Admin menu for coupon management
-    public function admin_menu() {
-        add_menu_page('Affiliate Coupons', 'Affiliate Coupons', 'manage_options', 'acb-coupons', array($this, 'admin_page'), 'dashicons-tickets', 60);
-    }
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+  }
 
-    public function admin_page() {
-        if (!current_user_can('manage_options')) return;
+  public function register_admin_menu() {
+    add_menu_page('Affiliate Coupons', 'Affiliate Coupons', 'manage_options', 'affiliate-coupon-booster', array($this, 'admin_page'), 'dashicons-tickets-alt');
+  }
 
-        $coupons = get_option('acb_coupons', array());
-        ?>
-        <div class="wrap">
-            <h1>Affiliate Coupon Booster</h1>
-            <h2>Add New Coupon</h2>
-            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-                <input type="hidden" name="action" value="acb_save_coupon">
-                <?php wp_nonce_field('acb_save_coupon_nonce'); ?>
-                <table class="form-table">
-                    <tr><th><label for="code">Coupon Code</label></th><td><input type="text" name="code" id="code" required></td></tr>
-                    <tr><th><label for="description">Description</label></th><td><input type="text" name="description" id="description" required></td></tr>
-                    <tr><th><label for="affiliate_url">Affiliate URL</label></th><td><input type="url" name="affiliate_url" id="affiliate_url" required></td></tr>
-                    <tr><th><label for="network">Affiliate Network</label></th><td><input type="text" name="network" id="network" placeholder="e.g. Amazon, ShareASale" required></td></tr>
-                    <tr><th><label for="categories">Categories (comma separated)</label></th><td><input type="text" name="categories" id="categories"></td></tr>
-                    <tr><th><label for="expires">Expiration Date</label></th><td><input type="date" name="expires" id="expires"></td></tr>
-                </table>
-                <input type="submit" class="button button-primary" value="Add Coupon">
-            </form>
-            <h2>Existing Coupons</h2>
-            <table class="wp-list-table widefat fixed striped">
-                <thead><tr><th>Code</th><th>Description</th><th>Network</th><th>Expires</th><th>Actions</th></tr></thead>
-                <tbody>
-                <?php foreach ($coupons as $index => $coupon) : ?>
-                    <tr>
-                        <td><?php echo esc_html($coupon['code']); ?></td>
-                        <td><?php echo esc_html($coupon['description']); ?></td>
-                        <td><?php echo esc_html($coupon['network']); ?></td>
-                        <td><?php echo esc_html($coupon['expires']); ?></td>
-                        <td>
-                            <a href="<?php echo esc_url(add_query_arg(array('acb_delete'=>$index))); ?>" onclick="return confirm('Delete this coupon?');">Delete</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <?php
-
-        // Handle deletion
-        if (isset($_GET['acb_delete'])) {
-            $index = intval($_GET['acb_delete']);
-            if (isset($coupons[$index])) {
-                unset($coupons[$index]);
-                update_option('acb_coupons', $coupons);
-                wp_redirect(admin_url('admin.php?page=acb-coupons'));
-                exit;
-            }
-        }
-    }
-
-    public function save_coupon() {
-        if (!current_user_can('manage_options') || !check_admin_referer('acb_save_coupon_nonce')) {
-            wp_die('Permission denied');
-        }
-
-        $coupons = get_option('acb_coupons', array());
-        $coupons[] = array(
-            'code' => sanitize_text_field($_POST['code']),
-            'description' => sanitize_text_field($_POST['description']),
-            'affiliate_url' => esc_url_raw($_POST['affiliate_url']),
-            'network' => sanitize_text_field($_POST['network']),
-            'categories' => sanitize_text_field($_POST['categories']),
-            'expires' => sanitize_text_field($_POST['expires'])
-        );
-
-        update_option('acb_coupons', $coupons);
-        wp_redirect(admin_url('admin.php?page=acb-coupons'));
-        exit;
-    }
-
-    // Render coupons on frontend via shortcode
-    public function render_coupons($atts) {
-        $atts = shortcode_atts(array('category' => ''), $atts);
-        $coupons = get_option('acb_coupons', array());
-        $output = '<div class="acb-coupons">';
-        $now = date('Y-m-d');
-        $filtered = array_filter($coupons, function($c) use ($atts, $now) {
-            $not_expired = empty($c['expires']) || $c['expires'] >= $now;
-            $in_category = empty($atts['category']) || stripos($c['categories'], $atts['category']) !== false;
-            return $not_expired && $in_category;
-        });
-
-        if (empty($filtered)) {
-            $output .= '<p>No coupons available currently.</p>';
-        } else {
-            $output .= '<ul>';
-            foreach ($filtered as $idx => $coupon) {
-                $esc_url = esc_url(add_query_arg(array('acb_track' => $idx), site_url()));
-                // Use JavaScript click tracking with AJAX
-                $output .= '<li><strong>' . esc_html($coupon['code']) . '</strong>: ' . esc_html($coupon['description']) . ' - <a href="#" class="acb-aff-link" data-url="' . esc_attr($coupon['affiliate_url']) . '">Get Deal</a></li>';
-            }
-            $output .= '</ul>';
-        }
-        $output .= '</div>';
-        return $output;
-    }
-
-    // Track click via AJAX
-    public function track_click() {
-        if (isset($_POST['url'])) {
-            $url = esc_url_raw($_POST['url']);
-            // Could implement real tracking here (database increment etc.)
-            wp_send_json_success();
-        } else {
-            wp_send_json_error();
-        }
-        wp_die();
-    }
-}
-
-new AffiliateCouponBooster();
-
-// Simple inline JS for click tracking
-add_action('wp_footer', function() {
+  public function admin_page() {
     ?>
+    <div class="wrap">
+      <h1>Affiliate Coupon Booster</h1>
+      <form id="acb-new-coupon" method="post">
+        <table class="form-table">
+          <tr><th><label for="title">Coupon Title</label></th><td><input type="text" id="title" name="title" required style="width: 300px;"></td></tr>
+          <tr><th><label for="affiliate_url">Affiliate URL</label></th><td><input type="url" id="affiliate_url" name="affiliate_url" required style="width: 300px;"></td></tr>
+          <tr><th><label for="coupon_code">Coupon Code (optional)</label></th><td><input type="text" id="coupon_code" name="coupon_code" style="width: 150px;"></td></tr>
+          <tr><th><label for="expiration_date">Expiration Date (optional)</label></th><td><input type="date" id="expiration_date" name="expiration_date" style="width: 150px;"></td></tr>
+        </table>
+        <p><button type="submit" class="button button-primary">Add Coupon</button></p>
+      </form>
+      <h2>Existing Coupons</h2>
+      <table class="wp-list-table widefat fixed striped">
+        <thead><tr><th>Title</th><th>Coupon Code</th><th>Expiration</th><th>Clicks</th><th>Shortcode</th></tr></thead>
+        <tbody>
+          <?php
+          global $wpdb;
+          $coupons = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "acb_coupons ORDER BY created_at DESC");
+          foreach($coupons as $c) {
+            $expires = $c->expiration_date ? esc_html($c->expiration_date) : 'Never';
+            $code = $c->coupon_code ? esc_html($c->coupon_code) : '-';
+            echo "<tr>" .
+                 "<td>" . esc_html($c->title) . "</td>" .
+                 "<td>" . $code . "</td>" .
+                 "<td>" . $expires . "</td>" .
+                 "<td>" . intval($c->clicks) . "</td>" .
+                 "<td>[affiliate_coupon id=\"" . intval($c->id) . "\"]</td>" .
+                 "</tr>";
+          }
+          ?>
+        </tbody>
+      </table>
+    </div>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const links = document.querySelectorAll('.acb-aff-link');
-        links.forEach(function(link) {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-                const url = this.getAttribute('data-url');
-                if (!url) return;
-                jQuery.post(acbAjax.ajaxurl, { action: 'acb_track_click', url: url }, function() {
-                    window.open(url, '_blank');
-                });
-            });
-        });
+    document.getElementById('acb-new-coupon').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+      formData.append('action', 'acb_save_coupon');
+      fetch(ajaxurl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: formData
+      }).then(res => res.json()).then(data => {
+        if(data.success) {
+          alert('Coupon added successfully!');
+          location.reload();
+        } else {
+          alert('Error: ' + data.data);
+        }
+      });
     });
     </script>
     <?php
-});
+  }
+
+  public function save_coupon() {
+    if (!current_user_can('manage_options')) wp_send_json_error('Unauthorized');
+
+    $title = sanitize_text_field($_POST['title'] ?? '');
+    $affiliate_url = esc_url_raw($_POST['affiliate_url'] ?? '');
+    $coupon_code = sanitize_text_field($_POST['coupon_code'] ?? '');
+    $expiration_date = sanitize_text_field($_POST['expiration_date'] ?? '');
+    if (!$title || !$affiliate_url) wp_send_json_error('Title and Affiliate URL required');
+
+    global $wpdb;
+    $table = $wpdb->prefix . 'acb_coupons';
+    $inserted = $wpdb->insert($table, [
+      'title' => $title,
+      'affiliate_url' => $affiliate_url,
+      'coupon_code' => $coupon_code ?: null,
+      'expiration_date' => $expiration_date ?: null
+    ]);
+
+    if ($inserted) wp_send_json_success();
+    else wp_send_json_error('Database insert failed');
+  }
+
+  public function render_coupon_list($atts) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'acb_coupons';
+    $now = date('Y-m-d');
+    $coupons = $wpdb->get_results($wpdb->prepare(
+      "SELECT * FROM $table WHERE (expiration_date IS NULL OR expiration_date >= %s) ORDER BY expiration_date ASC",
+      $now
+    ));
+
+    if (!$coupons) return '<p>No active coupons at this time.</p>';
+
+    $output = '<div class="acb-coupons">';
+    foreach ($coupons as $c) {
+      $code_html = $c->coupon_code ? '<strong>Code:</strong> ' . esc_html($c->coupon_code) . '<br>' : '';
+      $exp = $c->expiration_date ? esc_html($c->expiration_date) : 'Never';
+      $link = esc_url(add_query_arg(['acb_redirect' => $c->id], home_url()));
+      $output .= '<div class="acb-coupon" style="border:1px solid #ddd;padding:10px;margin-bottom:8px;">
+        <h4>' . esc_html($c->title) . '</h4>
+        ' . $code_html . '
+        <small>Expires: ' . $exp . '</small><br>
+        <a href="' . $link . '" target="_blank" rel="noopener">Get Deal</a>
+      </div>';
+    }
+    $output .= '</div>';
+    return $output;
+  }
+
+  public function handle_coupon_redirect() {
+    if (isset($_GET['acb_redirect'])) {
+      global $wpdb;
+      $id = intval($_GET['acb_redirect']);
+      $table = $wpdb->prefix . 'acb_coupons';
+      $coupon = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $id));
+      if ($coupon) {
+        // Check expiration
+        if ($coupon->expiration_date && $coupon->expiration_date < date('Y-m-d')) {
+          wp_die('This coupon has expired.');
+        }
+        // Increment clicks
+        $wpdb->query($wpdb->prepare("UPDATE $table SET clicks = clicks + 1 WHERE id = %d", $id));
+        wp_redirect($coupon->affiliate_url);
+        exit;
+      } else {
+        wp_die('Invalid coupon.');
+      }
+    }
+  }
+}
+
+new AffiliateCouponBooster();
