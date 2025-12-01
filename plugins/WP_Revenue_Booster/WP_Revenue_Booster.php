@@ -5,124 +5,178 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Description: Maximize your WordPress site's revenue by rotating and optimizing affiliate links, ads, and sponsored content.
+ * Description: Maximize revenue by rotating affiliate links, displaying targeted ads, and promoting exclusive offers.
  * Version: 1.0
- * Author: Your Name
+ * Author: WP Revenue Team
  */
 
-class WP_Revenue_Booster {
+define('WP_REVENUE_BOOSTER_VERSION', '1.0');
+
+class WPRevenueBooster {
 
     public function __construct() {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_footer', array($this, 'inject_content'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
+        add_action('wp_footer', array($this, 'render_offer_bar'));
+        add_shortcode('wp_revenue_offer', array($this, 'offer_shortcode'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('wp_ajax_save_offer', array($this, 'save_offer'));
+        add_action('wp_ajax_nopriv_save_offer', array($this, 'save_offer'));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('wp-revenue-booster', plugin_dir_url(__FILE__) . 'js/revenue-booster.js', array(), '1.0', true);
+        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'assets/style.css');
+        wp_enqueue_script('wp-revenue-booster', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), WP_REVENUE_BOOSTER_VERSION, true);
         wp_localize_script('wp-revenue-booster', 'wpRevenueBooster', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('revenue_booster_nonce')
+            'ajax_url' => admin_url('admin-ajax.php')
         ));
     }
 
-    public function inject_content() {
-        $options = get_option('wp_revenue_booster_settings');
-        if (!$options) return;
-
-        $content = '';
-        if (!empty($options['affiliate_links'])) {
-            $links = explode('\n', $options['affiliate_links']);
-            $content .= '<div class="wp-revenue-booster-affiliate">' . $this->rotate_content($links) . '</div>';
-        }
-        if (!empty($options['ads'])) {
-            $ads = explode('\n', $options['ads']);
-            $content .= '<div class="wp-revenue-booster-ads">' . $this->rotate_content($ads) . '</div>';
-        }
-        if (!empty($options['sponsored_content'])) {
-            $sponsored = explode('\n', $options['sponsored_content']);
-            $content .= '<div class="wp-revenue-booster-sponsored">' . $this->rotate_content($sponsored) . '</div>';
-        }
-
-        echo $content;
+    public function render_offer_bar() {
+        if (is_admin()) return;
+        $offers = get_option('wp_revenue_offers', array());
+        if (empty($offers)) return;
+        $offer = $offers[array_rand($offers)];
+        echo '<div id="wp-revenue-offer-bar" style="display:none;">
+            <span>' . esc_html($offer['title']) . '</span>
+            <a href="' . esc_url($offer['link']) . '" target="_blank" class="wp-revenue-offer-cta">' . esc_html($offer['cta']) . '</a>
+            <span class="wp-revenue-offer-close">×</span>
+        </div>';
     }
 
-    private function rotate_content($items) {
-        $index = array_rand($items);
-        return $items[$index];
+    public function offer_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'id' => '',
+        ), $atts, 'wp_revenue_offer');
+
+        $offers = get_option('wp_revenue_offers', array());
+        if (empty($offers)) return '';
+
+        $offer = null;
+        if ($atts['id']) {
+            foreach ($offers as $o) {
+                if ($o['id'] == $atts['id']) {
+                    $offer = $o;
+                    break;
+                }
+            }
+        } else {
+            $offer = $offers[array_rand($offers)];
+        }
+
+        if (!$offer) return '';
+
+        return '<div class="wp-revenue-offer">
+            <h4>' . esc_html($offer['title']) . '</h4>
+            <p>' . esc_html($offer['description']) . '</p>
+            <a href="' . esc_url($offer['link']) . '" target="_blank" class="button">' . esc_html($offer['cta']) . '</a>
+        </div>';
     }
 
-    public function add_admin_menu() {
-        add_options_page(
+    public function admin_menu() {
+        add_menu_page(
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
             'wp-revenue-booster',
-            array($this, 'options_page')
+            array($this, 'admin_page'),
+            'dashicons-chart-line'
         );
     }
 
-    public function settings_init() {
-        register_setting('wpRevenueBooster', 'wp_revenue_booster_settings');
-
-        add_settings_section(
-            'wp_revenue_booster_section',
-            'Revenue Booster Settings',
-            null,
-            'wp-revenue-booster'
-        );
-
-        add_settings_field(
-            'affiliate_links',
-            'Affiliate Links (one per line)',
-            array($this, 'affiliate_links_render'),
-            'wp-revenue-booster',
-            'wp_revenue_booster_section'
-        );
-        add_settings_field(
-            'ads',
-            'Ads (one per line)',
-            array($this, 'ads_render'),
-            'wp-revenue-booster',
-            'wp_revenue_booster_section'
-        );
-        add_settings_field(
-            'sponsored_content',
-            'Sponsored Content (one per line)',
-            array($this, 'sponsored_content_render'),
-            'wp-revenue-booster',
-            'wp_revenue_booster_section'
-        );
-    }
-
-    public function affiliate_links_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        echo '<textarea name="wp_revenue_booster_settings[affiliate_links]" rows="5" cols="50">' . (isset($options['affiliate_links']) ? esc_attr($options['affiliate_links']) : '') . '</textarea>';
-    }
-    public function ads_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        echo '<textarea name="wp_revenue_booster_settings[ads]" rows="5" cols="50">' . (isset($options['ads']) ? esc_attr($options['ads']) : '') . '</textarea>';
-    }
-    public function sponsored_content_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        echo '<textarea name="wp_revenue_booster_settings[sponsored_content]" rows="5" cols="50">' . (isset($options['sponsored_content']) ? esc_attr($options['sponsored_content']) : '') . '</textarea>';
-    }
-
-    public function options_page() {
+    public function admin_page() {
+        $offers = get_option('wp_revenue_offers', array());
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields('wpRevenueBooster');
-                do_settings_sections('wp-revenue-booster');
-                submit_button();
-                ?>
+            <form method="post" id="wp-revenue-offer-form">
+                <table class="form-table">
+                    <tr>
+                        <th><label>Offer Title</label></th>
+                        <td><input type="text" name="title" required /></td>
+                    </tr>
+                    <tr>
+                        <th><label>Description</label></th>
+                        <td><textarea name="description" rows="3" required></textarea></td>
+                    </tr>
+                    <tr>
+                        <th><label>CTA Text</label></th>
+                        <td><input type="text" name="cta" value="Learn More" required /></td>
+                    </tr>
+                    <tr>
+                        <th><label>Link URL</label></th>
+                        <td><input type="url" name="link" required /></td>
+                    </tr>
+                </table>
+                <p class="submit">
+                    <input type="hidden" name="action" value="save_offer" />
+                    <?php wp_nonce_field('save_offer'); ?>
+                    <input type="submit" class="button-primary" value="Add Offer" />
+                </p>
             </form>
+            <h2>Active Offers</h2>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Link</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($offers as $offer): ?>
+                    <tr>
+                        <td><?php echo esc_html($offer['title']); ?></td>
+                        <td><?php echo esc_html($offer['description']); ?></td>
+                        <td><a href="<?php echo esc_url($offer['link']); ?>" target="_blank">Link</a></td>
+                        <td><button class="button delete-offer" data-id="<?php echo esc_attr($offer['id']); ?>">Delete</button></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
+        <script>
+            jQuery(document).ready(function($) {
+                $('#wp-revenue-offer-form').on('submit', function(e) {
+                    e.preventDefault();
+                    $.post(wpRevenueBooster.ajax_url, $(this).serialize(), function(res) {
+                        location.reload();
+                    });
+                });
+                $('.delete-offer').on('click', function() {
+                    if (confirm('Delete this offer?')) {
+                        $.post(wpRevenueBooster.ajax_url, {
+                            action: 'delete_offer',
+                            id: $(this).data('id'),
+                            nonce: '<?php echo wp_create_nonce('delete_offer'); ?>'
+                        }, function() {
+                            location.reload();
+                        });
+                    }
+                });
+            });
+        </script>
         <?php
+    }
+
+    public function save_offer() {
+        if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['_wpnonce'], 'save_offer')) {
+            wp_die('Unauthorized');
+        }
+
+        $offers = get_option('wp_revenue_offers', array());
+        $new_offer = array(
+            'id' => uniqid(),
+            'title' => sanitize_text_field($_POST['title']),
+            'description' => sanitize_textarea_field($_POST['description']),
+            'cta' => sanitize_text_field($_POST['cta']),
+            'link' => esc_url_raw($_POST['link'])
+        );
+        $offers[] = $new_offer;
+        update_option('wp_revenue_offers', $offers);
+        wp_die('Offer saved');
     }
 }
 
-new WP_Revenue_Booster();
+new WPRevenueBooster();
+?>
