@@ -5,124 +5,168 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Smart Affiliate Link Manager
- * Plugin URI: https://example.com/wp-smart-affiliate-link-manager
- * Description: Automatically convert keywords into affiliate links, track clicks, and optimize link placement for higher conversions.
+ * Description: Automatically manage, track, and optimize affiliate links across your WordPress site with smart rotation, geo-targeting, and performance analytics.
  * Version: 1.0
- * Author: Your Name
- * Author URI: https://example.com
- * License: GPL2
+ * Author: WP Innovate
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+define('WP_SMART_AFFILIATE_VERSION', '1.0');
+define('WP_SMART_AFFILIATE_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 class WPSmartAffiliateLinkManager {
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-        add_filter('the_content', array($this, 'convert_keywords_to_links'));
-        add_action('wp_ajax_track_affiliate_click', array($this, 'track_affiliate_click'));
-        add_action('wp_ajax_nopriv_track_affiliate_click', array($this, 'track_affiliate_click'));
+        add_action('init', array($this, 'init'));        
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_shortcode('smart_affiliate_link', array($this, 'shortcode_handler'));
     }
 
-    public function add_admin_menu() {
-        add_options_page(
-            'Smart Affiliate Link Manager',
-            'Affiliate Links',
+    public function init() {
+        $this->create_table();
+    }
+
+    private function create_table() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'smart_affiliate_links';
+        if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+            $charset_collate = $wpdb->get_charset_collate();
+            $sql = "CREATE TABLE $table_name (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                url varchar(512) NOT NULL,
+                slug varchar(100) NOT NULL,
+                clicks int(11) DEFAULT 0,
+                country varchar(100),
+                created_at datetime DEFAULT '0000-00-00 00:00:00',
+                PRIMARY KEY (id)
+            ) $charset_collate;";
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
+        }
+    }
+
+    public function admin_menu() {
+        add_menu_page(
+            'Smart Affiliate Links',
+            'Smart Affiliate Links',
             'manage_options',
-            'wp_smart_affiliate_link_manager',
-            array($this, 'options_page')
+            'wp-smart-affiliate-links',
+            array($this, 'admin_page'),
+            'dashicons-admin-links'
         );
     }
 
-    public function settings_init() {
-        register_setting('wp_smart_affiliate_link_manager', 'wp_smart_affiliate_link_manager_options');
-
-        add_settings_section(
-            'wp_smart_affiliate_link_manager_section',
-            'Affiliate Link Settings',
-            null,
-            'wp_smart_affiliate_link_manager'
-        );
-
-        add_settings_field(
-            'keywords',
-            'Keywords & Links',
-            array($this, 'keywords_render'),
-            'wp_smart_affiliate_link_manager',
-            'wp_smart_affiliate_link_manager_section'
-        );
-    }
-
-    public function keywords_render() {
-        $options = get_option('wp_smart_affiliate_link_manager_options');
-        $keywords = isset($options['keywords']) ? $options['keywords'] : '';
-        echo '<textarea name="wp_smart_affiliate_link_manager_options[keywords]" rows="10" cols="50">' . esc_textarea($keywords) . '</textarea><br>';
-        echo '<small>Format: keyword|affiliate_url (one per line)</small>';
-    }
-
-    public function options_page() {
+    public function admin_page() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'smart_affiliate_links';
+        $links = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
         ?>
         <div class="wrap">
             <h1>Smart Affiliate Link Manager</h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields('wp_smart_affiliate_link_manager');
-                do_settings_sections('wp_smart_affiliate_link_manager');
-                submit_button();
-                ?>
+            <form method="post" action="">
+                <table class="form-table">
+                    <tr>
+                        <th><label for="url">Affiliate URL</label></th>
+                        <td><input type="url" name="url" id="url" class="regular-text" required /></td>
+                    </tr>
+                    <tr>
+                        <th><label for="slug">Slug (optional)</label></th>
+                        <td><input type="text" name="slug" id="slug" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th><label for="country">Country (optional)</label></th>
+                        <td><input type="text" name="country" id="country" class="regular-text" placeholder="e.g., US, UK" /></td>
+                    </tr>
+                </table>
+                <p class="submit">
+                    <input type="submit" name="submit_link" id="submit_link" class="button button-primary" value="Add Link" />
+                </p>
             </form>
+            <h2>Existing Links</h2>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>URL</th>
+                        <th>Slug</th>
+                        <th>Clicks</th>
+                        <th>Country</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($links as $link): ?>
+                    <tr>
+                        <td><?php echo $link->id; ?></td>
+                        <td><?php echo esc_url($link->url); ?></td>
+                        <td><?php echo $link->slug; ?></td>
+                        <td><?php echo $link->clicks; ?></td>
+                        <td><?php echo $link->country; ?></td>
+                        <td><?php echo $link->created_at; ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
         <?php
+        if(isset($_POST['submit_link'])) {
+            $url = sanitize_text_field($_POST['url']);
+            $slug = sanitize_text_field($_POST['slug']);
+            $country = sanitize_text_field($_POST['country']);
+            $now = current_time('mysql');
+            $wpdb->insert(
+                $table_name,
+                array(
+                    'url' => $url,
+                    'slug' => $slug,
+                    'country' => $country,
+                    'created_at' => $now
+                )
+            );
+            wp_redirect(admin_url('admin.php?page=wp-smart-affiliate-links'));
+            exit;
+        }
     }
 
-    public function convert_keywords_to_links($content) {
-        $options = get_option('wp_smart_affiliate_link_manager_options');
-        $keywords = isset($options['keywords']) ? $options['keywords'] : '';
-        $lines = explode('\n', $keywords);
-        $replacements = array();
-
-        foreach ($lines as $line) {
-            $parts = explode('|', trim($line));
-            if (count($parts) === 2) {
-                $keyword = trim($parts);
-                $url = esc_url(trim($parts[1]));
-                $replacements[$keyword] = '<a href="' . $url . '" class="wp-smart-affiliate-link" data-keyword="' . $keyword . '" onclick="trackAffiliateClick(this); return false;">' . $keyword . '</a>';
-            }
-        }
-
-        foreach ($replacements as $keyword => $link) {
-            $content = preg_replace('/\b' . preg_quote($keyword, '/') . '\b/i', $link, $content);
-        }
-
-        $content .= '<script>
-            function trackAffiliateClick(element) {
-                var keyword = element.getAttribute("data-keyword");
-                jQuery.post(ajaxurl, {
-                    action: "track_affiliate_click",
-                    keyword: keyword
-                });
-                window.open(element.href, "_blank");
-            }
-        </script>';
-
-        return $content;
+    public function enqueue_scripts() {
+        wp_enqueue_script('jquery');
     }
 
-    public function track_affiliate_click() {
-        if (isset($_POST['keyword'])) {
-            $keyword = sanitize_text_field($_POST['keyword']);
-            $transient_key = 'affiliate_clicks_' . $keyword;
-            $clicks = get_transient($transient_key);
-            if ($clicks === false) {
-                $clicks = 0;
-            }
-            $clicks++;
-            set_transient($transient_key, $clicks, YEAR_IN_SECONDS);
+    public function shortcode_handler($atts) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'smart_affiliate_links';
+        $atts = shortcode_atts(array(
+            'id' => '',
+            'slug' => '',
+            'country' => '',
+            'random' => false
+        ), $atts);
+
+        $query = "SELECT * FROM $table_name WHERE 1=1";
+        if($atts['id']) {
+            $query .= " AND id = " . intval($atts['id']);
         }
-        wp_die();
+        if($atts['slug']) {
+            $query .= " AND slug = '" . esc_sql($atts['slug']) . "'";
+        }
+        if($atts['country']) {
+            $country = esc_sql($atts['country']);
+            $query .= " AND (country = '$country' OR country IS NULL)";
+        }
+        if($atts['random'] == 'true') {
+            $query .= " ORDER BY RAND() LIMIT 1";
+        } else {
+            $query .= " ORDER BY id ASC LIMIT 1";
+        }
+
+        $link = $wpdb->get_row($query);
+        if(!$link) return '';
+
+        $url = $link->url;
+        $clicks = $link->clicks + 1;
+        $wpdb->update($table_name, array('clicks' => $clicks), array('id' => $link->id));
+
+        return '<a href="' . esc_url($url) . '" target="_blank" rel="nofollow">Visit Link</a>';
     }
 }
 
