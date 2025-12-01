@@ -1,312 +1,274 @@
-<?php
 /*
-Plugin Name: Smart Affiliate Link Manager Pro
-Plugin URI: https://smartaffiliatelinkmanager.com
-Description: Advanced affiliate link management with keyword automation, tracking, and analytics
-Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Smart_Affiliate_Link_Manager_Pro.php
-License: GPL2
 */
+<?php
+/**
+ * Smart Affiliate Link Manager Pro
+ * Version: 1.0.0
+ */
 
 if (!defined('ABSPATH')) exit;
 
-define('SALMP_VERSION', '1.0.0');
-define('SALMP_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('SALMP_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('SALMP_TABLE', $GLOBALS['wpdb']->prefix . 'salmp_affiliate_links');
-
 class SmartAffiliateLinkManager {
-    private static $instance = null;
-
-    public static function getInstance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
+    private $db_version = '1.0';
+    private $option_prefix = 'salm_';
 
     public function __construct() {
-        register_activation_hook(__FILE__, [$this, 'activate']);
-        register_deactivation_hook(__FILE__, [$this, 'deactivate']);
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
         
-        add_action('admin_menu', [$this, 'addAdminMenu']);
-        add_action('admin_init', [$this, 'registerSettings']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendScripts']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
-        add_filter('the_content', [$this, 'autoLinkifyContent'], 9999);
-        add_action('wp_ajax_salmp_create_link', [$this, 'ajaxCreateLink']);
-        add_action('wp_ajax_salmp_get_stats', [$this, 'ajaxGetStats']);
-        add_action('wp_ajax_salmp_delete_link', [$this, 'ajaxDeleteLink']);
-        add_action('template_redirect', [$this, 'redirectAffiliateLink']);
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+        add_action('wp_footer', array($this, 'track_clicks'));
+        add_shortcode('affiliate_link', array($this, 'affiliate_shortcode'));
+        add_filter('the_content', array($this, 'auto_link_content'));
     }
 
     public function activate() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         
-        $sql = "CREATE TABLE IF NOT EXISTS " . SALMP_TABLE . " (
-            id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            keyword VARCHAR(255) NOT NULL UNIQUE,
-            affiliate_url LONGTEXT NOT NULL,
-            custom_text VARCHAR(255),
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            click_count INT DEFAULT 0,
-            conversion_count INT DEFAULT 0,
-            enabled TINYINT(1) DEFAULT 1
+        $table_name = $wpdb->prefix . 'salm_links';
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) NOT NULL,
+            affiliate_url longtext NOT NULL,
+            short_code varchar(255) UNIQUE NOT NULL,
+            category varchar(100),
+            clicks bigint(20) DEFAULT 0,
+            commissions decimal(10, 2) DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
         ) $charset_collate;";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
         
-        update_option('salmp_version', SALMP_VERSION);
-        update_option('salmp_plan', 'free');
-        update_option('salmp_auto_linkify', 1);
-        update_option('salmp_max_links', 50);
+        update_option($this->option_prefix . 'db_version', $this->db_version);
+        update_option($this->option_prefix . 'api_key', '');
+        update_option($this->option_prefix . 'premium', false);
     }
 
     public function deactivate() {
-        // Cleanup if needed
+        wp_clear_scheduled_hook('salm_daily_analytics');
     }
 
-    public function addAdminMenu() {
+    public function add_admin_menu() {
         add_menu_page(
-            'Affiliate Link Manager',
-            'Affiliate Links',
+            'Smart Affiliate Links',
+            'Affiliate Manager',
             'manage_options',
-            'salmp-dashboard',
-            [$this, 'renderDashboard'],
+            'salm_dashboard',
+            array($this, 'render_dashboard'),
             'dashicons-link',
-            30
+            25
         );
         
         add_submenu_page(
-            'salmp-dashboard',
-            'All Links',
-            'All Links',
+            'salm_dashboard',
+            'Manage Links',
+            'Manage Links',
             'manage_options',
-            'salmp-dashboard',
-            [$this, 'renderDashboard']
+            'salm_links',
+            array($this, 'render_links_page')
         );
         
         add_submenu_page(
-            'salmp-dashboard',
-            'Create Link',
-            'Create Link',
+            'salm_dashboard',
+            'Analytics',
+            'Analytics',
             'manage_options',
-            'salmp-create',
-            [$this, 'renderCreatePage']
+            'salm_analytics',
+            array($this, 'render_analytics_page')
         );
         
         add_submenu_page(
-            'salmp-dashboard',
+            'salm_dashboard',
             'Settings',
             'Settings',
             'manage_options',
-            'salmp-settings',
-            [$this, 'renderSettingsPage']
+            'salm_settings',
+            array($this, 'render_settings_page')
         );
     }
 
-    public function registerSettings() {
-        register_setting('salmp_settings', 'salmp_auto_linkify');
-        register_setting('salmp_settings', 'salmp_link_prefix');
-        register_setting('salmp_settings', 'salmp_open_new_tab');
+    public function register_settings() {
+        register_setting('salm_settings_group', $this->option_prefix . 'api_key');
+        register_setting('salm_settings_group', $this->option_prefix . 'auto_link_keywords');
+        register_setting('salm_settings_group', $this->option_prefix . 'tracking_enabled');
     }
 
-    public function enqueueFrontendScripts() {
-        wp_enqueue_script('salmp-frontend', SALMP_PLUGIN_URL . 'assets/frontend.js', ['jquery'], SALMP_VERSION);
-        wp_localize_script('salmp-frontend', 'salmP', ['ajaxurl' => admin_url('admin-ajax.php')]);
-    }
-
-    public function enqueueAdminScripts($hook) {
-        if (strpos($hook, 'salmp') === false) return;
-        wp_enqueue_script('salmp-admin', SALMP_PLUGIN_URL . 'assets/admin.js', ['jquery'], SALMP_VERSION);
-        wp_enqueue_style('salmp-admin', SALMP_PLUGIN_URL . 'assets/admin.css', [], SALMP_VERSION);
-        wp_localize_script('salmp-admin', 'salmPAdmin', ['nonce' => wp_create_nonce('salmp_nonce')]);
-    }
-
-    public function renderDashboard() {
+    public function render_dashboard() {
         global $wpdb;
-        $links = $wpdb->get_results("SELECT * FROM " . SALMP_TABLE . " ORDER BY click_count DESC LIMIT 100");
-        $total_clicks = $wpdb->get_var("SELECT SUM(click_count) FROM " . SALMP_TABLE);
-        $total_conversions = $wpdb->get_var("SELECT SUM(conversion_count) FROM " . SALMP_TABLE);
-        ?>
-        <div class="wrap">
-            <h1>Affiliate Link Manager</h1>
-            <div class="salmp-stats">
-                <div class="stat-box"><strong>Total Clicks:</strong> <?php echo intval($total_clicks); ?></div>
-                <div class="stat-box"><strong>Total Conversions:</strong> <?php echo intval($total_conversions); ?></div>
-                <div class="stat-box"><strong>Active Links:</strong> <?php echo count($links); ?></div>
-            </div>
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th>Keyword</th>
-                        <th>Custom Text</th>
-                        <th>URL Preview</th>
-                        <th>Clicks</th>
-                        <th>Conversions</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($links as $link): ?>
-                    <tr>
-                        <td><strong><?php echo esc_html($link->keyword); ?></strong></td>
-                        <td><?php echo esc_html($link->custom_text ?: '—'); ?></td>
-                        <td><?php echo esc_html(substr($link->affiliate_url, 0, 50) . '...'); ?></td>
-                        <td><?php echo intval($link->click_count); ?></td>
-                        <td><?php echo intval($link->conversion_count); ?></td>
-                        <td><?php echo $link->enabled ? '<span class="active">Active</span>' : '<span class="inactive">Inactive</span>'; ?></td>
-                        <td><button class="button delete-link" data-id="<?php echo intval($link->id); ?>">Delete</button></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <?php
-    }
-
-    public function renderCreatePage() {
-        ?>
-        <div class="wrap">
-            <h1>Create New Affiliate Link</h1>
-            <form id="salmp-create-form" class="salmp-form">
-                <?php wp_nonce_field('salmp_nonce'); ?>
-                <table class="form-table">
-                    <tr>
-                        <th><label for="keyword">Keyword to Replace:</label></th>
-                        <td><input type="text" id="keyword" name="keyword" required placeholder="e.g., 'best hosting'"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="affiliate_url">Affiliate URL:</label></th>
-                        <td><input type="url" id="affiliate_url" name="affiliate_url" required placeholder="https://example.com/ref=abc123"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="custom_text">Link Text (optional):</label></th>
-                        <td><input type="text" id="custom_text" name="custom_text" placeholder="Custom link text"></td>
-                    </tr>
-                </table>
-                <p><button type="submit" class="button button-primary">Create Link</button></p>
-            </form>
-        </div>
-        <?php
-    }
-
-    public function renderSettingsPage() {
-        ?>
-        <div class="wrap">
-            <h1>Settings</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('salmp_settings'); ?>
-                <table class="form-table">
-                    <tr>
-                        <th><label for="salmp_auto_linkify">Auto-Linkify Content:</label></th>
-                        <td><input type="checkbox" id="salmp_auto_linkify" name="salmp_auto_linkify" value="1" <?php checked(get_option('salmp_auto_linkify')); ?>> Automatically convert keywords to affiliate links in posts</td>
-                    </tr>
-                    <tr>
-                        <th><label for="salmp_open_new_tab">Open Links in New Tab:</label></th>
-                        <td><input type="checkbox" id="salmp_open_new_tab" name="salmp_open_new_tab" value="1" <?php checked(get_option('salmp_open_new_tab')); ?>></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-        </div>
-        <?php
-    }
-
-    public function autoLinkifyContent($content) {
-        if (!get_option('salmp_auto_linkify') || is_admin()) return $content;
+        $table_name = $wpdb->prefix . 'salm_links';
+        $user_id = get_current_user_id();
         
+        $total_clicks = $wpdb->get_var($wpdb->prepare(
+            "SELECT SUM(clicks) FROM $table_name WHERE user_id = %d",
+            $user_id
+        ));
+        
+        $total_commission = $wpdb->get_var($wpdb->prepare(
+            "SELECT SUM(commissions) FROM $table_name WHERE user_id = %d",
+            $user_id
+        ));
+        
+        $link_count = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE user_id = %d",
+            $user_id
+        ));
+        
+        $is_premium = get_option($this->option_prefix . 'premium', false);
+        
+        echo '<div class="wrap"><h1>Smart Affiliate Link Manager Dashboard</h1>';
+        echo '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0;">';
+        echo '<div style="background: #f1f1f1; padding: 20px; border-radius: 5px;"><h3>Total Clicks</h3><p style="font-size: 24px; font-weight: bold;">' . ($total_clicks ?: 0) . '</p></div>';
+        echo '<div style="background: #f1f1f1; padding: 20px; border-radius: 5px;"><h3>Total Commission</h3><p style="font-size: 24px; font-weight: bold;">$' . number_format($total_commission ?: 0, 2) . '</p></div>';
+        echo '<div style="background: #f1f1f1; padding: 20px; border-radius: 5px;"><h3>Active Links</h3><p style="font-size: 24px; font-weight: bold;">' . $link_count . '</p></div>';
+        echo '</div>';
+        echo '<p><strong>Status:</strong> ' . ($is_premium ? '<span style="color: green;">Premium Active</span>' : '<span style="color: orange;">Free Version</span>') . '</p>';
+        echo '</div>';
+    }
+
+    public function render_links_page() {
         global $wpdb;
-        $links = $wpdb->get_results("SELECT * FROM " . SALMP_TABLE . " WHERE enabled = 1 ORDER BY LENGTH(keyword) DESC");
+        $table_name = $wpdb->prefix . 'salm_links';
+        $user_id = get_current_user_id();
         
-        foreach ($links as $link) {
-            $keyword = preg_quote($link->keyword, '/');
-            $target = get_option('salmp_open_new_tab') ? ' target="_blank"' : '';
-            $replacement = '<a href="' . esc_url($link->affiliate_url) . '" class="salmp-link" data-link-id="' . intval($link->id) . '"' . $target . '>' . esc_html($link->custom_text ?: $link->keyword) . '</a>';
-            $content = preg_replace('/\b' . $keyword . '\b/i', $replacement, $content, 1);
+        if (isset($_POST['add_link'])) {
+            check_admin_referer('salm_add_link_nonce');
+            
+            $url = sanitize_url($_POST['affiliate_url']);
+            $category = sanitize_text_field($_POST['category']);
+            $short_code = sanitize_text_field($_POST['short_code']);
+            
+            $wpdb->insert($table_name, array(
+                'user_id' => $user_id,
+                'affiliate_url' => $url,
+                'short_code' => $short_code,
+                'category' => $category,
+                'clicks' => 0,
+                'commissions' => 0
+            ));
+            
+            echo '<div class="notice notice-success"><p>Link added successfully!</p></div>';
         }
         
+        $links = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM $table_name WHERE user_id = %d ORDER BY created_at DESC",
+            $user_id
+        ));
+        
+        echo '<div class="wrap"><h1>Manage Affiliate Links</h1>';
+        echo '<form method="POST" style="background: #f9f9f9; padding: 20px; margin-bottom: 20px; border-radius: 5px;">';
+        wp_nonce_field('salm_add_link_nonce');
+        echo '<input type="hidden" name="add_link" value="1">';
+        echo '<p><label>Affiliate URL: <input type="url" name="affiliate_url" required style="width: 100%; margin-top: 5px; padding: 8px;"></label></p>';
+        echo '<p><label>Short Code: <input type="text" name="short_code" required style="width: 100%; margin-top: 5px; padding: 8px;"></label></p>';
+        echo '<p><label>Category: <input type="text" name="category" style="width: 100%; margin-top: 5px; padding: 8px;"></label></p>';
+        echo '<button type="submit" class="button button-primary">Add Link</button>';
+        echo '</form>';
+        
+        echo '<table class="widefat" style="margin-top: 20px;">';
+        echo '<thead><tr><th>Short Code</th><th>URL</th><th>Category</th><th>Clicks</th><th>Commission</th><th>Created</th></tr></thead>';
+        echo '<tbody>';
+        
+        foreach ($links as $link) {
+            echo '<tr>';
+            echo '<td>' . esc_html($link->short_code) . '</td>';
+            echo '<td>' . esc_html(substr($link->affiliate_url, 0, 50)) . '...</td>';
+            echo '<td>' . esc_html($link->category) . '</td>';
+            echo '<td>' . $link->clicks . '</td>';
+            echo '<td>$' . number_format($link->commissions, 2) . '</td>';
+            echo '<td>' . esc_html($link->created_at) . '</td>';
+            echo '</tr>';
+        }
+        
+        echo '</tbody></table></div>';
+    }
+
+    public function render_analytics_page() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'salm_links';
+        $user_id = get_current_user_id();
+        
+        $top_links = $wpdb->get_results($wpdb->prepare(
+            "SELECT short_code, clicks, commissions FROM $table_name WHERE user_id = %d ORDER BY clicks DESC LIMIT 10",
+            $user_id
+        ));
+        
+        echo '<div class="wrap"><h1>Analytics</h1>';
+        echo '<h2>Top Performing Links</h2>';
+        echo '<table class="widefat">';
+        echo '<thead><tr><th>Link</th><th>Clicks</th><th>Commission</th></tr></thead>';
+        echo '<tbody>';
+        
+        foreach ($top_links as $link) {
+            echo '<tr>';
+            echo '<td>' . esc_html($link->short_code) . '</td>';
+            echo '<td>' . $link->clicks . '</td>';
+            echo '<td>$' . number_format($link->commissions, 2) . '</td>';
+            echo '</tr>';
+        }
+        
+        echo '</tbody></table></div>';
+    }
+
+    public function render_settings_page() {
+        echo '<div class="wrap"><h1>Settings</h1>';
+        echo '<form method="POST" action="options.php">';
+        settings_fields('salm_settings_group');
+        echo '<table class="form-table">';
+        echo '<tr><th scope="row"><label for="api_key">API Key</label></th>';
+        echo '<td><input type="text" name="' . $this->option_prefix . 'api_key" value="' . esc_attr(get_option($this->option_prefix . 'api_key')) . '" style="width: 100%; max-width: 400px; padding: 8px;"></td></tr>';
+        echo '<tr><th scope="row"><label><input type="checkbox" name="' . $this->option_prefix . 'tracking_enabled" value="1" ' . checked(get_option($this->option_prefix . 'tracking_enabled'), 1, false) . '> Enable Click Tracking</label></th></tr>';
+        echo '</table>';
+        submit_button('Save Settings');
+        echo '</form></div>';
+    }
+
+    public function affiliate_shortcode($atts) {
+        $atts = shortcode_atts(array('code' => ''), $atts);
+        global $wpdb;
+        
+        $link = $wpdb->get_row($wpdb->prepare(
+            "SELECT affiliate_url FROM {$wpdb->prefix}salm_links WHERE short_code = %s",
+            $atts['code']
+        ));
+        
+        if ($link) {
+            return '<a href="' . esc_url($link->affiliate_url) . '" target="_blank" rel="noopener">View Product</a>';
+        }
+        
+        return '';
+    }
+
+    public function auto_link_content($content) {
+        if (!is_admin()) {
+            $keywords = get_option($this->option_prefix . 'auto_link_keywords', '');
+            if (!empty($keywords)) {
+                $keywords = array_map('trim', explode(',', $keywords));
+                foreach ($keywords as $keyword) {
+                    $content = str_ireplace($keyword, '[affiliate_link code="' . sanitize_text_field($keyword) . '"]' . $keyword . '[/affiliate_link]', $content);
+                }
+            }
+        }
         return $content;
     }
 
-    public function redirectAffiliateLink() {
-        if (!isset($_GET['salmp_link'])) return;
-        
-        global $wpdb;
-        $link_id = intval($_GET['salmp_link']);
-        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM " . SALMP_TABLE . " WHERE id = %d", $link_id));
-        
-        if ($link) {
-            $wpdb->update(SALMP_TABLE, ['click_count' => $link->click_count + 1], ['id' => $link_id]);
-            wp_redirect($link->affiliate_url);
-            exit;
-        }
-    }
-
-    public function ajaxCreateLink() {
-        check_ajax_referer('salmp_nonce');
-        
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Unauthorized');
-        }
-        
-        $keyword = sanitize_text_field($_POST['keyword'] ?? '');
-        $url = esc_url_raw($_POST['affiliate_url'] ?? '');
-        $custom_text = sanitize_text_field($_POST['custom_text'] ?? '');
-        
-        if (!$keyword || !$url) {
-            wp_send_json_error('Missing required fields');
-        }
-        
-        global $wpdb;
-        $result = $wpdb->insert(SALMP_TABLE, [
-            'keyword' => $keyword,
-            'affiliate_url' => $url,
-            'custom_text' => $custom_text
-        ]);
-        
-        if ($result) {
-            wp_send_json_success(['id' => $wpdb->insert_id]);
-        } else {
-            wp_send_json_error('Database error');
-        }
-    }
-
-    public function ajaxGetStats() {
-        check_ajax_referer('salmp_nonce');
-        
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Unauthorized');
-        }
-        
-        global $wpdb;
-        $stats = $wpdb->get_row("SELECT COUNT(*) as total_links, SUM(click_count) as total_clicks, SUM(conversion_count) as total_conversions FROM " . SALMP_TABLE);
-        wp_send_json_success($stats);
-    }
-
-    public function ajaxDeleteLink() {
-        check_ajax_referer('salmp_nonce');
-        
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Unauthorized');
-        }
-        
-        $link_id = intval($_POST['id'] ?? 0);
-        global $wpdb;
-        $result = $wpdb->delete(SALMP_TABLE, ['id' => $link_id]);
-        
-        if ($result) {
-            wp_send_json_success();
-        } else {
-            wp_send_json_error('Delete failed');
+    public function track_clicks() {
+        if (isset($_GET['salm_track'])) {
+            global $wpdb;
+            $wpdb->query($wpdb->prepare(
+                "UPDATE {$wpdb->prefix}salm_links SET clicks = clicks + 1 WHERE short_code = %s",
+                sanitize_text_field($_GET['salm_track'])
+            ));
         }
     }
 }
 
-SmartAffiliateLinkManager::getInstance();
+if (is_admin() || !is_admin()) {
+    new SmartAffiliateLinkManager();
+}
 ?>
