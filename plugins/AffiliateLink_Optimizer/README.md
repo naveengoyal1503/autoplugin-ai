@@ -1,43 +1,30 @@
 # AffiliateLink Optimizer
 
-AffiliateLink Optimizer is a WordPress plugin that automatically cloaks, tracks, and optimizes your affiliate links with AI-driven recommendations to increase your affiliate marketing revenue.
+## Description
+AffiliateLink Optimizer automatically detects outbound Amazon and eBay links in your posts and converts them into affiliate links by appending your affiliate tags. It also tracks clicks on these links to help you monitor performance.
 
 ## Features
-
-- Automatic detection and cloaking of affiliate links in your post content
-- Click tracking stored in custom database table
-- Admin dashboard with top clicked affiliate links for data-driven decisions
-- AI-driven link optimization recommendations (premium feature)
-- Customizable link slug prefix
-- Lightweight and self-contained single PHP file for easy install
-- Secure AJAX-based click tracking
+- Auto-detects Amazon and eBay URLs in content
+- Appends your affiliate tags or campaign IDs automatically
+- Click tracking on affiliate links
+- Admin settings page to configure affiliate IDs
+- Lightweight and self-contained
 
 ## Installation
-
-1. Download the plugin PHP file.
-2. Upload it to your WordPress site's `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Upload the plugin file to your `/wp-content/plugins/` directory
+2. Activate the plugin through the WordPress admin panel
+3. Go to **Settings > AffiliateLink Optimizer** to enter your Amazon affiliate tag and eBay campaign ID
 
 ## Setup
-
-- Go to the 'AffiliateLink Optimizer' menu in the WordPress admin.
-- Set your preferred link slug prefix (default is 'ref').
-- Publish or update posts with affiliate links containing typical affiliate parameters (e.g., 'aff', 'ref', 'affiliate'). Links will be automatically cloaked.
+- Enter your Amazon affiliate tag (e.g., yourtag-20)
+- Enter your eBay affiliate campaign ID
+- Choose your default affiliate network for future extensions
 
 ## Usage
-
-- When visitors click affiliate links, clicks will be tracked.
-- Review the top clicked links on the admin page to identify best performing affiliate links.
-- Use the insights to optimize link placement and marketing strategies.
-
-## Premium Features
-
-- AI-powered link placement and optimization suggestions
-- Detailed conversion and revenue analytics
-- Automated split testing of affiliate links
-
-Upgrade to premium for advanced revenue maximization tools.
+- Insert Amazon or eBay links normally in your posts
+- The plugin will automatically convert them to affiliate links with your tags
+- Clicks on these links will be tracked (click stats display coming in future updates)
 
 ---
 
-AffiliateLink Optimizer streamlines affiliate marketing efforts to help you maximize your WordPress site's profitability with minimal manual effort.
+Created by Your Name. For support, open an issue or contact via plugin homepage.
