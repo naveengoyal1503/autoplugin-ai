@@ -5,119 +5,115 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Description: Boost your WordPress site's revenue with smart affiliate offers and exclusive coupons.
+ * Description: Automate and optimize ads, affiliate links, coupons, and memberships.
  * Version: 1.0
- * Author: Cozmo Labs
+ * Author: WP Revenue Team
  */
-
-if (!defined('ABSPATH')) {
-    exit;
-}
 
 class WP_Revenue_Booster {
 
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_shortcode('wp_revenue_booster', array($this, 'display_offer'));
-        add_action('wp_ajax_save_offer_click', array($this, 'save_offer_click'));
-        add_action('wp_ajax_nopriv_save_offer_click', array($this, 'save_offer_click'));
+        add_action('wp_footer', array($this, 'inject_monetization_elements'));
+        add_shortcode('revenue_booster', array($this, 'shortcode_handler'));
     }
 
     public function add_admin_menu() {
         add_menu_page(
-            'WP Revenue Booster',
+            'Revenue Booster',
             'Revenue Booster',
             'manage_options',
             'wp-revenue-booster',
             array($this, 'admin_page'),
-            'dashicons-chart-line'
+            'dashicons-chart-line',
+            80
         );
     }
 
     public function admin_page() {
-        if (isset($_POST['save_offer'])) {
-            update_option('wp_revenue_booster_offer', sanitize_text_field($_POST['offer']));
-            update_option('wp_revenue_booster_coupon', sanitize_text_field($_POST['coupon']));
-            update_option('wp_revenue_booster_affiliate_link', esc_url($_POST['affiliate_link']));
-            echo '<div class="notice notice-success"><p>Offer updated!</p></div>';
-        }
-        $offer = get_option('wp_revenue_booster_offer', '');
-        $coupon = get_option('wp_revenue_booster_coupon', '');
-        $affiliate_link = get_option('wp_revenue_booster_affiliate_link', '');
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form method="post">
+            <form method="post" action="options.php">
+                <?php settings_fields('wp_revenue_booster_options'); ?>
+                <?php do_settings_sections('wp_revenue_booster_options'); ?>
                 <table class="form-table">
-                    <tr>
-                        <th><label for="offer">Smart Offer</label></th>
-                        <td><input type="text" name="offer" id="offer" value="<?php echo esc_attr($offer); ?>" class="regular-text" /></td>
+                    <tr valign="top">
+                        <th scope="row">AdSense Code</th>
+                        <td><textarea name="wp_revenue_booster_adsense" rows="3" cols="50"><?php echo esc_textarea(get_option('wp_revenue_booster_adsense')); ?></textarea></td>
                     </tr>
-                    <tr>
-                        <th><label for="coupon">Coupon Code</label></th>
-                        <td><input type="text" name="coupon" id="coupon" value="<?php echo esc_attr($coupon); ?>" class="regular-text" /></td>
+                    <tr valign="top">
+                        <th scope="row">Affiliate Link</th>
+                        <td><input type="text" name="wp_revenue_booster_affiliate" value="<?php echo esc_attr(get_option('wp_revenue_booster_affiliate')); ?>" /></td>
                     </tr>
-                    <tr>
-                        <th><label for="affiliate_link">Affiliate Link</label></th>
-                        <td><input type="url" name="affiliate_link" id="affiliate_link" value="<?php echo esc_url($affiliate_link); ?>" class="regular-text" /></td>
+                    <tr valign="top">
+                        <th scope="row">Coupon Code</th>
+                        <td><input type="text" name="wp_revenue_booster_coupon" value="<?php echo esc_attr(get_option('wp_revenue_booster_coupon')); ?>" /></td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Membership Link</th>
+                        <td><input type="text" name="wp_revenue_booster_membership" value="<?php echo esc_attr(get_option('wp_revenue_booster_membership')); ?>" /></td>
                     </tr>
                 </table>
-                <p class="submit">
-                    <input type="submit" name="save_offer" class="button-primary" value="Save Offer" />
-                </p>
+                <?php submit_button(); ?>
             </form>
         </div>
         <?php
     }
 
-    public function enqueue_scripts() {
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('wp-revenue-booster-js', plugin_dir_url(__FILE__) . 'revenue-booster.js', array('jquery'), '1.0', true);
-        wp_localize_script('wp-revenue-booster-js', 'wpRevenueBooster', array(
-            'ajax_url' => admin_url('admin-ajax.php')
-        ));
-    }
-
-    public function display_offer($atts) {
-        $offer = get_option('wp_revenue_booster_offer', '');
+    public function inject_monetization_elements() {
+        $adsense = get_option('wp_revenue_booster_adsense', '');
+        $affiliate = get_option('wp_revenue_booster_affiliate', '');
         $coupon = get_option('wp_revenue_booster_coupon', '');
-        $affiliate_link = get_option('wp_revenue_booster_affiliate_link', '#');
-        if (empty($offer)) return '';
-        return '<div class="wp-revenue-booster-offer">
-                    <p>' . esc_html($offer) . '</p>
-                    <p><strong>Coupon:</strong> <span class="wp-revenue-booster-coupon">' . esc_html($coupon) . '</span></p>
-                    <a href="' . esc_url($affiliate_link) . '" target="_blank" class="wp-revenue-booster-affiliate-link" data-offer="' . esc_attr($offer) . '">Get Deal</a>
-                </div>';
+        $membership = get_option('wp_revenue_booster_membership', '');
+
+        if (!empty($adsense)) {
+            echo '<div class="wp-revenue-adsense">' . $adsense . '</div>';
+        }
+        if (!empty($affiliate)) {
+            echo '<div class="wp-revenue-affiliate">Check out our <a href="' . esc_url($affiliate) . '" target="_blank">affiliate link</a>.</div>';
+        }
+        if (!empty($coupon)) {
+            echo '<div class="wp-revenue-coupon">Use coupon code: <strong>' . esc_html($coupon) . '</strong></div>';
+        }
+        if (!empty($membership)) {
+            echo '<div class="wp-revenue-membership">Join our <a href="' . esc_url($membership) . '" target="_blank">membership</a> for exclusive content.</div>';
+        }
     }
 
-    public function save_offer_click() {
-        if (isset($_POST['offer'])) {
-            $offer = sanitize_text_field($_POST['offer']);
-            $count = get_option('wp_revenue_booster_clicks_' . $offer, 0);
-            update_option('wp_revenue_booster_clicks_' . $offer, $count + 1);
-            wp_die('success');
+    public function shortcode_handler($atts) {
+        $atts = shortcode_atts(array(
+            'type' => 'all'
+        ), $atts, 'revenue_booster');
+
+        $output = '';
+        if ($atts['type'] == 'adsense' || $atts['type'] == 'all') {
+            $adsense = get_option('wp_revenue_booster_adsense', '');
+            if (!empty($adsense)) {
+                $output .= '<div class="wp-revenue-adsense">' . $adsense . '</div>';
+            }
         }
+        if ($atts['type'] == 'affiliate' || $atts['type'] == 'all') {
+            $affiliate = get_option('wp_revenue_booster_affiliate', '');
+            if (!empty($affiliate)) {
+                $output .= '<div class="wp-revenue-affiliate">Check out our <a href="' . esc_url($affiliate) . '" target="_blank">affiliate link</a>.</div>';
+            }
+        }
+        if ($atts['type'] == 'coupon' || $atts['type'] == 'all') {
+            $coupon = get_option('wp_revenue_booster_coupon', '');
+            if (!empty($coupon)) {
+                $output .= '<div class="wp-revenue-coupon">Use coupon code: <strong>' . esc_html($coupon) . '</strong></div>';
+            }
+        }
+        if ($atts['type'] == 'membership' || $atts['type'] == 'all') {
+            $membership = get_option('wp_revenue_booster_membership', '');
+            if (!empty($membership)) {
+                $output .= '<div class="wp-revenue-membership">Join our <a href="' . esc_url($membership) . '" target="_blank">membership</a> for exclusive content.</div>';
+            }
+        }
+        return $output;
     }
 }
 
 new WP_Revenue_Booster();
-
-// JavaScript for tracking clicks
-add_action('wp_footer', function() {
-    if (is_user_logged_in()) return;
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('.wp-revenue-booster-affiliate-link').on('click', function(e) {
-            var offer = $(this).data('offer');
-            $.post(wpRevenueBooster.ajax_url, {
-                action: 'save_offer_click',
-                offer: offer
-            });
-        });
-    });
-    </script>
-    <?php
-});
 ?>
