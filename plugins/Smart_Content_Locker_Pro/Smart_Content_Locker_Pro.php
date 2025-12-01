@@ -2,26 +2,29 @@
 /*
 Plugin Name: Smart Content Locker Pro
 Plugin URI: https://smartcontentlocker.com
-Description: Advanced content gating and monetization for WordPress with memberships, paywalls, and analytics
+Description: Gate premium content behind user actions to build email lists and increase engagement
 Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Smart_Content_Locker_Pro.php
-License: GPL2
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: smart-content-locker
 Domain Path: /languages
 */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
+define('SCL_VERSION', '1.0.0');
 define('SCL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SCL_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('SCL_VERSION', '1.0.0');
 
 class SmartContentLocker {
     private static $instance = null;
 
-    public static function getInstance() {
-        if (self::$instance === null) {
+    public static function get_instance() {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -29,269 +32,201 @@ class SmartContentLocker {
 
     public function __construct() {
         add_action('plugins_loaded', array($this, 'init'));
-        add_action('admin_menu', array($this, 'addAdminMenu'));
-        add_filter('the_content', array($this, 'applyContentLock'));
-        add_shortcode('scl-locker', array($this, 'renderLocker'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueueScripts'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueueAdminScripts'));
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        load_plugin_textdomain('smart-content-locker', false, dirname(plugin_basename(__FILE__)) . '/languages');
-        $this->createTables();
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+        add_shortcode('content_locker', array($this, 'render_locker'));
+        add_action('wp_ajax_scl_unlock_content', array($this, 'unlock_content'));
+        add_action('wp_ajax_nopriv_scl_unlock_content', array($this, 'unlock_content'));
     }
 
-    public function activate() {
-        $this->createTables();
-        add_option('scl_version', SCL_VERSION);
+    public function enqueue_scripts() {
+        wp_enqueue_script('scl-frontend', SCL_PLUGIN_URL . 'assets/frontend.js', array('jquery'), SCL_VERSION, true);
+        wp_enqueue_style('scl-frontend', SCL_PLUGIN_URL . 'assets/frontend.css', array(), SCL_VERSION);
+        wp_localize_script('scl-frontend', 'sclData', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('scl_nonce')
+        ));
     }
 
-    public function deactivate() {
-        // Cleanup if needed
-    }
-
-    private function createTables() {
-        global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
-        
-        $lockers_table = $wpdb->prefix . 'scl_lockers';
-        $analytics_table = $wpdb->prefix . 'scl_analytics';
-        
-        $sql_lockers = "CREATE TABLE IF NOT EXISTS $lockers_table (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
-            post_id bigint(20) NOT NULL,
-            lock_type varchar(50) NOT NULL,
-            unlock_method varchar(50) NOT NULL,
-            lock_message longtext,
-            required_role varchar(100),
-            unlock_button_text varchar(100),
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            UNIQUE KEY post_id (post_id)
-        ) $charset_collate;";
-        
-        $sql_analytics = "CREATE TABLE IF NOT EXISTS $analytics_table (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
-            locker_id bigint(20) NOT NULL,
-            user_id bigint(20),
-            action varchar(50) NOT NULL,
-            timestamp datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            KEY locker_id (locker_id)
-        ) $charset_collate;";
-        
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        dbDelta($sql_lockers);
-        dbDelta($sql_analytics);
-    }
-
-    public function addAdminMenu() {
+    public function add_admin_menu() {
         add_menu_page(
-            __('Smart Content Locker', 'smart-content-locker'),
-            __('Content Locker', 'smart-content-locker'),
+            'Smart Content Locker',
+            'Content Locker',
             'manage_options',
-            'scl-dashboard',
-            array($this, 'renderDashboard'),
+            'smart-content-locker',
+            array($this, 'render_admin_page'),
             'dashicons-lock',
-            30
-        );
-        
-        add_submenu_page(
-            'scl-dashboard',
-            __('Settings', 'smart-content-locker'),
-            __('Settings', 'smart-content-locker'),
-            'manage_options',
-            'scl-settings',
-            array($this, 'renderSettings')
-        );
-        
-        add_submenu_page(
-            'scl-dashboard',
-            __('Analytics', 'smart-content-locker'),
-            __('Analytics', 'smart-content-locker'),
-            'manage_options',
-            'scl-analytics',
-            array($this, 'renderAnalytics')
+            90
         );
     }
 
-    public function renderDashboard() {
-        global $wpdb;
-        $lockers = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}scl_lockers");
-        ?>
-        <div class="wrap">
-            <h1><?php _e('Smart Content Locker Dashboard', 'smart-content-locker'); ?></h1>
-            <div class="scl-dashboard">
-                <p><?php printf(__('You have %d active content lockers.', 'smart-content-locker'), count($lockers)); ?></p>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th><?php _e('Post', 'smart-content-locker'); ?></th>
-                            <th><?php _e('Lock Type', 'smart-content-locker'); ?></th>
-                            <th><?php _e('Method', 'smart-content-locker'); ?></th>
-                            <th><?php _e('Actions', 'smart-content-locker'); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($lockers as $locker): ?>
-                            <tr>
-                                <td><?php echo get_the_title($locker->post_id); ?></td>
-                                <td><?php echo esc_html($locker->lock_type); ?></td>
-                                <td><?php echo esc_html($locker->unlock_method); ?></td>
-                                <td>
-                                    <a href="<?php echo esc_url(get_edit_post_link($locker->post_id)); ?>"><?php _e('Edit', 'smart-content-locker'); ?></a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <?php
+    public function register_settings() {
+        register_setting('scl_settings', 'scl_email_provider');
+        register_setting('scl_settings', 'scl_mailchimp_key');
+        register_setting('scl_settings', 'scl_conversion_tracking');
     }
 
-    public function renderSettings() {
+    public function render_admin_page() {
         ?>
         <div class="wrap">
-            <h1><?php _e('Smart Content Locker Settings', 'smart-content-locker'); ?></h1>
+            <h1>Smart Content Locker Pro</h1>
             <form method="post" action="options.php">
-                <?php settings_fields('scl-settings'); ?>
+                <?php settings_fields('scl_settings'); ?>
                 <table class="form-table">
                     <tr>
-                        <th scope="row"><label for="scl_default_message"><?php _e('Default Lock Message', 'smart-content-locker'); ?></label></th>
+                        <th scope="row"><label for="scl_email_provider">Email Provider</label></th>
                         <td>
-                            <textarea id="scl_default_message" name="scl_default_message" rows="4" cols="50"><?php echo esc_textarea(get_option('scl_default_message', 'This content is locked. Please unlock to view.')); ?></textarea>
+                            <select name="scl_email_provider" id="scl_email_provider">
+                                <option value="mailchimp" <?php selected(get_option('scl_email_provider'), 'mailchimp'); ?>>Mailchimp</option>
+                                <option value="convertkit" <?php selected(get_option('scl_email_provider'), 'convertkit'); ?>>ConvertKit</option>
+                                <option value="custom" <?php selected(get_option('scl_email_provider'), 'custom'); ?>>Custom Webhook</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="scl_button_color"><?php _e('Button Color', 'smart-content-locker'); ?></label></th>
+                        <th scope="row"><label for="scl_mailchimp_key">API Key</label></th>
                         <td>
-                            <input type="color" id="scl_button_color" name="scl_button_color" value="<?php echo esc_attr(get_option('scl_button_color', '#0073aa')); ?>">
+                            <input type="password" name="scl_mailchimp_key" id="scl_mailchimp_key" value="<?php echo esc_attr(get_option('scl_mailchimp_key')); ?>" class="regular-text">
                         </td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
+            <h2>Shortcode Usage</h2>
+            <p><code>[content_locker action="email" title="Unlock Premium Content"]Your locked content here[/content_locker]</code></p>
+            <h2>Documentation</h2>
+            <p>Actions: <strong>email</strong>, <strong>social_share</strong>, <strong>referral</strong></p>
         </div>
         <?php
     }
 
-    public function renderAnalytics() {
-        global $wpdb;
-        $analytics = $wpdb->get_results(
-            "SELECT l.id, p.post_title, COUNT(a.id) as unlock_attempts 
-             FROM {$wpdb->prefix}scl_lockers l 
-             LEFT JOIN {$wpdb->posts} p ON l.post_id = p.ID 
-             LEFT JOIN {$wpdb->prefix}scl_analytics a ON l.id = a.locker_id 
-             GROUP BY l.id"
-        );
-        ?>
-        <div class="wrap">
-            <h1><?php _e('Content Locker Analytics', 'smart-content-locker'); ?></h1>
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th><?php _e('Post', 'smart-content-locker'); ?></th>
-                        <th><?php _e('Unlock Attempts', 'smart-content-locker'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($analytics as $stat): ?>
-                        <tr>
-                            <td><?php echo esc_html($stat->post_title); ?></td>
-                            <td><?php echo intval($stat->unlock_attempts); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <?php
-    }
-
-    public function applyContentLock($content) {
-        if (is_singular() && !is_admin()) {
-            global $post, $wpdb;
-            $locker = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT * FROM {$wpdb->prefix}scl_lockers WHERE post_id = %d",
-                    $post->ID
-                )
-            );
-            
-            if ($locker) {
-                $user_id = get_current_user_id();
-                $can_unlock = false;
-                
-                if ($locker->required_role && !empty($locker->required_role)) {
-                    $user = get_userdata($user_id);
-                    $can_unlock = $user && in_array($locker->required_role, $user->roles);
-                }
-                
-                if (!$can_unlock && !is_user_logged_in()) {
-                    $button_text = $locker->unlock_button_text ?: __('Unlock Content', 'smart-content-locker');
-                    $message = $locker->lock_message ?: get_option('scl_default_message', 'This content is locked.');
-                    
-                    $this->logAnalytics($locker->id, 'view_attempt');
-                    
-                    $locked_html = '<div class="scl-locker-wrapper">';
-                    $locked_html .= '<div class="scl-locker-message">' . wp_kses_post($message) . '</div>';
-                    $locked_html .= '<button class="scl-unlock-button" onclick="scl_unlock_content(event)">' . esc_html($button_text) . '</button>';
-                    $locked_html .= '</div>';
-                    $locked_html .= '<div class="scl-locked-content" style="display:none;">' . $content . '</div>';
-                    
-                    return $locked_html;
-                }
-            }
-        }
-        return $content;
-    }
-
-    public function renderLocker($atts) {
+    public function render_locker($atts, $content = '') {
         $atts = shortcode_atts(array(
-            'message' => __('This content is locked.', 'smart-content-locker'),
-            'button_text' => __('Unlock', 'smart-content-locker'),
-        ), $atts);
-        
-        $button_color = get_option('scl_button_color', '#0073aa');
-        
-        ob_start();
-        ?>
-        <div class="scl-locker-wrapper" style="text-align:center; padding:20px; background:#f5f5f5; border-radius:5px;">
-            <p><?php echo esc_html($atts['message']); ?></p>
-            <button class="scl-unlock-button" onclick="scl_unlock_content(event)" style="background-color:<?php echo esc_attr($button_color); ?>;">
-                <?php echo esc_html($atts['button_text']); ?>
-            </button>
-        </div>
-        <?php
-        return ob_get_clean();
+            'action' => 'email',
+            'title' => 'Unlock Premium Content',
+            'id' => uniqid('scl_')
+        ), $atts, 'content_locker');
+
+        $locker_id = $atts['id'];
+        $user_has_unlocked = isset($_COOKIE['scl_unlocked_' . md5($locker_id)]);
+
+        if ($user_has_unlocked) {
+            return '<div class="scl-unlocked-content">' . do_shortcode($content) . '</div>';
+        }
+
+        $html = '<div class="scl-locker" data-locker-id="' . esc_attr($locker_id) . '" data-action="' . esc_attr($atts['action']) . '">';
+        $html .= '<div class="scl-locked-overlay">';
+        $html .= '<div class="scl-lock-message">';
+        $html .= '<h3>' . esc_html($atts['title']) . '</h3>';
+
+        switch ($atts['action']) {
+            case 'email':
+                $html .= $this->render_email_form($locker_id);
+                break;
+            case 'social_share':
+                $html .= $this->render_social_share($locker_id);
+                break;
+            case 'referral':
+                $html .= $this->render_referral_form($locker_id);
+                break;
+        }
+
+        $html .= '</div></div>';
+        $html .= '<div class="scl-locked-content" style="filter: blur(5px); pointer-events: none;">' . do_shortcode($content) . '</div>';
+        $html .= '</div>';
+
+        return $html;
     }
 
-    private function logAnalytics($locker_id, $action) {
-        global $wpdb;
-        $wpdb->insert(
-            $wpdb->prefix . 'scl_analytics',
-            array(
-                'locker_id' => $locker_id,
-                'user_id' => get_current_user_id(),
-                'action' => $action,
+    private function render_email_form($locker_id) {
+        return '<form class="scl-email-form" data-locker-id="' . esc_attr($locker_id) . '">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit" class="scl-unlock-btn">Unlock Content</button>
+        </form>';
+    }
+
+    private function render_social_share($locker_id) {
+        return '<div class="scl-social-share">
+            <p>Share this post to unlock</p>
+            <button class="scl-share-btn" data-network="twitter">Share on Twitter</button>
+            <button class="scl-share-btn" data-network="facebook">Share on Facebook</button>
+        </div>';
+    }
+
+    private function render_referral_form($locker_id) {
+        return '<div class="scl-referral">
+            <p>Refer 3 friends to unlock this content</p>
+            <input type="text" readonly value="' . esc_url(add_query_arg('ref', md5(get_current_user_id()), home_url())) . '" class="scl-ref-link">
+            <button type="button" class="scl-copy-btn">Copy Link</button>
+        </div>';
+    }
+
+    public function unlock_content() {
+        check_ajax_referer('scl_nonce', 'nonce');
+
+        $locker_id = sanitize_text_field($_POST['locker_id'] ?? '');
+        $email = sanitize_email($_POST['email'] ?? '');
+        $action = sanitize_text_field($_POST['action'] ?? 'email');
+
+        if (!$locker_id) {
+            wp_send_json_error('Invalid locker ID');
+        }
+
+        if ($action === 'email' && is_email($email)) {
+            $this->subscribe_email($email);
+        }
+
+        setcookie('scl_unlocked_' . md5($locker_id), '1', time() + (30 * DAY_IN_SECONDS), COOKIEPATH, COOKIE_DOMAIN);
+
+        wp_send_json_success('Content unlocked');
+    }
+
+    private function subscribe_email($email) {
+        $provider = get_option('scl_email_provider', 'mailchimp');
+        $api_key = get_option('scl_mailchimp_key');
+
+        if ($provider === 'mailchimp' && $api_key) {
+            $this->add_to_mailchimp($email, $api_key);
+        }
+    }
+
+    private function add_to_mailchimp($email, $api_key) {
+        $list_id = apply_filters('scl_mailchimp_list_id', 'default_list');
+        $server = substr($api_key, strpos($api_key, '-') + 1);
+        $url = 'https://' . $server . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members';
+
+        wp_remote_post($url, array(
+            'method' => 'POST',
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode('user:' . $api_key),
+                'Content-Type' => 'application/json'
             ),
-            array('%d', '%d', '%s')
-        );
+            'body' => json_encode(array(
+                'email_address' => $email,
+                'status' => 'subscribed'
+            ))
+        ));
     }
 
-    public function enqueueScripts() {
-        wp_enqueue_script('scl-frontend', SCL_PLUGIN_URL . 'assets/js/frontend.js', array('jquery'), SCL_VERSION, true);
-        wp_enqueue_style('scl-frontend', SCL_PLUGIN_URL . 'assets/css/frontend.css', array(), SCL_VERSION);
+    public function activate() {
+        if (!current_user_can('activate_plugins')) {
+            return;
+        }
+        set_transient('scl_admin_notice', true, 10);
     }
 
-    public function enqueueAdminScripts($hook) {
-        if (strpos($hook, 'scl-') === false) return;
-        wp_enqueue_style('scl-admin', SCL_PLUGIN_URL . 'assets/css/admin.css', array(), SCL_VERSION);
+    public function deactivate() {
+        if (!current_user_can('activate_plugins') || !is_plugin_active(plugin_basename(__FILE__))) {
+            return;
+        }
     }
 }
 
-SmartContentLocker::getInstance();
+SmartContentLocker::get_instance();
 ?>
