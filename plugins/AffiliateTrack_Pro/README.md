@@ -1,86 +1,77 @@
 # AffiliateTrack Pro
 
-A powerful WordPress plugin for managing affiliate links, tracking clicks and conversions, and monetizing your content through affiliate marketing.
+Advanced affiliate link tracking and performance analytics plugin for WordPress.
 
 ## Features
 
-- **Affiliate Link Management**: Create, organize, and manage all affiliate links from a single dashboard
-- **Click Tracking**: Automatically track every click on your affiliate links
-- **Conversion Monitoring**: Track conversions and revenue generated from each link
-- **Short URL Generation**: Generate clean, short URLs for your affiliate links (e.g., yoursite.com/go/linkname)
-- **Revenue Analytics**: Comprehensive dashboard showing total clicks, conversions, and revenue
-- **Shortcode Support**: Use [affiliate_link code="link_code" text="Click Here"] to embed links anywhere
-- **User-Friendly Interface**: Intuitive admin interface for managing all your affiliate campaigns
-- **Performance Reports**: Detailed statistics for each affiliate link
-- **Freemium Model**: Basic features free, premium analytics available
+- **Link Management**: Create and manage unlimited affiliate links with custom slugs
+- **Click Tracking**: Monitor every click with detailed information including IP, user agent, and referrer
+- **Conversion Tracking**: Track conversions and commission earnings for each link
+- **Analytics Dashboard**: View comprehensive analytics with conversion rates and earnings reports
+- **Shortcode Support**: Easy integration with `[affiliate_link slug="your-slug"]`
+- **Real-time Statistics**: Track total clicks, conversions, earnings, and active links
+- **Database Storage**: All data stored securely in WordPress database
+- **Premium Plans**: Freemium model with advanced features in premium tier
 
 ## Installation
 
-1. Download the plugin or extract it to your `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Navigate to 'AffiliateTrack' in the admin menu to start managing your links
+1. Upload the plugin folder to `/wp-content/plugins/`
+2. Activate the plugin through the WordPress admin panel
+3. Navigate to AffiliateTrack Pro in the admin menu
 
 ## Setup
 
-1. After activation, go to **AffiliateTrack > Settings**
-2. Configure your tracking preferences
-3. Create your first affiliate link from **AffiliateTrack > Links**
-4. Copy the generated short link and share it on your site
+1. Go to **AffiliateTrack Pro > My Links** to create your first affiliate link
+2. Enter the link slug (URL-friendly identifier)
+3. Paste your affiliate URL
+4. Enter the program name and commission rate
+5. Click "Add Link"
 
 ## Usage
 
-### Creating an Affiliate Link
+### Adding Links to Posts/Pages
 
-1. Click **Add New Link** in the Links section
-2. Enter the affiliate link name
-3. Paste your full affiliate URL
-4. Optionally customize the short code (or auto-generate one)
-5. Save and copy your short link
-
-### Using Shortcodes
-
-Embed affiliate links directly in your posts and pages:
+Use the shortcode in your content:
 
 
-[affiliate_link code="amazon-book" text="Buy This Book on Amazon"]
+[affiliate_link slug="your-link-slug"]
 
 
-### Viewing Statistics
+### Viewing Analytics
 
-The main dashboard displays:
+- Go to **AffiliateTrack Pro > Analytics** to see performance metrics
+- Track clicks, conversions, and earnings per program
+- Monitor conversion rates in real-time
+
+### Dashboard
+
+The main dashboard shows:
 - Total clicks across all links
-- Total conversions
-- Total revenue generated
+- Number of conversions
+- Total earnings
+- Active affiliate links count
 
-Click into individual links to see detailed performance metrics.
+## Monetization Model
 
-## Benefits for Monetization
+**Free Features**:
+- Unlimited affiliate links
+- Basic click tracking
+- Dashboard statistics
+- Shortcode support
 
-- **Track ROI**: Know exactly which affiliate links are performing
-- **Optimize Campaigns**: See which products/services convert best
-- **Professional Appearance**: Clean short links look better than long affiliate URLs
-- **Easy Management**: Centralized control of all affiliate relationships
-- **Revenue Growth**: Better tracking leads to better optimization and higher earnings
-
-## Premium Features (Coming Soon)
-
-- Advanced analytics with graphs and trends
-- A/B testing for link text and placement
-- Bulk link import
-- Custom link parameters
-- Email reports
-- API access
+**Premium Features** ($9.99/month):
+- Advanced analytics and reports
+- API access for third-party integrations
+- White-label reporting
+- Email notifications for conversions
+- CSV export functionality
 
 ## Requirements
 
 - WordPress 5.0 or higher
 - PHP 7.2 or higher
-- MySQL 5.6 or higher
+- MySQL 5.7 or higher
 
 ## Support
 
-For support and feature requests, visit our website or contact support@affiliatetrackpro.com
-
-## License
-
-GPL2 - See LICENSE file for details
+For questions or issues, visit our documentation or contact support through the plugin dashboard.
