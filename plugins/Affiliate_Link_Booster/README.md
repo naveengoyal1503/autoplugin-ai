@@ -1,44 +1,38 @@
 # Affiliate Link Booster
 
-## Description
-Affiliate Link Booster improves your affiliate marketing by automatically cloaking affiliate links, categorizing them, applying geotargeting, and scheduling link activations. Increase commissions by showing the right offers to the right audience at the right time.
+Affiliate Link Booster enhances the performance of your affiliate marketing by automatically adding **coupons, price comparison info, and click tracking** to your affiliate links.
 
 ## Features
-- Automatic cloaking of affiliate links through internal redirect to hide ugly URLs
-- Keyword-based link replacement in post content
-- Geolocation targeting to show links only to visitors from specified countries
-- Scheduling support with start and end dates for time-limited campaigns
-- JSON-based link management directly from WordPress admin
+
+- Automatically detects and enhances affiliate links in your posts (Amazon, ClickBank, eBay, ShareASale).
+- Adds custom coupon codes alongside links.
+- Displays price comparison snippets to increase buyer confidence.
+- Tracks clicks on affiliate links via AJAX for basic analytics.
+- Lightweight, single-file plugin for easy deployment.
 
 ## Installation
-1. Upload `affiliate-link-booster.php` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Access the "Affiliate Link Booster" menu to configure your links
+
+1. Upload the `affiliate-link-booster.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. No configuration required for basic usage.
 
 ## Setup
-1. Prepare your affiliate links in JSON format. Example entry:
 
-{
-  "keyword": "BlueWidget",
-  "url": "https://affiliate.example.com/bluewidget",
-  "category": "widgets",
-  "countries": ["US", "CA"],
-  "start_date": "2025-12-01",
-  "end_date": "2025-12-31"
-}
-
-2. Enter an array of such link objects in the plugin settings JSON textarea.
-3. Save changes.
-4. Add posts containing the keywords (e.g., "BlueWidget") to automatically link them to your affiliate URLs.
+- Currently, the plugin uses static coupon and price data for demonstration.
+- Future premium versions may include automatic coupon fetching and detailed analytics.
 
 ## Usage
-- The plugin automatically replaces the first occurrence of each keyword per post with a cloaked affiliate link.
-- Links open in a new tab with `nofollow` and `noopener` attributes to protect SEO and security.
-- Visitor geoIP country detection uses Cloudflare header `HTTP_CF_IPCOUNTRY` if available.
-- Access link click logging and advanced features planned for premium upgrades.
 
-## Monetization Model
-The core plugin is free for basic cloaking and keyword replacement. Advanced geotargeting, link scheduling, and detailed analytics will be available in a premium subscription.
+- Add affiliate links in your posts as usual.
+- The plugin will automatically detect and enhance supported affiliate links.
+- Clicks on links are tracked and stored in WordPress options.
+- To view click data, consider exporting the `alb_clicks` option via a custom admin interface (not included in the free version).
 
-## Support
-For issues or feature requests, please open a ticket in the plugin support forum.
+## Monetization
+
+This plugin adopts a **freemium model**:
+
+- Free: Basic link enhancement, static coupon/pricing info, click tracking.
+- Premium Upgrade: Automatic coupon retrieval, advanced analytics dashboard, A/B testing of affiliate links.
+
+Enhance your affiliate revenue strategically with Affiliate Link Booster!
