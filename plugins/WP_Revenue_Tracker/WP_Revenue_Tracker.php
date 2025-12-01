@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP Revenue Tracker
-Description: Track and visualize revenue from ads, affiliate links, and digital product sales.
+Description: Track and optimize your WordPress site's monetization streams.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Tracker.php
@@ -11,9 +11,10 @@ class WP_Revenue_Tracker {
 
     public function __construct() {
         add_action('admin_menu', array($this, 'add_menu'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_save_revenue_data', array($this, 'save_revenue_data'));
-        add_action('wp_ajax_get_revenue_data', array($this, 'get_revenue_data'));
+        add_action('wp_ajax_track_revenue', array($this, 'track_revenue'));
+        add_action('wp_ajax_nopriv_track_revenue', array($this, 'track_revenue'));
+        add_action('wp_ajax_get_revenue_stats', array($this, 'get_revenue_stats'));
+        add_action('wp_ajax_nopriv_get_revenue_stats', array($this, 'get_revenue_stats'));
     }
 
     public function add_menu() {
@@ -23,58 +24,66 @@ class WP_Revenue_Tracker {
             'manage_options',
             'wp-revenue-tracker',
             array($this, 'render_dashboard'),
-            'dashicons-chart-bar',
-            6
+            'dashicons-chart-bar'
         );
-    }
-
-    public function enqueue_scripts($hook) {
-        if ($hook != 'toplevel_page_wp-revenue-tracker') return;
-        wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
-        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'assets/js/script.js', array('jquery'), '1.0', true);
-        wp_localize_script('wp-revenue-tracker-js', 'wpRevenueTracker', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wp-revenue-tracker-nonce')
-        ));
-        wp_enqueue_style('wp-revenue-tracker-css', plugin_dir_url(__FILE__) . 'assets/css/style.css', array(), '1.0');
     }
 
     public function render_dashboard() {
         ?>
         <div class="wrap">
             <h1>WP Revenue Tracker</h1>
-            <div id="revenue-form">
-                <label>Revenue Type:
-                    <select id="revenue-type">
-                        <option value="ads">Ads</option>
-                        <option value="affiliate">Affiliate</option>
-                        <option value="digital">Digital Products</option>
-                    </select>
-                </label>
-                <label>Amount: <input type="number" id="revenue-amount" step="0.01" /></label>
-                <label>Date: <input type="date" id="revenue-date" /></label>
-                <button id="save-revenue">Save Revenue</button>
+            <div id="revenue-stats">
+                <p>Loading stats...</p>
             </div>
-            <canvas id="revenue-chart" width="400" height="200"></canvas>
+            <form id="track-revenue-form">
+                <input type="hidden" name="action" value="track_revenue">
+                <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('track_revenue_nonce'); ?>">
+                <input type="text" name="source" placeholder="Source (e.g., AdSense, Affiliate)" required>
+                <input type="number" name="amount" placeholder="Amount" required>
+                <button type="submit">Track Revenue</button>
+            </form>
         </div>
+        <script>
+            jQuery(document).ready(function($) {
+                function loadStats() {
+                    $.post(ajaxurl, { action: 'get_revenue_stats' }, function(response) {
+                        $('#revenue-stats').html('<h2>Revenue Stats</h2><pre>' + JSON.stringify(response, null, 2) + '</pre>');
+                    });
+                }
+                $('#track-revenue-form').on('submit', function(e) {
+                    e.preventDefault();
+                    $.post(ajaxurl, $(this).serialize(), function() {
+                        loadStats();
+                        $('#track-revenue-form').reset();
+                    });
+                });
+                loadStats();
+            });
+        </script>
         <?php
     }
 
-    public function save_revenue_data() {
-        check_ajax_referer('wp-revenue-tracker-nonce', 'nonce');
-        $type = sanitize_text_field($_POST['type']);
+    public function track_revenue() {
+        check_ajax_referer('track_revenue_nonce', 'nonce');
+        $source = sanitize_text_field($_POST['source']);
         $amount = floatval($_POST['amount']);
-        $date = sanitize_text_field($_POST['date']);
         $data = get_option('wp_revenue_tracker_data', array());
-        $data[] = array('type' => $type, 'amount' => $amount, 'date' => $date);
+        $data[] = array('source' => $source, 'amount' => $amount, 'date' => current_time('mysql'));
         update_option('wp_revenue_tracker_data', $data);
         wp_die();
     }
 
-    public function get_revenue_data() {
-        check_ajax_referer('wp-revenue-tracker-nonce', 'nonce');
+    public function get_revenue_stats() {
         $data = get_option('wp_revenue_tracker_data', array());
-        wp_send_json($data);
+        $stats = array();
+        foreach ($data as $entry) {
+            $source = $entry['source'];
+            if (!isset($stats[$source])) {
+                $stats[$source] = 0;
+            }
+            $stats[$source] += $entry['amount'];
+        }
+        wp_die(json_encode($stats));
     }
 }
 
