@@ -5,102 +5,107 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Plugin URI: https://example.com/wp-revenue-booster
- * Description: Boost your WordPress site's revenue by rotating high-converting affiliate offers, coupons, and sponsored content based on user behavior.
- * Version: 1.0.0
- * Author: Revenue Labs
- * Author URI: https://example.com
- * License: GPL2
+ * Description: Rotates high-converting affiliate offers, coupons, and sponsored content based on user behavior.
+ * Version: 1.0
+ * Author: WP Dev Team
  */
-
-define('WP_REVENUE_BOOSTER_VERSION', '1.0.0');
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('revenue_booster', array($this, 'shortcode'));
-    }
-
-    public function init() {
-        // Register custom post type for offers
-        $args = array(
-            'public' => true,
-            'label' => 'Revenue Offers',
-            'supports' => array('title', 'editor', 'custom-fields'),
-            'show_in_rest' => true
-        );
-        register_post_type('revenue_offer', $args);
+        add_shortcode('wp_revenue_booster', array($this, 'display_offer'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'settings_init'));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('wp-revenue-booster', plugin_dir_url(__FILE__) . 'assets/js/booster.js', array('jquery'), WP_REVENUE_BOOSTER_VERSION, true);
-        wp_localize_script('wp-revenue-booster', 'wpRevenueBooster', array(
-            'ajax_url' => admin_url('admin-ajax.php')
-        ));
+        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'style.css');
     }
 
-    public function admin_menu() {
+    public function display_offer($atts) {
+        $atts = shortcode_atts(array(
+            'type' => 'random',
+        ), $atts, 'wp_revenue_booster');
+
+        $offers = get_option('wp_revenue_booster_offers', array());
+        if (empty($offers)) return '<p>No offers available.</p>';
+
+        $offer = $this->get_offer_by_type($offers, $atts['type']);
+        if (!$offer) return '<p>No matching offer found.</p>';
+
+        return '<div class="wp-revenue-booster-offer">
+                    <h4>' . esc_html($offer['title']) . '</h4>
+                    <p>' . esc_html($offer['description']) . '</p>
+                    <a href="' . esc_url($offer['url']) . '" target="_blank" class="wp-revenue-booster-cta">' . esc_html($offer['cta']) . '</a>
+                </div>';
+    }
+
+    private function get_offer_by_type($offers, $type) {
+        if ($type === 'random') {
+            return $offers[array_rand($offers)];
+        }
+        // Extend with behavior-based logic in premium version
+        return $offers;
+    }
+
+    public function add_admin_menu() {
         add_menu_page(
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
             'wp-revenue-booster',
-            array($this, 'admin_page'),
-            'dashicons-chart-line'
+            array($this, 'plugin_settings_page')
         );
     }
 
-    public function admin_page() {
-        if (!current_user_can('manage_options')) {
-            wp_die('You do not have sufficient permissions to access this page.');
-        }
-        echo '<div class="wrap"><h1>WP Revenue Booster</h1>';
-        echo '<p>Manage your affiliate offers, coupons, and sponsored content here.</p>';
-        echo '<p><a href="' . admin_url('post-new.php?post_type=revenue_offer') . '" class="button button-primary">Add New Offer</a></p>';
-        echo '</div>';
+    public function settings_init() {
+        register_setting('wp_revenue_booster', 'wp_revenue_booster_offers');
     }
 
-    public function shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'type' => 'all',
-            'limit' => 3
-        ), $atts, 'revenue_booster');
-
-        $args = array(
-            'post_type' => 'revenue_offer',
-            'posts_per_page' => $atts['limit'],
-            'meta_query' => array(
-                array(
-                    'key' => 'offer_type',
-                    'value' => $atts['type'],
-                    'compare' => 'IN'
-                )
-            )
-        );
-
-        $offers = new WP_Query($args);
-        $output = '<div class="wp-revenue-booster-offers">';
-        while ($offers->have_posts()) {
-            $offers->the_post();
-            $output .= '<div class="offer">
-                <h3>' . get_the_title() . '</h3>
-                <p>' . get_the_content() . '</p>
-                <a href="' . get_post_meta(get_the_ID(), 'offer_link', true) . '" target="_blank" class="button">' . get_post_meta(get_the_ID(), 'offer_cta', true) . '</a>
-            </div>';
-        }
-        $output .= '</div>';
-        wp_reset_postdata();
-        return $output;
+    public function plugin_settings_page() {
+        $offers = get_option('wp_revenue_booster_offers', array());
+        ?>
+        <div class="wrap">
+            <h1>WP Revenue Booster</h1>
+            <form method="post" action="options.php">
+                <?php settings_fields('wp_revenue_booster'); ?>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Offers</th>
+                        <td>
+                            <div id="offers-container">
+                                <?php foreach ($offers as $offer): ?>
+                                    <div class="offer-item">
+                                        <input type="text" name="wp_revenue_booster_offers[][title]" value="<?php echo esc_attr($offer['title']); ?>" placeholder="Offer Title" />
+                                        <input type="text" name="wp_revenue_booster_offers[][description]" value="<?php echo esc_attr($offer['description']); ?>" placeholder="Description" />
+                                        <input type="url" name="wp_revenue_booster_offers[][url]" value="<?php echo esc_attr($offer['url']); ?>" placeholder="URL" />
+                                        <input type="text" name="wp_revenue_booster_offers[][cta]" value="<?php echo esc_attr($offer['cta']); ?>" placeholder="Call to Action" />
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button type="button" onclick="addOffer()">Add Offer</button>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+        </div>
+        <script>
+            function addOffer() {
+                const container = document.getElementById('offers-container');
+                const item = document.createElement('div');
+                item.className = 'offer-item';
+                item.innerHTML = `<input type="text" name="wp_revenue_booster_offers[][title]" placeholder="Offer Title" />
+                                 <input type="text" name="wp_revenue_booster_offers[][description]" placeholder="Description" />
+                                 <input type="url" name="wp_revenue_booster_offers[][url]" placeholder="URL" />
+                                 <input type="text" name="wp_revenue_booster_offers[][cta]" placeholder="Call to Action" />`;
+                container.appendChild(item);
+            }
+        </script>
+        <?php
     }
 }
 
 new WP_Revenue_Booster();
-
-// Create assets/js/booster.js file with basic JS for tracking and rotation
-// Example: jQuery(document).ready(function($) {
-//     // Track user engagement and rotate offers
-// });
 ?>
