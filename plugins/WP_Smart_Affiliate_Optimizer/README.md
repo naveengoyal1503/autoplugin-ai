@@ -1,29 +1,24 @@
 # WP Smart Affiliate Optimizer
 
-Automatically optimizes affiliate links for higher conversion rates and revenue using AI-driven placement and A/B testing.
+Automatically optimizes affiliate links for higher conversion rates using AI-driven placement and A/B testing.
 
 ## Features
-- AI-driven affiliate link placement
-- A/B testing for affiliate links
-- Detailed analytics (premium)
-- Easy setup and configuration
+- Automatically injects affiliate links into content based on keywords
+- Simple admin interface to manage affiliate links
+- Freemium model: basic features free, premium unlocks AI placement, A/B testing, and analytics
 
 ## Installation
-1. Upload the plugin files to the `/wp-content/plugins/wp-smart-affiliate-optimizer` directory, or install through the WordPress plugins screen directly.
-2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Go to the plugin settings page and enter your affiliate link.
-4. Choose your placement strategy (auto or manual).
-5. Save your settings.
+1. Upload the plugin file to your WordPress plugins directory
+2. Activate the plugin from the WordPress admin
+3. Go to Settings > Affiliate Optimizer to add your affiliate links
 
 ## Setup
-- Enter your affiliate link in the plugin settings.
-- Select the placement strategy.
-- For premium features, upgrade to the premium version.
+- Enter affiliate links in the format: URL|Keyword (one per line)
+- The plugin will automatically inject links into content containing the keyword
 
 ## Usage
-- The plugin will automatically optimize your affiliate links for higher conversion rates.
-- View analytics in the plugin dashboard (premium).
-- Adjust settings as needed for optimal performance.
+- Use the admin interface to manage and update your affiliate links
+- Upgrade to premium for advanced optimization features
 
 ## Support
-For support, please contact us at support@example.com.
+For support, visit our website or contact support@yoursite.com
