@@ -1,46 +1,44 @@
 # Smart Affiliate Coupon Aggregator
 
-## Description
-Smart Affiliate Coupon Aggregator automatically aggregates affiliate coupons from multiple retailers, updates them daily, and displays them in an SEO-optimized, customizable coupon widget to increase affiliate commissions.
+**Smart Affiliate Coupon Aggregator** is a WordPress plugin designed to boost your affiliate marketing revenue by automatically aggregating coupons from multiple affiliate RSS feeds and displaying them in an attractive, customizable shortcode.
 
 ## Features
 
-- Daily automatic coupon updates
-- Display active coupons with affiliate codes and links
-- Simple shortcode `[saca_coupons]` to embed coupons anywhere
-- Responsive and clean coupon widget design
-- Lightweight, self-contained single PHP file plugin
+- Aggregate affiliate coupons automatically from multiple RSS feed sources
+- Customize coupon display and number of coupons shown via shortcode attributes
+- Extract coupon codes automatically from feed titles and descriptions
+- Simple admin interface to add/update coupon feed URLs
+- Manual refresh coupons button to update coupons on demand
+- Link cloaking and affiliate-friendly output (nofollow and target blank links)
+- Freemium-ready architecture for future premium analytics and branding options
 
 ## Installation
 
-1. Upload the `smart-affiliate-coupon-aggregator.php` file to your WordPress `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress Admin.
-3. The plugin auto-fetches coupons once activated.
+1. Download the plugin ZIP and install via WordPress admin (Plugins > Add New > Upload Plugin).
+2. Activate the plugin.
+3. Go to Settings > SACA Coupons.
+4. Enter one or more affiliate coupon RSS feed URLs (one per line).
+5. Click **Save Changes**.
+6. Optionally click **Refresh Coupons Now** to fetch coupons immediately.
 
 ## Setup
 
-No additional setup is required for the free default version.
-
-To customize coupon sources or add your own coupons, modify the plugin code where coupons are defined or extend with premium features.
+- Use the shortcode `[saca_coupons max="5"]` in any post/page to display up to 5 coupons.
+- Adjust the `max` parameter to change how many coupons are shown.
 
 ## Usage
 
-1. Insert shortcode `[saca_coupons]` in any post, page, or widget where you want to display affiliate coupons.
-2. Visitors see a list of valid coupons with clickable affiliate links.
-3. Track affiliate sales through your affiliate dashboards.
+- Insert `[saca_coupons]` in any post, page, or widget area to show coupons.
+- Coupons automatically link to affiliate stores with codes highlighted when detected.
+- Refresh coupons manually on the settings page or rely on automatic refresh (coming in premium).
 
-## Monetization
+## Future Enhancements (Premium)
 
-This plugin helps site owners monetize by driving affiliate sales through coupon promotions. A potential premium upgrade can offer:
+- Real-time coupon syncing
+- Advanced coupon analytics and tracking
+- Custom branding and styling options
+- Coupon expiration and validation
 
-- More coupon sources/APIs
-- Widget customization options
-- Analytics on coupon clicks
+---
 
-## Support
-
-For support, please contact the author via the plugin support forum or your purchase platform.
-
-## License
-
-GPL v2 or later
+Increase your affiliate revenue by providing relevant and updated deals automatically with Smart Affiliate Coupon Aggregator!
