@@ -1,172 +1,205 @@
+<?php
 /*
+Plugin Name: AffiliateLink Manager Pro
+Description: Manage, track, and optimize affiliate links with advanced analytics and automated link cloaking.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=AffiliateLink_Manager_Pro.php
 */
-<?php
-/**
- * Plugin Name: AffiliateLink Manager Pro
- * Description: Manage, track, and optimize affiliate links with advanced analytics and automated link cloaking.
- * Version: 1.0
- * Author: Your Company
- */
 
+define('ALMP_VERSION', '1.0');
 define('ALMP_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ALMP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-// Register activation and deactivation hooks
-register_activation_hook(__FILE__, 'almp_activate');
-register_deactivation_hook(__FILE__, 'almp_deactivate');
-
-function almp_activate() {
-    // Create table for storing affiliate links
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'affiliate_links';
-    $charset_collate = $wpdb->get_charset_collate();
-    $sql = "CREATE TABLE $table_name (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        url text NOT NULL,
-        slug varchar(200) NOT NULL,
-        clicks int(11) DEFAULT 0,
-        created_at datetime DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
+// Register custom post type for affiliate links
+function almp_register_affiliate_link_post_type() {
+    $args = array(
+        'public' => false,
+        'show_ui' => true,
+        'label' => 'Affiliate Links',
+        'supports' => array('title'),
+        'menu_icon' => 'dashicons-admin-links',
+        'show_in_menu' => 'edit.php?post_type=affiliate-link',
+    );
+    register_post_type('affiliate-link', $args);
 }
+add_action('init', 'almp_register_affiliate_link_post_type');
 
-function almp_deactivate() {
-    // Optional: Cleanup on deactivation
+// Add custom columns to the affiliate link list
+function almp_affiliate_link_columns($columns) {
+    $columns['link'] = 'Affiliate Link';
+    $columns['clicks'] = 'Clicks';
+    $columns['conversions'] = 'Conversions';
+    return $columns;
 }
+add_filter('manage_affiliate-link_posts_columns', 'almp_affiliate_link_columns');
 
-// Add admin menu
-add_action('admin_menu', 'almp_add_admin_menu');
-function almp_add_admin_menu() {
-    add_menu_page(
-        'AffiliateLink Manager Pro',
-        'Affiliate Links',
-        'manage_options',
-        'affiliate-link-manager-pro',
-        'almp_admin_page',
-        'dashicons-admin-links'
+// Populate custom columns
+function almp_affiliate_link_column_content($column, $post_id) {
+    switch ($column) {
+        case 'link':
+            echo '<input type="text" value="' . esc_url(get_post_meta($post_id, '_affiliate_url', true)) . '" readonly style="width:100%" onclick="this.select()">';
+            break;
+        case 'clicks':
+            echo (int) get_post_meta($post_id, '_clicks', true);
+            break;
+        case 'conversions':
+            echo (int) get_post_meta($post_id, '_conversions', true);
+            break;
+    }
+}
+add_action('manage_affiliate-link_posts_custom_column', 'almp_affiliate_link_column_content', 10, 2);
+
+// Add meta box for affiliate link URL
+function almp_add_affiliate_link_meta_box() {
+    add_meta_box(
+        'almp_affiliate_link_meta',
+        'Affiliate Link Details',
+        'almp_affiliate_link_meta_box_callback',
+        'affiliate-link',
+        'normal',
+        'high'
     );
 }
+add_action('add_meta_boxes', 'almp_add_affiliate_link_meta_box');
 
-// Admin page
-function almp_admin_page() {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'affiliate_links';
-
-    if (isset($_POST['add_link'])) {
-        $url = sanitize_text_field($_POST['url']);
-        $slug = sanitize_title($_POST['slug']);
-        $wpdb->insert($table_name, array('url' => $url, 'slug' => $slug));
-    }
-
-    if (isset($_GET['delete'])) {
-        $id = intval($_GET['delete']);
-        $wpdb->delete($table_name, array('id' => $id));
-    }
-
-    $links = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
+function almp_affiliate_link_meta_box_callback($post) {
+    wp_nonce_field('almp_save_affiliate_link_meta', 'almp_affiliate_link_nonce');
+    $affiliate_url = get_post_meta($post->ID, '_affiliate_url', true);
+    $cloaked = get_post_meta($post->ID, '_cloaked', true);
     ?>
-    <div class="wrap">
-        <h1>AffiliateLink Manager Pro</h1>
-        <form method="post">
-            <table class="form-table">
-                <tr>
-                    <th><label for="url">Affiliate URL</label></th>
-                    <td><input type="text" name="url" id="url" class="regular-text" required></td>
-                </tr>
-                <tr>
-                    <th><label for="slug">Slug (short name)</label></th>
-                    <td><input type="text" name="slug" id="slug" class="regular-text" required></td>
-                </tr>
-            </table>
-            <p class="submit"><input type="submit" name="add_link" class="button-primary" value="Add Link"></p>
-        </form>
-        <h2>Existing Links</h2>
-        <table class="wp-list-table widefat fixed striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>URL</th>
-                    <th>Slug</th>
-                    <th>Clicks</th>
-                    <th>Created</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($links as $link): ?>
-                <tr>
-                    <td><?php echo $link->id; ?></td>
-                    <td><?php echo esc_url($link->url); ?></td>
-                    <td><?php echo $link->slug; ?></td>
-                    <td><?php echo $link->clicks; ?></td>
-                    <td><?php echo $link->created_at; ?></td>
-                    <td><a href="?page=affiliate-link-manager-pro&delete=<?php echo $link->id; ?>" onclick="return confirm('Are you sure?');">Delete</a></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+    <p>
+        <label for="almp_affiliate_url">Affiliate URL:</label>
+        <input type="url" id="almp_affiliate_url" name="almp_affiliate_url" value="<?php echo esc_url($affiliate_url); ?>" style="width:100%">
+    </p>
+    <p>
+        <label for="almp_cloaked">Cloak Link:</label>
+        <input type="checkbox" id="almp_cloaked" name="almp_cloaked" value="1" <?php checked($cloaked, 1); ?>>
+    </p>
     <?php
 }
 
-// Shortcode to display affiliate link
-add_shortcode('affiliate_link', 'almp_affiliate_link_shortcode');
-function almp_affiliate_link_shortcode($atts) {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'affiliate_links';
-    $atts = shortcode_atts(array('slug' => ''), $atts);
-    $slug = sanitize_title($atts['slug']);
-    $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE slug = %s", $slug));
-    if ($link) {
-        // Increment click count
-        $wpdb->update($table_name, array('clicks' => $link->clicks + 1), array('id' => $link->id));
-        return '<a href="' . esc_url($link->url) . '" target="_blank">Visit Link</a>';
+function almp_save_affiliate_link_meta($post_id) {
+    if (!isset($_POST['almp_affiliate_link_nonce']) || !wp_verify_nonce($_POST['almp_affiliate_link_nonce'], 'almp_save_affiliate_link_meta')) {
+        return;
     }
-    return 'Link not found.';
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    if (isset($_POST['almp_affiliate_url'])) {
+        update_post_meta($post_id, '_affiliate_url', sanitize_url($_POST['almp_affiliate_url']));
+    }
+    if (isset($_POST['almp_cloaked'])) {
+        update_post_meta($post_id, '_cloaked', 1);
+    } else {
+        update_post_meta($post_id, '_cloaked', 0);
+    }
 }
+add_action('save_post_affiliate-link', 'almp_save_affiliate_link_meta');
 
-// Rewrite rule for cloaked links
-add_action('init', 'almp_add_rewrite_rule');
-function almp_add_rewrite_rule() {
-    add_rewrite_rule('^go/([^/]+)/?', 'index.php?almp_slug=$matches[1]', 'top');
+// Shortcode to display cloaked affiliate link
+function almp_affiliate_link_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'id' => 0,
+    ), $atts, 'affiliate_link');
+    $post = get_post($atts['id']);
+    if (!$post || $post->post_type !== 'affiliate-link') {
+        return '';
+    }
+    $url = get_post_meta($post->ID, '_affiliate_url', true);
+    $cloaked = get_post_meta($post->ID, '_cloaked', true);
+    if ($cloaked) {
+        $url = home_url('/go/' . $post->post_name);
+    }
+    // Increment click count
+    $clicks = (int) get_post_meta($post->ID, '_clicks', true);
+    update_post_meta($post->ID, '_clicks', $clicks + 1);
+    return '<a href="' . esc_url($url) . '" target="_blank">' . esc_html($post->post_title) . '</a>';
 }
+add_shortcode('affiliate_link', 'almp_affiliate_link_shortcode');
 
-// Query vars
-add_filter('query_vars', 'almp_add_query_vars');
-function almp_add_query_vars($vars) {
-    $vars[] = 'almp_slug';
-    return $vars;
-}
-
-// Template redirect for cloaked links
-add_action('template_redirect', 'almp_template_redirect');
-function almp_template_redirect() {
-    global $wp_query;
-    $slug = get_query_var('almp_slug');
-    if ($slug) {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'affiliate_links';
-        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE slug = %s", $slug));
-        if ($link) {
-            $wpdb->update($table_name, array('clicks' => $link->clicks + 1), array('id' => $link->id));
-            wp_redirect($link->url, 301);
+// Handle cloaked link redirects
+function almp_handle_cloaked_link() {
+    if (isset($_GET['go']) && !empty($_GET['go'])) {
+        $slug = sanitize_text_field($_GET['go']);
+        $post = get_page_by_path($slug, OBJECT, 'affiliate-link');
+        if ($post && get_post_meta($post->ID, '_cloaked', true)) {
+            $url = get_post_meta($post->ID, '_affiliate_url', true);
+            // Increment click count
+            $clicks = (int) get_post_meta($post->ID, '_clicks', true);
+            update_post_meta($post->ID, '_clicks', $clicks + 1);
+            wp_redirect(esc_url($url));
             exit;
         }
     }
 }
+add_action('init', 'almp_handle_cloaked_link');
 
-// Flush rewrite rules on activation
-function almp_activate() {
-    almp_add_rewrite_rule();
-    flush_rewrite_rules();
+// Admin menu page for analytics
+function almp_add_admin_menu() {
+    add_submenu_page(
+        'edit.php?post_type=affiliate-link',
+        'Analytics',
+        'Analytics',
+        'manage_options',
+        'almp-analytics',
+        'almp_analytics_page'
+    );
+}
+add_action('admin_menu', 'almp_add_admin_menu');
+
+function almp_analytics_page() {
+    $links = get_posts(array(
+        'post_type' => 'affiliate-link',
+        'numberposts' => -1,
+    ));
+    echo '<div class="wrap"><h1>Affiliate Link Analytics</h1><table class="widefat fixed"><thead><tr><th>Title</th><th>Clicks</th><th>Conversions</th></tr></thead><tbody>';
+    foreach ($links as $link) {
+        $clicks = (int) get_post_meta($link->ID, '_clicks', true);
+        $conversions = (int) get_post_meta($link->ID, '_conversions', true);
+        echo '<tr><td>' . esc_html($link->post_title) . '</td><td>' . $clicks . '</td><td>' . $conversions . '</td></tr>';
+    }
+    echo '</tbody></table></div>';
 }
 
-// Deactivate: flush rules
+// Add conversion tracking (example: via query param)
+function almp_track_conversion() {
+    if (isset($_GET['conversion']) && !empty($_GET['conversion'])) {
+        $slug = sanitize_text_field($_GET['conversion']);
+        $post = get_page_by_path($slug, OBJECT, 'affiliate-link');
+        if ($post) {
+            $conversions = (int) get_post_meta($post->ID, '_conversions', true);
+            update_post_meta($post->ID, '_conversions', $conversions + 1);
+        }
+    }
+}
+add_action('init', 'almp_track_conversion');
+
+// Enqueue admin styles
+function almp_admin_styles() {
+    wp_enqueue_style('almp-admin-style', ALMP_PLUGIN_URL . 'admin.css');
+}
+add_action('admin_enqueue_scripts', 'almp_admin_styles');
+
+// Create admin.css file if not exists
+function almp_create_admin_css() {
+    $css = "table.fixed th, table.fixed td { padding: 8px; text-align: left; }";
+    file_put_contents(ALMP_PLUGIN_DIR . 'admin.css', $css);
+}
+register_activation_hook(__FILE__, 'almp_create_admin_css');
+
+// Plugin activation hook
+function almp_activate() {
+    // Flush rewrite rules
+    flush_rewrite_rules();
+}
+register_activation_hook(__FILE__, 'almp_activate');
+
+// Plugin deactivation hook
 function almp_deactivate() {
     flush_rewrite_rules();
 }
-?>
+register_deactivation_hook(__FILE__, 'almp_deactivate');
