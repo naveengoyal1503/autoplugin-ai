@@ -1,26 +1,26 @@
 # WP Revenue Booster
 
-Automatically optimize and rotate monetization strategies (ads, affiliate links, coupons, memberships) based on visitor behavior and content performance.
+Automatically optimize ad placement, affiliate links, and coupon offers for maximum revenue on your WordPress site.
 
 ## Features
-- Rotates ad placements for higher CTR
-- Dynamically inserts affiliate links
-- Displays targeted coupons
-- Promotes membership upsells
-- Easy admin configuration
+- Automatically inserts ad code after a specified paragraph
+- Inserts affiliate links after a specified paragraph
+- Inserts coupon code offers after a specified paragraph
+- Easy-to-use admin settings page
 
 ## Installation
-1. Upload `wp-revenue-booster.php` to the `/wp-content/plugins/` directory
+1. Upload the plugin file to your WordPress plugins directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Revenue Booster to configure your monetization options
+3. Go to Settings > Revenue Booster to configure your ad code, affiliate link, and coupon code
 
 ## Setup
-- Enable/disable monetization strategies in the admin panel
-- Save settings to apply changes
+- Enter your ad code (e.g., Google AdSense)
+- Enter your affiliate link
+- Enter your coupon code
+- Save settings
 
 ## Usage
-- The plugin will automatically inject optimized monetization elements on your site
-- Monitor performance and adjust settings as needed
+The plugin will automatically insert your ad code, affiliate link, and coupon code after the specified paragraphs in your posts. Customize the insertion points in the settings if needed.
 
 ## Support
-For issues or feature requests, contact support@revenuelabs.com
+For support, please contact support@wprevenuebooster.com
