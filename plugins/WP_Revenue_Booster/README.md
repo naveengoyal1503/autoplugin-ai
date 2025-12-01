@@ -1,30 +1,26 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by intelligently rotating affiliate links, coupons, and sponsored content based on user engagement and conversion rates.
+Automatically optimizes and manages multiple monetization streams for WordPress sites, including affiliate links, ad placements, and premium content gating.
 
 ## Features
-- Add and manage multiple affiliate links, coupons, and sponsored content.
-- Automatic rotation of the best-performing links.
-- Real-time tracking of clicks, impressions, and conversion rates.
-- Easy-to-use admin interface for managing your links.
-- Shortcode to display rotating links anywhere on your site.
+- Inject custom ad code into your site
+- Automatically add affiliate tracking to specified links
+- Gate premium content with a keyword
+- Simple admin interface for configuration
 
 ## Installation
-1. Upload the `wp-revenue-booster.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to the 'Revenue Booster' menu in your admin panel to add and manage your links.
+1. Upload the plugin file to your WordPress plugins directory.
+2. Activate the plugin from the WordPress admin panel.
 
 ## Setup
-- Add your affiliate links, coupons, or sponsored content through the admin interface.
-- Use the shortcode `[revenue_booster type="affiliate"]` (or `coupon`, `sponsored`) to display a rotating link on your site.
+1. Go to Settings > Revenue Booster in your admin panel.
+2. Enter your ad code (HTML), affiliate links (comma-separated), and premium content keyword.
+3. Save settings.
 
 ## Usage
-- The plugin will automatically rotate the link with the highest conversion rate for each type.
-- Monitor performance in the admin panel and adjust your links as needed.
+- Use the premium content keyword in your posts to gate content (e.g., `[premium]`)
+- All specified affiliate links will have tracking added automatically
+- Ad code will be injected site-wide
 
 ## Support
-For support or feature requests, please visit the plugin's support page.
-
----
-
-**Note:** This is a basic version. Premium features include advanced analytics, automated A/B testing, and integration with popular affiliate networks.
+For support, please contact the plugin author.
