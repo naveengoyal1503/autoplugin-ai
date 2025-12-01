@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Affiliate Link Booster
-Description: Automatically converts product URLs into optimized, trackable affiliate links with cloaking and performance tracking.
+Description: Automatically cloaks, categorizes, geotargets, and schedules affiliate links for higher commissions.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Link_Booster.php
@@ -10,147 +10,128 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 if (!defined('ABSPATH')) exit;
 
 class AffiliateLinkBooster {
-    private $option_name = 'alb_options';
+    private $option_name = 'alb_links';
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_settings_page'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_filter('the_content', array($this, 'convert_links_to_affiliate'));
-        add_action('wp_ajax_alb_link_click', array($this, 'handle_link_click'));
-        add_action('init', array($this, 'handle_redirect'));
-        $this->maybe_register_redirect();
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'settings_init'));
+        add_filter('the_content', array($this, 'replace_links_in_content'));
     }
 
-    public function add_settings_page() {
-        add_options_page('Affiliate Link Booster', 'Affiliate Link Booster', 'manage_options', 'alb-settings', array($this, 'settings_page_html'));
+    public function add_admin_menu() {
+        add_menu_page('Affiliate Link Booster', 'Affiliate Link Booster', 'manage_options', 'affiliate_link_booster', array($this, 'options_page'));
     }
 
-    public function register_settings() {
-        register_setting($this->option_name, $this->option_name, array($this, 'validate_settings'));
+    public function settings_init() {
+        register_setting('alb_plugin', $this->option_name);
 
-        add_settings_section('alb_main', 'General Settings', null, $this->option_name);
+        add_settings_section(
+            'alb_plugin_section',
+            __('Affiliate Links Management', 'alb'),
+            null,
+            'alb_plugin'
+        );
 
-        add_settings_field('affiliate_id', 'Affiliate ID (e.g., Amazon tag)', array($this, 'field_affiliate_id'), $this->option_name, 'alb_main');
-        add_settings_field('domains_to_convert', 'Domains to Convert (comma separated)', array($this, 'field_domains_to_convert'), $this->option_name, 'alb_main');
+        add_settings_field(
+            'alb_links_field',
+            __('Affiliate Links (JSON format)', 'alb'),
+            array($this, 'links_field_render'),
+            'alb_plugin',
+            'alb_plugin_section'
+        );
     }
 
-    public function field_affiliate_id() {
-        $options = get_option($this->option_name);
-        echo '<input type="text" name="'.$this->option_name.'[affiliate_id]" value="'.esc_attr($options['affiliate_id'] ?? '').'" class="regular-text" />';
-        echo '<p class="description">Enter your affiliate network ID. Currently supports Amazon affiliate IDs (tag).</p>';
+    public function links_field_render() {
+        $options = get_option($this->option_name, '{}');
+        echo '<textarea cols="60" rows="10" name="'.$this->option_name.'">'.esc_textarea($options).'</textarea>';
+        echo '<p class="description">Enter your links as a JSON array. Each entry: {"keyword":"keyword", "url":"https://affiliate.link", "category":"cat", "countries":["US","CA"], "start_date":"YYYY-MM-DD", "end_date":"YYYY-MM-DD"}</p>';
     }
 
-    public function field_domains_to_convert() {
-        $options = get_option($this->option_name);
-        echo '<input type="text" name="'.$this->option_name.'[domains_to_convert]" value="'.esc_attr($options['domains_to_convert'] ?? 'amazon.com,amazon.co.uk').'" class="regular-text" />';
-        echo '<p class="description">Enter comma separated domains whose links should be converted to affiliate links.</p>';
-    }
-
-    public function validate_settings($input) {
-        $output = array();
-        $output['affiliate_id'] = sanitize_text_field($input['affiliate_id'] ?? '');
-        $output['domains_to_convert'] = sanitize_text_field($input['domains_to_convert'] ?? '');
-        return $output;
-    }
-
-    public function settings_page_html() {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
+    public function options_page() {
         ?>
-        <div class="wrap">
-            <h1>Affiliate Link Booster Settings</h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields($this->option_name);
-                do_settings_sections($this->option_name);
-                submit_button();
-                ?>
-            </form>
-        </div>
+        <form action='options.php' method='post'>
+            <h1>Affiliate Link Booster</h1>
+            <?php
+            settings_fields('alb_plugin');
+            do_settings_sections('alb_plugin');
+            submit_button();
+            ?>
+        </form>
         <?php
     }
 
-    public function convert_links_to_affiliate($content) {
-        $options = get_option($this->option_name);
-        $affiliate_id = trim($options['affiliate_id'] ?? '');
-        $domains = array_map('trim', explode(',', $options['domains_to_convert'] ?? ''));
-        if (empty($affiliate_id) || empty($domains)) {
-            return $content;
+    private function get_active_links() {
+        $json = get_option($this->option_name, '{}');
+        $links = json_decode($json, true);
+        if (!is_array($links)) return array();
+
+        $now = new DateTime();
+        $user_country = $this->get_user_country();
+
+        $active_links = array();
+        foreach ($links as $link) {
+            // Validate fields
+            if (!isset($link['keyword']) || !isset($link['url'])) continue;
+
+            // Date filtering
+            if (isset($link['start_date'])) {
+                $start = DateTime::createFromFormat('Y-m-d', $link['start_date']);
+                if ($start && $now < $start) continue;
+            }
+            if (isset($link['end_date'])) {
+                $end = DateTime::createFromFormat('Y-m-d', $link['end_date']);
+                if ($end && $now > $end) continue;
+            }
+
+            // Geo-filtering
+            if (isset($link['countries']) && is_array($link['countries'])) {
+                if (!in_array($user_country, $link['countries'])) continue;
+            }
+
+            $active_links[] = $link;
         }
+        return $active_links;
+    }
 
-        libxml_use_internal_errors(true);
-        $dom = new DOMDocument();
-        $dom->loadHTML(mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8'));
-
-        $links = $dom->getElementsByTagName('a');
+    public function replace_links_in_content($content) {
+        $links = $this->get_active_links();
+        if (empty($links)) return $content;
 
         foreach ($links as $link) {
-            $href = $link->getAttribute('href');
-            $parsed = parse_url($href);
-            if (!$parsed || !isset($parsed['host'])) continue;
-            $host = $parsed['host'];
+            $keyword = preg_quote($link['keyword'], '/');
+            $url = esc_url($link['url']);
 
-            foreach ($domains as $d) {
-                if (stripos($host, $d) !== false) {
-                    // If Amazon link, add tag param or replace existing tag
-                    if (stripos($host, 'amazon.') !== false) {
-                        $query = [];
-                        if (isset($parsed['query'])) wp_parse_str($parsed['query'], $query);
-                        $query['tag'] = $affiliate_id;
-                        $new_query = http_build_query($query);
+            // Cloaking with internal affiliate redirect
+            $cloak_url = admin_url('admin-post.php?action=alb_redirect&url='.urlencode($url));
 
-                        $new_url = $parsed['scheme'] . '://' . $host . ($parsed['path'] ?? '/') . '?' . $new_query;
-
-                        // Cloak link: redirect through this plugin with encoded destination
-                        $redirect_url = admin_url('admin-ajax.php?action=alb_redirect&url=' . urlencode($new_url));
-
-                        $link->setAttribute('href', $redirect_url);
-                        $link->setAttribute('rel', 'nofollow noopener sponsored');
-                        $link->setAttribute('target', '_blank');
-                    }
-                }
-            }
+            // Replace only first occurrence per keyword
+            $pattern = '/(?<!<a[^>]*?>)\b(' . $keyword . ')\b(?!<\/a>)/i';
+            $replacement = '<a href="' . esc_attr($cloak_url) . '" target="_blank" rel="nofollow noopener">$1</a>';
+            $content = preg_replace($pattern, $replacement, $content, 1);
         }
-
-        return $this->get_inner_html($dom->getElementsByTagName('body')->item(0));
+        return $content;
     }
 
-    private function get_inner_html($node) {
-        $innerHTML = "";
-        foreach ($node->childNodes as $child) {
-            $innerHTML .= $node->ownerDocument->saveHTML($child);
-        }
-        return $innerHTML;
+    public function redirect_handler() {
+        if (!isset($_GET['url'])) wp_die('Missing URL parameter');
+
+        $url = esc_url_raw($_GET['url']);
+
+        // Optional: Add tracking, logging, or nonce check here
+        wp_redirect($url, 302);
+        exit;
     }
 
-    public function maybe_register_redirect() {
-        if (isset($_GET['action']) && $_GET['action'] === 'alb_redirect' && isset($_GET['url'])) {
-            $this->handle_redirect();
-            exit;
+    private function get_user_country() {
+        // Simple geoIP based on HTTP header for demonstration
+        if (!empty($_SERVER['HTTP_CF_IPCOUNTRY'])) {
+            return strtoupper(sanitize_text_field($_SERVER['HTTP_CF_IPCOUNTRY']));
         }
-    }
-
-    public function handle_redirect() {
-        if (!isset($_GET['url'])) return;
-        $url = urldecode($_GET['url']);
-
-        // Simple validation to allow only http/https URLs
-        if (filter_var($url, FILTER_VALIDATE_URL) && preg_match('/^https?:\/\//', $url)) {
-            // Track click here (optionally extend with DB or external analytics)
-            // For now simple header redirect
-
-            wp_redirect($url, 302);
-            exit;
-        } else {
-            wp_die('Invalid affiliate URL');
-        }
-    }
-
-    public function handle_link_click() {
-        // Placeholder for AJAX click tracking if extended in future
-        wp_send_json_success();
+        // Default/fallback
+        return '';
     }
 }
 
-new AffiliateLinkBooster();
+$affiliateLinkBooster = new AffiliateLinkBooster();
+add_action('admin_post_alb_redirect', array($affiliateLinkBooster, 'redirect_handler'));
+add_action('admin_post_nopriv_alb_redirect', array($affiliateLinkBooster, 'redirect_handler'));
