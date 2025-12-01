@@ -1,136 +1,134 @@
 <?php
 /*
 Plugin Name: WP SmartPaywall
-Description: Smart paywall for content monetization with adaptive offers.
+Description: Unlock premium content based on engagement, referrals, or micro-payments.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_SmartPaywall.php
 */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
+// Main plugin class
 class WPSmartPaywall {
     public function __construct() {
+        add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('the_content', array($this, 'apply_paywall'));
-        add_shortcode('smartpaywall', array($this, 'shortcode'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_smartpaywall_track', array($this, 'track_conversion'));
+        add_action('wp_ajax_unlock_content', array($this, 'unlock_content'));
+        add_action('wp_ajax_nopriv_unlock_content', array($this, 'unlock_content'));
+        add_filter('the_content', array($this, 'apply_paywall'));
+    }
+
+    public function init() {
+        // Register settings
+        register_setting('wp_smartpaywall', 'wp_smartpaywall_rules');
+        add_option('wp_smartpaywall_rules', array('min_views' => 3, 'min_referrals' => 2, 'min_payment' => 0.50));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('smartpaywall-js', plugin_dir_url(__FILE__) . 'smartpaywall.js', array('jquery'), '1.0', true);
-        wp_localize_script('smartpaywall-js', 'smartpaywall_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+        wp_enqueue_script('wp-smartpaywall', plugins_url('/js/smartpaywall.js', __FILE__), array('jquery'), '1.0', true);
+        wp_localize_script('wp-smartpaywall', 'smartpaywall_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
     }
 
     public function apply_paywall($content) {
-        if (is_admin() || is_user_logged_in()) {
+        if (is_admin() || !is_singular('post')) return $content;
+
+        $rules = get_option('wp_smartpaywall_rules', array());
+        $post_id = get_the_ID();
+        $user_id = get_current_user_id();
+
+        // Check if user has unlocked content
+        $unlocked = get_user_meta($user_id, 'smartpaywall_unlocked_' . $post_id, true);
+        if ($unlocked) return $content;
+
+        // Apply paywall logic
+        $views = get_post_meta($post_id, 'views_' . $user_id, true);
+        $referrals = get_user_meta($user_id, 'referrals', true);
+        $payment = get_user_meta($user_id, 'payment_' . $post_id, true);
+
+        if (($views >= $rules['min_views']) || ($referrals >= $rules['min_referrals']) || ($payment >= $rules['min_payment'])) {
+            update_user_meta($user_id, 'smartpaywall_unlocked_' . $post_id, true);
             return $content;
         }
 
-        $settings = get_option('smartpaywall_settings', array());
-        $threshold = isset($settings['threshold']) ? intval($settings['threshold']) : 3;
-        $offer_type = isset($settings['offer_type']) ? $settings['offer_type'] : 'subscription';
+        // Show paywall
+        $paywall = '<div class="smartpaywall-overlay">
+            <p>This content is locked. Unlock by:
+            <ul>
+                <li>Reading ' . $rules['min_views'] . ' articles</li>
+                <li>Referring ' . $rules['min_referrals'] . ' friends</li>
+                <li>Pay $' . $rules['min_payment'] . '</li>
+            </ul>
+            <button onclick="unlockContent(' . $post_id . ')">Unlock Now</button>
+            </div>';
+        return $paywall . $content;
+    }
 
-        $visited_pages = isset($_COOKIE['smartpaywall_pages']) ? explode(',', $_COOKIE['smartpaywall_pages']) : array();
-        $visited_pages[] = get_the_ID();
-        $visited_pages = array_unique($visited_pages);
-        setcookie('smartpaywall_pages', implode(',', $visited_pages), time() + 3600, '/');
+    public function unlock_content() {
+        $post_id = intval($_POST['post_id']);
+        $user_id = get_current_user_id();
+        $method = sanitize_text_field($_POST['method']);
 
-        if (count($visited_pages) >= $threshold) {
-            $offer = $this->generate_offer($offer_type);
-            return $offer . '<div class="smartpaywall-content">' . $content . '</div>';
+        if ($method === 'payment') {
+            // Simulate payment
+            update_user_meta($user_id, 'payment_' . $post_id, 0.50);
+        } elseif ($method === 'referral') {
+            $referrals = get_user_meta($user_id, 'referrals', true);
+            update_user_meta($user_id, 'referrals', $referrals + 1);
         }
 
-        return $content;
-    }
-
-    public function generate_offer($type) {
-        switch ($type) {
-            case 'subscription':
-                return '<div class="smartpaywall-offer">Subscribe for full access to all content!</div>';
-            case 'one_time':
-                return '<div class="smartpaywall-offer">Pay once for lifetime access!</div>';
-            case 'affiliate':
-                return '<div class="smartpaywall-offer">Earn by referring friends to unlock content!</div>';
-            default:
-                return '<div class="smartpaywall-offer">Unlock content with our flexible options!</div>';
-        }
-    }
-
-    public function shortcode($atts) {
-        $atts = shortcode_atts(array('type' => 'subscription'), $atts, 'smartpaywall');
-        return $this->generate_offer($atts['type']);
-    }
-
-    public function admin_menu() {
-        add_options_page('SmartPaywall Settings', 'SmartPaywall', 'manage_options', 'smartpaywall', array($this, 'settings_page'));
-    }
-
-    public function settings_page() {
-        if (isset($_POST['smartpaywall_save'])) {
-            update_option('smartpaywall_settings', array(
-                'threshold' => intval($_POST['threshold']),
-                'offer_type' => sanitize_text_field($_POST['offer_type'])
-            ));
-            echo '<div class="updated"><p>Settings saved.</p></div>';
-        }
-        $settings = get_option('smartpaywall_settings', array());
-        ?>
-        <div class="wrap">
-            <h1>SmartPaywall Settings</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Pages before paywall</th>
-                        <td><input type="number" name="threshold" value="<?php echo esc_attr($settings['threshold'] ?? 3); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th>Offer Type</th>
-                        <td>
-                            <select name="offer_type">
-                                <option value="subscription" <?php selected($settings['offer_type'] ?? 'subscription', 'subscription'); ?>>Subscription</option>
-                                <option value="one_time" <?php selected($settings['offer_type'] ?? 'subscription', 'one_time'); ?>>One-time Payment</option>
-                                <option value="affiliate" <?php selected($settings['offer_type'] ?? 'subscription', 'affiliate'); ?>>Affiliate</option>
-                            </select>
-                        </td>
-                    </tr>
-                </table>
-                <p class="submit">
-                    <input type="submit" name="smartpaywall_save" class="button-primary" value="Save Changes" />
-                </p>
-            </form>
-        </div>
-        <?php
-    }
-
-    public function track_conversion() {
-        if (isset($_POST['conversion_type'])) {
-            $log = get_option('smartpaywall_conversions', array());
-            $log[] = array(
-                'type' => sanitize_text_field($_POST['conversion_type']),
-                'time' => current_time('mysql')
-            );
-            update_option('smartpaywall_conversions', $log);
-            wp_die('Conversion tracked');
-        }
+        update_user_meta($user_id, 'smartpaywall_unlocked_' . $post_id, true);
+        wp_die('success');
     }
 }
 
-new WPSmartPaywall;
+new WPSmartPaywall();
 
-// smartpaywall.js
-// (This would be a separate file, but for single-file requirement, it's included as comment)
-/*
-jQuery(document).ready(function($) {
-    $('.smartpaywall-offer').on('click', function() {
-        $.post(smartpaywall_ajax.ajax_url, {
-            action: 'smartpaywall_track',
-            conversion_type: 'offer_click'
-        });
+// Add settings page
+add_action('admin_menu', function() {
+    add_options_page('WP SmartPaywall', 'SmartPaywall', 'manage_options', 'wp-smartpaywall', function() {
+        $rules = get_option('wp_smartpaywall_rules', array());
+        if (isset($_POST['submit'])) {
+            $rules['min_views'] = intval($_POST['min_views']);
+            $rules['min_referrals'] = intval($_POST['min_referrals']);
+            $rules['min_payment'] = floatval($_POST['min_payment']);
+            update_option('wp_smartpaywall_rules', $rules);
+        }
+        ?>
+        <div class="wrap">
+            <h1>WP SmartPaywall Settings</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr><th>Minimum Views</th><td><input type="number" name="min_views" value="<?php echo $rules['min_views']; ?>" /></td></tr>
+                    <tr><th>Minimum Referrals</th><td><input type="number" name="min_referrals" value="<?php echo $rules['min_referrals']; ?>" /></td></tr>
+                    <tr><th>Minimum Payment ($)</th><td><input type="number" step="0.01" name="min_payment" value="<?php echo $rules['min_payment']; ?>" /></td></tr>
+                </table>
+                <input type="submit" name="submit" class="button button-primary" value="Save" />
+            </form>
+        </div>
+        <?php
     });
 });
-*/
+
+// JS for unlocking
+add_action('wp_footer', function() {
+    if (is_singular('post')) {
+        ?>
+        <script>
+        function unlockContent(postId) {
+            var method = prompt('Choose unlock method: views, referral, payment');
+            jQuery.post(smartpaywall_ajax.ajax_url, {
+                action: 'unlock_content',
+                post_id: postId,
+                method: method
+            }, function(res) {
+                if (res === 'success') {
+                    location.reload();
+                }
+            });
+        }
+        </script>
+        <?php
+    }
+});
 ?>
