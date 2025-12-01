@@ -1,99 +1,118 @@
-<?php
 /*
-Plugin Name: WP Revenue Booster
-Description: Maximize your WordPress site's revenue with smart affiliate, ad, and sponsored content rotation.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
+<?php
+/**
+ * Plugin Name: WP Revenue Booster
+ * Plugin URI: https://example.com/wp-revenue-booster
+ * Description: Boost your WordPress site's revenue by displaying smart offers, coupons, and affiliate links.
+ * Version: 1.0
+ * Author: Your Name
+ * Author URI: https://example.com
+ * License: GPL2
+ */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_footer', array($this, 'display_offer')); 
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('revenue_booster', array($this, 'shortcode'));
-    }
-
-    public function init() {
-        // Register custom post type for campaigns
-        register_post_type('revenue_campaign', array(
-            'labels' => array('name' => 'Revenue Campaigns'),
-            'public' => false,
-            'show_ui' => true,
-            'supports' => array('title', 'editor')
-        ));
+        add_action('admin_init', array($this, 'settings_init'));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('revenue-booster-js', plugin_dir_url(__FILE__) . 'revenue-booster.js', array('jquery'), '1.0', true);
-        wp_localize_script('revenue-booster-js', 'revenue_booster_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php')
-        ));
+        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'assets/style.css');
+        wp_enqueue_script('wp-revenue-booster', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0', true);
+    }
+
+    public function display_offer() {
+        $offers = get_option('wp_revenue_booster_offers', array());
+        if (empty($offers)) return;
+
+        $offer = $offers[array_rand($offers)];
+        $content = '<div id="wp-revenue-booster-offer" style="display:none;">
+            <div class="wp-revenue-booster-content">
+                <h3>' . esc_html($offer['title']) . '</h3>
+                <p>' . esc_html($offer['description']) . '</p>
+                <a href="' . esc_url($offer['link']) . '" target="_blank" class="wp-revenue-booster-cta">' . esc_html($offer['cta']) . '</a>
+                <button class="wp-revenue-booster-close">Close</button>
+            </div>
+        </div>';
+        echo $content;
     }
 
     public function admin_menu() {
-        add_menu_page('Revenue Booster', 'Revenue Booster', 'manage_options', 'revenue-booster', array($this, 'admin_page'));
+        add_options_page(
+            'WP Revenue Booster',
+            'Revenue Booster',
+            'manage_options',
+            'wp-revenue-booster',
+            array($this, 'admin_page')
+        );
+    }
+
+    public function settings_init() {
+        register_setting('wp_revenue_booster', 'wp_revenue_booster_offers');
     }
 
     public function admin_page() {
-        echo '<div class="wrap"><h1>WP Revenue Booster</h1>';
-        echo '<p>Manage your revenue campaigns and optimize affiliate links, ads, and sponsored content.</p>';
-        echo '<p><a href="' . admin_url('post-new.php?post_type=revenue_campaign') . '">Create New Campaign</a></p>';
-        echo '</div>';
-    }
-
-    public function shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'campaign' => '',
-            'type' => 'affiliate' // affiliate, ad, sponsored
-        ), $atts);
-
-        $campaign = get_page_by_title($atts['campaign'], OBJECT, 'revenue_campaign');
-        if (!$campaign) return '';
-
-        $content = get_post_meta($campaign->ID, '_revenue_content', true);
-        if (!$content) return '';
-
-        // Simple rotation logic
-        $variants = explode('||', $content);
-        $selected = $variants[array_rand($variants)];
-
-        return '<div class="revenue-booster-' . esc_attr($atts['type']) . '">' . do_shortcode($selected) . '</div>';
+        if (isset($_POST['submit'])) {
+            $offers = array();
+            if (isset($_POST['offer_title']) && is_array($_POST['offer_title'])) {
+                foreach ($_POST['offer_title'] as $key => $title) {
+                    $offers[] = array(
+                        'title' => sanitize_text_field($title),
+                        'description' => sanitize_textarea_field($_POST['offer_description'][$key]),
+                        'link' => esc_url($_POST['offer_link'][$key]),
+                        'cta' => sanitize_text_field($_POST['offer_cta'][$key])
+                    );
+                }
+            }
+            update_option('wp_revenue_booster_offers', $offers);
+            echo '<div class="notice notice-success"><p>Offers updated.</p></div>';
+        }
+        $offers = get_option('wp_revenue_booster_offers', array());
+        ?>
+        <div class="wrap">
+            <h1>WP Revenue Booster</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Offers</th>
+                        <td>
+                            <div id="offers-container">
+                                <?php foreach ($offers as $offer): ?>
+                                <div class="offer-item">
+                                    <input type="text" name="offer_title[]" value="<?php echo esc_attr($offer['title']); ?>" placeholder="Offer Title" style="width: 100%; margin-bottom: 5px;" />
+                                    <textarea name="offer_description[]" placeholder="Offer Description" style="width: 100%; margin-bottom: 5px;"><?php echo esc_textarea($offer['description']); ?></textarea>
+                                    <input type="url" name="offer_link[]" value="<?php echo esc_url($offer['link']); ?>" placeholder="Offer Link" style="width: 100%; margin-bottom: 5px;" />
+                                    <input type="text" name="offer_cta[]" value="<?php echo esc_attr($offer['cta']); ?>" placeholder="Call to Action" style="width: 100%; margin-bottom: 5px;" />
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button type="button" id="add-offer">Add Offer</button>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+        </div>
+        <script>
+            document.getElementById('add-offer').addEventListener('click', function() {
+                var container = document.getElementById('offers-container');
+                var item = document.createElement('div');
+                item.className = 'offer-item';
+                item.innerHTML = '<input type="text" name="offer_title[]" placeholder="Offer Title" style="width: 100%; margin-bottom: 5px;" />' +
+                    '<textarea name="offer_description[]" placeholder="Offer Description" style="width: 100%; margin-bottom: 5px;"></textarea>' +
+                    '<input type="url" name="offer_link[]" placeholder="Offer Link" style="width: 100%; margin-bottom: 5px;" />' +
+                    '<input type="text" name="offer_cta[]" placeholder="Call to Action" style="width: 100%; margin-bottom: 5px;" />';
+                container.appendChild(item);
+            });
+        </script>
+        <?php
     }
 }
 
 new WP_Revenue_Booster();
-
-// AJAX handler for tracking clicks
-add_action('wp_ajax_track_revenue_click', 'track_revenue_click');
-add_action('wp_ajax_nopriv_track_revenue_click', 'track_revenue_click');
-function track_revenue_click() {
-    $campaign_id = intval($_POST['campaign_id']);
-    $variant = sanitize_text_field($_POST['variant']);
-    $count_key = '_click_count_' . $variant;
-    $count = get_post_meta($campaign_id, $count_key, true);
-    update_post_meta($campaign_id, $count_key, ($count ? $count + 1 : 1));
-    wp_die();
-}
-
-// JavaScript for tracking
-function revenue_booster_js() {
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('.revenue-booster-affiliate a, .revenue-booster-ad a, .revenue-booster-sponsored a').on('click', function() {
-            var campaignId = $(this).data('campaign-id');
-            var variant = $(this).data('variant');
-            $.post(revenue_booster_ajax.ajax_url, {
-                action: 'track_revenue_click',
-                campaign_id: campaignId,
-                variant: variant
-            });
-        });
-    });
-    </script>
-    <?php
-}
-add_action('wp_footer', 'revenue_booster_js');
