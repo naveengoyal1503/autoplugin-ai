@@ -1,80 +1,30 @@
 # AffiliateBoost Pro
 
-Advanced affiliate link management and performance tracking plugin for WordPress.
+## Description
+AffiliateBoost Pro is an advanced affiliate link and coupon management plugin for WordPress designed to increase your affiliate marketing revenue. It dynamically inserts optimized affiliate links and coupons into your content, tracks clicks for analytics, and supports A/B testing for conversion optimization.
 
 ## Features
-
-- **Centralized Link Management**: Store and organize all affiliate links in one dashboard
-- **Click Tracking**: Automatically track clicks on your affiliate links
-- **Performance Analytics**: View detailed analytics including clicks, conversions, and revenue per link
-- **Easy Shortcodes**: Use simple shortcodes to embed affiliate links anywhere on your site
-- **Category Organization**: Organize links by category for better management
-- **Status Control**: Activate/deactivate links without deleting them
-- **Conversion Tracking**: Monitor conversion rates and link performance
-- **Revenue Reporting**: Track total revenue generated from affiliate marketing
+- Automatically replace keywords in post content with affiliate links.
+- Add customizable affiliate links via shortcode `[affiliatelink url="" text=""]`.
+- Insert coupon codes with discount info via shortcode `[affiliatecoupon code="" discount="" url=""]`.
+- Track affiliate link clicks with AJAX.
+- Simple settings page to manage affiliate links and keywords.
+- Freemium-ready for future advanced analytics and A/B testing.
 
 ## Installation
-
-1. Upload the `affiliateboost-pro` folder to `/wp-content/plugins/`
-2. Activate the plugin through the WordPress Plugins menu
-3. Navigate to AffiliateBoost in the admin menu to get started
+1. Upload the plugin PHP file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to **Settings > AffiliateBoost Pro** to configure your affiliate links and keywords.
 
 ## Setup
-
-1. Go to **AffiliateBoost > Settings** to enable click tracking
-2. Navigate to **AffiliateBoost > Manage Links**
-3. Add your first affiliate link with:
-   - Link Name (e.g., "Amazon Associates")
-   - Affiliate URL (your affiliate link)
-   - Affiliate ID (for reference)
-   - Category (optional, for organization)
+- Add each affiliate link as an ID and URL pair in the settings.
+- Assign keywords to each affiliate link; these keywords will be automatically hyperlinked in your content.
+- Use the shortcodes to manually insert affiliate links or coupon codes where needed.
 
 ## Usage
+- Use the shortcode `[affiliatelink url="https://example.com/product" text="Buy Now"]` to add specific affiliate links.
+- Use the shortcode `[affiliatecoupon code="SAVE20" discount="20%" url="https://example.com/deal"]` to show coupon codes with optional discount info and link.
+- Affiliate keywords in your posts will automatically link to their assigned URLs.
+- Link clicks are tracked in the background for basic analytics.
 
-### Adding Affiliate Links
-
-1. Go to **Manage Links**
-2. Fill in the form with your affiliate link details
-3. Click "Add Link"
-4. The link will appear in your table
-
-### Embedding Links in Posts
-
-Use the shortcode in your posts or pages:
-
-
-[affiliateboost_link id="1" text="Click to Buy"]
-
-
-Replace `id="1"` with your actual link ID and customize the display text as needed.
-
-### Monitoring Performance
-
-Visit **AffiliateBoost > Analytics** to see:
-- Total clicks per link
-- Conversion counts
-- Revenue generated
-- Link performance comparison
-
-## Monetization Model
-
-**Free Tier**: Basic link management with up to 5 affiliate links
-
-**Premium Subscription ($9.99/month)**:
-- Unlimited affiliate links
-- Advanced analytics with graphs and trends
-- AI-powered link placement suggestions
-- Conversion goal tracking
-- A/B testing for link text
-- Monthly performance reports
-- Priority email support
-
-## Requirements
-
-- WordPress 5.0 or higher
-- PHP 7.4 or higher
-- MySQL 5.6 or higher
-
-## Support
-
-For issues or feature requests, contact support through the plugin settings page.
+This plugin helps affiliate marketers and content creators maximize affiliate conversions by automating link insertion and coupon display, combined with click tracking for data insights.
