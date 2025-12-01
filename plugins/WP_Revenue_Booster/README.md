@@ -1,27 +1,29 @@
 # WP Revenue Booster
 
-Boost your WordPress site revenue with smart affiliate, coupon, and sponsored content placement.
+Maximize your WordPress site's revenue by rotating affiliate links, coupons, and sponsored content based on user behavior and conversion rates.
 
 ## Features
-- Admin dashboard to manage affiliate links, coupons, and sponsored content
-- Shortcode support for manual placement
-- Automatic smart content injection on single posts
-- Easy JSON-based content management
+- Rotates affiliate links, coupons, and sponsored content automatically
+- Simple admin interface for managing content
+- Lightweight and easy to use
+- Premium version offers analytics, A/B testing, and automation
 
 ## Installation
-1. Upload the plugin folder to your `/wp-content/plugins/` directory
+1. Upload the plugin file to your WordPress plugins directory (`/wp-content/plugins/`)
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Revenue Booster to configure your content
+3. Go to 'Revenue Booster' in your admin menu to configure your links, coupons, and sponsored content
 
 ## Setup
-- Add your affiliate links, coupons, and sponsored content as JSON arrays in the admin settings
-- Use the shortcode `[revenue_booster type="affiliate"]` to display specific content
-- Smart content will automatically appear on single posts
+- Enter your affiliate links (one per line)
+- Enter your coupons (one per line)
+- Enter your sponsored content (HTML allowed)
 
 ## Usage
-- Manage all monetization content from one dashboard
-- Customize content for different post types or categories
-- Monitor and update offers without touching code
+The plugin will automatically rotate and display your content in the footer of your site. For advanced features like analytics and A/B testing, upgrade to the premium version.
 
 ## Support
-For support, visit the plugin page or contact the developer.
+For support and feature requests, visit our website or contact us directly.
+
+---
+
+**Note:** This is a basic version. The premium version includes advanced analytics, A/B testing, and automation features.
