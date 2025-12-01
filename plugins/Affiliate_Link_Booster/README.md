@@ -1,45 +1,44 @@
 # Affiliate Link Booster
 
 ## Description
-Affiliate Link Booster automatically converts plain product URLs on your WordPress site into optimized, trackable affiliate links with link cloaking and performance tracking. This plugin helps boost your affiliate revenue by ensuring all eligible product links contain your affiliate ID and are routed through a secure redirect.
+Affiliate Link Booster improves your affiliate marketing by automatically cloaking affiliate links, categorizing them, applying geotargeting, and scheduling link activations. Increase commissions by showing the right offers to the right audience at the right time.
 
 ## Features
-
-- Auto-detects and converts links from specified domains (e.g., amazon.com) to affiliate links
-- Supports Amazon affiliate tags with automatic parameter injection
-- Cloaks affiliate links by redirecting through the plugin for tracking and improved click-through
-- Adds rel="nofollow noopener sponsored" and target="_blank" attributes for SEO compliance
-- Settings page to configure affiliate ID and domains to convert
-- Lightweight and easy to use
+- Automatic cloaking of affiliate links through internal redirect to hide ugly URLs
+- Keyword-based link replacement in post content
+- Geolocation targeting to show links only to visitors from specified countries
+- Scheduling support with start and end dates for time-limited campaigns
+- JSON-based link management directly from WordPress admin
 
 ## Installation
-
-1. Upload the `affiliate-link-booster.php` file to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Link Booster** to configure your affiliate ID (e.g., your Amazon tag) and domains to convert.
+1. Upload `affiliate-link-booster.php` to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Access the "Affiliate Link Booster" menu to configure your links
 
 ## Setup
+1. Prepare your affiliate links in JSON format. Example entry:
 
-- Enter your affiliate network ID in the settings page. For Amazon, this is your affiliate tag (e.g., "yourtag-20").
-- Set the list of domains you want the plugin to convert links for (default includes amazon.com).
-- Save changes.
+{
+  "keyword": "BlueWidget",
+  "url": "https://affiliate.example.com/bluewidget",
+  "category": "widgets",
+  "countries": ["US", "CA"],
+  "start_date": "2025-12-01",
+  "end_date": "2025-12-31"
+}
+
+2. Enter an array of such link objects in the plugin settings JSON textarea.
+3. Save changes.
+4. Add posts containing the keywords (e.g., "BlueWidget") to automatically link them to your affiliate URLs.
 
 ## Usage
+- The plugin automatically replaces the first occurrence of each keyword per post with a cloaked affiliate link.
+- Links open in a new tab with `nofollow` and `noopener` attributes to protect SEO and security.
+- Visitor geoIP country detection uses Cloudflare header `HTTP_CF_IPCOUNTRY` if available.
+- Access link click logging and advanced features planned for premium upgrades.
 
-- Simply add links to supported domains in your posts or pages as usual.
-- The plugin will automatically convert those links into affiliate links with cloaking when displaying your content.
-- Clicks on links will be redirected through the plugin for tracking purposes.
-
-## Monetization
-
-The plugin uses a freemium approach:
-- Basic affiliate link auto-conversion and cloaking for free.
-- Advanced add-ons can be built offering detailed real-time analytics, integration with multiple affiliate networks, and custom branding options.
+## Monetization Model
+The core plugin is free for basic cloaking and keyword replacement. Advanced geotargeting, link scheduling, and detailed analytics will be available in a premium subscription.
 
 ## Support
-
-For issues or feature requests, please use the WordPress support forum or contact the author directly.
-
----
-
-Enjoy boosting your affiliate revenue with Affiliate Link Booster!
+For issues or feature requests, please open a ticket in the plugin support forum.
