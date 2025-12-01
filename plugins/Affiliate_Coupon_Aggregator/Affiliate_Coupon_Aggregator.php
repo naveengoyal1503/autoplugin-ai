@@ -5,96 +5,112 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Affiliate Coupon Aggregator
- * Description: Aggregates and displays affiliate coupons from multiple stores with shortcode.
+ * Description: Display curated affiliate coupons and deals dynamically to increase conversions.
  * Version: 1.0
- * Author: Plugin Generator
+ * Author: Your Name
  */
 
 if (!defined('ABSPATH')) exit;
 
 class AffiliateCouponAggregator {
-    private $coupons_option = 'aca_coupons_data';
-    private $nonce = 'aca_nonce_action';
+    private $coupons_option = 'aca_coupons';
+    private $affiliate_id_option = 'aca_affiliate_id';
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_post_save_coupons', array($this, 'save_coupons_data'));
-        add_shortcode('affiliate_coupons', array($this, 'render_coupons'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'settings_init'));
+        add_shortcode('affiliate_coupons', array($this, 'display_coupons_shortcode'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
-    public function admin_menu() {
-        add_menu_page('Affiliate Coupon Aggregator', 'Coupon Aggregator', 'manage_options', 'aca_settings', array($this, 'settings_page'));
+    public function add_admin_menu() {
+        add_options_page('Affiliate Coupon Aggregator', 'Affiliate Coupons', 'manage_options', 'affiliate_coupon_aggregator', array($this, 'options_page'));
     }
 
-    public function settings_page() {
-        if (!current_user_can('manage_options')) return;
-        $coupons = get_option($this->coupons_option, array());
+    public function settings_init() {
+        register_setting('acaSettings', $this->coupons_option);
+        register_setting('acaSettings', $this->affiliate_id_option);
+
+        add_settings_section('aca_settings_section', 'Settings', null, 'affiliate_coupon_aggregator');
+
+        add_settings_field(
+            'aca_coupons',
+            'Coupons JSON',
+            array($this, 'coupons_render'),
+            'affiliate_coupon_aggregator',
+            'aca_settings_section'
+        );
+
+        add_settings_field(
+            'aca_affiliate_id',
+            'Affiliate ID',
+            array($this, 'affiliate_id_render'),
+            'affiliate_coupon_aggregator',
+            'aca_settings_section'
+        );
+    }
+
+    public function coupons_render() {
+        $value = get_option($this->coupons_option, '[]');
+        echo '<textarea cols="50" rows="10" name="' . esc_attr($this->coupons_option) . '">' . esc_textarea($value) . '</textarea><p>Enter coupons as JSON array. Example: [{"title":"10% Off Sitewide","code":"SAVE10","url":"https://example.com?ref=affiliate"}]</p>';
+    }
+
+    public function affiliate_id_render() {
+        $value = get_option($this->affiliate_id_option, '');
+        echo '<input type="text" name="' . esc_attr($this->affiliate_id_option) . '" value="' . esc_attr($value) . '" placeholder="your-affiliate-id" />';
+    }
+
+    public function options_page() {
         ?>
-        <div class="wrap">
-            <h1>Affiliate Coupon Aggregator Settings</h1>
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-                <?php wp_nonce_field($this->nonce); ?>
-                <input type="hidden" name="action" value="save_coupons">
-                <label for="coupons_data">Enter coupons JSON (array of objects with keys: title, code, url, description):</label><br>
-                <textarea id="coupons_data" name="coupons_data" rows="15" cols="70" style="font-family: monospace;"><?php echo esc_textarea(json_encode($coupons)); ?></textarea><br><br>
-                <input type="submit" class="button button-primary" value="Save Coupons">
-            </form>
-            <h2>Usage</h2>
-            <p>Add shortcode <code>[affiliate_coupons]</code> wherever you want to display coupons.</p>
-        </div>
+        <form action='options.php' method='post'>
+            <h2>Affiliate Coupon Aggregator Settings</h2>
+            <?php
+            settings_fields('acaSettings');
+            do_settings_sections('affiliate_coupon_aggregator');
+            submit_button();
+            ?>
+        </form>
         <?php
     }
 
-    public function save_coupons_data() {
-        if (!current_user_can('manage_options') || !check_admin_referer($this->nonce)) {
-            wp_die('Permission denied');
-        }
-        $raw = isset($_POST['coupons_data']) ? wp_unslash($_POST['coupons_data']) : '';
-        $decoded = json_decode($raw, true);
-        if (!is_array($decoded)) {
-            wp_redirect(admin_url('admin.php?page=aca_settings&error=invalid_json'));
-            exit;
-        }
-        // Basic validation of keys
-        foreach ($decoded as $c) {
-            if (!isset($c['title']) || !isset($c['code']) || !isset($c['url'])) {
-                wp_redirect(admin_url('admin.php?page=aca_settings&error=missing_fields'));
-                exit;
-            }
-        }
-        update_option($this->coupons_option, $decoded);
-        wp_redirect(admin_url('admin.php?page=aca_settings&updated=1'));
-        exit;
+    public function enqueue_scripts() {
+        wp_enqueue_style('aca-style', plugin_dir_url(__FILE__) . 'style.css');
     }
 
-    public function render_coupons($atts) {
-        $coupons = get_option($this->coupons_option, array());
-        if (empty($coupons)) {
-            return '<p>No coupons available at the moment.</p>';
-        }
-        $output = '<div class="aca-coupons-list">';
+    public function display_coupons_shortcode() {
+        $coupons_json = get_option($this->coupons_option, '[]');
+        $affiliate_id = trim(get_option($this->affiliate_id_option, ''));
+
+        $coupons = json_decode($coupons_json, true);
+        if (!$coupons || !is_array($coupons)) return '<p>No valid coupons found.</p>';
+
+        $output = '<div class="aca-coupon-list">';
+
         foreach ($coupons as $coupon) {
-            $title = esc_html($coupon['title']);
-            $code = esc_html($coupon['code']);
-            $url = esc_url($coupon['url']);
-            $desc = isset($coupon['description']) ? esc_html($coupon['description']) : '';
-            $output .= "<div class='aca-coupon-item' style='border:1px solid #ddd;padding:10px;margin-bottom:10px;'>";
-            $output .= "<h3 style='margin:0 0 5px 0;'>$title</h3>";
-            if ($desc) {
-                $output .= "<p style='margin:0 0 5px 0;'>$desc</p>";
+            $title = isset($coupon['title']) ? esc_html($coupon['title']) : 'Coupon';
+            $code = isset($coupon['code']) ? esc_html($coupon['code']) : '';
+            $url = isset($coupon['url']) ? esc_url($coupon['url']) : '#';
+
+            // Append affiliate ID to URL if set
+            if ($affiliate_id) {
+                $url = add_query_arg('aff_id', $affiliate_id, $url);
             }
-            $output .= "<p><strong>Coupon Code: </strong><code>$code</code></p>";
-            $output .= "<p><a href='$url' target='_blank' rel='nofollow noopener' style='background:#0073aa;color:#fff;padding:5px 10px;text-decoration:none;border-radius:3px;'>Use Coupon</a></p>";
-            $output .= "</div>";
+
+            $output .= '<div class="aca-coupon-item">';
+            $output .= '<a href="' . $url . '" target="_blank" rel="nofollow noopener noreferrer">';
+            $output .= '<h4 class="aca-coupon-title">' . $title . '</h4>';
+            $output .= '</a>';
+            if ($code) {
+                $output .= '<p class="aca-coupon-code">Code: <strong>' . $code . '</strong> <button class="aca-copy-btn" data-code="' . $code . '">Copy</button></p>';
+            }
+            $output .= '</div>';
         }
         $output .= '</div>';
-        return $output;
-    }
 
-    public function enqueue_styles() {
-        wp_register_style('aca-style', false);
-        wp_enqueue_style('aca-style');
+        // Add copy to clipboard script
+        $output .= '<script>document.addEventListener("DOMContentLoaded", function(){var buttons=document.querySelectorAll(".aca-copy-btn");buttons.forEach(function(btn){btn.addEventListener("click",function(){navigator.clipboard.writeText(this.getAttribute("data-code")).then(()=>{alert("Coupon code copied!");});});});});</script>';
+
+        return $output;
     }
 }
 
