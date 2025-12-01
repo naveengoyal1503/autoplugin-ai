@@ -1,32 +1,31 @@
 # WP Revenue Booster
 
-Automatically optimize ad placements, affiliate links, and premium content access to maximize revenue for your WordPress site.
+Maximize your WordPress site's revenue by intelligently rotating and optimizing affiliate links, ads, and sponsored content based on user behavior and conversion rates.
 
 ## Features
-- Inject custom ad code into your site's header.
-- Automatically insert affiliate links for specified keywords in your content.
-- Restrict access to premium content for non-logged-in users.
-- Simple admin interface for managing settings.
+- Easy management of affiliate links, ad codes, and sponsored content
+- Shortcode to display rotating content
+- Basic conversion tracking
+- Admin dashboard for stats and settings
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory (`/wp-content/plugins/`).
-2. Activate the plugin from the WordPress admin panel.
-3. Go to Settings > Revenue Booster to configure ad code, affiliate links, and premium content.
+1. Upload the plugin file to your WordPress plugins directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to the 'Revenue Booster' menu to configure your links, ads, and sponsored content.
 
 ## Setup
-- **Ad Code:** Paste your ad network code (e.g., Google AdSense) in the Ad Code field.
-- **Affiliate Links:** Enter one keyword and URL per line, separated by a pipe (|). Example: `WordPress|https://example.com/wordpress`
-- **Premium Content:** Enter comma-separated post IDs that should be restricted to logged-in users.
+- Add your affiliate links, ad codes, and sponsored content in the admin panel.
+- Use the shortcode `[revenue_booster type="affiliate"]`, `[revenue_booster type="ad"]`, or `[revenue_booster type="sponsored"]` in your posts or pages.
 
 ## Usage
-- The plugin will automatically inject your ad code and affiliate links into your site.
-- Premium content will be restricted to logged-in users as specified.
+The plugin will rotate your content and track clicks/conversions. View stats in the admin dashboard.
 
-## Notes
-- For advanced features (analytics, A/B testing, more ad networks), upgrade to the premium version.
-- Always test your site after making changes to ensure everything works as expected.
+## Premium Features (Coming Soon)
+- Advanced analytics
+- A/B testing
+- Automated optimization
+- Integration with popular ad networks
 
 ---
 
-**Version:** 1.0
-**Author:** WP Revenue Team
+**Note:** This is the free version. Premium features require a paid upgrade.
