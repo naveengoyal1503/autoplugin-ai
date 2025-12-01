@@ -5,197 +5,211 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Affiliate Booster Pro
- * Description: Manage and optimize affiliate marketing campaigns with automated tracking and payouts.
+ * Description: Turn your visitors into revenue drivers with affiliate link tracking, payouts, and gamification.
  * Version: 1.0
- * Author: Affiliate Booster Team
+ * Author: YourName
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class AffiliateBoosterPro {
     private static $instance = null;
-    private $option_name = 'affiliate_booster_pro_options';
-    private $affiliate_table;
-
-    public static function get_instance() {
+    public static function instance() {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function __construct() {
-        global $wpdb;
-        $this->affiliate_table = $wpdb->prefix . 'abp_affiliates';
-
-        register_activation_hook(__FILE__, array($this, 'activate_plugin'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate_plugin'));
-
+    private function __construct() {
+        add_action('init', array($this, 'register_shortcodes'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_footer', array($this, 'track_affiliate_click'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_post_abp_add_affiliate', array($this, 'handle_add_affiliate'));
-        add_action('init', array($this, 'track_affiliate_referral'));
-
-        add_shortcode('abp_affiliate_link', array($this, 'affiliate_link_shortcode'));
+        add_action('admin_post_abp_process_payout', array($this, 'process_payout'));
+        add_action('wp_ajax_abp_get_stats', array($this, 'ajax_get_stats'));
+        add_action('wp_ajax_nopriv_abp_get_stats', array($this, 'ajax_get_stats'));
+        register_activation_hook(__FILE__, array($this, 'activation'));
     }
 
-    public function activate_plugin() {
+    public function activation() {
         global $wpdb;
+        $table = $wpdb->prefix . 'abp_affiliates';
         $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE IF NOT EXISTS {$this->affiliate_table} (
-            id BIGINT(20) NOT NULL AUTO_INCREMENT,
-            user_email VARCHAR(100) NOT NULL,
-            affiliate_code VARCHAR(50) NOT NULL UNIQUE,
-            referrals INT DEFAULT 0,
-            earnings DECIMAL(10,2) DEFAULT 0.00,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
+
+        $sql = "CREATE TABLE IF NOT EXISTS $table (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            user_id BIGINT UNSIGNED NULL,
+            affiliate_code VARCHAR(32) NOT NULL UNIQUE,
+            clicks BIGINT UNSIGNED DEFAULT 0,
+            conversions BIGINT UNSIGNED DEFAULT 0,
+            commission DECIMAL(10,2) DEFAULT 0.00
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
 
-    public function deactivate_plugin() {
-        // Optional: Cleanup actions on deactivation
+    public function enqueue_scripts() {
+        wp_enqueue_script('abp-main-js', plugin_dir_url(__FILE__) . 'abp-script.js', array('jquery'), '1.0', true);
+        wp_localize_script('abp-main-js', 'abpAjax', array('ajax_url' => admin_url('admin-ajax.php')));
+    }
+
+    public function register_shortcodes() {
+        add_shortcode('affiliate_link', array($this, 'affiliate_link_shortcode'));
+        add_shortcode('affiliate_stats', array($this, 'affiliate_stats_shortcode'));
+    }
+
+    // Generates an affiliate link with ?ref=affiliate_code
+    public function affiliate_link_shortcode($atts, $content = null) {
+        $atts = shortcode_atts(array('code' => ''), $atts);
+        $code = sanitize_text_field($atts['code']);
+        if (empty($code)) return '';
+        $url = home_url('/?ref=' . rawurlencode($code));
+        $text = $content ?: 'Visit';
+        return '<a href="' . esc_url($url) . '" target="_blank" rel="nofollow noreferrer">' . esc_html($text) . '</a>';
+    }
+
+    public function affiliate_stats_shortcode() {
+        if (!is_user_logged_in()) {
+            return '<p>Please log in to view your affiliate stats.</p>';
+        }
+        $user_id = get_current_user_id();
+        global $wpdb;
+        $table = $wpdb->prefix . 'abp_affiliates';
+        $affiliate = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE user_id = %d", $user_id));
+        if (!$affiliate) {
+            return '<p>You do not have an affiliate account.</p>';
+        }
+
+        ob_start();
+        ?>
+        <div id="abp-affiliate-stats">
+            <p>Clicks: <span id="abp-clicks"><?php echo intval($affiliate->clicks); ?></span></p>
+            <p>Conversions: <span id="abp-conversions"><?php echo intval($affiliate->conversions); ?></span></p>
+            <p>Commission: $<span id="abp-commission"><?php echo number_format(floatval($affiliate->commission), 2); ?></span></p>
+            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <input type="hidden" name="action" value="abp_process_payout">
+                <?php wp_nonce_field('abp_payout_nonce'); ?>
+                <button type="submit" class="button">Request Payout</button>
+            </form>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    // Track clicks via URL parameter
+    public function track_affiliate_click() {
+        if (!isset($_GET['ref'])) return;
+        $code = sanitize_text_field($_GET['ref']);
+        if (empty($code)) return;
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'abp_affiliates';
+        $affiliate = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE affiliate_code = %s", $code));
+        if (!$affiliate) return;
+
+        // Count click, prevent multiple clicks in same session
+        if (!isset($_COOKIE['abp_click_' . $code])) {
+            $wpdb->query($wpdb->prepare("UPDATE $table SET clicks = clicks + 1 WHERE affiliate_code = %s", $code));
+            setcookie('abp_click_' . $code, 1, time() + DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true);
+        }
+
+        // Store affiliate code in user session for conversions
+        if (!session_id()) session_start();
+        $_SESSION['abp_affiliate_code'] = $code;
+    }
+
+    // Assume conversion tracked manually, increment conversions and commission
+    public static function record_conversion($amount) {
+        if (!session_id()) session_start();
+        if (!isset($_SESSION['abp_affiliate_code'])) return false;
+        $code = sanitize_text_field($_SESSION['abp_affiliate_code']);
+        if (empty($code)) return false;
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'abp_affiliates';
+        $rate = 0.10; // 10% commission rate
+
+        // Increment conversions and add commission
+        $commission = $amount * $rate;
+        $wpdb->query($wpdb->prepare("UPDATE $table SET conversions = conversions + 1, commission = commission + %f WHERE affiliate_code = %s", $commission, $code));
+
+        // Clear session affiliate code to avoid double counting
+        unset($_SESSION['abp_affiliate_code']);
+        return true;
     }
 
     public function admin_menu() {
-        add_menu_page(
-            'Affiliate Booster',
-            'Affiliate Booster',
-            'manage_options',
-            'affiliate-booster-pro',
-            array($this, 'admin_page'),
-            'dashicons-networking',
-            30
-        );
+        add_menu_page('Affiliate Booster Pro', 'Affiliate Booster', 'manage_options', 'affiliate-booster-pro', array($this, 'admin_page'), 'dashicons-chart-bar', 76);
     }
 
     public function admin_page() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized user');
-        }
         global $wpdb;
-        $affiliates = $wpdb->get_results("SELECT * FROM {$this->affiliate_table} ORDER BY created_at DESC");
-        ?>
-        <div class="wrap">
-            <h1>Affiliate Booster Pro</h1>
-            <h2>Add New Affiliate</h2>
-            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-                <input type="hidden" name="action" value="abp_add_affiliate" />
-                <?php wp_nonce_field('abp_add_affiliate_nonce'); ?>
-                <table class="form-table" role="presentation">
-                    <tr>
-                        <th scope="row"><label for="user_email">Affiliate Email</label></th>
-                        <td><input name="user_email" type="email" id="user_email" required class="regular-text"/></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="affiliate_code">Affiliate Code</label></th>
-                        <td><input name="affiliate_code" type="text" id="affiliate_code" required pattern="[a-zA-Z0-9_-]{4,20}" class="regular-text"/>
-                        <p class="description">Unique code (4-20 chars): letters, numbers, underscore or dash</p>
-                        </td>
-                    </tr>
-                </table>
-                <input type="submit" class="button button-primary" value="Add Affiliate" />
-            </form>
-            <h2>Affiliates List</h2>
-            <table class="wp-list-table widefat fixed striped">
-                <thead><tr><th>Email</th><th>Code</th><th>Referrals</th><th>Earnings ($)</th><th>Registered</th></tr></thead>
-                <tbody>
-                    <?php if ($affiliates) {
-                        foreach ($affiliates as $aff) {
-                            echo '<tr>' .
-                                '<td>' . esc_html($aff->user_email) . '</td>' .
-                                '<td>' . esc_html($aff->affiliate_code) . '</td>' .
-                                '<td>' . intval($aff->referrals) . '</td>' .
-                                '<td>' . number_format(floatval($aff->earnings), 2) . '</td>' .
-                                '<td>' . esc_html($aff->created_at) . '</td>' .
-                                '</tr>';
-                        }
-                    } else {
-                        echo '<tr><td colspan="5">No affiliates found.</td></tr>';
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-        <?php
+        $table = $wpdb->prefix . 'abp_affiliates';
+        $affiliates = $wpdb->get_results("SELECT * FROM $table ORDER BY commission DESC LIMIT 50");
+        echo '<div class="wrap"><h1>Affiliate Booster Pro Stats</h1><table class="widefat striped"><thead><tr><th>Affiliate Code</th><th>User ID</th><th>Clicks</th><th>Conversions</th><th>Commission</th></tr></thead><tbody>';
+        foreach ($affiliates as $a) {
+            echo '<tr>' .
+                '<td>' . esc_html($a->affiliate_code) . '</td>' .
+                '<td>' . intval($a->user_id) . '</td>' .
+                '<td>' . intval($a->clicks) . '</td>' .
+                '<td>' . intval($a->conversions) . '</td>' .
+                '<td>$' . number_format(floatval($a->commission), 2) . '</td>' .
+                '</tr>';
+        }
+        echo '</tbody></table></div>';
     }
 
-    public function handle_add_affiliate() {
-        if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'abp_add_affiliate_nonce')) {
-            wp_die('Nonce verification failed');
-        }
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized user');
-        }
-
-        $email = sanitize_email($_POST['user_email']);
-        $code = sanitize_text_field($_POST['affiliate_code']);
-
-        if (!is_email($email) || empty($code)) {
-            wp_redirect(admin_url('admin.php?page=affiliate-booster-pro&msg=error')); exit;
-        }
+    public function process_payout() {
+        if (!current_user_can('edit_posts')) wp_die('Unauthorized');
+        check_admin_referer('abp_payout_nonce');
 
         global $wpdb;
-        $existing = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$this->affiliate_table} WHERE affiliate_code = %s", $code));
-        if ($existing) {
-            wp_redirect(admin_url('admin.php?page=affiliate-booster-pro&msg=code_exists')); exit;
+        $user_id = get_current_user_id();
+        $table = $wpdb->prefix . 'abp_affiliates';
+        $affiliate = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE user_id = %d", $user_id));
+
+        if (!$affiliate || $affiliate->commission <= 0) {
+            wp_redirect($_SERVER['HTTP_REFERER']);
+            exit;
         }
 
-        $wpdb->insert(
-            $this->affiliate_table,
-            array('user_email' => $email, 'affiliate_code' => $code),
-            array('%s', '%s')
-        );
+        // Simulate payout processing (actual integration with payment gateway needed)
+        // Reset commission to zero after payout
+        $wpdb->query($wpdb->prepare("UPDATE $table SET commission = 0 WHERE user_id = %d", $user_id));
 
-        wp_redirect(admin_url('admin.php?page=affiliate-booster-pro&msg=added'));
+        wp_redirect(add_query_arg('abp_payout', 'success', $_SERVER['HTTP_REFERER']));
         exit;
     }
 
-    public function track_affiliate_referral() {
-        if (is_admin()) return;
-
-        if (isset($_GET['ref'])) {
-            $ref_code = sanitize_text_field($_GET['ref']);
-            global $wpdb;
-
-            $affiliate = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->affiliate_table} WHERE affiliate_code = %s", $ref_code));
-            if ($affiliate) {
-                setcookie('abp_ref', $ref_code, time() + (30 * DAY_IN_SECONDS), COOKIEPATH, COOKIE_DOMAIN);
-            }
-        } elseif (isset($_COOKIE['abp_ref'])) {
-            $ref_code = sanitize_text_field($_COOKIE['abp_ref']);
-        } else {
-            return;
-        }
-
-        // Example: track conversion on purchase page (for demonstration)
-        // In real usages, hook into order completion, payment confirmation, etc.
-        if (is_page('thank-you-for-purchase')) {
-            global $wpdb;
-
-            $affiliate = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->affiliate_table} WHERE affiliate_code = %s", $ref_code));
-            if ($affiliate) {
-                // Increment referrals and earnings
-                $wpdb->query($wpdb->prepare(
-                    "UPDATE {$this->affiliate_table} SET referrals = referrals + 1, earnings = earnings + 10.00 WHERE id = %d",
-                    $affiliate->id
-                ));
-                // Clear cookie after conversion
-                setcookie('abp_ref', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN);
-            }
-        }
-    }
-
-    public function affiliate_link_shortcode($atts) {
-        $atts = shortcode_atts(array('code' => ''), $atts, 'abp_affiliate_link');
-        if (empty($atts['code'])) return '';
-
-        $url = home_url('/?ref=' . urlencode($atts['code']));
-        return esc_url($url);
+    public function ajax_get_stats() {
+        if (!is_user_logged_in()) wp_send_json_error('Not logged in');
+        $user_id = get_current_user_id();
+        global $wpdb;
+        $table = $wpdb->prefix . 'abp_affiliates';
+        $affiliate = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE user_id = %d", $user_id));
+        if (!$affiliate) wp_send_json_error('No affiliate account');
+        wp_send_json_success(array(
+            'clicks' => intval($affiliate->clicks),
+            'conversions' => intval($affiliate->conversions),
+            'commission' => number_format(floatval($affiliate->commission), 2)
+        ));
     }
 
 }
 
-AffiliateBoosterPro::get_instance();
+// Initialize plugin
+AffiliateBoosterPro::instance();
+
+// Helper to create affiliate account for users automatically on registration
+add_action('user_register', function($user_id) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'abp_affiliates';
+    $code = substr(md5(uniqid('aff_', true)), 0, 8);
+    $wpdb->insert($table, array('user_id' => $user_id, 'affiliate_code' => $code));
+});
+
+// Example: To record conversion after successful purchase, call:
+// AffiliateBoosterPro::record_conversion($order_amount);
+
