@@ -1,34 +1,30 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue with smart affiliate link rotation, targeted ad display, and exclusive offer promotion.
+Maximize your WordPress site's revenue by intelligently rotating affiliate links, coupons, and sponsored content based on user engagement and conversion rates.
 
 ## Features
-- Rotate high-paying affiliate links for better conversion
-- Display targeted ads based on user behavior
-- Promote exclusive offers at strategic times
-- Easy-to-use admin interface
-- Shortcodes for affiliate links and offers
-- Responsive design
+- Add and manage multiple affiliate links, coupons, and sponsored content.
+- Automatic rotation of the best-performing links.
+- Real-time tracking of clicks, impressions, and conversion rates.
+- Easy-to-use admin interface for managing your links.
+- Shortcode to display rotating links anywhere on your site.
 
 ## Installation
-1. Upload the `wp-revenue-booster` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to 'Revenue Booster' in the admin menu to configure your affiliate links, ads, and offers
+1. Upload the `wp-revenue-booster.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to the 'Revenue Booster' menu in your admin panel to add and manage your links.
 
 ## Setup
-- Add your affiliate links, ad codes, and exclusive offers in the plugin settings
-- The plugin will automatically rotate and display them on your site
+- Add your affiliate links, coupons, or sponsored content through the admin interface.
+- Use the shortcode `[revenue_booster type="affiliate"]` (or `coupon`, `sponsored`) to display a rotating link on your site.
 
 ## Usage
-- Use the shortcode `[wp_revenue_booster_affiliate]` to display a random affiliate link
-- Use the shortcode `[wp_revenue_booster_offer]` to display a random exclusive offer
+- The plugin will automatically rotate the link with the highest conversion rate for each type.
+- Monitor performance in the admin panel and adjust your links as needed.
 
 ## Support
-For support and feature requests, please visit our website or contact us directly.
-
-## License
-This plugin is released under the GPL v2 or later.
+For support or feature requests, please visit the plugin's support page.
 
 ---
 
-**Note:** This is a basic version. The premium version includes advanced analytics, automation, and more features.
+**Note:** This is a basic version. Premium features include advanced analytics, automated A/B testing, and integration with popular affiliate networks.
