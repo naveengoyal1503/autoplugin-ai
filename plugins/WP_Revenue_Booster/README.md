@@ -1,24 +1,28 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue with intelligent affiliate link rotation, targeted ads, and digital product promotion.
+Automatically optimizes and manages multiple monetization streams for WordPress sites, including ads, affiliate links, and premium content.
 
 ## Features
-- Rotates affiliate links and ads based on user behavior
-- Displays targeted promotions in the footer
-- Shortcode support for manual promo placement
-- Easy admin interface to manage promotions
+- Centralized monetization settings
+- AdSense code injection
+- Affiliate link management
+- Premium content gating
+- Shortcode for premium content
 
 ## Installation
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Revenue Booster to add your promotions
+1. Upload the plugin file to your WordPress plugins directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to Settings > Revenue Booster to configure your monetization options.
 
 ## Setup
-- Add promotions with ID, title, URL, and image URL
-- Promotions will rotate automatically on your site
-- Use the shortcode `[wp_revenue_promo id="your_id"]` to display specific promotions
+- Enter your AdSense code in the settings.
+- Add your affiliate link.
+- Set a message for premium content.
 
 ## Usage
-- Promotions appear in the footer for non-logged-in users
-- Customize promotions anytime via the admin panel
-- Premium version available for advanced targeting and analytics
+- The plugin will automatically inject AdSense and affiliate links into your site.
+- Use the shortcode `[premium_content]Your exclusive content here[/premium_content]` to gate premium content.
+- Only logged-in users will see the premium content.
+
+## Support
+For support, please contact support@example.com.
