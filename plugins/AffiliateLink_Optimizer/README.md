@@ -1,43 +1,44 @@
 # AffiliateLink Optimizer
 
 ## Description
-AffiliateLink Optimizer helps bloggers and affiliate marketers automatically track, shorten, and optimize affiliate links on their WordPress sites. It provides click analytics and easy-to-use management for affiliate URLs to boost commission earnings.
+AffiliateLink Optimizer is a WordPress plugin that automatically detects affiliate links in your posts, cloaks them through your own site domain to improve click-tracking and conversion rates, and styles them for better visibility. It helps bloggers and affiliate marketers increase their commissions with minimal effort.
 
 ## Features
-
-- Add and manage affiliate links via the admin dashboard
-- Generate short, branded redirect links for affiliate URLs
-- Track clicks per link with simple statistics
-- Easy copy of short URLs for insertion anywhere
-- Secure link management with WordPress nonce protection
+- Auto-detects common affiliate URLs in post content
+- Cloaks affiliate links via your own domain
+- Adds nofollow and opens links in new tabs
+- Styles links for better visibility and click-through
+- Lightweight and easy to use
 
 ## Installation
-
 1. Download the plugin PHP file.
-2. Upload to the `/wp-content/plugins/` directory.
-3. Activate the plugin through the WordPress Admin Plugins menu.
-4. Access the `AffiliateLink Optimizer` menu in the admin sidebar.
+2. Log in to your WordPress admin dashboard.
+3. Go to Plugins > Add New > Upload Plugin.
+4. Upload the PHP file and activate the plugin.
 
 ## Setup
-
-1. Navigate to the AffiliateLink Optimizer admin page.
-2. Add new affiliate links by providing a unique name and the full affiliate URL.
-3. Use the generated short link (`?alo=unique-name`) in your posts, widgets, or campaigns.
+No setup required. Once installed and activated, the plugin will automatically scan your posts for affiliate links and optimize them.
 
 ## Usage
+- Write posts with your normal affiliate links included.
+- The plugin automatically detects and cloaks these affiliate links on the front-end.
+- Clicks on cloaked links redirect through your domain for better tracking.
 
-- Replace your raw affiliate URLs with the short links provided by the plugin.
-- Monitor clicks directly in the plugin admin table to evaluate performance.
-- Regularly add, update, or remove affiliate links to keep your campaigns optimized.
+## Premium Add-ons (Coming Soon)
+- Detailed affiliate link click analytics
+- A/B testing for affiliate links
+- Automatic affiliate link updating and management
 
-## Monetization
 
-This plugin is designed as a freemium model: a free core plugin with basic features and a planned premium upgrade that will add advanced tracking, custom branded domains for links, and enhanced analytics.
+## FAQ
+**Q:** Will this plugin affect normal links? 
+
+**A:** No, it only alters recognized affiliate URLs.
+
+**Q:** Can I customize styles?
+
+**A:** Yes, you can override CSS in your theme if desired.
+
 
 ## Support
-
-For support, please raise an issue on the plugin's official repository or contact the author via the WordPress plugin support forums.
-
----
-
-Created for affiliate marketers and content creators aiming to boost affiliate revenue with easy link management and analytics.
+For support, please open a ticket on the plugin support page.
