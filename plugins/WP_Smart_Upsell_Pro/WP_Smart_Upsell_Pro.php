@@ -5,150 +5,80 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Smart Upsell Pro
- * Description: Automatically recommends upsell and cross-sell offers to customers based on their browsing and purchase behavior.
+ * Description: Intelligent upsell and cross-sell product recommendations for WooCommerce using behavioral data.
  * Version: 1.0
- * Author: Your Company
+ * Author: Your Name
+ * Text Domain: wp-smart-upsell-pro
  */
 
 if (!defined('ABSPATH')) exit;
 
-// Main plugin class
 class WPSmartUpsellPro {
-
     public function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('woocommerce_after_single_product', array($this, 'render_upsell'));
-        add_action('woocommerce_after_cart', array($this, 'render_cart_upsell'));
-        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('woocommerce_after_single_product_summary', array($this, 'display_recommendations'), 15);
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
-    public function init() {
-        if (!class_exists('WooCommerce')) {
-            add_action('admin_notices', array($this, 'notice_woocommerce_required'));
-        }
-    }
-
-    public function notice_woocommerce_required() {
-        echo '<div class="notice notice-error"><p>WP Smart Upsell Pro requires WooCommerce to be installed and activated.</p></div>';
-    }
-
-    public function admin_menu() {
-        add_options_page(
-            'WP Smart Upsell Pro',
-            'Smart Upsell',
-            'manage_options',
-            'wp-smart-upsell-pro',
-            array($this, 'admin_page')
-        );
-    }
-
-    public function admin_page() {
-        ?>
-        <div class="wrap">
-            <h1>WP Smart Upsell Pro Settings</h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('wp_smart_upsell_pro_options');
-                do_settings_sections('wp-smart-upsell-pro');
-                submit_button();
-                ?>
-            </form>
-        </div>
-        <?php
-    }
-
     public function enqueue_scripts() {
-        wp_enqueue_style('wp-smart-upsell-pro', plugin_dir_url(__FILE__) . 'assets/style.css');
+        if (is_product()) {
+            wp_enqueue_style('wpsu-style', plugin_dir_url(__FILE__) . 'style.css');
+        }
     }
 
-    public function render_upsell() {
-        if (!is_product()) return;
+    // Simulated smart recommendation based on simple purchase history
+    public function get_recommendations($current_product_id) {
+        if (!class_exists('WooCommerce')) return array();
 
-        $product_id = get_the_ID();
-        $upsell_ids = $this->get_upsell_products($product_id);
+        $customer_orders = wc_get_orders(array(
+            'limit' => 20,
+            'customer' => get_current_user_id(),
+            'status' => 'completed',
+        ));
 
-        if (empty($upsell_ids)) return;
-
-        echo '<div class="wp-smart-upsell-pro-upsell">
-                <h3>Recommended for you</h3>
-                <div class="wp-smart-upsell-pro-products">';
-
-        foreach ($upsell_ids as $id) {
-            $product = wc_get_product($id);
-            if ($product) {
-                echo '<div class="wp-smart-upsell-pro-product">
-                        <a href="' . get_permalink($id) . '">
-                            ' . $product->get_image() . '<br>
-                            ' . $product->get_name() . '<br>
-                            ' . $product->get_price_html() . '
-                        </a>
-                      </div>';
+        $bought_products = array();
+        foreach ($customer_orders as $order) {
+            foreach ($order->get_items() as $item) {
+                $bought_products[] = $item->get_product_id();
             }
         }
 
-        echo '</div></div>';
-    }
-
-    public function render_cart_upsell() {
-        $upsell_ids = $this->get_cart_upsell_products();
-
-        if (empty($upsell_ids)) return;
-
-        echo '<div class="wp-smart-upsell-pro-upsell">
-                <h3>Complete your order</h3>
-                <div class="wp-smart-upsell-pro-products">';
-
-        foreach ($upsell_ids as $id) {
-            $product = wc_get_product($id);
-            if ($product) {
-                echo '<div class="wp-smart-upsell-pro-product">
-                        <a href="' . get_permalink($id) . '">
-                            ' . $product->get_image() . '<br>
-                            ' . $product->get_name() . '<br>
-                            ' . $product->get_price_html() . '
-                        </a>
-                      </div>';
+        // Get related products by simple logic: products frequently bought with those products.
+        $related_ids = array();
+        foreach ($bought_products as $pid) {
+            if ($pid !== $current_product_id) {
+                $related_ids[] = $pid;
             }
         }
 
-        echo '</div></div>';
+        if (empty($related_ids)) {
+            $related_ids = wc_get_related_products($current_product_id, 4);
+        }
+
+        return array_slice(array_unique($related_ids), 0, 4);
     }
 
-    private function get_upsell_products($product_id) {
-        $upsell_ids = get_post_meta($product_id, '_upsell_ids', true);
-        if (!$upsell_ids) {
-            $upsell_ids = array();
-            $categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
-            if ($categories) {
-                $args = array(
-                    'post_type' => 'product',
-                    'posts_per_page' => 3,
-                    'post__not_in' => array($product_id),
-                    'tax_query' => array(
-                        array(
-                            'taxonomy' => 'product_cat',
-                            'field' => 'term_id',
-                            'terms' => $categories
-                        )
-                    )
-                );
-                $products = get_posts($args);
-                foreach ($products as $p) {
-                    $upsell_ids[] = $p->ID;
-                }
-            }
-        }
-        return $upsell_ids;
-    }
+    public function display_recommendations() {
+        global $product;
+        if (!$product) return;
 
-    private function get_cart_upsell_products() {
-        $upsell_ids = array();
-        foreach (WC()->cart->get_cart() as $cart_item) {
-            $product_id = $cart_item['product_id'];
-            $upsell_ids = array_merge($upsell_ids, $this->get_upsell_products($product_id));
+        $recommend_ids = $this->get_recommendations($product->get_id());
+        if (empty($recommend_ids)) return;
+
+        echo '<div class="wpsu-recommendations"><h3>' . __('You may also like', 'wp-smart-upsell-pro') . '</h3><ul class="wpsu-products">';
+
+        foreach ($recommend_ids as $pid) {
+            $rec_product = wc_get_product($pid);
+            if (!$rec_product) continue;
+
+            echo '<li class="wpsu-product">';
+            echo '<a href="' . esc_url(get_permalink($pid)) . '">' . $rec_product->get_image() . '</a>';
+            echo '<a href="' . esc_url(get_permalink($pid)) . '">' . esc_html($rec_product->get_name()) . '</a>';
+            echo '<span class="price">' . wp_kses_post($rec_product->get_price_html()) . '</span>';
+            echo '<a href="?add-to-cart=' . intval($pid) . '" class="button">' . __('Add to cart', 'wp-smart-upsell-pro') . '</a>';
+            echo '</li>';
         }
-        return array_unique($upsell_ids);
+
+        echo '</ul></div>';
     }
 }
 
