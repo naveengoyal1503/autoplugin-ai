@@ -1,105 +1,137 @@
-<?php
 /*
-Plugin Name: AffiliateLink Booster
-Description: Automatically cloak affiliate links, track clicks, and aggregate affiliate discount coupons to boost conversions.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=AffiliateLink_Booster.php
 */
+<?php
+/**
+ * Plugin Name: AffiliateLink Booster
+ * Description: Auto-convert product mentions into affiliate links with advanced cloaking and disclaimers.
+ * Version: 1.0.0
+ * Author: YourName
+ * License: GPL2
+ */
 
 if (!defined('ABSPATH')) exit;
 
 class AffiliateLinkBooster {
-    private $option_name = 'alb_links';
+    private $affiliate_programs = array();
+    private $default_affiliate_id = '';
+    private $is_premium = false;
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_head', array($this, 'inject_discount_banner'));
-        add_shortcode('alb_afflink', array($this, 'afflink_shortcode'));
-        add_action('wp_ajax_alb_track_click', array($this, 'track_click_ajax'));
-        add_action('wp_ajax_nopriv_alb_track_click', array($this, 'track_click_ajax'));
-        add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
-        add_action('wp_enqueue_scripts', array($this, 'frontend_scripts'));
+        $this->load_settings();
+        add_filter('the_content', array($this, 'auto_link_affiliate_products'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
     }
 
-    public function admin_menu() {
-        add_menu_page('AffiliateLink Booster', 'AffiliateLink Booster', 'manage_options', 'affiliate-link-booster', array($this, 'admin_page'), 'dashicons-external');
+    private function load_settings() {
+        $this->affiliate_programs = get_option('alb_affiliate_programs', array());
+        $this->default_affiliate_id = get_option('alb_default_affiliate_id', '');
+        $this->is_premium = defined('ALB_PREMIUM') && ALB_PREMIUM === true;
     }
 
-    public function admin_scripts($hook) {
-        if ($hook != 'toplevel_page_affiliate-link-booster') return;
-        wp_enqueue_style('alb_admin_css', plugin_dir_url(__FILE__) . 'alb_admin.css');
-        wp_enqueue_script('alb_admin_js', plugin_dir_url(__FILE__) . 'alb_admin.js', array('jquery'), false, true);
-    }
+    public function auto_link_affiliate_products($content) {
+        if (empty($this->affiliate_programs) || empty($content))
+            return $content;
 
-    public function frontend_scripts() {
-        wp_enqueue_script('alb_front_js', plugin_dir_url(__FILE__) . 'alb_front.js', array('jquery'), false, true);
-        wp_localize_script('alb_front_js', 'albAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
-        wp_enqueue_style('alb_front_css', plugin_dir_url(__FILE__) . 'alb_front.css');
-    }
+        // Extract all product keywords from affiliate programs
+        $keywords = array_keys($this->affiliate_programs);
+        if (empty($keywords))
+            return $content;
 
-    public function admin_page() {
-        if (!current_user_can('manage_options')) return;
-
-        if (isset($_POST['alb_save_links'])) {
-            check_admin_referer('alb_save_links_nonce');
-            $raw_links = sanitize_textarea_field($_POST['alb_links_input']);
-            $links = array_filter(array_map('trim', explode("\n", $raw_links)));
-            update_option($this->option_name, $links);
-            echo '<div class="updated"><p>Affiliate links saved.</p></div>';
+        // Quickly exit if none of the keywords present
+        $found_any = false;
+        foreach ($keywords as $kw) {
+            if (stripos($content, $kw) !== false) {
+                $found_any = true;
+                break;
+            }
         }
-        $stored_links = get_option($this->option_name, []);
+        if (!$found_any) return $content;
+
+        // Create replacement links
+        foreach ($this->affiliate_programs as $keyword => $data) {
+            $pattern = '/\b(' . preg_quote($keyword, '/') . ')\b/i';
+
+            $affiliate_url = esc_url($data['url']);
+            $link_title = esc_attr('Buy ' . $keyword);
+            $nofollow = isset($data['nofollow']) && $data['nofollow'] ? ' rel="nofollow"' : '';
+            $target = isset($data['new_tab']) && $data['new_tab'] ? ' target="_blank"' : '';
+
+            $replacement = '<a href="' . $affiliate_url . '" title="' . $link_title . '"' . $nofollow . $target . ' class="alb-affiliate-link">$1</a>';
+
+            $content = preg_replace($pattern, $replacement, $content, 1); // Only replace first occurrence per keyword
+        }
+
+        // Append affiliate disclaimer if premium enabled
+        if ($this->is_premium) {
+            $disclaimer = '<p><small><em>Disclosure: Some links on this site are affiliate links that provide us a commission at no extra cost to you.</em></small></p>';
+            $content .= $disclaimer;
+        }
+
+        return $content;
+    }
+
+    public function add_admin_menu() {
+        add_options_page('AffiliateLink Booster Settings', 'AffiliateLink Booster', 'manage_options', 'alb-settings', array($this, 'settings_page'));
+    }
+
+    public function register_settings() {
+        register_setting('alb_settings_group', 'alb_affiliate_programs', array($this, 'validate_affiliate_programs'));
+        register_setting('alb_settings_group', 'alb_default_affiliate_id');
+    }
+
+    public function validate_affiliate_programs($input) {
+        if (!is_array($input)) return array();
+        $valid = array();
+        foreach ($input as $keyword => $data) {
+            $keyword = sanitize_text_field($keyword);
+            $url = esc_url_raw($data['url']);
+            $nofollow = isset($data['nofollow']) ? boolval($data['nofollow']) : true;
+            $new_tab = isset($data['new_tab']) ? boolval($data['new_tab']) : true;
+            if ($keyword && $url) {
+                $valid[$keyword] = array('url' => $url, 'nofollow' => $nofollow, 'new_tab' => $new_tab);
+            }
+        }
+        return $valid;
+    }
+
+    public function settings_page() {
         ?>
         <div class="wrap">
             <h1>AffiliateLink Booster Settings</h1>
-            <form method="post">
-                <?php wp_nonce_field('alb_save_links_nonce'); ?>
-                <label for="alb_links_input">Affiliate links (one per line):</label><br>
-                <textarea id="alb_links_input" name="alb_links_input" rows="10" cols="50"><?php echo esc_textarea(implode("\n", $stored_links)); ?></textarea><br><br>
-                <input type="submit" name="alb_save_links" class="button button-primary" value="Save Links">
+            <form method="post" action="options.php">
+            <?php settings_fields('alb_settings_group'); ?>
+            <?php do_settings_sections('alb_settings_group'); ?>
+            <table class="form-table" id="alb-affiliate-table">
+                <thead><tr><th>Keyword / Product Name</th><th>Affiliate URL</th><th>NoFollow</th><th>Open in New Tab</th></tr></thead>
+                <tbody>
+                <?php
+                $programs = get_option('alb_affiliate_programs', array());
+                if (empty($programs)) {
+                    $programs = array('Example Product' => array('url' => 'https://example.com/?ref=affiliate', 'nofollow' => true, 'new_tab' => true));
+                }
+                foreach ($programs as $keyword => $data) {
+                    $k = esc_attr($keyword);
+                    $url = esc_url($data['url']);
+                    $nofollow_checked = $data['nofollow'] ? 'checked' : '';
+                    $tab_checked = $data['new_tab'] ? 'checked' : '';
+                    echo '<tr>' .
+                         '<td><input type="text" name="alb_affiliate_programs[' . $k . '][keyword]" value="' . $k . '" readonly /></td>' .
+                         '<td><input type="url" name="alb_affiliate_programs[' . $k . '][url]" value="' . $url . '" size="50" /></td>' .
+                         '<td><input type="checkbox" name="alb_affiliate_programs[' . $k . '][nofollow]" ' . $nofollow_checked . '/></td>' .
+                         '<td><input type="checkbox" name="alb_affiliate_programs[' . $k . '][new_tab]" ' . $tab_checked . '/></td>' .
+                         '</tr>';
+                }
+                ?>
+                </tbody>
+            </table>
+            <p>Add new product keywords by editing options manually or extend premium version.</p>
+            <?php submit_button(); ?>
             </form>
-            <h2>Usage</h2>
-            <p>Use shortcode <code>[alb_afflink url="YOUR_AFFILIATE_URL"]Link Text[/alb_afflink]</code> to auto cloak and track clicks.</p>
-            <p>The plugin also automatically inserts an affiliate discount banner if discount info is available (Premium feature placeholder).</p>
         </div>
         <?php
-    }
-
-    public function afflink_shortcode($atts, $content = '') {
-        $atts = shortcode_atts(array('url' => ''), $atts);
-        $url = esc_url_raw($atts['url']);
-        $text = $content ? esc_html($content) : $url;
-        if (!$url) return '';
-        $link_id = md5($url);
-        $link = add_query_arg(array('alb_track_click' => $link_id), admin_url('admin-ajax.php'));
-
-        return sprintf('<a href="%s" class="alb-afflink" data-target="%s" target="_blank" rel="nofollow noopener">%s</a>', esc_url($link), esc_url($url), $text);
-    }
-
-    public function track_click_ajax() {
-        if (isset($_GET['alb_track_click'])) {
-            $hashed = sanitize_text_field($_GET['alb_track_click']);
-            // Normally store click in DB or analytics
-            // Redirect to actual affiliate URL
-            $links = get_option($this->option_name, []);
-            foreach ($links as $link) {
-                if (md5($link) === $hashed) {
-                    wp_redirect($link);
-                    exit();
-                }
-            }
-            wp_die('Invalid affiliate link', '', 404);
-        }
-        wp_die('No affiliate tracking link', '', 400);
-    }
-
-    public function inject_discount_banner() {
-        // Premium feature placeholder: dynamically fetch and show affiliate discounts
-        // For demo, show a simple static banner
-        if (is_singular()) {
-            echo '<style>.alb-discount-banner{background:#fffae6;color:#333;padding:10px;text-align:center;position:fixed;bottom:0;width:100%;font-weight:bold;z-index:9999;} .alb-discount-banner a{color:#0073aa;text-decoration:underline;}</style>';
-            echo '<div class="alb-discount-banner">Limited time offer: Use our exclusive affiliate discounts! <a href="#">See Deals &raquo;</a></div>';
-        }
     }
 }
 
