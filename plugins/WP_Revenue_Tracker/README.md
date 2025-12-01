@@ -1,35 +1,31 @@
 # WP Revenue Tracker
 
-Track and visualize revenue from ads, affiliate links, digital products, and memberships in one dashboard.
+Track and visualize your WordPress site's revenue streams from ads, affiliate links, digital products, and memberships.
 
 ## Features
-- Add and track revenue from multiple sources
-- View total revenue and history
-- Display total revenue on frontend with shortcode
-- Dashboard widget for quick overview
-- REST API endpoint for revenue data (premium)
-- Premium upgrade for advanced analytics and export
+- Add and manage revenue entries by source
+- View total and detailed revenue reports
+- Shortcode to display total revenue on frontend
+- Simple and intuitive admin dashboard
+- Premium upgrade for advanced analytics and integrations
 
 ## Installation
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
+1. Upload the `wp-revenue-tracker` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Revenue Tracker in the admin menu to start tracking
+3. Go to 'Revenue Tracker' in the admin menu to start tracking
 
 ## Setup
-- Add revenue entries manually through the dashboard
-- Use shortcode `[wp_revenue_total]` to display total revenue on frontend
-- View revenue widget on WordPress dashboard
+- Add revenue entries by selecting source, amount, and date
+- View your revenue overview and total in the dashboard
+- Use the shortcode `[wp_revenue_total]` to display total revenue on any page or post
 
 ## Usage
-- Add new revenue entries with source, amount, date, and description
-- View and manage all revenue history in the dashboard
-- Upgrade to premium for advanced features
+- Regularly update your revenue entries to keep accurate records
+- Use the data to optimize your monetization strategies
+- Upgrade to premium for advanced features like export, integrations, and detailed analytics
 
-## Premium Features (Upgrade)
-- Advanced analytics and charts
-- Export revenue data to CSV
-- Integration with popular monetization platforms
-- Priority support
+## Support
+For support and feature requests, visit our website or contact support.
 
 ## License
-GPL2
+GPLv2 or later
