@@ -1,169 +1,165 @@
 <?php
 /*
 Plugin Name: Affiliate Coupon & Deal Booster
-Plugin URI: https://example.com/affiliate-coupon-booster
-Description: Manage affiliate coupons and deals with ease and boost your affiliate revenue.
+Description: Dynamically generates a coupon & deal page linked to affiliate URLs with shortcode and widget support.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Coupon___Deal_Booster.php
-License: GPL2
 */
 
-if ( ! defined( 'ABSPATH' ) ) { exit; }
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-class AffiliateCouponBooster {
+class AffiliateCouponDealBooster {
+
+    private $coupons_option = 'acdb_coupons_data';
 
     public function __construct() {
-        add_action( 'init', array( $this, 'register_coupon_post_type' ) );
-        add_action( 'add_meta_boxes', array( $this, 'add_coupon_metabox' ) );
-        add_action( 'save_post', array( $this, 'save_coupon_meta' ) );
-        add_shortcode( 'affiliate_coupons', array( $this, 'coupons_shortcode' ) );
-        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+        add_action('admin_menu', array($this, 'acdb_add_admin_menu'));
+        add_action('admin_init', array($this, 'acdb_settings_init'));
+        add_shortcode('acdb_coupons', array($this, 'acdb_render_coupons_shortcode'));
+        add_action('widgets_init', function() {
+            register_widget('ACDB_Coupons_Widget');
+        });
+        add_action('wp_enqueue_scripts', array($this, 'acdb_enqueue_scripts'));
     }
 
-    public function register_coupon_post_type() {
-        $labels = array(
-            'name' => 'Coupons',
-            'singular_name' => 'Coupon',
-            'add_new' => 'Add New Coupon',
-            'add_new_item' => 'Add New Coupon',
-            'edit_item' => 'Edit Coupon',
-            'new_item' => 'New Coupon',
-            'view_item' => 'View Coupon',
-            'search_items' => 'Search Coupons',
-            'not_found' => 'No coupons found',
-            'not_found_in_trash' => 'No coupons found in Trash',
-        );
-
-        $args = array(
-            'labels' => $labels,
-            'public' => true,
-            'has_archive' => true,
-            'supports' => array('title', 'editor'),
-            'menu_icon' => 'dashicons-tickets-alt',
-        );
-
-        register_post_type( 'aff_coupon', $args );
+    public function acdb_enqueue_scripts() {
+        wp_enqueue_style('acdb-style', plugin_dir_url(__FILE__) . 'acdb-style.css');
     }
 
-    public function add_coupon_metabox() {
-        add_meta_box(
-            'coupon_details',
-            'Coupon Details',
-            array( $this, 'render_coupon_metabox' ),
-            'aff_coupon',
-            'normal',
-            'high'
+    public function acdb_add_admin_menu() {
+        add_options_page('Affiliate Coupon Booster', 'Affiliate Coupon Booster', 'manage_options', 'affiliate_coupon_booster', array($this, 'acdb_options_page'));
+    }
+
+    public function acdb_settings_init() {
+        register_setting('acdb_settings_group', $this->coupons_option);
+
+        add_settings_section(
+            'acdb_settings_section',
+            __('Manage Coupons & Deals', 'acdb'),
+            function() {
+                echo '<p>' . __('Add your affiliate coupons and deals here. Use JSON format. Example: [{"title":"10% off Shoes","code":"SHOES10","url":"https://affiliate-link.com/product"}]', 'acdb') . '</p>';
+            },
+            'acdb_settings_group'
+        );
+
+        add_settings_field(
+            'acdb_coupons_field',
+            __('Coupons JSON', 'acdb'),
+            array($this, 'acdb_coupons_field_render'),
+            'acdb_settings_group',
+            'acdb_settings_section'
         );
     }
 
-    public function render_coupon_metabox( $post ) {
-        wp_nonce_field( 'save_coupon_meta', 'coupon_meta_nonce' );
-
-        $affiliate_url = get_post_meta( $post->ID, '_affiliate_url', true );
-        $coupon_code = get_post_meta( $post->ID, '_coupon_code', true );
-        $expiry_date = get_post_meta( $post->ID, '_expiry_date', true );
-
-        echo '<p><label for="affiliate_url">Affiliate URL:</label><br>';
-        echo '<input type="url" id="affiliate_url" name="affiliate_url" value="' . esc_attr( $affiliate_url ) . '" style="width:100%;" required></p>';
-
-        echo '<p><label for="coupon_code">Coupon Code (optional):</label><br>';
-        echo '<input type="text" id="coupon_code" name="coupon_code" value="' . esc_attr( $coupon_code ) . '" style="width:100%;"></p>';
-
-        echo '<p><label for="expiry_date">Expiry Date (optional):</label><br>';
-        echo '<input type="date" id="expiry_date" name="expiry_date" value="' . esc_attr( $expiry_date ) . '"></p>';
+    public function acdb_coupons_field_render() {
+        $data = get_option($this->coupons_option, '[]');
+        echo '<textarea cols="60" rows="10" name="' . esc_attr($this->coupons_option) . '">' . esc_textarea($data) . '</textarea>';
     }
 
-    public function save_coupon_meta( $post_id ) {
-        if ( ! isset( $_POST['coupon_meta_nonce'] ) ) {
-            return;
-        }
-
-        if ( ! wp_verify_nonce( $_POST['coupon_meta_nonce'], 'save_coupon_meta' ) ) {
-            return;
-        }
-
-        if ( defined( 'DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
-            return;
-        }
-
-        if ( ! current_user_can( 'edit_post', $post_id ) ) {
-            return;
-        }
-
-        if ( isset( $_POST['affiliate_url'] ) ) {
-            update_post_meta( $post_id, '_affiliate_url', esc_url_raw( $_POST['affiliate_url'] ) );
-        }
-
-        if ( isset( $_POST['coupon_code'] ) ) {
-            update_post_meta( $post_id, '_coupon_code', sanitize_text_field( $_POST['coupon_code'] ) );
-        }
-
-        if ( isset( $_POST['expiry_date'] ) ) {
-            update_post_meta( $post_id, '_expiry_date', sanitize_text_field( $_POST['expiry_date'] ) );
-        }
+    public function acdb_options_page() {
+        ?>
+        <form action='options.php' method='post'>
+            <h2>Affiliate Coupon & Deal Booster</h2>
+            <?php
+            settings_fields('acdb_settings_group');
+            do_settings_sections('acdb_settings_group');
+            submit_button();
+            ?>
+        </form>
+        <?php
     }
 
-    public function coupons_shortcode( $atts ) {
-        $atts = shortcode_atts( array(
-            'limit' => 10
-        ), $atts, 'affiliate_coupons' );
+    public function acdb_render_coupons_shortcode() {
+        $coupons_json = get_option($this->coupons_option, '[]');
+        $coupons = json_decode($coupons_json, true);
 
-        $today = date( 'Y-m-d' );
-
-        $args = array(
-            'post_type' => 'aff_coupon',
-            'posts_per_page' => intval( $atts['limit'] ),
-            'meta_query' => array(
-                'relation' => 'OR',
-                array(
-                    'key' => '_expiry_date',
-                    'value' => $today,
-                    'compare' => '>=',
-                    'type' => 'DATE'
-                ),
-                array(
-                    'key' => '_expiry_date',
-                    'compare' => 'NOT EXISTS'
-                )
-            ),
-            'orderby' => 'date',
-            'order' => 'DESC'
-        );
-
-        $coupons_query = new WP_Query( $args );
-
-        if ( ! $coupons_query->have_posts() ) {
-            return '<p>No valid coupons available at the moment.</p>';
+        if (empty($coupons) || !is_array($coupons)) {
+            return '<p>No coupons added yet.</p>';
         }
 
-        $output = '<div class="affiliate-coupons-list" style="border:1px solid #ccc;padding:1em;border-radius:5px;">';
+        $output = '<div class="acdb-coupons-container">';
+        foreach ($coupons as $coupon) {
+            $title = esc_html($coupon['title'] ?? '');
+            $code = esc_html($coupon['code'] ?? '');
+            $url = esc_url($coupon['url'] ?? '#');
 
-        while ( $coupons_query->have_posts() ) {
-            $coupons_query->the_post();
-            $affiliate_url = esc_url( get_post_meta( get_the_ID(), '_affiliate_url', true ) );
-            $coupon_code = esc_html( get_post_meta( get_the_ID(), '_coupon_code', true ) );
-
-            $button_text = $coupon_code ? 'Use Coupon: ' . $coupon_code : 'Grab Deal';
-
-            $output .= '<div class="single-coupon" style="margin-bottom:1em;">';
-            $output .= '<h3 style="margin:0 0 .5em 0;">' . get_the_title() . '</h3>';
-            $output .= '<div>' . wpautop( get_the_content() ) . '</div>';
-            $output .= '<a href="' . $affiliate_url . '" target="_blank" rel="nofollow noopener noreferrer" style="display:inline-block;margin-top:.5em;padding:.5em 1em;background:#0073aa;color:#fff;text-decoration:none;border-radius:3px;">' . $button_text . '</a>';
+            $output .= '<div class="acdb-coupon">';
+            $output .= '<h3 class="acdb-title">' . $title . '</h3>';
+            $output .= '<p>Use code: <strong>' . $code . '</strong></p>';
+            $output .= '<p><a class="acdb-button" href="' . $url . '" target="_blank" rel="nofollow noopener">Shop Now</a></p>';
             $output .= '</div>';
         }
-
         $output .= '</div>';
-
-        wp_reset_postdata();
 
         return $output;
     }
-
-    public function enqueue_styles() {
-        wp_enqueue_style( 'affiliate-coupon-booster-style', plugin_dir_url( __FILE__ ) . 'style.css', array(), '1.0' );
-    }
-
 }
 
-new AffiliateCouponBooster();
+// Widget to display coupons
+class ACDB_Coupons_Widget extends WP_Widget {
+    public function __construct() {
+        parent::__construct(
+            'acdb_coupons_widget',
+            'Affiliate Coupons Widget',
+            array('description' => __('Displays affiliate coupons and deals', 'acdb'))
+        );
+    }
+
+    public function widget($args, $instance) {
+        echo $args['before_widget'];
+
+        $title = apply_filters('widget_title', $instance['title'] ?? 'Deals & Coupons');
+        if (!empty($title)) {
+            echo $args['before_title'] . $title . $args['after_title'];
+        }
+
+        $coupons_json = get_option('acdb_coupons_data', '[]');
+        $coupons = json_decode($coupons_json, true);
+
+        if (empty($coupons) || !is_array($coupons)) {
+            echo '<p>No coupons available.</p>';
+        } else {
+            echo '<ul class="acdb-widget-list">';
+            foreach ($coupons as $coupon) {
+                $title = esc_html($coupon['title'] ?? '');
+                $url = esc_url($coupon['url'] ?? '#');
+                echo '<li><a href="' . $url . '" target="_blank" rel="nofollow noopener">' . $title . '</a></li>';
+            }
+            echo '</ul>';
+        }
+
+        echo $args['after_widget'];
+    }
+
+    public function form($instance) {
+        $title = $instance['title'] ?? __('Deals & Coupons', 'acdb');
+        ?>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php esc_attr_e('Title:'); ?></label> 
+            <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>" name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text" value="<?php echo esc_attr($title); ?>">
+        </p>
+        <?php 
+    }
+
+    public function update($new_instance, $old_instance) {
+        $instance = array();
+        $instance['title'] = sanitize_text_field($new_instance['title']);
+        return $instance;
+    }
+}
+
+// Init plugin
+new AffiliateCouponDealBooster();
+
+// Simple CSS injected inline for demonstration
+add_action('wp_head', function() {
+    echo '<style>
+    .acdb-coupons-container { display: flex; flex-wrap: wrap; gap: 15px; }
+    .acdb-coupon { background: #f7f7f7; padding: 15px; border: 1px solid #ccc; width: 300px; border-radius: 5px; }
+    .acdb-title { font-size: 1.2em; margin-bottom: 8px; }
+    .acdb-button { display: inline-block; padding: 8px 12px; background: #0073aa; color: #fff; text-decoration: none; border-radius: 3px; }
+    .acdb-button:hover { background: #005177; }
+    .acdb-widget-list { list-style-type: disc; padding-left: 20px; margin: 0; }
+    </style>';
+});
