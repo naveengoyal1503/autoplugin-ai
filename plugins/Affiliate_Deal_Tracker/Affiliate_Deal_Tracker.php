@@ -1,188 +1,157 @@
+<?php
 /*
+Plugin Name: Affiliate Deal Tracker
+Description: Manage and display affiliate coupon deals with tracking capabilities.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Deal_Tracker.php
 */
-<?php
-/**
- * Plugin Name: Affiliate Deal Tracker
- * Description: Manage and display affiliate coupons and deals with tracking and analytics.
- * Version: 1.0
- * Author: Generated Plugin
- */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class AffiliateDealTracker {
-    private $plugin_slug = 'affiliate-deal-tracker';
-    private $version = '1.0';
-    private $option_name = 'adt_deals_data';
-
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_shortcode('adt_deals', array($this, 'shortcode_display_deals'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
-        add_action('init', array($this, 'track_affiliate_click'));
+        add_action('init', array($this, 'register_coupon_post_type'));
+        add_action('add_meta_boxes', array($this, 'add_coupon_meta_boxes'));
+        add_action('save_post', array($this, 'save_coupon_meta')); 
+        add_shortcode('aff_deals', array($this, 'display_deals_shortcode'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
-    public function enqueue_styles() {
-        wp_enqueue_style('adt_styles', plugin_dir_url(__FILE__) . 'style.css');
+    public function register_coupon_post_type() {
+        $labels = array(
+            'name' => 'Affiliate Deals',
+            'singular_name' => 'Affiliate Deal',
+            'add_new' => 'Add New Deal',
+            'add_new_item' => 'Add New Affiliate Deal',
+            'edit_item' => 'Edit Affiliate Deal',
+            'new_item' => 'New Affiliate Deal',
+            'view_item' => 'View Affiliate Deal',
+            'search_items' => 'Search Deals',
+            'not_found' => 'No deals found',
+            'not_found_in_trash' => 'No deals found in Trash',
+            'all_items' => 'All Affiliate Deals',
+            'menu_name' => 'Affiliate Deals',
+            'name_admin_bar' => 'Affiliate Deal'
+        );
+
+        $args = array(
+            'labels' => $labels,
+            'public' => true,
+            'has_archive' => true,
+            'show_in_rest' => true,
+            'supports' => array('title', 'editor'),
+            'menu_icon' => 'dashicons-tag'
+        );
+
+        register_post_type('affiliate_deal', $args);
     }
 
-    public function add_admin_menu() {
-        add_menu_page('Affiliate Deal Tracker', 'Affiliate Deals', 'manage_options', $this->plugin_slug, array($this, 'admin_page'), 'dashicons-tag', 80);
+    public function add_coupon_meta_boxes() {
+        add_meta_box('deal_details', 'Deal Details', array($this, 'render_deal_meta_box'), 'affiliate_deal', 'normal', 'high');
     }
 
-    public function register_settings() {
-        register_setting($this->plugin_slug, $this->option_name);
+    public function render_deal_meta_box($post) {
+        wp_nonce_field('save_deal_meta', 'deal_meta_nonce');
+        $url = get_post_meta($post->ID, '_deal_url', true);
+        $code = get_post_meta($post->ID, '_deal_code', true);
+        $expiry = get_post_meta($post->ID, '_deal_expiry', true);
+        $clicks = get_post_meta($post->ID, '_deal_clicks', true);
+        if (!$clicks) $clicks = 0;
+        echo '<p><label>Affiliate URL (required):</label><br><input type="url" name="deal_url" value="'.esc_attr($url).'" size="50" required></p>';
+        echo '<p><label>Coupon Code (optional):</label><br><input type="text" name="deal_code" value="'.esc_attr($code).'" size="30"></p>';
+        echo '<p><label>Expiry Date (optional):</label><br><input type="date" name="deal_expiry" value="'.esc_attr($expiry).'" /></p>';
+        echo '<p><strong>Clicks:</strong> '.intval($clicks).'</p>';
     }
 
-    public function admin_page() {
-        if (!current_user_can('manage_options')) { wp_die('Unauthorized user'); }
+    public function save_coupon_meta($post_id) {
+        if (!isset($_POST['deal_meta_nonce']) || !wp_verify_nonce($_POST['deal_meta_nonce'], 'save_deal_meta')) return;
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+        if (!current_user_can('edit_post', $post_id)) return;
 
-        $deals = get_option($this->option_name, array());
-
-        // Handle form submission
-        if (isset($_POST['adt_submit'])) {
-            check_admin_referer('adt_save_deal','adt_nonce');
-
-            $id = sanitize_text_field($_POST['deal_id']);
-            $title = sanitize_text_field($_POST['title']);
-            $code = sanitize_text_field($_POST['coupon_code']);
-            $url = esc_url_raw($_POST['affiliate_url']);
-            $desc = sanitize_textarea_field($_POST['description']);
-
-            if (empty($id)) { // New deal
-                $id = uniqid('deal_');
-            }
-
-            $deals[$id] = array(
-                'title' => $title,
-                'coupon_code' => $code,
-                'affiliate_url' => $url,
-                'description' => $desc,
-                'clicks' => isset($deals[$id]['clicks']) ? $deals[$id]['clicks'] : 0
-            );
-
-            update_option($this->option_name, $deals);
-
-            echo '<div class="updated"><p>Deal saved.</p></div>';
+        if (isset($_POST['deal_url'])) {
+            update_post_meta($post_id, '_deal_url', esc_url_raw($_POST['deal_url']));
         }
-
-        if (isset($_GET['delete']) && isset($deals[$_GET['delete']])) {
-            check_admin_referer('adt_delete_deal','adt_delete_nonce');
-            unset($deals[$_GET['delete']]);
-            update_option($this->option_name, $deals);
-            echo '<div class="updated"><p>Deal deleted.</p></div>';
+        if (isset($_POST['deal_code'])) {
+            update_post_meta($post_id, '_deal_code', sanitize_text_field($_POST['deal_code']));
         }
-
-        // Edit deal if requested
-        $edit_deal = null;
-        if (isset($_GET['edit']) && isset($deals[$_GET['edit']])) {
-            $edit_deal = $deals[$_GET['edit']];
-            $edit_deal['id'] = $_GET['edit'];
+        if (isset($_POST['deal_expiry'])) {
+            update_post_meta($post_id, '_deal_expiry', sanitize_text_field($_POST['deal_expiry']));
         }
-
-        ?>
-        <div class="wrap">
-            <h1>Affiliate Deal Tracker</h1>
-
-            <h2><?php echo $edit_deal ? 'Edit Deal' : 'Add New Deal'; ?></h2>
-            <form method="post" action="">
-                <?php wp_nonce_field('adt_save_deal','adt_nonce'); ?>
-                <input type="hidden" name="deal_id" value="<?php echo $edit_deal ? esc_attr($edit_deal['id']) : ''; ?>">
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="title">Title</label></th>
-                        <td><input name="title" type="text" value="<?php echo $edit_deal ? esc_attr($edit_deal['title']) : ''; ?>" class="regular-text" required></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="coupon_code">Coupon Code</label></th>
-                        <td><input name="coupon_code" type="text" value="<?php echo $edit_deal ? esc_attr($edit_deal['coupon_code']) : ''; ?>" class="regular-text"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="affiliate_url">Affiliate URL</label></th>
-                        <td><input name="affiliate_url" type="url" value="<?php echo $edit_deal ? esc_url($edit_deal['affiliate_url']) : ''; ?>" class="regular-text" required></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="description">Description</label></th>
-                        <td><textarea name="description" rows="5" cols="50"><?php echo $edit_deal ? esc_textarea($edit_deal['description']) : ''; ?></textarea></td>
-                    </tr>
-                </table>
-                <?php submit_button($edit_deal ? 'Save Deal' : 'Add Deal', 'primary', 'adt_submit'); ?>
-            </form>
-
-            <h2>Existing Deals</h2>
-            <table class="widefat fixed" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Title</th><th>Coupon Code</th><th>Description</th><th>Clicks</th><th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if (!empty($deals)) : foreach($deals as $id => $deal): ?>
-                    <tr>
-                        <td><?php echo esc_html($deal['title']); ?></td>
-                        <td><?php echo esc_html($deal['coupon_code']); ?></td>
-                        <td><?php echo esc_html(wp_trim_words($deal['description'],10,'...')); ?></td>
-                        <td><?php echo intval($deal['clicks']); ?></td>
-                        <td>
-                            <a href="?page=<?php echo $this->plugin_slug; ?>&edit=<?php echo esc_attr($id); ?>">Edit</a> |
-                            <a href="?page=<?php echo $this->plugin_slug; ?>&delete=<?php echo esc_attr($id); ?>&adt_delete_nonce=<?php echo wp_create_nonce('adt_delete_deal'); ?>" onclick="return confirm('Are you sure you want to delete this deal?');">Delete</a>
-                        </td>
-                    </tr>
-                <?php endforeach; else: ?>
-                    <tr><td colspan="5">No deals added yet.</td></tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-        <?php
     }
 
-    public function shortcode_display_deals() {
-        $deals = get_option($this->option_name, array());
-        if (empty($deals)) return '<p>No deals available at this time.</p>';
+    public function display_deals_shortcode($atts) {
+        $atts = shortcode_atts(array('count'=>5), $atts, 'aff_deals');
+        $args = array(
+            'post_type' => 'affiliate_deal',
+            'posts_per_page' => intval($atts['count']),
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'meta_query' => array(
+                'relation' => 'OR',
+                array(
+                    'key' => '_deal_expiry',
+                    'value' => date('Y-m-d'),
+                    'compare' => '>=',
+                    'type' => 'DATE'
+                ),
+                array(
+                    'key' => '_deal_expiry',
+                    'compare' => 'NOT EXISTS'
+                )
+            )
+        );
+        $query = new WP_Query($args);
+        if (!$query->have_posts()) return '<p>No deals found.</p>';
 
-        $output = '<div class="adt-deals-list">';
-        foreach ($deals as $id => $deal) {
-            $url = add_query_arg(array('adt_redirect' => $id), site_url('/')); // Redirect handler
-            $output .= '<div class="adt-deal">';
-            $output .= '<h3>' . esc_html($deal['title']) . '</h3>';
-            if (!empty($deal['coupon_code'])) {
-                $output .= '<p>Use Coupon Code: <strong>' . esc_html($deal['coupon_code']) . '</strong></p>';
-            }
-            if (!empty($deal['description'])) {
-                $output .= '<p>' . esc_html($deal['description']) . '</p>';
-            }
-            $output .= '<a href="' . esc_url($url) . '" target="_blank" rel="nofollow noopener" class="adt-button">Redeem Deal</a>';
+        $output = '<div class="aff-deals-list">';
+        while ($query->have_posts()) {
+            $query->the_post();
+            $url = get_post_meta(get_the_ID(), '_deal_url', true);
+            $code = get_post_meta(get_the_ID(), '_deal_code', true);
+            $expiry = get_post_meta(get_the_ID(), '_deal_expiry', true);
+
+            $title = get_the_title();
+            $deal_id = get_the_ID();
+
+            $expiry_html = $expiry ? '<small>Expires on '.esc_html($expiry).'</small>' : '';
+            $code_html = $code ? '<p><strong>Coupon Code:</strong> '.esc_html($code).'</p>' : '';
+
+            $link = esc_url(add_query_arg(array('aff_deal_click' => $deal_id), $url));
+
+            $output .= '<div class="aff-deal-item" style="border:1px solid #ccc;padding:10px;margin-bottom:10px;">';
+            $output .= '<h3><a href="'.esc_url($link).'" target="_blank" rel="nofollow noopener">'.esc_html($title).'</a></h3>';
+            $output .= $code_html;
+            $output .= $expiry_html;
             $output .= '</div>';
         }
+        wp_reset_postdata();
         $output .= '</div>';
-
         return $output;
     }
 
-    public function track_affiliate_click() {
-        if (isset($_GET['adt_redirect'])) {
-            $deals = get_option($this->option_name, array());
-            $id = sanitize_text_field($_GET['adt_redirect']);
-            if (isset($deals[$id])) {
-                $deals[$id]['clicks'] = isset($deals[$id]['clicks']) ? intval($deals[$id]['clicks']) + 1 : 1;
-                update_option($this->option_name, $deals);
-                wp_redirect($deals[$id]['affiliate_url']);
-                exit;
-            }
-        }
+    public function enqueue_scripts() {
+        // Add custom styles for the deals display (optional)
+        wp_register_style('aff-deals-style', false);
+        wp_enqueue_style('aff-deals-style');
+        wp_add_inline_style('aff-deals-style', '.aff-deal-item h3 a { color: #0073aa; text-decoration: none; } 
+            .aff-deal-item h3 a:hover { text-decoration: underline; }');
     }
 }
 
 new AffiliateDealTracker();
 
-// Minimal CSS for the plugin
-add_action('wp_head', function() {
-    echo '<style>.adt-deals-list { display: flex; flex-wrap: wrap; gap: 20px; }
-          .adt-deal { border: 1px solid #ccc; padding: 15px; flex: 1 1 300px; background: #f9f9f9; border-radius: 8px; }
-          .adt-button { display: inline-block; background: #0073aa; color: #fff; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; }
-          .adt-button:hover { background: #005177; }</style>';
+// Track clicks and update click count
+add_action('template_redirect', function() {
+    if (isset($_GET['aff_deal_click'])) {
+        $deal_id = intval($_GET['aff_deal_click']);
+        $url = get_post_meta($deal_id, '_deal_url', true);
+        if ($url) {
+            $clicks = get_post_meta($deal_id, '_deal_clicks', true);
+            $clicks = $clicks ? intval($clicks) : 0;
+            update_post_meta($deal_id, '_deal_clicks', $clicks + 1);
+            wp_redirect($url, 301);
+            exit;
+        }
+    }
 });
