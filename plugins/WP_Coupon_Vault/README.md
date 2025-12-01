@@ -1,37 +1,30 @@
 # WP Coupon Vault
 
+WP Coupon Vault is a WordPress plugin that lets you create, manage, and display exclusive coupons and deals for your audience. Boost affiliate revenue and user engagement by offering custom discounts and deals.
+
 ## Features
-- Create and manage exclusive coupons and deals
+- Create and manage coupons as custom post types
 - Display coupons using a shortcode
-- Set expiry dates and affiliate URLs
-- Filter coupons by brand
-- Simple admin interface for coupon management
-- Premium version offers advanced analytics, bulk import, and brand partnership tools
+- Customize display style (default, compact, grid)
+- Easy-to-use admin settings
 
 ## Installation
-1. Upload the `wp-coupon-vault.php` file to your WordPress plugins directory (`/wp-content/plugins/`)
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Posts > Coupons to add new coupons
-4. Use the shortcode `[coupon_vault]` to display coupons on any page or post
+3. Go to Coupons > Settings to configure display style
 
 ## Setup
-- Add a new coupon by going to Coupons > Add New
-- Fill in the coupon details (title, description, code, expiry, URL, brand)
-- Publish the coupon
-- Use the shortcode `[coupon_vault]` to display coupons
+- Add new coupons under the 'Coupons' menu
+- Set coupon code and URL in custom fields
+- Use the `[coupon_vault]` shortcode to display coupons on any page or post
 
 ## Usage
-- `[coupon_vault]` - Display all coupons
-- `[coupon_vault brand="Amazon"]` - Display coupons for a specific brand
-- `[coupon_vault limit="5"]` - Display a limited number of coupons
-
-## Premium Features
-Upgrade to the Pro version for:
-- Advanced analytics
-- Bulk coupon import/export
-- Brand partnership management
-- Custom coupon templates
-- Priority support
+- `[coupon_vault limit="5" category="tech" style="grid"]` - Display 5 tech coupons in grid style
+- `[coupon_vault limit="10"]` - Display 10 coupons in default style
 
 ## Support
-For support, please contact us at support@wpcouponvault.com
+For support and feature requests, visit the plugin page or contact the developer.
+
+---
+
+**Note:** This is a basic version. Premium features include analytics, expiration dates, and advanced styling options.
