@@ -1,11 +1,14 @@
-<?php
 /*
-Plugin Name: WP Revenue Tracker
-Description: Track and visualize revenue from ads, affiliate links, digital products, and memberships.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Tracker.php
 */
+<?php
+/**
+ * Plugin Name: WP Revenue Tracker
+ * Description: Track and visualize revenue from ads, affiliate links, and digital product sales.
+ * Version: 1.0
+ * Author: WP Dev Team
+ */
 
 class WP_Revenue_Tracker {
 
@@ -23,13 +26,14 @@ class WP_Revenue_Tracker {
             'manage_options',
             'wp-revenue-tracker',
             array($this, 'render_dashboard'),
-            'dashicons-chart-bar',
-            6
+            'dashicons-chart-bar'
         );
     }
 
     public function enqueue_scripts($hook) {
-        if ($hook != 'toplevel_page_wp-revenue-tracker') return;
+        if ($hook !== 'toplevel_page_wp-revenue-tracker') {
+            return;
+        }
         wp_enqueue_script('jquery');
         wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
     }
@@ -39,71 +43,108 @@ class WP_Revenue_Tracker {
         <div class="wrap">
             <h1>WP Revenue Tracker</h1>
             <div id="revenue-form">
-                <label>Revenue Type: 
-                    <select id="revenue-type">
+                <h2>Add Revenue</h2>
+                <form id="revenue-form">
+                    <label>Source: <select id="source">
                         <option value="ads">Ads</option>
                         <option value="affiliate">Affiliate</option>
-                        <option value="products">Digital Products</option>
-                        <option value="memberships">Memberships</option>
-                    </select>
-                </label>
-                <label>Amount: <input type="number" id="revenue-amount" step="0.01" /></label>
-                <button id="save-revenue">Save Revenue</button>
+                        <option value="digital">Digital Products</option>
+                    </select></label>
+                    <label>Amount: <input type="number" id="amount" step="0.01" /></label>
+                    <button type="button" onclick="saveRevenue()">Save</button>
+                </form>
             </div>
-            <canvas id="revenue-chart" width="400" height="200"></canvas>
+            <div id="revenue-chart" style="width: 80%; margin-top: 20px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
         </div>
         <script>
-            jQuery(document).ready(function($) {
-                $('#save-revenue').on('click', function() {
-                    $.post(ajaxurl, {
-                        action: 'save_revenue',
-                        type: $('#revenue-type').val(),
-                        amount: $('#revenue-amount').val()
-                    }, function(response) {
-                        if (response.success) {
-                            loadChart();
+            function saveRevenue() {
+                var source = jQuery('#source').val();
+                var amount = jQuery('#amount').val();
+                jQuery.post(ajaxurl, {
+                    action: 'save_revenue',
+                    source: source,
+                    amount: amount
+                }, function(response) {
+                    alert('Revenue saved!');
+                    loadRevenueData();
+                });
+            }
+
+            function loadRevenueData() {
+                jQuery.post(ajaxurl, {
+                    action: 'get_revenue_data'
+                }, function(response) {
+                    var ctx = document.getElementById('revenueChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: response.labels,
+                            datasets: [{
+                                label: 'Revenue',
+                                data: response.data,
+                                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                            }]
                         }
                     });
                 });
+            }
 
-                function loadChart() {
-                    $.post(ajaxurl, { action: 'get_revenue_data' }, function(response) {
-                        if (response.success) {
-                            var ctx = document.getElementById('revenue-chart').getContext('2d');
-                            new Chart(ctx, {
-                                type: 'bar',
-                                data: {
-                                    labels: Object.keys(response.data),
-                                    datasets: [{
-                                        label: 'Revenue ($)',
-                                        data: Object.values(response.data),
-                                        backgroundColor: '#4CAF50'
-                                    }]
-                                }
-                            });
-                        }
-                    });
-                }
-                loadChart();
+            jQuery(document).ready(function() {
+                loadRevenueData();
             });
         </script>
         <?php
     }
 
     public function save_revenue() {
-        $type = sanitize_text_field($_POST['type']);
+        $source = sanitize_text_field($_POST['source']);
         $amount = floatval($_POST['amount']);
-        $data = get_option('wp_revenue_tracker_data', array());
-        if (!isset($data[$type])) $data[$type] = 0;
-        $data[$type] += $amount;
-        update_option('wp_revenue_tracker_data', $data);
-        wp_send_json_success();
+        $date = current_time('mysql');
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'revenue_tracker';
+        $wpdb->insert($table, array(
+            'source' => $source,
+            'amount' => $amount,
+            'date' => $date
+        ));
+
+        wp_die();
     }
 
     public function get_revenue_data() {
-        $data = get_option('wp_revenue_tracker_data', array());
-        wp_send_json_success($data);
+        global $wpdb;
+        $table = $wpdb->prefix . 'revenue_tracker';
+        $results = $wpdb->get_results("SELECT source, SUM(amount) as total FROM $table GROUP BY source");
+
+        $labels = array();
+        $data = array();
+        foreach ($results as $row) {
+            $labels[] = ucfirst($row->source);
+            $data[] = $row->total;
+        }
+
+        wp_send_json(array('labels' => $labels, 'data' => $data));
+    }
+
+    public function install() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'revenue_tracker';
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE $table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            source varchar(20) NOT NULL,
+            amount decimal(10,2) NOT NULL,
+            date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
     }
 }
 
-new WP_Revenue_Tracker();
+$revenue_tracker = new WP_Revenue_Tracker();
+register_activation_hook(__FILE__, array($revenue_tracker, 'install'));
+?>
