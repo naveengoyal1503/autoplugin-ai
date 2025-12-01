@@ -1,24 +1,25 @@
 # WP Revenue Booster
 
-Automatically optimize ad, affiliate, and coupon placements for maximum revenue on your WordPress site.
+Boost your WordPress site's revenue with smart affiliate offers and exclusive coupons.
 
 ## Features
-- Automatically injects ad code, affiliate links, and coupon codes into your content at optimal positions.
-- Simple admin interface to configure ad, affiliate, and coupon settings.
-- Easy to use and customize for any WordPress site.
+- Display context-aware affiliate offers and coupons
+- Track clicks on offers for analytics
+- Easy admin interface to manage offers and coupons
+- Shortcode to display offers anywhere on your site
 
 ## Installation
-1. Download the plugin file.
-2. Upload it to your WordPress plugins directory (`/wp-content/plugins/`).
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to 'Revenue Booster' in the admin menu to set up your first offer
 
 ## Setup
-1. Go to Settings > Revenue Booster in your WordPress admin.
-2. Enter your ad code, affiliate link, and coupon code.
-3. Save your settings.
+- Enter your smart offer, coupon code, and affiliate link in the admin panel
+- Use the shortcode `[wp_revenue_booster]` to display the offer on any post or page
 
 ## Usage
-Once activated, the plugin will automatically inject your configured ad, affiliate, and coupon content into your posts at the positions you specify. No further action is needed.
+- Customize offers based on your audience and content
+- Monitor clicks in the admin panel to optimize your offers
 
 ## Support
-For support or feature requests, please contact us at support@example.com.
+For support, visit the plugin page or contact the developer.
