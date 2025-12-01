@@ -1,301 +1,271 @@
 <?php
 /*
 Plugin Name: AffiliateTrack Pro
-Plugin URI: https://affiliatetrackpro.com
-Description: Advanced affiliate link tracking and performance analytics
+Plugin URI: https://affiliatetrackpro.local
+Description: Advanced affiliate link tracking and performance analytics with commission management
 Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=AffiliateTrack_Pro.php
-License: GPL v2 or later
-Text Domain: affiliatetrack-pro
+License: GPL2
 */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
-define('AFFILIATETRACK_VERSION', '1.0.0');
-define('AFFILIATETRACK_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('AFFILIATETRACK_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('ATP_VERSION', '1.0.0');
+define('ATP_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('ATP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 class AffiliateTrackPro {
     private static $instance = null;
-
+    
     public static function getInstance() {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-
+    
     public function __construct() {
-        $this->initHooks();
-        $this->createDatabase();
-    }
-
-    private function initHooks() {
         add_action('admin_menu', array($this, 'addAdminMenu'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueueAdminAssets'));
-        add_shortcode('affiliate_link', array($this, 'affiliateLinkShortcode'));
+        add_action('admin_init', array($this, 'registerSettings'));
         add_action('template_redirect', array($this, 'trackAffiliateClick'));
+        add_shortcode('affiliate_link', array($this, 'affiliateLinkShortcode'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
-
-    private function createDatabase() {
+    
+    public function activate() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-        $table_name = $wpdb->prefix . 'affiliatetrack_links';
-        $clicks_table = $wpdb->prefix . 'affiliatetrack_clicks';
-
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") !== $table_name) {
-            $sql = "CREATE TABLE $table_name (
-                id mediumint(9) NOT NULL AUTO_INCREMENT,
-                link_slug varchar(100) NOT NULL UNIQUE,
-                affiliate_url text NOT NULL,
-                affiliate_id varchar(100),
-                program_name varchar(255),
-                commission_rate decimal(5,2),
-                created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id)
-            ) $charset_collate;";
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            dbDelta($sql);
-        }
-
-        if ($wpdb->get_var("SHOW TABLES LIKE '$clicks_table'") !== $clicks_table) {
-            $sql = "CREATE TABLE $clicks_table (
-                id mediumint(9) NOT NULL AUTO_INCREMENT,
-                link_id mediumint(9) NOT NULL,
-                click_timestamp datetime DEFAULT CURRENT_TIMESTAMP,
-                user_ip varchar(45),
-                user_agent text,
-                referrer_url text,
-                conversion_status varchar(20) DEFAULT 'pending',
-                commission_earned decimal(10,2),
-                PRIMARY KEY (id),
-                FOREIGN KEY (link_id) REFERENCES $table_name(id)
-            ) $charset_collate;";
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-            dbDelta($sql);
-        }
+        
+        $sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}atp_affiliate_links (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) NOT NULL,
+            link_name varchar(255) NOT NULL,
+            target_url longtext NOT NULL,
+            affiliate_code varchar(100) NOT NULL UNIQUE,
+            commission_rate float DEFAULT 0,
+            clicks int DEFAULT 0,
+            conversions int DEFAULT 0,
+            revenue decimal(10,2) DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;
+        
+        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}atp_clicks (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            affiliate_id mediumint(9) NOT NULL,
+            click_time datetime DEFAULT CURRENT_TIMESTAMP,
+            ip_address varchar(100),
+            user_agent longtext,
+            PRIMARY KEY (id),
+            FOREIGN KEY (affiliate_id) REFERENCES {$wpdb->prefix}atp_affiliate_links(id)
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
     }
-
+    
+    public function deactivate() {
+        // Cleanup if needed
+    }
+    
     public function addAdminMenu() {
         add_menu_page(
             'AffiliateTrack Pro',
             'AffiliateTrack Pro',
             'manage_options',
             'affiliatetrack-dashboard',
-            array($this, 'renderDashboard'),
+            array($this, 'dashboardPage'),
             'dashicons-chart-line',
-            30
+            25
         );
-
+        
         add_submenu_page(
             'affiliatetrack-dashboard',
-            'My Links',
-            'My Links',
+            'Dashboard',
+            'Dashboard',
+            'manage_options',
+            'affiliatetrack-dashboard',
+            array($this, 'dashboardPage')
+        );
+        
+        add_submenu_page(
+            'affiliatetrack-dashboard',
+            'Manage Links',
+            'Manage Links',
             'manage_options',
             'affiliatetrack-links',
-            array($this, 'renderLinksPage')
+            array($this, 'linksPage')
         );
-
-        add_submenu_page(
-            'affiliatetrack-dashboard',
-            'Analytics',
-            'Analytics',
-            'manage_options',
-            'affiliatetrack-analytics',
-            array($this, 'renderAnalyticsPage')
-        );
-
+        
         add_submenu_page(
             'affiliatetrack-dashboard',
             'Settings',
             'Settings',
             'manage_options',
             'affiliatetrack-settings',
-            array($this, 'renderSettingsPage')
+            array($this, 'settingsPage')
         );
     }
-
-    public function enqueueAdminAssets($hook) {
-        if (strpos($hook, 'affiliatetrack') === false) {
+    
+    public function registerSettings() {
+        register_setting('affiliatetrack-settings', 'atp_license_key');
+        register_setting('affiliatetrack-settings', 'atp_enable_tracking');
+    }
+    
+    public function dashboardPage() {
+        if (!current_user_can('manage_options')) {
             return;
         }
-        wp_enqueue_style('affiliatetrack-admin', AFFILIATETRACK_PLUGIN_URL . 'css/admin.css', array(), AFFILIATETRACK_VERSION);
-        wp_enqueue_script('affiliatetrack-admin', AFFILIATETRACK_PLUGIN_URL . 'js/admin.js', array('jquery'), AFFILIATETRACK_VERSION, true);
-    }
-
-    public function renderDashboard() {
+        
         global $wpdb;
-        $table_clicks = $wpdb->prefix . 'affiliatetrack_clicks';
-        $table_links = $wpdb->prefix . 'affiliatetrack_links';
-
-        $total_clicks = $wpdb->get_var("SELECT COUNT(*) FROM $table_clicks");
-        $conversions = $wpdb->get_var("SELECT COUNT(*) FROM $table_clicks WHERE conversion_status='completed'");
-        $total_earnings = $wpdb->get_var("SELECT COALESCE(SUM(commission_earned), 0) FROM $table_clicks");
-        $active_links = $wpdb->get_var("SELECT COUNT(*) FROM $table_links");
-
-        echo '<div class="wrap">';
+        $stats = $wpdb->get_row(
+            "SELECT COUNT(*) as total_links, SUM(clicks) as total_clicks, SUM(conversions) as total_conversions, SUM(revenue) as total_revenue FROM {$wpdb->prefix}atp_affiliate_links"
+        );
+        
+        echo '<div class="wrap" style="font-family: Arial, sans-serif; padding: 20px;">';
         echo '<h1>AffiliateTrack Pro Dashboard</h1>';
-        echo '<div class="affiliatetrack-dashboard">';
-        echo '<div class="stat-box"><h3>Total Clicks</h3><p>' . esc_html($total_clicks) . '</p></div>';
-        echo '<div class="stat-box"><h3>Conversions</h3><p>' . esc_html($conversions) . '</p></div>';
-        echo '<div class="stat-box"><h3>Total Earnings</h3><p>$' . esc_html(number_format($total_earnings, 2)) . '</p></div>';
-        echo '<div class="stat-box"><h3>Active Links</h3><p>' . esc_html($active_links) . '</p></div>';
+        echo '<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 20px 0;">';
+        echo '<div style="background: #f5f5f5; padding: 20px; border-radius: 5px;"><h3>Total Links</h3><p style="font-size: 24px; font-weight: bold;">' . ($stats->total_links ?? 0) . '</p></div>';
+        echo '<div style="background: #f5f5f5; padding: 20px; border-radius: 5px;"><h3>Total Clicks</h3><p style="font-size: 24px; font-weight: bold;">' . ($stats->total_clicks ?? 0) . '</p></div>';
+        echo '<div style="background: #f5f5f5; padding: 20px; border-radius: 5px;"><h3>Total Conversions</h3><p style="font-size: 24px; font-weight: bold;">' . ($stats->total_conversions ?? 0) . '</p></div>';
+        echo '<div style="background: #f5f5f5; padding: 20px; border-radius: 5px;"><h3>Total Revenue</h3><p style="font-size: 24px; font-weight: bold;">$' . number_format($stats->total_revenue ?? 0, 2) . '</p></div>';
         echo '</div>';
         echo '</div>';
     }
-
-    public function renderLinksPage() {
+    
+    public function linksPage() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        
         global $wpdb;
-        $table_name = $wpdb->prefix . 'affiliatetrack_links';
-
-        if (isset($_POST['action']) && $_POST['action'] === 'add_link' && isset($_POST['nonce']) && wp_verify_nonce($_POST['nonce'], 'affiliatetrack_nonce')) {
-            $slug = sanitize_text_field($_POST['link_slug']);
-            $url = esc_url_raw($_POST['affiliate_url']);
-            $program = sanitize_text_field($_POST['program_name']);
-            $rate = floatval($_POST['commission_rate']);
-
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_link'])) {
+            $link_name = sanitize_text_field($_POST['link_name']);
+            $target_url = esc_url_raw($_POST['target_url']);
+            $commission_rate = floatval($_POST['commission_rate']);
+            $affiliate_code = sanitize_text_field($_POST['affiliate_code']);
+            
             $wpdb->insert(
-                $table_name,
+                $wpdb->prefix . 'atp_affiliate_links',
                 array(
-                    'link_slug' => $slug,
-                    'affiliate_url' => $url,
-                    'program_name' => $program,
-                    'commission_rate' => $rate
+                    'user_id' => get_current_user_id(),
+                    'link_name' => $link_name,
+                    'target_url' => $target_url,
+                    'affiliate_code' => $affiliate_code,
+                    'commission_rate' => $commission_rate
                 ),
-                array('%s', '%s', '%s', '%f')
+                array('%d', '%s', '%s', '%s', '%f')
             );
         }
-
-        $links = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
-
-        echo '<div class="wrap">';
-        echo '<h1>Manage Affiliate Links</h1>';
-        echo '<form method="POST" class="affiliatetrack-form">';
-        wp_nonce_field('affiliatetrack_nonce', 'nonce');
-        echo '<input type="hidden" name="action" value="add_link">';
-        echo '<table class="form-table">';
-        echo '<tr><th>Link Slug</th><td><input type="text" name="link_slug" required></td></tr>';
-        echo '<tr><th>Affiliate URL</th><td><input type="url" name="affiliate_url" required></td></tr>';
-        echo '<tr><th>Program Name</th><td><input type="text" name="program_name" required></td></tr>';
-        echo '<tr><th>Commission Rate (%)</th><td><input type="number" name="commission_rate" step="0.01" required></td></tr>';
-        echo '</table>';
-        echo '<p><input type="submit" class="button button-primary" value="Add Link"></p>';
-        echo '</form>';
-
-        echo '<table class="widefat striped">';
-        echo '<thead><tr><th>Slug</th><th>Program</th><th>Commission Rate</th><th>Created</th><th>Shortcode</th></tr></thead>';
-        echo '<tbody>';
-        foreach ($links as $link) {
-            echo '<tr>';
-            echo '<td>' . esc_html($link->link_slug) . '</td>';
-            echo '<td>' . esc_html($link->program_name) . '</td>';
-            echo '<td>' . esc_html($link->commission_rate) . '%</td>';
-            echo '<td>' . esc_html($link->created_at) . '</td>';
-            echo '<td><code>[affiliate_link slug="' . esc_html($link->link_slug) . '"]</code></td>';
-            echo '</tr>';
-        }
-        echo '</tbody></table>';
-        echo '</div>';
-    }
-
-    public function renderAnalyticsPage() {
-        global $wpdb;
-        $table_clicks = $wpdb->prefix . 'affiliatetrack_clicks';
-        $table_links = $wpdb->prefix . 'affiliatetrack_links';
-
-        $results = $wpdb->get_results(
-            "SELECT l.program_name, COUNT(c.id) as click_count, 
-             SUM(CASE WHEN c.conversion_status='completed' THEN 1 ELSE 0 END) as conversion_count,
-             COALESCE(SUM(c.commission_earned), 0) as total_earned
-             FROM $table_links l
-             LEFT JOIN $table_clicks c ON l.id = c.link_id
-             GROUP BY l.id"
+        
+        $links = $wpdb->get_results(
+            "SELECT * FROM {$wpdb->prefix}atp_affiliate_links WHERE user_id = " . get_current_user_id()
         );
-
-        echo '<div class="wrap">';
-        echo '<h1>Affiliate Analytics</h1>';
-        echo '<table class="widefat striped">';
-        echo '<thead><tr><th>Program</th><th>Clicks</th><th>Conversions</th><th>Conversion Rate</th><th>Earnings</th></tr></thead>';
-        echo '<tbody>';
-        foreach ($results as $row) {
-            $conversion_rate = $row->click_count > 0 ? ($row->conversion_count / $row->click_count * 100) : 0;
-            echo '<tr>';
-            echo '<td>' . esc_html($row->program_name) . '</td>';
-            echo '<td>' . intval($row->click_count) . '</td>';
-            echo '<td>' . intval($row->conversion_count) . '</td>';
-            echo '<td>' . number_format($conversion_rate, 2) . '%</td>';
-            echo '<td>$' . number_format($row->total_earned, 2) . '</td>';
-            echo '</tr>';
+        
+        echo '<div class="wrap" style="font-family: Arial, sans-serif; padding: 20px;">';
+        echo '<h1>Manage Affiliate Links</h1>';
+        echo '<form method="POST" style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">';
+        echo '<h3>Add New Link</h3>';
+        echo '<table style="width: 100%;">';
+        echo '<tr><td><label>Link Name:</label><input type="text" name="link_name" required style="width: 100%; padding: 8px;"></td></tr>';
+        echo '<tr><td><label>Target URL:</label><input type="url" name="target_url" required style="width: 100%; padding: 8px;"></td></tr>';
+        echo '<tr><td><label>Affiliate Code:</label><input type="text" name="affiliate_code" required style="width: 100%; padding: 8px;"></td></tr>';
+        echo '<tr><td><label>Commission Rate (%):</label><input type="number" name="commission_rate" step="0.01" required style="width: 100%; padding: 8px;"></td></tr>';
+        echo '</table>';
+        echo '<button type="submit" name="add_link" style="background: #0073aa; color: white; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer; margin-top: 10px;">Add Link</button>';
+        echo '</form>';
+        
+        if ($links) {
+            echo '<table style="width: 100%; border-collapse: collapse;">';
+            echo '<thead style="background: #f5f5f5;"><tr><th style="padding: 10px; border: 1px solid #ddd;">Name</th><th style="padding: 10px; border: 1px solid #ddd;">Code</th><th style="padding: 10px; border: 1px solid #ddd;">Clicks</th><th style="padding: 10px; border: 1px solid #ddd;">Conversions</th><th style="padding: 10px; border: 1px solid #ddd;">Revenue</th></tr></thead>';
+            echo '<tbody>';
+            foreach ($links as $link) {
+                echo '<tr><td style="padding: 10px; border: 1px solid #ddd;">' . $link->link_name . '</td>';
+                echo '<td style="padding: 10px; border: 1px solid #ddd;">' . $link->affiliate_code . '</td>';
+                echo '<td style="padding: 10px; border: 1px solid #ddd;">' . $link->clicks . '</td>';
+                echo '<td style="padding: 10px; border: 1px solid #ddd;">' . $link->conversions . '</td>';
+                echo '<td style="padding: 10px; border: 1px solid #ddd;">$' . number_format($link->revenue, 2) . '</td></tr>';
+            }
+            echo '</tbody></table>';
         }
-        echo '</tbody></table>';
         echo '</div>';
     }
-
-    public function renderSettingsPage() {
-        echo '<div class="wrap">';
+    
+    public function settingsPage() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        
+        echo '<div class="wrap" style="font-family: Arial, sans-serif; padding: 20px;">';
         echo '<h1>AffiliateTrack Pro Settings</h1>';
-        echo '<form method="POST" action="options.php">';
-        settings_fields('affiliatetrack_options');
-        do_settings_sections('affiliatetrack_settings');
+        echo '<form method="POST" action="options.php" style="max-width: 600px;">';
+        settings_fields('affiliatetrack-settings');
+        
+        echo '<table style="width: 100%;">';
+        echo '<tr><td><label for="atp_enable_tracking">Enable Click Tracking:</label></td>';
+        echo '<td><input type="checkbox" id="atp_enable_tracking" name="atp_enable_tracking" value="1" ' . (get_option('atp_enable_tracking') ? 'checked' : '') . '></td></tr>';
+        echo '</table>';
+        
         submit_button();
         echo '</form>';
         echo '</div>';
     }
-
+    
     public function affiliateLinkShortcode($atts) {
-        $atts = shortcode_atts(array('slug' => ''), $atts);
+        $atts = shortcode_atts(array(
+            'code' => '',
+            'text' => 'Click here'
+        ), $atts);
+        
+        if (!$atts['code']) {
+            return '';
+        }
+        
         global $wpdb;
-        $table_name = $wpdb->prefix . 'affiliatetrack_links';
-
-        $link = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $table_name WHERE link_slug = %s",
-            $atts['slug']
-        ));
-
+        $link = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}atp_affiliate_links WHERE affiliate_code = %s",
+                $atts['code']
+            )
+        );
+        
         if (!$link) {
-            return '[Invalid affiliate link]';
+            return '';
         }
-
-        return '<a href="' . esc_url(add_query_arg('atc', base64_encode($link->id), site_url('/affiliate-redirect/'))) . '" class="affiliatetrack-link">View Offer</a>';
+        
+        $tracking_url = add_query_arg('atp_track', $link->id, $link->target_url);
+        return '<a href="' . esc_url($tracking_url) . '" target="_blank">' . esc_html($atts['text']) . '</a>';
     }
-
+    
     public function trackAffiliateClick() {
-        if (isset($_GET['atc'])) {
-            $link_id = intval(base64_decode($_GET['atc']));
-            global $wpdb;
-            $table_name = $wpdb->prefix . 'affiliatetrack_links';
-            $clicks_table = $wpdb->prefix . 'affiliatetrack_clicks';
-
-            $link = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM $table_name WHERE id = %d",
-                $link_id
-            ));
-
-            if ($link) {
-                $wpdb->insert(
-                    $clicks_table,
-                    array(
-                        'link_id' => $link_id,
-                        'user_ip' => sanitize_text_field($_SERVER['REMOTE_ADDR']),
-                        'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT']),
-                        'referrer_url' => isset($_SERVER['HTTP_REFERER']) ? esc_url_raw($_SERVER['HTTP_REFERER']) : ''
-                    ),
-                    array('%d', '%s', '%s', '%s')
-                );
-
-                wp_redirect($link->affiliate_url);
-                exit;
-            }
+        if (!isset($_GET['atp_track']) || !get_option('atp_enable_tracking')) {
+            return;
         }
+        
+        global $wpdb;
+        $affiliate_id = intval($_GET['atp_track']);
+        
+        $wpdb->insert(
+            $wpdb->prefix . 'atp_clicks',
+            array(
+                'affiliate_id' => $affiliate_id,
+                'ip_address' => $_SERVER['REMOTE_ADDR'],
+                'user_agent' => substr($_SERVER['HTTP_USER_AGENT'], 0, 255)
+            ),
+            array('%d', '%s', '%s')
+        );
+        
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$wpdb->prefix}atp_affiliate_links SET clicks = clicks + 1 WHERE id = %d",
+                $affiliate_id
+            )
+        );
     }
 }
-
-register_activation_hook(__FILE__, function() {
-    AffiliateTrackPro::getInstance();
-});
 
 AffiliateTrackPro::getInstance();
 ?>
