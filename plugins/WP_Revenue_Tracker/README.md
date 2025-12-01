@@ -1,25 +1,27 @@
 # WP Revenue Tracker
 
-Track and visualize revenue from ads, affiliate links, and digital product sales in a unified dashboard.
+Track and visualize your WordPress site's revenue from ads, affiliate links, and digital product sales.
 
 ## Features
-- Add revenue entries for different sources (ads, affiliate, products)
-- Visualize revenue data in a bar chart
-- Simple, intuitive dashboard
+- Add revenue entries for ads, affiliate links, and products
+- View revenue data in a dashboard chart
+- Easy-to-use interface
 
 ## Installation
-1. Upload `wp-revenue-tracker.php` to the `/wp-content/plugins/` directory
+1. Upload the plugin folder to your `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Access the dashboard under 'Revenue Tracker' in the admin menu
+3. Go to Revenue Tracker in your admin menu
 
 ## Setup
-No additional setup required. Start adding revenue entries right away.
+- No additional setup required
 
 ## Usage
-- Enter the revenue source, amount, and date
-- Click 'Add Revenue' to save
-- View your revenue chart on the dashboard
+- Enter revenue data using the form in the dashboard
+- View your revenue chart
 
 ## Requirements
-- WordPress 5.0 or higher
-- PHP 7.0 or higher
+- WordPress 5.0+
+- JavaScript enabled
+
+## Support
+For support, please open an issue on the plugin's GitHub page.
