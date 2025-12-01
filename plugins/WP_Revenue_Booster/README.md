@@ -1,25 +1,25 @@
 # WP Revenue Booster
 
-Automatically optimizes ad placements, affiliate links, and upsell offers to maximize revenue on any WordPress site.
+Maximize your WordPress site's revenue with smart affiliate link rotation, coupon display, and sponsored content management.
 
 ## Features
-- Easy-to-use admin dashboard for managing ads, affiliate links, and upsell offers
-- Automatically injects optimized content into your site
-- Lightweight and compatible with any theme
+- Manage coupons and sponsored content via custom post types
+- Shortcode to display coupons or sponsored posts
+- Admin interface for easy management
 
 ## Installation
-1. Upload the `wp-revenue-booster.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
-2. Activate the plugin from the WordPress admin panel.
-3. Go to the Revenue Booster menu in your admin dashboard to configure settings.
+1. Upload the plugin folder to your `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Use the admin menu to add coupons and sponsored content
 
 ## Setup
-- Enter your ad code (e.g., Google AdSense) in the Ad Code field.
-- Add your affiliate links in the Affiliate Links field.
-- Input your upsell offers in the Upsell Offers field.
-- Save your settings.
+- Go to Revenue Booster in your admin menu to add coupons and sponsored posts
+- Use the shortcode `[revenue_booster type="coupon" count="1"]` or `[revenue_booster type="sponsored" count="1"]` in your posts or pages
 
 ## Usage
-Once configured, the plugin will automatically display your ads, affiliate links, and upsell offers in the most effective locations on your site. Monitor your revenue and adjust your content as needed for optimal results.
+- Add coupons and sponsored content via the admin interface
+- Insert shortcodes where you want them to appear
+- Customize the number of items to display with the `count` attribute
 
-## Support
-For support or feature requests, please contact us at support@revenuelabs.com.
+## License
+GPLv2 or later
