@@ -1,33 +1,32 @@
 # Affiliate Booster Pro
 
-Affiliate Booster Pro is a powerful WordPress plugin designed for affiliate marketers and bloggers who want to create, manage, and display affiliate coupon deals and special discounts with ease to boost affiliate revenue.
+## Description
+Affiliate Booster Pro automatically detects product-related keywords in your WordPress posts and replaces the first occurrence with your affiliate links. It helps you boost affiliate revenue by reducing manual work and ensuring consistent link placement.
 
 ## Features
-
-- Custom post type for managing affiliate coupons
-- Add coupon codes, descriptions, and affiliate URLs
-- Frontend shortcode `[abp_coupons]` to display coupons attractively
-- Tracks user clicks on affiliate coupon links
-- Lightweight JavaScript handles click tracking and redirection
-- Responsive and minimal styling
+- Automatically replaces predefined keywords with affiliate links in posts
+- Simple settings page to customize affiliate URLs per keyword
+- SEO-friendly links with nofollow and noopener attributes
+- Lightweight, single-file plugin for easy installation
 
 ## Installation
-
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory or install via WordPress admin interface if packaged as a zip.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. You will see a new 'Coupons' menu in the WordPress admin sidebar.
+1. Upload `affiliate-booster-pro.php` to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the Plugins menu in WordPress.
+3. Go to **Settings > Affiliate Booster Pro** to customize affiliate URLs.
 
 ## Setup
-
-1. Go to **Coupons > Add New** to create your first coupon.
-2. Enter the coupon title (deal title), description, coupon code, and set the affiliate URL as a custom field named `_abp_affiliate_link`.
-3. Publish the coupon.
+- Keywords are included by default (e.g., 'camera', 'laptop') with example affiliate URLs.
+- Customize URLs per keyword on the settings page to match your affiliate programs.
+- The plugin replaces only the first occurrence of each keyword per post to avoid over-linking.
 
 ## Usage
+- Write your posts naturally mentioning products or keywords.
+- Affiliate Booster Pro auto-inserts affiliate links when displaying posts.
+- Monitor affiliate link performance via your affiliate program dashboards (analytics are planned for future releases).
 
-- Insert the shortcode `[abp_coupons count="5"]` in any post or page to show the latest 5 coupons.
-- Clicking the coupon button tracks the click and opens the affiliate link in a new tab.
+## Support
+For help, please contact the plugin author or submit issues on the plugin repository.
 
----
-
-This plugin can be extended with premium features such as advanced analytics, automatic fetching of deals from affiliate networks, and multi-network integration to increase monetization potential.
+## Changelog
+### 1.0
+- Initial release with auto-link replacement and settings page.
