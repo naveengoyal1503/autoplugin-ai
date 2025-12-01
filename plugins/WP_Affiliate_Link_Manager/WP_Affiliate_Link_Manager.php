@@ -1,93 +1,142 @@
 <?php
 /*
 Plugin Name: WP Affiliate Link Manager
-Description: Automatically convert keywords into affiliate links and manage all links from a single dashboard.
+Description: Manage, track, and cloak affiliate links from your WordPress dashboard.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Affiliate_Link_Manager.php
 */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+// Prevent direct access
+define('ABSPATH') or die('No script kiddies please!');
 
-// Add admin menu
-function wpaflm_admin_menu() {
-    add_menu_page(
-        'Affiliate Link Manager',
-        'Affiliate Links',
-        'manage_options',
-        'wpaflm',
-        'wpaflm_admin_page',
-        'dashicons-admin-links'
+// Register custom post type for affiliate links
+function wp_affiliate_link_manager_cpt() {
+    $args = array(
+        'public' => true,
+        'label'  => 'Affiliate Links',
+        'supports' => array('title'),
+        'has_archive' => true,
+        'show_in_menu' => true,
+        'menu_icon' => 'dashicons-admin-links',
+        'show_in_rest' => true,
+    );
+    register_post_type('wp_affiliate_link', $args);
+}
+add_action('init', 'wp_affiliate_link_manager_cpt');
+
+// Add custom fields to affiliate link post type
+function wp_affiliate_link_manager_meta_box() {
+    add_meta_box(
+        'wp_affiliate_link_manager_meta',
+        'Affiliate Link Details',
+        'wp_affiliate_link_manager_meta_callback',
+        'wp_affiliate_link',
+        'normal',
+        'high'
     );
 }
-add_action('admin_menu', 'wpaflm_admin_menu');
+add_action('add_meta_boxes', 'wp_affiliate_link_manager_meta_box');
 
-// Admin page
-function wpaflm_admin_page() {
-    if (isset($_POST['wpaflm_save_links'])) {
-        $links = array();
-        if (isset($_POST['keyword']) && isset($_POST['url'])) {
-            for ($i = 0; $i < count($_POST['keyword']); $i++) {
-                $links[] = array(
-                    'keyword' => sanitize_text_field($_POST['keyword'][$i]),
-                    'url' => esc_url($_POST['url'][$i])
-                );
-            }
-        }
-        update_option('wpaflm_links', $links);
-    }
-    $links = get_option('wpaflm_links', array());
+function wp_affiliate_link_manager_meta_callback($post) {
+    wp_nonce_field('wp_affiliate_link_manager_meta_nonce', 'wp_affiliate_link_manager_meta_nonce');
+    $url = get_post_meta($post->ID, '_affiliate_url', true);
+    $cloak = get_post_meta($post->ID, '_cloak_link', true);
+    $clicks = get_post_meta($post->ID, '_click_count', true);
+    $clicks = $clicks ? $clicks : 0;
     ?>
-    <div class="wrap">
-        <h1>Affiliate Link Manager</h1>
-        <form method="post">
-            <table class="form-table">
-                <tr>
-                    <th>Keyword</th>
-                    <th>Affiliate URL</th>
-                </tr>
-                <?php for ($i = 0; $i < 10; $i++): ?>
-                <tr>
-                    <td><input type="text" name="keyword[]" value="<?php echo isset($links[$i]['keyword']) ? $links[$i]['keyword'] : ''; ?>" style="width: 100%;" /></td>
-                    <td><input type="url" name="url[]" value="<?php echo isset($links[$i]['url']) ? $links[$i]['url'] : ''; ?>" style="width: 100%;" /></td>
-                </tr>
-                <?php endfor; ?>
-            </table>
-            <p class="submit">
-                <input type="submit" name="wpaflm_save_links" class="button-primary" value="Save Links" />
-            </p>
-        </form>
-    </div>
+    <p>
+        <label for="affiliate_url">Affiliate URL:</label>
+        <input type="url" name="affiliate_url" id="affiliate_url" value="<?php echo esc_url($url); ?>" style="width:100%;" />
+    </p>
+    <p>
+        <label for="cloak_link">
+            <input type="checkbox" name="cloak_link" id="cloak_link" value="1" <?php checked($cloak, 1); ?> />
+            Cloak this link?
+        </label>
+    </p>
+    <p><strong>Clicks:</strong> <?php echo $clicks; ?></p>
     <?php
 }
 
-// Auto-link keywords in content
-function wpaflm_auto_link($content) {
-    $links = get_option('wpaflm_links', array());
-    foreach ($links as $link) {
-        $keyword = $link['keyword'];
-        $url = $link['url'];
-        if (!empty($keyword) && !empty($url)) {
-            $pattern = '/\b' . preg_quote($keyword, '/') . '\b/i';
-            $replacement = '<a href="' . esc_url($url) . '" target="_blank" rel="nofollow">$0</a>';
-            $content = preg_replace($pattern, $replacement, $content);
+function wp_affiliate_link_manager_save_meta($post_id) {
+    if (!isset($_POST['wp_affiliate_link_manager_meta_nonce']) || !wp_verify_nonce($_POST['wp_affiliate_link_manager_meta_nonce'], 'wp_affiliate_link_manager_meta_nonce')) return;
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if (!current_user_can('edit_post', $post_id)) return;
+
+    if (isset($_POST['affiliate_url'])) {
+        update_post_meta($post_id, '_affiliate_url', sanitize_url($_POST['affiliate_url']));
+    }
+    if (isset($_POST['cloak_link'])) {
+        update_post_meta($post_id, '_cloak_link', intval($_POST['cloak_link']));
+    }
+}
+add_action('save_post', 'wp_affiliate_link_manager_save_meta');
+
+// Shortcode to display affiliate link
+function wp_affiliate_link_shortcode($atts) {
+    $atts = shortcode_atts(array('id' => 0), $atts, 'affiliate_link');
+    $post = get_post($atts['id']);
+    if (!$post || $post->post_type !== 'wp_affiliate_link') return '';
+
+    $url = get_post_meta($post->ID, '_affiliate_url', true);
+    $cloak = get_post_meta($post->ID, '_cloak_link', true);
+    $clicks = get_post_meta($post->ID, '_click_count', true);
+    $clicks = $clicks ? $clicks : 0;
+
+    if ($cloak) {
+        $link = home_url('/go/' . $post->post_name);
+    } else {
+        $link = $url;
+    }
+
+    // Increment click count
+    update_post_meta($post->ID, '_click_count', $clicks + 1);
+
+    return '<a href="' . esc_url($link) . '" target="_blank" rel="nofollow">' . esc_html($post->post_title) . '</a>';
+}
+add_shortcode('affiliate_link', 'wp_affiliate_link_shortcode');
+
+// Handle cloaked link redirects
+function wp_affiliate_link_manager_redirect() {
+    if (isset($_GET['go']) && !empty($_GET['go'])) {
+        $slug = sanitize_text_field($_GET['go']);
+        $post = get_page_by_path($slug, OBJECT, 'wp_affiliate_link');
+        if ($post) {
+            $url = get_post_meta($post->ID, '_affiliate_url', true);
+            $clicks = get_post_meta($post->ID, '_click_count', true);
+            $clicks = $clicks ? $clicks : 0;
+            update_post_meta($post->ID, '_click_count', $clicks + 1);
+            wp_redirect($url);
+            exit;
         }
     }
-    return $content;
 }
-add_filter('the_content', 'wpaflm_auto_link');
+add_action('init', 'wp_affiliate_link_manager_redirect');
 
-// Add shortcode for manual linking
-function wpaflm_shortcode($atts) {
-    $atts = shortcode_atts(array(
-        'keyword' => '',
-        'url' => ''
-    ), $atts);
-    if (!empty($atts['keyword']) && !empty($atts['url'])) {
-        return '<a href="' . esc_url($atts['url']) . '" target="_blank" rel="nofollow">' . esc_html($atts['keyword']) . '</a>';
-    }
-    return '';
+// Add rewrite rule for cloaked links
+function wp_affiliate_link_manager_rewrite() {
+    add_rewrite_rule('^go/([^/]+)/?', 'index.php?go=$matches[1]', 'top');
 }
-add_shortcode('wpaflm', 'wpaflm_shortcode');
+add_action('init', 'wp_affiliate_link_manager_rewrite');
+
+// Add query var
+function wp_affiliate_link_manager_query_vars($vars) {
+    $vars[] = 'go';
+    return $vars;
+}
+add_filter('query_vars', 'wp_affiliate_link_manager_query_vars');
+
+// Flush rewrite rules on activation
+function wp_affiliate_link_manager_activation() {
+    wp_affiliate_link_manager_cpt();
+    wp_affiliate_link_manager_rewrite();
+    flush_rewrite_rules();
+}
+register_activation_hook(__FILE__, 'wp_affiliate_link_manager_activation');
+
+// Flush rewrite rules on deactivation
+function wp_affiliate_link_manager_deactivation() {
+    flush_rewrite_rules();
+}
+register_deactivation_hook(__FILE__, 'wp_affiliate_link_manager_deactivation');
