@@ -1,54 +1,39 @@
 # Affiliate Coupon & Deal Booster
 
-A WordPress plugin that dynamically creates a coupon and deal section to boost your affiliate marketing revenue by displaying attractive coupon codes and affiliate links.
+## Description
+Affiliate Coupon & Deal Booster helps affiliate marketers and bloggers increase conversions by managing exclusive coupon codes and deals easily within WordPress. Display active coupons on your site with a simple shortcode.
 
 ## Features
-
-- Simple admin interface to add coupons/deals using JSON
-- Shortcode `[acdb_coupons]` to display coupon sections anywhere
-- Widget support to showcase deals in sidebars
-- Responsive and clean design for coupons
-- External affiliate link integration with nofollow
+- Create and manage unlimited affiliate coupons using a clean JSON interface
+- Display coupons anywhere using `[affiliate_coupons]` shortcode
+- Automatically hides expired coupons
+- Mobile-responsive coupon layout
+- Simple admin page for adding/editing coupons
 
 ## Installation
-
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory.
+1. Upload the plugin PHP file to your `/wp-content/plugins/` directory or install via WordPress admin.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Coupon Booster** to add your coupons in JSON format.
+3. Go to 'Affiliate Coupons' menu in WordPress admin to add your affiliate coupons in JSON format.
 
 ## Setup
-
-- Add coupons in this JSON format (copy this example for your editing):
+Prepare your coupons as a JSON array with fields: `title`, `code`, `url`, `description`, and `expiry` (format YYYY-MM-DD). Example:
 
 
 [
   {
-    "title": "10% off Shoes",
-    "code": "SHOES10",
-    "url": "https://youraffiliate.link/product"
-  },
-  {
-    "title": "Free Shipping on Orders $50+",
-    "code": "FREESHIP",
-    "url": "https://youraffiliate.link/shipping"
+    "title": "20% OFF",
+    "code": "SAVE20",
+    "url": "https://affiliate.example.com/product?code=SAVE20",
+    "description": "Save 20% on selected products",
+    "expiry": "2026-12-31"
   }
 ]
 
 
-- Save changes.
+Paste this JSON in the plugin settings page under 'Affiliate Coupons'. Save changes.
 
 ## Usage
+Add the shortcode `[affiliate_coupons]` in any post or page to display the active affiliate coupons with their codes and corresponding links.
 
-- Use the shortcode `[acdb_coupons]` in posts, pages, or widgets to display the coupon list.
-- Add the **Affiliate Coupons Widget** to your sidebar or footer to show deals dynamically.
-
-## Monetization Model
-
-This plugin can be distributed as freemium:
-
-- Free version: Basic coupon input, shortcode, and widget display
-- Premium version (future): Advanced analytics, multiple affiliate networks integration, priority support
-
-## Support
-
-For bug reports and feature requests, please reach out to the plugin author via the WordPress plugin repository support or your website contact form.
+## Monetization
+Offer the plugin free for basic coupon management, then develop premium add-ons for automated coupon imports from affiliate networks, detailed analytics tracking, and white-label branding to generate revenue.
