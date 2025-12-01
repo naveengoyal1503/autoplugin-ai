@@ -1,28 +1,27 @@
 # WP Paywall Pro
 
-Monetize your WordPress content with flexible paywalls, subscriptions, and micropayments.
+Monetize your WordPress content with flexible paywall options for subscriptions, one-time payments, and affiliate links.
 
 ## Features
-- Easy paywall setup for posts and pages
-- Customizable paywall messages
-- Shortcode support for selective paywalls
-- Admin settings panel
-- CSS and JS customization
+- Lock posts, pages, or custom content behind a paywall
+- Support for subscription and one-time payment models
+- Affiliate link integration
+- Admin dashboard for managing paywall products
+- Easy shortcode integration
 
 ## Installation
-1. Upload the plugin folder to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Paywall Pro to configure your paywall settings.
+1. Upload the plugin folder to `/wp-content/plugins/`
+2. Activate the plugin from the WordPress admin
+3. Go to **Paywall Pro** in the admin menu to configure products
 
 ## Setup
-- Enable/disable paywall for posts in the admin panel.
-- Customize the paywall message.
-- Use the `[paywall message="Your message"]` shortcode to add paywalls to any content.
+- Create a new paywall product in the admin dashboard
+- Use the shortcode `[paywall price="9.99" type="subscription" product_id="123"]Your locked content[/paywall]` in any post or page
 
 ## Usage
-- The paywall will automatically apply to all posts if enabled.
-- Use the shortcode for more granular control.
-- Customize the look and feel with the provided CSS and JS files.
+- Customize price, type (subscription, one-time, affiliate), and product ID
+- The paywall will show a payment button to unlock content
+- After payment, the content is revealed
 
-## Notes
-- For advanced features like subscriptions and micropayments, check out our premium add-ons.
+## Support
+For help or feature requests, visit our support page.
