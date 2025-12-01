@@ -1,29 +1,25 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by rotating and optimizing affiliate links, ads, and sponsored content.
+Automatically optimize ad placement, affiliate links, and upsell offers to maximize revenue on any WordPress site.
 
 ## Features
-- Rotates affiliate links, ad codes, and sponsored content automatically
-- Easy-to-use admin interface for managing all revenue sources
-- Lightweight and non-intrusive
-- Supports unlimited affiliate links, ad codes, and sponsored content
+- Automatically injects ad code after content
+- Adds affiliate links to posts
+- Displays customizable upsell text
+- Simple admin interface for configuration
 
 ## Installation
-1. Upload the `wp-revenue-booster` folder to the `/wp-content/plugins/` directory
+1. Upload the plugin file to your WordPress plugins directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Revenue Booster to configure your revenue sources
+3. Go to Settings > Revenue Booster to configure your ad code, affiliate link, and upsell text
 
 ## Setup
-- Enable the plugin in the settings
-- Add your affiliate links, ad codes, and sponsored content
-- The plugin will automatically rotate and display content on your site
+- Enter your ad code (HTML) in the Ad Code field
+- Add your affiliate link in the Affiliate Link field
+- Enter your upsell text in the Upsell Text field
 
 ## Usage
-- The plugin outputs a single revenue element (affiliate link, ad, or sponsored content) in the footer of your site
-- All content is rotated randomly for each page view
-- Manage and update your revenue sources from the admin panel
+Once configured, the plugin will automatically add your ad code, affiliate link, and upsell text to the end of each post. Customize the settings as needed to optimize your revenue.
 
-## Notes
-- For best results, add multiple revenue sources to maximize conversion opportunities
-- The plugin is compatible with all WordPress themes
-- No additional configuration required for basic use
+## License
+GPL2
