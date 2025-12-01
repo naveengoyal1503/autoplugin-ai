@@ -5,157 +5,137 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: AffiliateLink Optimizer
- * Description: Automate affiliate link cloaking, tracking, and optimization to boost conversions.
+ * Description: Auto-tracks, shortens, and optimizes affiliate links with reports to boost affiliate revenue.
  * Version: 1.0
- * Author: OpenAI
- * License: GPLv2 or later
+ * Author: YourName
  */
 
-if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
-}
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class AffiliateLinkOptimizer {
     private $option_name = 'alo_affiliate_links';
 
-    public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_page'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_filter('the_content', array($this, 'auto_cloak_affiliate_links'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_tracking_script'));
-        add_action('wp_ajax_alo_track_click', array($this, 'ajax_track_click'));
-        add_action('wp_ajax_nopriv_alo_track_click', array($this, 'ajax_track_click'));
+    public function __construct(){
+        add_action('init', array($this, 'handle_redirect'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_post_alo_add_link', array($this, 'add_link'));
+        add_action('admin_post_alo_delete_link', array($this, 'delete_link'));
     }
 
-    public function add_admin_page() {
-        add_menu_page(
-            'AffiliateLink Optimizer',
-            'AffiliateLink Optimizer',
-            'manage_options',
-            'affiliate-link-optimizer',
-            array($this, 'admin_page_html'),
-            'dashicons-admin-links'
-        );
-    }
-
-    public function register_settings() {
-        register_setting('alo_settings_group', $this->option_name, array($this, 'validate_links'));
-    }
-
-    public function validate_links($input) {
-        if (!is_array($input)) {
-            return array();
-        }
-        $output = array();
-        foreach ($input as $key => $link) {
-            $output[sanitize_text_field($key)] = esc_url_raw($link);
-        }
-        return $output;
-    }
-
-    public function admin_page_html() {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
+    public function get_links(){
         $links = get_option($this->option_name, array());
+        if (!is_array($links)) $links = array();
+        return $links;
+    }
+
+    public function save_links($links){
+        update_option($this->option_name, $links);
+    }
+
+    // Handle affiliate redirect
+    public function handle_redirect(){
+        if (!isset($_GET['alo'])) return;
+        $key = sanitize_text_field($_GET['alo']);
+        $links = $this->get_links();
+        if (!isset($links[$key])) {
+            wp_die('Invalid affiliate link');
+        }
+        $links[$key]['clicks'] = isset($links[$key]['clicks']) ? $links[$key]['clicks'] + 1 : 1;
+        $this->save_links($links);
+        wp_redirect(esc_url_raw($links[$key]['target_url']), 302);
+        exit;
+    }
+
+    // Admin menu
+    public function admin_menu(){
+        add_menu_page('AffiliateLink Optimizer', 'AffiliateLink Optimizer', 'manage_options', 'affiliate-link-optimizer', array($this, 'admin_page'), 'dashicons-admin-links', 80);
+    }
+
+    public function admin_page(){
+        if (!current_user_can('manage_options')) return;
+        $links = $this->get_links();
         ?>
         <div class="wrap">
-            <h1>AffiliateLink Optimizer Settings</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('alo_settings_group'); ?>
-                <table class="form-table" id="alo-affiliate-links-table">
-                    <thead>
-                        <tr><th>Link Name</th><th>Affiliate URL</th><th>Action</th></tr>
-                    </thead>
-                    <tbody>
-                    <?php if ($links): ?>
-                        <?php foreach ($links as $name => $url): ?>
-                            <tr>
-                                <td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[<?php echo esc_attr($name); ?>][name]" value="<?php echo esc_attr($name); ?>" readonly /></td>
-                                <td><input type="url" name="<?php echo esc_attr($this->option_name); ?>[<?php echo esc_attr($name); ?>]" value="<?php echo esc_url($url); ?>" required /></td>
-                                <td><button type="button" class="button alo-remove-link">Remove</button></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-                <button type="button" class="button" id="alo-add-link">Add New Link</button>
-                <?php submit_button('Save Links'); ?>
-            </form>
+          <h1>AffiliateLink Optimizer</h1>
+          <h2>Add New Affiliate Link</h2>
+          <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+            <input type="hidden" name="action" value="alo_add_link">
+            <?php wp_nonce_field('alo_add_link_verify'); ?>
+            <table class="form-table">
+              <tr>
+                <th><label for="name">Name (identifier)</label></th>
+                <td><input type="text" name="name" id="name" required></td>
+              </tr>
+              <tr>
+                <th><label for="url">Affiliate URL</label></th>
+                <td><input type="url" name="url" id="url" required></td>
+              </tr>
+            </table>
+            <?php submit_button('Add Link'); ?>
+          </form>
+          <h2>Managed Affiliate Links</h2>
+          <table class="wp-list-table widefat fixed striped">
+            <thead><tr><th>Name</th><th>Affiliate URL</th><th>Clicks</th><th>Short Link</th><th>Actions</th></tr></thead>
+            <tbody>
+              <?php if(empty($links)){ ?>
+                <tr><td colspan="5">No affiliate links added.</td></tr>
+              <?php } else {
+                foreach ($links as $key => $link) { ?>
+                  <tr>
+                    <td><?php echo esc_html($key); ?></td>
+                    <td><a href="<?php echo esc_url($link['target_url']); ?>" target="_blank"><?php echo esc_html($link['target_url']); ?></a></td>
+                    <td><?php echo isset($link['clicks']) ? intval($link['clicks']) : 0; ?></td>
+                    <td><input type="text" readonly value="<?php echo esc_url(home_url('?alo=' . urlencode($key))); ?>" style="width:100%;"></td>
+                    <td>
+                      <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" onsubmit="return confirm('Delete this link?');">
+                        <input type="hidden" name="action" value="alo_delete_link">
+                        <?php wp_nonce_field('alo_delete_link_verify'); ?>
+                        <input type="hidden" name="name" value="<?php echo esc_attr($key); ?>">
+                        <input type="submit" class="button button-danger" value="Delete">
+                      </form>
+                    </td>
+                  </tr>
+                <?php } } ?>
+            </tbody>
+          </table>
         </div>
-        <script>
-        document.getElementById('alo-add-link').addEventListener('click', function() {
-            let tableBody = document.querySelector('#alo-affiliate-links-table tbody');
-            let timestamp = Date.now();
-            let row = document.createElement('tr');
-            row.innerHTML =
-                '<td><input type="text" name="<?php echo esc_js($this->option_name); ?>['+timestamp+'][name]" value="" required /></td>' +
-                '<td><input type="url" name="<?php echo esc_js($this->option_name); ?>['+timestamp+']" value="" required /></td>' +
-                '<td><button type="button" class="button alo-remove-link">Remove</button></td>';
-            tableBody.appendChild(row);
-        });
-        document.querySelector('#alo-affiliate-links-table').addEventListener('click', function(e) {
-            if (e.target && e.target.classList.contains('alo-remove-link')) {
-                e.target.closest('tr').remove();
-            }
-        });
-        </script>
         <?php
     }
 
-    public function auto_cloak_affiliate_links($content) {
-        $links = get_option($this->option_name, array());
-        if (!$links) return $content;
-
-        foreach ($links as $name => $url) {
-            // Cloak the URL
-            $cloaked_url = esc_url(add_query_arg(array('alo' => rawurlencode($name))));
-
-            // Replace all occurrences of the raw affiliate URL with the cloaked URL
-            $pattern = '/'.preg_quote($url, '/').'/i';
-            $content = preg_replace($pattern, $cloaked_url, $content);
+    // Add new link handler
+    public function add_link(){
+        if (!current_user_can('manage_options')) wp_die('Unauthorized');
+        check_admin_referer('alo_add_link_verify');
+        $name = sanitize_key($_POST['name']);
+        $url = esc_url_raw($_POST['url']);
+        if (!$name || !$url) {
+            wp_redirect(admin_url('admin.php?page=affiliate-link-optimizer&error=invalid_input'));
+            exit;
         }
-        return $content;
+        $links = $this->get_links();
+        if (isset($links[$name])) {
+            wp_redirect(admin_url('admin.php?page=affiliate-link-optimizer&error=name_exists'));
+            exit;
+        }
+        $links[$name] = array('target_url' => $url, 'clicks' => 0);
+        $this->save_links($links);
+        wp_redirect(admin_url('admin.php?page=affiliate-link-optimizer&success=1'));
+        exit;
     }
 
-    public function enqueue_tracking_script() {
-        if (is_singular()) {
-            wp_enqueue_script('alo-tracking', plugin_dir_url(__FILE__).'tracking.js', array('jquery'), '1.0', true);
-            wp_localize_script('alo-tracking', 'ALO_Ajax', array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('alo_nonce'),
-            ));
+    // Delete link handler
+    public function delete_link(){
+        if (!current_user_can('manage_options')) wp_die('Unauthorized');
+        check_admin_referer('alo_delete_link_verify');
+        $name = sanitize_key($_POST['name']);
+        $links = $this->get_links();
+        if (isset($links[$name])) {
+            unset($links[$name]);
+            $this->save_links($links);
         }
+        wp_redirect(admin_url('admin.php?page=affiliate-link-optimizer&deleted=1'));
+        exit;
     }
-
-    public function ajax_track_click() {
-        check_ajax_referer('alo_nonce', 'nonce');
-        $link_name = isset($_POST['link_name']) ? sanitize_text_field($_POST['link_name']) : '';
-        if (!$link_name) {
-            wp_send_json_error('Invalid link name');
-        }
-        // For simplicity, store counts in options - in real plugin store in custom tables
-        $counts = get_option('alo_click_counts', array());
-        if (!isset($counts[$link_name])) {
-            $counts[$link_name] = 0;
-        }
-        $counts[$link_name]++;
-        update_option('alo_click_counts', $counts);
-        wp_send_json_success(array('count' => $counts[$link_name]));
-    }
-
 }
 
 new AffiliateLinkOptimizer();
-
-// Handle redirect of cloaked URLs
-add_action('template_redirect', function() {
-    if (isset($_GET['alo'])) {
-        $name = sanitize_text_field($_GET['alo']);
-        $links = get_option('alo_affiliate_links', array());
-        if (isset($links[$name])) {
-            wp_redirect(esc_url_raw($links[$name]), 301);
-            exit;
-        }
-    }
-});
