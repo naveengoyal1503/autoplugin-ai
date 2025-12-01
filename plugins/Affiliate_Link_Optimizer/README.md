@@ -1,27 +1,31 @@
 # Affiliate Link Optimizer
 
-## Description
-Affiliate Link Optimizer is a WordPress plugin that automatically detects affiliate URLs within your post content, cloaks them under your own domain for branding and tracking purposes, and improves click-through rates. It supports major affiliate networks like Amazon, ClickBank, and ShareASale.
+Affiliate Link Optimizer automatically detects affiliate links in your WordPress content, cloaks them for branding and tracking, and optimizes them with nofollow and open-in-new-tab attributes to improve conversions.
 
 ## Features
-- Automatically detects common affiliate URLs in your posts
-- Cloaks affiliate links with clean URLs on your own domain
-- Redirects cloaked URLs to the original affiliate link
-- Supports Amazon, ClickBank, ShareASale by default
-- Lightweight and self-contained plugin
-- Freemium-ready for future premium analytics and link rotation
+
+- Automatically detects major affiliate domains (Amazon, eBay, ShareASale) in post content
+- Cloaks affiliate links through your own domain for brand trust
+- Adds `nofollow` and `sponsored` rel attributes for SEO compliance
+- Opens affiliate links in a new tab to improve user experience
+- Admin settings page to customize cloaking base URL
 
 ## Installation
-1. Download the plugin file.
-2. Upload the `affiliate-link-optimizer.php` file to your `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+
+1. Upload `affiliate-link-optimizer.php` to your `/wp-content/plugins/` directory
+2. Activate the plugin through the WordPress 'Plugins' menu
+3. Navigate to Settings > Affiliate Link Optimizer to configure the cloaking base URL (default is yoursite.com/go/)
 
 ## Setup
-No configuration needed to start. Simply add affiliate links from supported networks in your posts.
+
+Ensure you have a page or URL path set up to handle cloaked links, typically `/go/` on your site. The plugin redirects cloaked URLs to the original affiliate URL seamlessly.
 
 ## Usage
-- Include affiliate links as usual in your post or page content.
-- The plugin will automatically convert them into cloaked URLs.
-- Use the cloaked URLs in your content to improve branding and tracking.
 
-*For advanced features like detailed click analytics and link rotation, upgrades may be available in premium versions.*
+Just write your posts and include your affiliate links as usual. The plugin will automatically detect and cloak them on display.
+
+You can add more affiliate domains by modifying the plugin code's `$affiliate_domains` array if needed.
+
+---
+
+This plugin uses a freemium model; the free version covers basic link cloaking and SEO optimization. Premium features planned include advanced analytics, A/B testing for affiliate links, and auto-updating of affiliate coupons and deals.
