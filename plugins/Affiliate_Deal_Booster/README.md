@@ -1,29 +1,48 @@
 # Affiliate Deal Booster
 
-Affiliate Deal Booster is a WordPress plugin designed to help affiliate marketers and bloggers easily create, manage, and display dynamic coupon and deal listings with affiliate links to boost commission revenue.
+**Version:** 1.0
+
+## Description
+Affiliate Deal Booster is a WordPress plugin designed to help affiliate marketers and bloggers effortlessly aggregate, display, and track coupon deals from affiliate programs on their sites. It boosts affiliate commissions by promoting validated, expiring discounts in an attractive, easy-to-use interface.
 
 ## Features
-
-- Add and manage affiliate deals and coupons via admin page
-- Automatically hide expired deals
-- Display deals using a shortcode `[adb_deals]` anywhere on your site
-- Widget available to show current deals in sidebars or widget areas
-- Clean, simple admin interface
+- Easy JSON-based coupon input in WordPress admin.
+- Frontend shortcode `[aff_deals]` to display active coupons with discounts and expiration.
+- Automatic expiration check to filter out old deals.
+- Click tracking with anonymous count analytics.
+- Responsive, minimal styling for seamless theme integration.
+- Lightweight JavaScript to track clicks without impacting page load.
 
 ## Installation
-
-1. Upload the plugin file to your `/wp-content/plugins/` directory
-2. Activate the plugin through the WordPress admin dashboard
-3. Go to the "Affiliate Deals" menu in your dashboard to add deals
+1. Upload the plugin PHP file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to the 'Affiliate Deals' admin menu.
+4. Enter your affiliate coupons in JSON format (see example).
+5. Save changes.
 
 ## Setup
+- The JSON format should be an array of objects, each object representing a coupon with the following keys:
+  - `id`: Unique string identifier for the coupon.
+  - `title`: Display title for the coupon.
+  - `url`: Affiliate tracking URL.
+  - `discount`: Visible discount off (e.g., "20%", "$10 off").
+  - `expiry`: Expiration date in YYYY-MM-DD (optional).
 
-- To add a deal, fill in the title, description, affiliate URL, and optional expiration date
-- Save deals; they will appear on your site where the shortcode or widget is placed
+Example JSON:
+
+[
+  {"id": "deal1", "title": "10% off Shoes", "url": "https://affiliate.com/track/deal1", "discount": "10%", "expiry": "2026-12-31"}
+]
+
 
 ## Usage
+- Insert the shortcode `[aff_deals]` into any page or post where you want the coupons displayed.
+- Coupons past their expiry date will be hidden automatically.
+- Track affiliate link clicks through plugin's click database (for later enhancement of analytics UI).
 
-- Insert `[adb_deals]` shortcode in any page, post, or custom post type to display deals list
-- Use the "Affiliate Deal Booster Widget" in your widgets area to display deals in sidebars or footers
+## Changelog
+### 1.0
+- Initial release with coupon aggregation, display, and click tracking.
 
-By leveraging this plugin, site owners can convert their content traffic into affiliate revenue by showcasing attractive, time-sensitive deals with tracked affiliate links.
+## Support
+For support and feature requests, please contact the author.
