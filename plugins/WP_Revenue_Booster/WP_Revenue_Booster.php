@@ -1,38 +1,22 @@
+<?php
 /*
+Plugin Name: WP Revenue Booster
+Description: Automatically optimizes ad placement, affiliate links, and coupon offers to maximize revenue.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
-<?php
-/**
- * Plugin Name: WP Revenue Booster
- * Description: Maximize revenue by rotating and optimizing monetization methods based on user behavior.
- * Version: 1.0
- * Author: WP Revenue Team
- */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_footer', array($this, 'inject_monetization_content'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('wp_head', array($this, 'inject_optimized_ads'));
+        add_action('the_content', array($this, 'inject_affiliate_links'));
+        add_action('wp_footer', array($this, 'inject_coupon_offers'));
     }
 
-    public function init() {
-        // Register settings
-        register_setting('wp_revenue_booster', 'wp_revenue_booster_settings');
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('wp-revenue-booster', plugins_url('js/script.js', __FILE__), array('jquery'), '1.0', true);
-        wp_localize_script('wp-revenue-booster', 'wp_revenue_booster', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wp_revenue_booster_nonce')
-        ));
-    }
-
-    public function admin_menu() {
+    public function add_admin_menu() {
         add_options_page(
             'WP Revenue Booster',
             'Revenue Booster',
@@ -43,76 +27,72 @@ class WP_Revenue_Booster {
     }
 
     public function admin_page() {
-        $settings = get_option('wp_revenue_booster_settings', array());
+        if (!current_user_can('manage_options')) return;
+        if (isset($_POST['save_settings'])) {
+            update_option('wp_revenue_booster_ads', $_POST['ads']);
+            update_option('wp_revenue_booster_affiliates', $_POST['affiliates']);
+            update_option('wp_revenue_booster_coupons', $_POST['coupons']);
+            echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
+        }
+        $ads = get_option('wp_revenue_booster_ads', '');
+        $affiliates = get_option('wp_revenue_booster_affiliates', '');
+        $coupons = get_option('wp_revenue_booster_coupons', '');
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('wp_revenue_booster'); ?>
+            <form method="post">
                 <table class="form-table">
                     <tr>
-                        <th scope="row">Enable Ad Rotation</th>
-                        <td><input name="wp_revenue_booster_settings[enable_ads]" type="checkbox" value="1" <?php checked(isset($settings['enable_ads']) ? $settings['enable_ads'] : 0, 1); ?> /></td>
+                        <th><label>Ad Code</label></th>
+                        <td><textarea name="ads" rows="5" cols="50"><?php echo esc_textarea($ads); ?></textarea></td>
                     </tr>
                     <tr>
-                        <th scope="row">Enable Affiliate Rotation</th>
-                        <td><input name="wp_revenue_booster_settings[enable_affiliate]" type="checkbox" value="1" <?php checked(isset($settings['enable_affiliate']) ? $settings['enable_affiliate'] : 0, 1); ?> /></td>
+                        <th><label>Affiliate Links (JSON)</label></th>
+                        <td><textarea name="affiliates" rows="5" cols="50"><?php echo esc_textarea($affiliates); ?></textarea></td>
                     </tr>
                     <tr>
-                        <th scope="row">Enable Premium Content</th>
-                        <td><input name="wp_revenue_booster_settings[enable_premium]" type="checkbox" value="1" <?php checked(isset($settings['enable_premium']) ? $settings['enable_premium'] : 0, 1); ?> /></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Ad Code</th>
-                        <td><textarea name="wp_revenue_booster_settings[ad_code]" rows="5" cols="50"><?php echo esc_textarea(isset($settings['ad_code']) ? $settings['ad_code'] : ''); ?></textarea></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Affiliate Link</th>
-                        <td><input name="wp_revenue_booster_settings[affiliate_link]" type="text" value="<?php echo esc_attr(isset($settings['affiliate_link']) ? $settings['affiliate_link'] : ''); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Premium Content Message</th>
-                        <td><input name="wp_revenue_booster_settings[premium_message]" type="text" value="<?php echo esc_attr(isset($settings['premium_message']) ? $settings['premium_message'] : ''); ?>" /></td>
+                        <th><label>Coupons (JSON)</label></th>
+                        <td><textarea name="coupons" rows="5" cols="50"><?php echo esc_textarea($coupons); ?></textarea></td>
                     </tr>
                 </table>
-                <?php submit_button(); ?>
+                <input type="submit" name="save_settings" class="button button-primary" value="Save Settings">
             </form>
         </div>
         <?php
     }
 
-    public function inject_monetization_content() {
-        $settings = get_option('wp_revenue_booster_settings', array());
-        if (empty($settings)) return;
-
-        $method = $this->get_random_method($settings);
-        switch ($method) {
-            case 'ads':
-                if (!empty($settings['ad_code'])) {
-                    echo '<div class="wp-revenue-booster-ad">' . $settings['ad_code'] . '</div>';
-                }
-                break;
-            case 'affiliate':
-                if (!empty($settings['affiliate_link'])) {
-                    echo '<div class="wp-revenue-booster-affiliate"><a href="' . esc_url($settings['affiliate_link']) . '" target="_blank">Check this out!</a></div>';
-                }
-                break;
-            case 'premium':
-                if (!empty($settings['premium_message'])) {
-                    echo '<div class="wp-revenue-booster-premium">' . esc_html($settings['premium_message']) . '</div>';
-                }
-                break;
+    public function inject_optimized_ads() {
+        $ads = get_option('wp_revenue_booster_ads', '');
+        if (!empty($ads)) {
+            echo $ads;
         }
     }
 
-    private function get_random_method($settings) {
-        $methods = array();
-        if (!empty($settings['enable_ads'])) $methods[] = 'ads';
-        if (!empty($settings['enable_affiliate'])) $methods[] = 'affiliate';
-        if (!empty($settings['enable_premium'])) $methods[] = 'premium';
+    public function inject_affiliate_links($content) {
+        $affiliates = get_option('wp_revenue_booster_affiliates', '');
+        if (!empty($affiliates)) {
+            $links = json_decode($affiliates, true);
+            if (is_array($links)) {
+                foreach ($links as $keyword => $url) {
+                    $content = str_replace($keyword, '<a href="' . esc_url($url) . '" target="_blank">' . $keyword . '</a>', $content);
+                }
+            }
+        }
+        return $content;
+    }
 
-        if (empty($methods)) return false;
-        return $methods[array_rand($methods)];
+    public function inject_coupon_offers() {
+        $coupons = get_option('wp_revenue_booster_coupons', '');
+        if (!empty($coupons)) {
+            $offers = json_decode($coupons, true);
+            if (is_array($offers)) {
+                echo '<div class="wp-revenue-booster-coupons"><h3>Special Offers</h3><ul>';
+                foreach ($offers as $offer) {
+                    echo '<li><a href="' . esc_url($offer['url']) . '" target="_blank">' . esc_html($offer['title']) . '</a>: ' . esc_html($offer['code']) . '</li>';
+                }
+                echo '</ul></div>';
+            }
+        }
     }
 }
 
