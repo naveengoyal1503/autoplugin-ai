@@ -1,134 +1,227 @@
+<?php
 /*
+Plugin Name: AffiliateCoupon Booster
+Description: Automates affiliate coupon deal management with personalized notifications.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=AffiliateCoupon_Booster.php
 */
-<?php
-/**
- * Plugin Name: AffiliateCoupon Booster
- * Description: Curates and displays affiliate coupons with expiration countdowns and conversion tracking.
- * Version: 1.0
- * Author: PluginDev
- */
 
 if (!defined('ABSPATH')) exit;
 
 class AffiliateCouponBooster {
+    private $option_name = 'affcouponbooster_coupons';
 
     public function __construct() {
-        add_shortcode('affiliate_coupons', array($this, 'render_coupons'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
-        add_action('wp_ajax_acb_track_click', array($this, 'track_click')); 
-        add_action('wp_ajax_nopriv_acb_track_click', array($this, 'track_click'));
+        add_action('admin_menu', array($this, 'add_admin_page'));
+        add_action('admin_post_save_coupon', array($this, 'save_coupon'));
+        add_shortcode('affcouponbooster', array($this, 'display_coupons'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_footer', array($this, 'show_popup'));
+        add_action('wp_ajax_affcoupon_cloak', array($this, 'handle_cloak')); 
+        add_action('wp_ajax_nopriv_affcoupon_cloak', array($this, 'handle_cloak'));
     }
 
-    public function enqueue_assets() {
-        wp_enqueue_style('acb-style', plugin_dir_url(__FILE__) . 'style.css');
-        wp_enqueue_script('acb-script', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), false, true);
-        wp_localize_script('acb-script', 'acb_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('acb_nonce')
-        ));
+    public function add_admin_page() {
+        add_menu_page('AffiliateCoupon Booster', 'AffiliateCoupon Booster', 'manage_options', 'affcouponbooster', array($this, 'admin_page'), 'dashicons-tickets-alt');
     }
 
-    private function get_coupons() {
-        // For demo, static coupons
-        return array(
-            array('id'=>1, 'title'=>'Save 20% on Shoes', 'code'=>'SHOE20', 'url'=>'https://example.com/shoes?aff=123', 'expiry'=>'2025-12-10'),
-            array('id'=>2, 'title'=>'30% Off Electronics', 'code'=>'ELEC30', 'url'=>'https://example.com/electronics?aff=123', 'expiry'=>'2025-12-05'),
-            array('id'=>3, 'title'=>'Free Shipping on Orders $50+', 'code'=>'FREESHIP', 'url'=>'https://example.com/freeship?aff=123', 'expiry'=>'2025-12-20')
-        );
-    }
+    public function admin_page() {
+        if (!current_user_can('manage_options')) { wp_die('Permission denied.'); }
 
-    public function render_coupons() {
-        $coupons = $this->get_coupons();
-        ob_start();
-        echo '<div class="acb-coupons-container">';
-        foreach ($coupons as $coupon) {
-            $expiry = strtotime($coupon['expiry']);
-            $now = current_time('timestamp');
-            $days_left = max(0, ceil(($expiry - $now) / DAY_IN_SECONDS));
-            echo '<div class="acb-coupon" data-coupon-id="' . esc_attr($coupon['id']) . '">';
-            echo '<h3>' . esc_html($coupon['title']) . '</h3>';
-            echo '<p>Code: <strong>' . esc_html($coupon['code']) . '</strong></p>';
-            if ($days_left > 0) {
-                echo '<p>Expires in <span class="acb-days-left" data-expiry="'.esc_attr($coupon['expiry']).'">' . $days_left . ' days</span></p>';
-            } else {
-                echo '<p class="acb-expired">Expired</p>';
+        $coupons = get_option($this->option_name, array());
+        $edit_coupon = null;
+        if (isset($_GET['edit'])) {
+            $id = sanitize_text_field($_GET['edit']);
+            foreach ($coupons as $coupon) {
+                if ($coupon['id'] === $id) {
+                    $edit_coupon = $coupon;
+                    break;
+                }
             }
-            echo '<a href="#" class="acb-use-coupon" data-url="' . esc_url($coupon['url']) . '">Use Coupon</a>';
-            echo '</div>';
         }
-        echo '</div>';
-        return ob_get_clean();
+        ?>
+        <div class='wrap'>
+            <h1>AffiliateCoupon Booster Coupons</h1>
+            <form method='post' action='<?php echo admin_url('admin-post.php'); ?>'>
+                <input type='hidden' name='action' value='save_coupon'>
+                <input type='hidden' name='id' value='<?php echo esc_attr($edit_coupon['id'] ?? ''); ?>'>
+                <?php wp_nonce_field('affcouponbooster_save_coupon'); ?>
+                <table class='form-table'>
+                    <tr><th><label for='title'>Title</label></th><td><input type='text' id='title' name='title' required class='regular-text' value='<?php echo esc_attr($edit_coupon['title'] ?? ''); ?>'></td></tr>
+                    <tr><th><label for='description'>Description</label></th><td><textarea id='description' name='description' class='large-text' rows='3'><?php echo esc_textarea($edit_coupon['description'] ?? ''); ?></textarea></td></tr>
+                    <tr><th><label for='affiliate_url'>Affiliate URL</label></th><td><input type='url' id='affiliate_url' name='affiliate_url' required class='regular-text' value='<?php echo esc_url($edit_coupon['affiliate_url'] ?? ''); ?>'></td></tr>
+                    <tr><th><label for='code'>Coupon Code</label></th><td><input type='text' id='code' name='code' required class='regular-text' value='<?php echo esc_attr($edit_coupon['code'] ?? ''); ?>'></td></tr>
+                    <tr><th><label for='start_date'>Start Date</label></th><td><input type='date' id='start_date' name='start_date' value='<?php echo esc_attr($edit_coupon['start_date'] ?? ''); ?>'></td></tr>
+                    <tr><th><label for='end_date'>End Date</label></th><td><input type='date' id='end_date' name='end_date' value='<?php echo esc_attr($edit_coupon['end_date'] ?? ''); ?>'></td></tr>
+                    <tr><th><label for='popup_message'>Popup Message</label></th><td><textarea id='popup_message' name='popup_message' class='large-text' rows='2'><?php echo esc_textarea($edit_coupon['popup_message'] ?? ''); ?></textarea><br><small>Message shown in discount popup.</small></td></tr>
+                </table>
+                <?php submit_button($edit_coupon ? 'Update Coupon' : 'Add Coupon'); ?>
+            </form>
+
+            <h2>Existing Coupons</h2>
+            <table class='wp-list-table widefat fixed striped'>
+                <thead><tr><th>Title</th><th>Code</th><th>Validity</th><th>Actions</th></tr></thead><tbody>
+                <?php foreach ($coupons as $coupon) :
+                    $id = $coupon['id'];
+                    $validity = ($coupon['start_date'] ?? '') . ' to ' . ($coupon['end_date'] ?? '');
+                ?>
+                <tr>
+                    <td><?php echo esc_html($coupon['title']); ?></td>
+                    <td><?php echo esc_html($coupon['code']); ?></td>
+                    <td><?php echo esc_html($validity); ?></td>
+                    <td><a href='<?php echo admin_url('admin.php?page=affcouponbooster&edit=' . urlencode($id)); ?>'>Edit</a></td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
     }
 
-    public function track_click() {
-        check_ajax_referer('acb_nonce', 'nonce');
-        $coupon_id = intval($_POST['coupon_id']);
-        if ($coupon_id <= 0) {
-            wp_send_json_error('Invalid coupon ID');
+    public function save_coupon() {
+        if (!current_user_can('manage_options') || !check_admin_referer('affcouponbooster_save_coupon')) {
+            wp_die('Permission denied or nonce check failed.');
         }
-        $count_key = 'acb_coupon_clicks_' . $coupon_id;
-        $count = get_option($count_key, 0);
-        update_option($count_key, $count + 1);
-        wp_send_json_success('Click tracked');
+
+        $coupons = get_option($this->option_name, array());
+        $id = sanitize_text_field($_POST['id'] ?? '');
+        $title = sanitize_text_field($_POST['title']);
+        $description = sanitize_textarea_field($_POST['description']);
+        $affiliate_url = esc_url_raw($_POST['affiliate_url']);
+        $code = sanitize_text_field($_POST['code']);
+        $start_date = sanitize_text_field($_POST['start_date']);
+        $end_date = sanitize_text_field($_POST['end_date']);
+        $popup_message = sanitize_textarea_field($_POST['popup_message']);
+
+        if ($id) {
+            foreach ($coupons as &$coupon) {
+                if ($coupon['id'] === $id) {
+                    $coupon['title'] = $title;
+                    $coupon['description'] = $description;
+                    $coupon['affiliate_url'] = $affiliate_url;
+                    $coupon['code'] = $code;
+                    $coupon['start_date'] = $start_date;
+                    $coupon['end_date'] = $end_date;
+                    $coupon['popup_message'] = $popup_message;
+                    break;
+                }
+            }
+        } else {
+            $id = uniqid('c');
+            $coupons[] = array(
+                'id' => $id,
+                'title' => $title,
+                'description' => $description,
+                'affiliate_url' => $affiliate_url,
+                'code' => $code,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'popup_message' => $popup_message
+            );
+        }
+
+        update_option($this->option_name, $coupons);
+        wp_redirect(admin_url('admin.php?page=affcouponbooster&saved=1'));
+        exit;
+    }
+
+    public function display_coupons() {
+        $coupons = get_option($this->option_name, array());
+        $now = current_time('Y-m-d');
+        $output = '<div class="affcouponbooster-list">';
+
+        foreach ($coupons as $coupon) {
+            if (($coupon['start_date'] && $coupon['start_date'] > $now) || ($coupon['end_date'] && $coupon['end_date'] < $now)) {
+                continue; // skip expired or inactive
+            }
+            $url = esc_url(add_query_arg('affcoupon_redirect', $coupon['id'], home_url()));
+            $output .= '<div class="affcouponbooster-item" style="margin-bottom:15px; padding:10px; border:1px solid #ddd;">';
+            $output .= '<h4>' . esc_html($coupon['title']) . '</h4>';
+            $output .= '<p>' . esc_html($coupon['description']) . '</p>';
+            $output .= '<p><strong>Coupon Code:</strong> <code>' . esc_html($coupon['code']) . '</code></p>';
+            $output .= '<p><a href="' . esc_url($url) . '" target="_blank" class="affcouponbooster-link">Get Deal</a></p>';
+            $output .= '</div>';
+        }
+        $output .= '</div>';
+        return $output;
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_style('affcouponbooster-style', plugin_dir_url(__FILE__) . 'style.css');
+        wp_enqueue_script('affcouponbooster-js', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0', true);
+    }
+
+    public function show_popup() {
+        $coupons = get_option($this->option_name, array());
+        $now = current_time('Y-m-d');
+
+        foreach ($coupons as $coupon) {
+            if (($coupon['start_date'] && $coupon['start_date'] > $now) || ($coupon['end_date'] && $coupon['end_date'] < $now)) {
+                continue; // skip expired
+            }
+            if (!empty($coupon['popup_message'])) {
+                echo "<div id='affcouponbooster-popup' style='display:none; position:fixed; bottom:20px; right:20px; background:#fff; border:1px solid #ccc; padding:15px; box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:9999;'>";
+                echo "<p>" . esc_html($coupon['popup_message']) . "</p>";
+                $link = esc_url(add_query_arg('affcoupon_redirect', $coupon['id'], home_url()));
+                echo "<p><a href='$link' target='_blank' style='color:#fff; background:#0073aa; padding:8px 12px; text-decoration:none;'>Get Coupon " . esc_html($coupon['code']) . "</a></p>";
+                echo "<button id='affcouponbooster-close' style='position:absolute; top:5px; right:5px; border:none; background:none; font-size:16px; cursor:pointer;'>&times;</button>";
+                echo "</div>";
+                break; // show popup for first valid coupon
+            }
+        }
+    }
+
+    public function handle_cloak() {
+        $id = sanitize_text_field($_GET['coupon_id'] ?? '');
+        $coupons = get_option($this->option_name, array());
+        foreach ($coupons as $coupon) {
+            if ($coupon['id'] === $id) {
+                // Redirect to affiliate URL with 302 status for cloaking
+                wp_redirect($coupon['affiliate_url']);
+                exit;
+            }
+        }
+        wp_die('Invalid coupon ID.');
     }
 }
 
 new AffiliateCouponBooster();
 
-// Inline style for demonstration
-add_action('wp_head', function () {
-    echo '<style>
-        .acb-coupons-container { max-width: 600px; margin: 20px auto; font-family: Arial,sans-serif; }
-        .acb-coupon { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; background:#f9f9f9; }
-        .acb-coupon h3 { margin: 0 0 5px 0; font-size: 1.2em; }
-        .acb-coupon p { margin: 5px 0; }
-        .acb-use-coupon { display: inline-block; margin-top: 10px; padding: 8px 12px; background: #28a745; color: white; text-decoration: none; border-radius: 3px; }
-        .acb-use-coupon:hover { background: #218838; }
-        .acb-expired { color: #dc3545; font-weight: bold; }
-    </style>';
+// JS and CSS inline to keep single file plugin
+add_action('wp_head', function() {
+    echo "<style>#affcouponbooster-popup {font-family:arial,sans-serif;} #affcouponbooster-popup p {margin: 0 0 10px;} #affcouponbooster-popup a:hover {background:#005177;}</style>";
 });
 
-// Inline JS for demonstration
-add_action('wp_footer', function () {
+add_action('wp_footer', function() {
     ?>
     <script>
-    jQuery(document).ready(function($){
-        $('.acb-use-coupon').on('click', function(e){
-            e.preventDefault();
-            var url = $(this).data('url');
-            var couponDiv = $(this).closest('.acb-coupon');
-            var couponId = couponDiv.data('coupon-id');
-
-            $.post(acb_ajax.ajax_url, {
-                action: 'acb_track_click',
-                coupon_id: couponId,
-                nonce: acb_ajax.nonce
-            });
-
-            window.open(url, '_blank');
-        });
-
-        // Countdown update every day (optional enhancement)
-        function updateCountdowns() {
-            $('.acb-days-left').each(function() {
-                var expiry = new Date($(this).data('expiry')); 
-                var now = new Date();
-                var diffTime = expiry.getTime() - now.getTime();
-                var diffDays = Math.ceil(diffTime / (1000 * 3600 * 24));
-                if (diffDays <= 0) {
-                    $(this).text('Expired');
-                    $(this).closest('.acb-coupon').find('.acb-use-coupon').hide();
-                } else {
-                    $(this).text(diffDays + ' days');
+        (function($){
+            $(document).ready(function(){
+                var popup = $('#affcouponbooster-popup');
+                if (popup.length) {
+                    setTimeout(function(){popup.fadeIn();}, 3000);
+                    $('#affcouponbooster-close').on('click', function(e){
+                        e.preventDefault();
+                        popup.fadeOut();
+                    });
                 }
             });
-        }
-
-        updateCountdowns();
-        // Could setInterval for real-time but daily is sufficient
-    });
+        })(jQuery);
     </script>
     <?php
+});
+
+// Handle redirect for affiliate links
+add_action('template_redirect', function() {
+    if (isset($_GET['affcoupon_redirect'])) {
+        $id = sanitize_text_field($_GET['affcoupon_redirect']);
+        $coupons = get_option('affcouponbooster_coupons', array());
+        foreach ($coupons as $coupon) {
+            if ($coupon['id'] === $id) {
+                wp_redirect($coupon['affiliate_url']);
+                exit;
+            }
+        }
+    }
 });
