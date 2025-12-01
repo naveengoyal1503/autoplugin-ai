@@ -1,27 +1,31 @@
 # WP SmartPaywall
 
+WP SmartPaywall is a dynamic paywall plugin for WordPress that unlocks premium content based on user engagement, referral sources, or micro-payments.
+
 ## Features
-- Adaptive paywall that triggers after a set number of visited pages
-- Multiple monetization paths: subscription, one-time payment, affiliate
-- Admin settings for easy configuration
-- Conversion tracking for analytics
-- Shortcode for manual paywall placement
+- Unlock content after reading a set number of articles
+- Unlock content after referring a set number of friends
+- Unlock content by making a micro-payment
+- Admin settings to customize unlock rules
+- Simple integration with any WordPress theme
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory
-2. Activate the plugin from the WordPress admin panel
-3. Go to Settings > SmartPaywall to configure
+1. Upload the `wp-smartpaywall` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to Settings > SmartPaywall to configure unlock rules
 
 ## Setup
-- Set the number of pages a visitor can view before the paywall appears
-- Choose the default offer type (subscription, one-time, affiliate)
-- Use the shortcode `[smartpaywall type="subscription"]` to manually place paywall offers
+- Set minimum views, referrals, and payment amounts in the plugin settings
+- The paywall will automatically appear on posts for users who haven't met the unlock criteria
 
 ## Usage
-- The paywall will automatically appear after the configured number of pages
-- Visitors see a personalized offer based on your settings
-- Conversion events are tracked in the admin panel
+- Users can unlock content by clicking the 'Unlock Now' button and choosing a method
+- Content is unlocked and remains accessible for that user
+- Admins can monitor and adjust rules as needed
 
-## Notes
-- For advanced features and analytics, consider upgrading to the premium version
-- Compatible with most WordPress themes and plugins
+## Requirements
+- WordPress 5.0 or higher
+- PHP 7.0 or higher
+
+## Support
+For support, please visit the plugin page or contact the developer.
