@@ -1,60 +1,55 @@
 # Affiliate Deal Booster
 
-Affiliate Deal Booster is a simple but powerful WordPress plugin that lets you display affiliate discount deals and coupons fetched from multiple networks and track users' clicks to help you maximize affiliate sales and revenue.
+Affiliate Deal Booster is a WordPress plugin that automatically collects and displays affiliate coupons, discount codes, and deals from multiple external affiliate data sources in real time. It enhances your affiliate marketing efforts by boosting user engagement and conversions with a customizable, easy-to-use deal showcase.
 
 ## Features
 
-- Easily add and manage affiliate deals via admin settings using JSON format
-- Display affiliate deals anywhere using the `[affiliate_deals]` shortcode
-- Automatically track and record affiliate link clicks for performance insights
-- Lightweight and developer-friendly
-- Support for multiple affiliate deals with title, URL, and description
+- Aggregates affiliate deals and coupons from multiple JSON API sources
+- Automatically caches deals to reduce load and maintain speed
+- Admin panel to specify affiliate data sources (API URLs) and caching duration
+- Shortcode `[affiliate_deals]` to embed deal listings anywhere on your site
+- Simple yet clean, customizable deal display
+- AJAX refresh button in admin for on-demand manual update
+- Lightweight single-file plugin for easy deployment
 
 ## Installation
 
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to **Settings > Affiliate Deal Booster** to add your affiliate deals in JSON format
-4. Use the shortcode `[affiliate_deals]` to display deals on posts, pages, or widgets
+1. Upload the `affiliate-deal-booster.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. In the WordPress admin sidebar, find and open 'Affiliate Deal Booster'.
+4. Enter one or more affiliate source URLs that return JSON-formatted deals (one URL per line).
+5. Set cache duration in minutes to control how often deals refresh.
+6. Save settings.
+7. Use the shortcode `[affiliate_deals]` in pages, posts, or widgets to show the latest deals.
 
 ## Setup
 
-- Format your affiliate deals as a JSON array with objects containing `title`, `url`, and `description`, for example:
-
+- Your affiliate sources should provide deal data in a JSON array format with objects containing at least: `title`, `url`, and `description` fields.
+- Example JSON response from an affiliate source:
 
 [
   {
-    "title": "10% off on Awesome Product",
-    "url": "https://affiliate-network.com/product?ref=yourid",
-    "description": "Save 10% with this exclusive offer"
+    "title": "30% off Summer Shoes",
+    "url": "https://affiliate.example.com/deal123",
+    "description": "Use code SUMMER30 at checkout."
   },
   {
-    "title": "Free shipping on orders over $50",
-    "url": "https://affiliate-network.com/shipping-deal?ref=yourid",
-    "description": "Get free shipping instantly"
+    "title": "Free Shipping on Orders over $50",
+    "url": "https://affiliate.example.com/deal456",
+    "description": "Automatically applied at checkout."
   }
 ]
 
-
-- Paste this JSON in the settings page textarea and save
+- After saving your affiliate sources, the plugin will fetch and cache deals.
 
 ## Usage
 
-- Insert the shortcode `[affiliate_deals]` in any post, page, or widget where you want the deals to appear.
-- Visitors clicking on the deals will be tracked automatically for click counts.
-- Monitor click counts via the WordPress database option `adb_click_data` (requires database access or developer tools).
-
-## Monetization
-
-The plugin is suited for a freemium model:
-
-- Free tier allowing manual deal input and basic display
-- Premium upgrades could include multi-network API integration for automatic fetching, detailed analytics dashboard for clicks and conversions, styling customization, and priority support.
-
-## Support
-
-If you encounter issues or have feature requests, please open a ticket on the plugin support forum or contact the author.
+- Insert the shortcode `[affiliate_deals]` anywhere in your content to display the currently cached deals.
+- You can manually refresh deals from the admin settings page by clicking the 'Refresh Deals Now' button.
+- Use CSS if desired to style the deals list (`.adb-deal-list` class).
 
 ---
 
-Build your affiliate revenue smartly and efficiently with Affiliate Deal Booster!
+Affiliate Deal Booster helps you monetize your WordPress site by displaying timely affiliate deals with minimal manual overhead. Boost your affiliate commissions by providing visitors with valuable, curated discounts and offers.
+
+_For support, please visit the plugin's support forum or contact the author._
