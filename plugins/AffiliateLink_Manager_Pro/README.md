@@ -1,30 +1,34 @@
 # AffiliateLink Manager Pro
 
-AffiliateLink Manager Pro is a powerful WordPress plugin that helps bloggers and site owners manage, track, and optimize affiliate links with advanced analytics and automated link cloaking.
+Manage, cloak, and track affiliate links with advanced analytics and automated link cloaking.
 
 ## Features
-- Easy management of affiliate links
-- Advanced analytics and click tracking
-- Automated link cloaking
-- Shortcode support for easy integration
-- Customizable tracking code
+- Add and manage affiliate links
+- Cloak affiliate URLs for cleaner links
+- Shortcode to insert affiliate links anywhere
+- Basic click tracking (premium)
+- Easy-to-use admin interface
 
 ## Installation
-1. Upload the `affiliatelink-manager-pro` folder to the `/wp-content/plugins/` directory
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to the AffiliateLink Manager Pro settings page to configure your tracking code
+3. Go to 'Affiliate Links' in the admin menu to add and manage links
 
 ## Setup
-1. Navigate to the AffiliateLink Manager Pro menu in your WordPress admin
-2. Enter your affiliate tracking code
-3. Save your settings
+- Set your cloak prefix in the plugin settings
+- Add new affiliate links with name and destination URL
+- Use the shortcode `[afflink name="Link Name"]` to insert links in posts/pages
 
 ## Usage
-- Use the `[affiliatelink url="https://example.com" text="Click here"]` shortcode to create affiliate links in your posts and pages
-- View click statistics in the plugin dashboard
+- Add links via the admin panel
+- Insert links using the shortcode
+- Cloaked links are automatically redirected
+
+## Premium Features (Subscription)
+- Advanced analytics and reporting
+- Click tracking and conversion stats
+- Bulk import/export
+- Link expiration and scheduling
 
 ## Support
-For support and feature requests, please visit our website or contact us directly.
-
-## License
-This plugin is released under the GPL2 license.
+For support, visit our website or contact support@affiliatelnkmanager.com
