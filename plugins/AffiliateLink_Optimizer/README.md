@@ -1,30 +1,31 @@
 # AffiliateLink Optimizer
 
 ## Description
-AffiliateLink Optimizer automatically detects outbound Amazon and eBay links in your posts and converts them into affiliate links by appending your affiliate tags. It also tracks clicks on these links to help you monitor performance.
+Automatically detects affiliate links in your content and cloaks them by redirecting through your site to track clicks for performance optimization. Includes a simple admin dashboard with click stats sorted by URL.
 
 ## Features
-- Auto-detects Amazon and eBay URLs in content
-- Appends your affiliate tags or campaign IDs automatically
-- Click tracking on affiliate links
-- Admin settings page to configure affiliate IDs
-- Lightweight and self-contained
+
+- Auto-detect and cloak affiliate links from popular networks (Amazon, ClickBank, ShareASale, etc.)
+- Track clicks with timestamp and IP to monitor engagement
+- Admin dashboard showing top clicked affiliate URLs
+- Target _blank with nofollow cloak to protect SEO
+- Lightweight, single PHP file for easy installation
 
 ## Installation
-1. Upload the plugin file to your `/wp-content/plugins/` directory
-2. Activate the plugin through the WordPress admin panel
-3. Go to **Settings > AffiliateLink Optimizer** to enter your Amazon affiliate tag and eBay campaign ID
+
+1. Upload `affiliatelink-optimizer.php` to your `wp-content/plugins` directory.
+2. Activate the plugin via the WordPress admin Plugins menu.
+3. The plugin will automatically start cloaking affiliate links in your posts and pages.
+4. Access click stats under "AffiliateLink Optimizer" in the WordPress admin menu.
 
 ## Setup
-- Enter your Amazon affiliate tag (e.g., yourtag-20)
-- Enter your eBay affiliate campaign ID
-- Choose your default affiliate network for future extensions
+
+No additional setup required for basic usage. To customize or add affiliate networks, modify the regex pattern inside the plugin source.
 
 ## Usage
-- Insert Amazon or eBay links normally in your posts
-- The plugin will automatically convert them to affiliate links with your tags
-- Clicks on these links will be tracked (click stats display coming in future updates)
 
----
+Just write your posts with raw affiliate links from supported networks. The plugin automatically converts these links in content output to cloaked URLs that track clicks.
 
-Created by Your Name. For support, open an issue or contact via plugin homepage.
+Visit the admin page to view analytics on which affiliate URLs are performing best.
+
+*(Future updates planned to add AI-driven optimization suggestions and multi-network affiliate management in premium version)*
