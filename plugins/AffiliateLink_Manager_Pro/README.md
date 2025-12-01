@@ -1,34 +1,27 @@
 # AffiliateLink Manager Pro
 
-Manage, cloak, and track affiliate links with advanced analytics and automated link cloaking.
+AffiliateLink Manager Pro is a WordPress plugin that helps you manage, cloak, and track affiliate links with advanced analytics.
 
 ## Features
-- Add and manage affiliate links
+- Create and manage affiliate links
 - Cloak affiliate URLs for cleaner links
-- Shortcode to insert affiliate links anywhere
-- Basic click tracking (premium)
-- Easy-to-use admin interface
+- Track clicks on each affiliate link
+- Display affiliate links using shortcodes
+- Simple dashboard for link management
 
 ## Installation
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to 'Affiliate Links' in the admin menu to add and manage links
+1. Upload the plugin folder to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to 'Affiliate Links' in your admin menu to start managing links.
 
 ## Setup
-- Set your cloak prefix in the plugin settings
-- Add new affiliate links with name and destination URL
-- Use the shortcode `[afflink name="Link Name"]` to insert links in posts/pages
+- Add new affiliate links via the dashboard.
+- Use the shortcode `[almp_link id="123"]` to display a cloaked affiliate link on your site.
 
 ## Usage
-- Add links via the admin panel
-- Insert links using the shortcode
-- Cloaked links are automatically redirected
-
-## Premium Features (Subscription)
-- Advanced analytics and reporting
-- Click tracking and conversion stats
-- Bulk import/export
-- Link expiration and scheduling
+- Add, edit, and delete affiliate links from the dashboard.
+- View click statistics for each link.
+- Use shortcodes to embed affiliate links in posts, pages, or widgets.
 
 ## Support
-For support, visit our website or contact support@affiliatelnkmanager.com
+For support and feature requests, visit our website or contact support.
