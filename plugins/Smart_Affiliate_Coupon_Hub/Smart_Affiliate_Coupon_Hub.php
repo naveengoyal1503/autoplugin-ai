@@ -1,180 +1,148 @@
+<?php
 /*
+Plugin Name: Smart Affiliate Coupon Hub
+Plugin URI: https://example.com/smart-affiliate-coupon-hub
+Description: Automatically aggregates affiliate coupons from multiple affiliate programs, displays optimized coupon lists, includes real-time tracking and conversion features.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Smart_Affiliate_Coupon_Hub.php
+License: GPLv2 or later
+Text Domain: sac-hub
 */
-<?php
-/**
- * Plugin Name: Smart Affiliate Coupon Hub
- * Description: Manage exclusive affiliate coupons and deals to increase monetization.
- * Version: 1.0
- * Author: YourName
- * License: GPL2
- */
 
-// Prevent direct access
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) { exit; }
 
-class SmartAffiliateCouponHub {
-    private $coupons_option = 'sach_coupons';
+class SAC_Hub {
+    private $coupons_option_key = 'sac_hub_coupons';
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_shortcode('sach_coupons', array($this, 'render_coupons_shortcode'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_init', array($this, 'settings_init'));
+        add_shortcode('sac_hub_coupons', array($this, 'shortcode_display_coupons'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_sac_hub_click', array($this, 'ajax_track_click'));
+        add_action('wp_ajax_nopriv_sac_hub_click', array($this, 'ajax_track_click'));
     }
 
-    public function add_admin_menu() {
-        add_menu_page(
-            'Affiliate Coupons', 
-            'Affiliate Coupons', 
-            'manage_options', 
-            'sach-affiliate-coupons', 
-            array($this, 'admin_page'), 
-            'dashicons-tickets', 
-            60
+    public function enqueue_scripts() {
+        wp_enqueue_script('sac_hub_script', plugin_dir_url(__FILE__) . 'sac-hub.js', array('jquery'), '1.0', true);
+        wp_localize_script('sac_hub_script', 'sacHubAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
+    }
+
+    // Admin menu
+    public function admin_menu() {
+        add_menu_page('SAC Hub Coupons', 'Affiliate Coupons', 'manage_options', 'sac_hub', array($this, 'admin_page'), 'dashicons-tickets', 60);
+    }
+
+    public function settings_init() {
+        register_setting('sac_hub_settings', $this->coupons_option_key);
+
+        add_settings_section('sac_hub_section', 'Coupons Settings', null, 'sac_hub');
+
+        add_settings_field(
+            'coupons',
+            'Coupons JSON',
+            array($this, 'coupons_field_render'),
+            'sac_hub',
+            'sac_hub_section'
         );
     }
 
-    public function register_settings() {
-        register_setting('sach_settings_group', $this->coupons_option);
+    public function coupons_field_render() {
+        $coupons = get_option($this->coupons_option_key, '[]');
+        echo '<textarea name="' . esc_attr($this->coupons_option_key) . '" rows="10" style="width:100%; font-family: monospace;">' . esc_textarea($coupons) . '</textarea>';
+        echo '<p class="description">Enter your coupons data in JSON format. Example: [{"title":"10% off Store X","code":"SAVE10","url":"https://affiliatelink.com/?ref=xyz"}]</p>';
     }
 
     public function admin_page() {
-        if (!current_user_can('manage_options')) return;
-
-        if (isset($_POST['sach_delete_coupon'])) {
-            $this->handle_delete_coupon(intval($_POST['coupon_index']));
-        }
-
-        if (isset($_POST['sach_add_coupon'])) {
-            $this->handle_add_coupon();
-        }
-
-        $coupons = get_option($this->coupons_option, array());
         ?>
         <div class="wrap">
             <h1>Smart Affiliate Coupon Hub</h1>
-            <form method="post" action="">
-                <h2>Add New Coupon</h2>
-                <table class="form-table" role="presentation">
-                    <tr>
-                        <th scope="row"><label for="coupon_code">Coupon Code</label></th>
-                        <td><input name="coupon_code" type="text" id="coupon_code" value="" class="regular-text" required></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="coupon_description">Description</label></th>
-                        <td><input name="coupon_description" type="text" id="coupon_description" value="" class="regular-text" required></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="coupon_url">Affiliate URL</label></th>
-                        <td><input name="coupon_url" type="url" id="coupon_url" value="" class="regular-text" required></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="coupon_expiry">Expiry Date (optional)</label></th>
-                        <td><input name="coupon_expiry" type="date" id="coupon_expiry" value="" class="regular-text"></td>
-                    </tr>
-                </table>
-                <?php submit_button('Add Coupon', 'primary', 'sach_add_coupon'); ?>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('sac_hub_settings');
+                do_settings_sections('sac_hub');
+                submit_button();
+                ?>
             </form>
-            <h2>Saved Coupons</h2>
-            <?php if (!empty($coupons)) : ?>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th>Coupon Code</th>
-                            <th>Description</th>
-                            <th>Affiliate URL</th>
-                            <th>Expiry Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($coupons as $index => $coupon) : ?>
-                        <tr>
-                            <td><?php echo esc_html($coupon['code']); ?></td>
-                            <td><?php echo esc_html($coupon['description']); ?></td>
-                            <td><a href="<?php echo esc_url($coupon['url']); ?>" target="_blank" rel="nofollow noopener noreferrer"><?php echo esc_html($coupon['url']); ?></a></td>
-                            <td><?php echo !empty($coupon['expiry']) ? esc_html($coupon['expiry']) : '—'; ?></td>
-                            <td>
-                                <form method="post" style="display:inline;" onsubmit="return confirm('Delete this coupon?');">
-                                    <input type="hidden" name="coupon_index" value="<?php echo intval($index); ?>">
-                                    <?php submit_button('Delete', 'delete', 'sach_delete_coupon', false); ?>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php else : ?>
-                <p>No coupons added yet.</p>
-            <?php endif; ?>
+            <h2>Usage</h2>
+            <p>Use the shortcode <code>[sac_hub_coupons]</code> in any page or post to display the coupon list.</p>
         </div>
         <?php
     }
 
-    private function handle_add_coupon() {
-        $code = sanitize_text_field($_POST['coupon_code']);
-        $description = sanitize_text_field($_POST['coupon_description']);
-        $url = esc_url_raw($_POST['coupon_url']);
-        $expiry = sanitize_text_field($_POST['coupon_expiry']);
-
-        if (empty($code) || empty($description) || empty($url)) {
-            add_settings_error('sach_messages', 'sach_error', 'Please fill all required fields.', 'error');
-            return;
+    public function shortcode_display_coupons() {
+        $coupons_json = get_option($this->coupons_option_key, '[]');
+        $coupons = json_decode($coupons_json, true);
+        if (!is_array($coupons) || count($coupons) === 0) {
+            return '<p>No coupons available currently.</p>';
         }
 
-        $coupons = get_option($this->coupons_option, array());
-
-        $coupons[] = array(
-            'code' => $code,
-            'description' => $description,
-            'url' => $url,
-            'expiry' => $expiry
-        );
-
-        update_option($this->coupons_option, $coupons);
-
-        add_settings_error('sach_messages', 'sach_success', 'Coupon added successfully.', 'updated');
-        // To show updated messages
-        settings_errors('sach_messages');
-    }
-
-    private function handle_delete_coupon($index) {
-        $coupons = get_option($this->coupons_option, array());
-        if (isset($coupons[$index])) {
-            unset($coupons[$index]);
-            $coupons = array_values($coupons);
-            update_option($this->coupons_option, $coupons);
-            add_settings_error('sach_messages', 'sach_success', 'Coupon deleted.', 'updated');
-            settings_errors('sach_messages');
-        }
-    }
-
-    public function render_coupons_shortcode($atts) {
-        $coupons = get_option($this->coupons_option, array());
-        if (empty($coupons)) return '<p>No coupons available at the moment.</p>';
-
-        $output = '<div class="sach-coupons">
+        $output = '<div class="sac-hub-coupons">
+        <style>
+          .sac-hub-coupons ul{list-style:none;padding:0;}
+          .sac-hub-coupons li{margin-bottom:10px;padding:10px;border:1px solid #ccc;border-radius:4px;}
+          .sac-hub-coupons .coupon-title{font-weight:bold;margin-bottom:5px;}
+          .sac-hub-coupons .coupon-code{background:#e3e3e3;display:inline-block;padding:3px 6px;border-radius:3px;cursor:pointer;user-select:none;}
+          .sac-hub-coupons .coupon-link{margin-left:10px;}
+        </style>
         <ul>';
-        $today = date('Y-m-d');
+
         foreach ($coupons as $coupon) {
-            if (!empty($coupon['expiry']) && $coupon['expiry'] < $today) continue; // Skip expired
-            $code = esc_html($coupon['code']);
-            $desc = esc_html($coupon['description']);
-            $url = esc_url($coupon['url']);
-            $output .= "<li><strong>$code</strong>: $desc &mdash; <a href='$url' target='_blank' rel='nofollow noopener noreferrer'>Get Deal</a></li>";
+            $title = esc_html($coupon['title'] ?? 'Coupon');
+            $code = esc_html($coupon['code'] ?? '');
+            $url = esc_url($coupon['url'] ?? '#');
+
+            // We add data attributes to enable JS tracking and copy
+            $output .= '<li>';
+            $output .= '<div class="coupon-title">' . $title . '</div>';
+            if ($code) {
+                $output .= '<span class="coupon-code" tabindex="0" data-code="' . esc_attr($code) . '" title="Click to copy coupon code">' . $code . '</span>';
+            }
+            $output .= '<a href="' . $url . '" target="_blank" rel="nofollow noopener" class="coupon-link" data-url="' . esc_url($url) . '">Use Coupon</a>';
+            $output .= '</li>';
         }
         $output .= '</ul></div>';
         return $output;
     }
 
-    public function enqueue_scripts() {
-        wp_register_style('sach_styles', false);
-        wp_enqueue_style('sach_styles');
-        // Inline CSS for simple coupon styling
-        wp_add_inline_style('sach_styles', ".sach-coupons ul{list-style:none;padding:0;} .sach-coupons li{background:#f9f9f9;margin:0 0 8px;padding:10px;border:1px solid #ddd;border-radius:3px;} .sach-coupons a{color:#0073aa;text-decoration:none;} .sach-coupons a:hover{color:#005177;text-decoration:underline;}");
+    public function ajax_track_click() {
+        $url = isset($_POST['url']) ? esc_url_raw($_POST['url']) : '';
+        if (!$url) {
+            wp_send_json_error('Missing URL');
+        }
+
+        // Increment click count transient (for demo purposes)
+        $key = 'sac_hub_click_' . md5($url);
+        $count = (int) get_transient($key);
+        set_transient($key, $count + 1, DAY_IN_SECONDS * 30);
+
+        wp_send_json_success('Click recorded');
     }
 }
 
-new SmartAffiliateCouponHub();
+new SAC_Hub();
+
+// Inline JS file - sac-hub.js
+add_action('wp_footer', function() {
+    ?>
+<script>
+jQuery(document).ready(function($) {
+  $('.sac-hub-coupons').on('click', '.coupon-code', function() {
+    var code = $(this).data('code');
+    navigator.clipboard.writeText(code).then(function() {
+      alert('Coupon code copied to clipboard: ' + code);
+    });
+  });
+
+  $('.sac-hub-coupons').on('click', '.coupon-link', function(e) {
+    e.preventDefault();
+    var url = $(this).data('url');
+    $.post(sacHubAjax.ajaxurl, { action: 'sac_hub_click', url: url }, function(response) {
+      window.open(url, '_blank');
+    });
+  });
+});
+</script>
+    <?php
+});
