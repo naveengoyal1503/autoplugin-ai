@@ -1,33 +1,46 @@
 # Affiliate Booster Pro
 
-## Description
-Affiliate Booster Pro is a powerful WordPress plugin that enables site owners to run their own affiliate marketing programs. It supports real-time referral tracking, customizable commission rates, WooCommerce integration, and affiliate dashboards.
+Affiliate Booster Pro is a comprehensive affiliate marketing WordPress plugin that lets you create affiliate programs, track referrals, and manage earnings with ease.
 
 ## Features
-- Easy affiliate registration form with shortcode
-- Tracks referrals via URL parameter and WooCommerce orders
-- Customizable commission rates through Admin Settings
-- Affiliate dashboard via shortcode to display earnings & referrals
-- Email notifications for affiliates upon commission earned
-- Secure AJAX registration and nonce protection
-- Lightweight, self-contained, and compatible with modern WordPress
+
+- Easy affiliate registration and management from WordPress admin
+- Unique affiliate codes for tracking referrals
+- Referral tracking via URL parameters and cookies
+- Automatic referral and earnings increment on conversion
+- Shortcode to generate affiliate referral links
+- Simple admin interface displaying affiliates with stats
+- Lightweight, single-file plugin for fast performance
 
 ## Installation
-1. Upload the plugin file `affiliate-booster-pro.php` to the `/wp-content/plugins/` directory.
+
+1. Upload `affiliate-booster-pro.php` to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Ensure WooCommerce plugin is installed and activated for order tracking.
-4. Go to 'Affiliate Booster' in the WordPress admin to configure commission rates.
+3. The plugin will create a database table for affiliates on activation.
 
 ## Setup
-- Use shortcode `[affiliate_register]` on any page to display the affiliate registration form.
-- Use shortcode `[affiliate_dashboard]` on a protected page to provide affiliates with their earnings dashboard.
-- Affiliates sign up and receive a unique affiliate code.
-- Share affiliate links in the format `https://yoursite.com?ref=affiliate_code`.
-- Referral sales from WooCommerce are tracked automatically, and commissions calculated.
+
+- Navigate to the **Affiliate Booster** menu in the WordPress admin.
+- Add new affiliates by entering their email and unique affiliate code.
+- Provide your affiliates with their referral URL: `[your-site-url]/?ref=affiliate_code`.
 
 ## Usage
-- To register as an affiliate, navigate to the page with the registration form.
-- Affiliates can monitor their commissions and referral sales on the dashboard page.
-- Admins can adjust commission rates in the plugin settings in the WordPress dashboard.
 
-This plugin establishes a recurring revenue opportunity by enabling businesses to run optimized affiliate marketing in an easy, managed way.
+- Use the shortcode `[abp_affiliate_link code="affiliate_code"]` anywhere on your site to generate a referral URL link.
+- Track conversions by directing users to pages like `/thank-you-for-purchase` where referrals increment automatically.
+- Review affiliates, referrals, and earnings from the admin panel.
+
+## Monetization Model
+
+The plugin offers core functionalities for free. You can monetize by offering premium features such as:
+- Advanced multi-level commissions
+- Detailed analytics dashboard
+- Priority support and consulting
+- API and third-party service integrations
+
+## Support
+
+For assistance, open an issue on the plugin's official support forum or contact the development team.
+
+---
+Affiliate Booster Pro is designed to help WordPress site owners grow revenue through affiliate marketing seamlessly and effectively.
