@@ -2,129 +2,93 @@
 
 ## Description
 
-SmartContentLocker is a powerful WordPress plugin that enables content creators, bloggers, and course instructors to lock premium content behind user actions like email signups, social shares, or payments. This creates a seamless lead generation and monetization tool that increases engagement while building your subscriber list.
+SmartContentLocker is a comprehensive WordPress plugin designed to monetize your content through premium membership management, email capture, and flexible content gating options. Unlock new revenue streams by offering tiered access to exclusive content, managing memberships seamlessly, and capturing valuable subscriber data.
 
 ## Features
 
-**Free Version:**
-- Lock content behind email signup forms
-- Lock content behind social share requirements
-- Easy-to-use shortcode integration
-- Built-in subscriber database
-- Simple unlock overlays with customizable messages
-- Basic analytics dashboard
-
-**Premium Version (Recommended for Advanced Users):**
-- Multiple email service integrations (Mailchimp, ConvertKit, ActiveCampaign)
-- Payment gateway integration (Stripe, PayPal)
-- A/B testing for unlock messages and actions
-- Advanced analytics with conversion tracking
-- Custom unlock templates
-- Conditional unlock rules based on user roles
-- Drip campaigns and automation
+- **Content Gating**: Lock posts behind membership, email capture, or one-time payment walls
+- **Tiered Memberships**: Create multiple membership levels with different access permissions
+- **Email Capture**: Build your mailing list by requiring email verification to unlock content
+- **Flexible Preview**: Show a configurable preview of locked content to entice users
+- **User Management**: Track member access and manage subscription status
+- **Shortcodes**: Use [scl_login_form], [scl_membership_wall], and more
+- **Dashboard Analytics**: Monitor content engagement and conversion rates
+- **Admin Interface**: Intuitive settings and membership management
+- **Payment Ready**: Foundation for integrating payment gateways
 
 ## Installation
 
-1. Download the SmartContentLocker plugin
-2. Go to **WordPress Admin > Plugins > Add New**
-3. Click **Upload Plugin** and select the plugin file
-4. Click **Install Now** and then **Activate**
-5. Navigate to **SmartContentLocker** in the admin menu to configure settings
+1. Upload the plugin folder to `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Navigate to 'Content Locker' menu to configure settings
+4. Create membership tiers and set up your pricing structure
 
 ## Setup
 
-### Basic Configuration
-
-1. Go to **SmartContentLocker** > **Settings**
-2. Enter your email service API key (for Mailchimp integration in free version)
-3. Configure unlock message defaults
-4. Save your settings
-
-### Email Service Setup
-
-- **Mailchimp**: Obtain your API key from Mailchimp account settings and paste it into the plugin settings
-- For Premium: Connect to ConvertKit, ActiveCampaign, or other supported services
+1. Go to **Content Locker > Settings** to configure general plugin options
+2. Create new memberships under **Content Locker > Memberships**
+3. Edit any post and use the **Content Lock Settings** metabox to enable locking
+4. Select lock type (membership, email, or payment)
+5. Choose required membership level if applicable
+6. Set preview text length
 
 ## Usage
 
-### Basic Shortcode
+### Locking Content on Posts
 
-Use the `[content_locker]` shortcode to protect any content:
+1. Edit or create a post
+2. Scroll to 'Content Lock Settings' metabox
+3. Check 'Enable Content Lock'
+4. Choose your lock type:
+   - **Membership Required**: User must have active membership
+   - **Email Capture**: User enters email to unlock
+   - **One-time Payment**: Charge a one-time fee (requires payment gateway)
+5. Select membership level (if applicable)
+6. Set preview text length in characters
+7. Publish the post
 
+### Using Shortcodes
 
-[content_locker type="email" message="Subscribe to unlock this exclusive content!"]
-  <p>This is your premium content that will be hidden until the user subscribes.</p>
-[/content_locker]
+- `[scl_login_form post_id="123"]` - Display login form for specific post
+- `[scl_membership_wall]` - Display all available membership options
 
+### Managing Memberships
 
-### Social Share Lock
+1. Go to **Content Locker > Memberships**
+2. Click 'Add New' to create membership tier
+3. Set name, price, and duration
+4. Configure included features in content
+5. Publish membership
 
+### Viewing Analytics
 
-[content_locker type="share" message="Share this article to unlock the full content!"]
-  <p>Premium content here.</p>
-[/content_locker]
-
-
-### Payment Lock (Premium)
-
-
-[content_locker type="payment" price="9.99" currency="USD" message="Purchase access for $9.99"]
-  <p>Exclusive paid content.</p>
-[/content_locker]
-
-
-### Shortcode Parameters
-
-| Parameter | Description | Default |
-|-----------|-------------|----------|
-| `type` | Unlock method: email, share, payment | email |
-| `message` | Custom unlock message | "Unlock this content" |
-| `id` | Unique locker ID (auto-generated) | auto |
-| `price` | Price for payment locks (Premium) | N/A |
-| `currency` | Currency code (Premium) | USD |
+1. Visit **Content Locker > Analytics**
+2. Review:
+   - Content unlock rates
+   - Email captures
+   - Member retention
+   - Revenue metrics
 
 ## Monetization Models
 
-SmartContentLocker supports multiple revenue streams:
+This plugin supports multiple monetization strategies:
 
-1. **Email Capture**: Build your mailing list for future sales
-2. **Social Amplification**: Encourage content sharing for organic reach
-3. **Direct Sales**: Lock premium courses, guides, or resources behind payments
-4. **Freemium Model**: Offer basic content free, premium content for subscribers
-5. **Affiliate Integration**: Create locked content for affiliate products
+- **Freemium Model**: Offer basic content free with premium tiers
+- **Subscription-Based**: Monthly or yearly recurring payments
+- **Pay-Per-Content**: Individual post purchases
+- **Email List Building**: Free unlocks in exchange for emails
+- **Membership Communities**: Exclusive member access and features
 
-## Examples
+## Requirements
 
-### Blog Monetization
-- Lock in-depth guides behind email signup
-- Generate leads while providing value
-
-### Course Creator
-- Lock course modules behind payment
-- Preview content free, full access paid
-
-### Newsletter Builder
-- Gate valuable content to grow subscriber base
-- Use for email list segmentation
-
-## Frequently Asked Questions
-
-**Q: Will this affect my SEO?**
-A: The locked content is still in the HTML (just visually hidden), so search engines can crawl it. Premium version includes SEO optimization options.
-
-**Q: Can I customize the unlock button appearance?**
-A: In the free version, basic CSS customization is available. Premium version includes full design customization.
-
-**Q: Does this support email list exports?**
-A: Yes, export subscriber lists from the admin dashboard in CSV format.
-
-**Q: What payment gateways are supported?**
-A: Free version requires Premium for payment integration. Premium supports Stripe and PayPal.
+- WordPress 5.0 or higher
+- PHP 7.4 or higher
+- MySQL 5.7 or higher
 
 ## Support
 
-For issues, feature requests, or support: contact support@smartcontentlocker.com
+For issues, feature requests, or support, visit the plugin documentation or contact support team.
 
 ## License
 
-This plugin is licensed under GPL v2 or later.
+This plugin is licensed under the GPL v2 or later license.
