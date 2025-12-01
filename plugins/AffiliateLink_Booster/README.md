@@ -1,42 +1,36 @@
 # AffiliateLink Booster
 
 ## Description
-AffiliateLink Booster automatically converts specified keywords in your WordPress posts and pages into your affiliate links, helping you increase affiliate revenue effortlessly. It also tracks click counts for each keyword affiliate link to give you basic analytics.
-
----
+AffiliateLink Booster is a WordPress plugin that helps affiliate marketers and bloggers increase their revenue by automatically cloaking affiliate links, tracking clicks, and displaying affiliate discount banners to visitors.
 
 ## Features
-
-- Automatically convert keywords to affiliate links in post/page content.
-- Track clicks on each affiliate link to monitor performance.
-- Easy settings page to manage keywords and corresponding affiliate URLs.
-- Lightweight and self-contained without external dependencies.
+- Cloak affiliate URLs using a shortcode to create clean, easy-to-manage links
+- Track clicks on affiliate links to measure performance
+- Display a customizable affiliate discount banner on posts/pages
+- Simple backend interface to manage affiliate links
+- Freemium model: basic features free, advanced analytics and auto discount updates with premium subscription
 
 ## Installation
-
-1. Upload the `affiliate-link-booster.php` file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the WordPress Plugins menu.
-3. Go to **Settings > AffiliateLink Booster** to configure your keywords and affiliate URLs.
+1. Upload the `affiliate-link-booster.php` file to your WordPress `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to the AffiliateLink Booster admin menu to add your affiliate URLs.
 
 ## Setup
-
-- Enter your keywords as comma-separated words or phrases.
-- Enter the affiliate URLs matching the keywords in the same order, comma-separated.
-- Save changes.
+- Enter one affiliate URL per line in the admin settings page and save.
+- Use the shortcode `[alb_afflink url="https://affiliateurl.com"]Link Text[/alb_afflink]` inside posts or pages to create cloaked links.
+- The plugin will auto-redirect users through a tracking URL and count clicks.
+- The discount banner shows automatically on any single post/page to encourage conversions.
 
 ## Usage
+- To add an affiliate link in your post, insert the shortcode like:
 
-- Once configured, specified keywords in your posts and pages will automatically hyperlink to your affiliate URLs.
-- Clicks on these links are tracked and displayed in the plugin settings page for review.
+  
+  [alb_afflink url="https://example.com/?ref=123"]Buy Product[/alb_afflink]
+  
 
----
-
-## Premium / Future Enhancements
-- Bulk keyword import/export.
-- Link cloaking and shortening.
-- Advanced analytics and reporting dashboard.
-- Integration with popular affiliate networks.
+- The link will appear as a normal hyperlink but will route clicks via the plugin for tracking and cloaking.
+- Visit the plugin settings page to manage your tracked affiliate URLs.
 
 ---
 
-Use AffiliateLink Booster to monetize your WordPress content efficiently by turning your text naturally into revenue streams with minimal effort.
+Enhance your affiliate marketing game and boost profits seamlessly with AffiliateLink Booster.
