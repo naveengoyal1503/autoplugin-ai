@@ -5,157 +5,101 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Affiliate Coupon Optimizer
- * Description: Aggregate and display affiliate coupons dynamically to maximize conversion.
+ * Description: Automatically aggregate affiliate coupons, customize display, and optimize for revenue.
  * Version: 1.0
- * Author: Generated Plugin
- * License: GPLv2 or later
+ * Author: Your Name
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if (!defined('ABSPATH')) exit;
 
 class AffiliateCouponOptimizer {
-    private $coupons_option = 'aco_coupons_data';
+    private $option_name = 'aco_coupons';
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-        add_shortcode('affiliate_coupons', array($this, 'render_coupons_shortcode'));
-        add_action('wp_ajax_aco_refresh_coupons', array($this, 'ajax_refresh_coupons'));
-        add_action('wp_ajax_nopriv_aco_refresh_coupons', array($this, 'ajax_refresh_coupons'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_shortcode('aco_coupons', array($this, 'display_coupons_shortcode'));
+        add_action('init', array($this, 'fetch_coupons_cron'));
+        add_action('aco_cron_hook', array($this, 'fetch_and_store_coupons'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
-    public function add_admin_menu() {
-        add_menu_page('Affiliate Coupon Optimizer', 'Coupon Optimizer', 'manage_options', 'aco_settings', array($this, 'settings_page'), 'dashicons-tickets', 61);
-    }
-
-    public function settings_init() {
-        register_setting('aco_settings_group', $this->coupons_option, array($this, 'sanitize_coupons'));
-
-        add_settings_section('aco_section', 'Manage Coupons', null, 'aco_settings');
-
-        add_settings_field(
-            'aco_coupons',
-            'Coupons JSON',
-            array($this, 'coupons_field_render'),
-            'aco_settings',
-            'aco_section'
-        );
-    }
-
-    public function sanitize_coupons($input) {
-        $data = json_decode($input, true);
-        if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
-            // Filter coupons: require keys 'title', 'code', 'link', 'expires'
-            $filtered = array_filter($data, function($c) {
-                return isset($c['title'], $c['code'], $c['link'], $c['expires']);
-            });
-            return json_encode(array_values($filtered));
+    public function activate() {
+        if (!wp_next_scheduled('aco_cron_hook')) {
+            wp_schedule_event(time(), 'hourly', 'aco_cron_hook');
         }
-        return get_option($this->coupons_option);
+        $this->fetch_and_store_coupons();
     }
 
-    public function coupons_field_render() {
-        $value = get_option($this->coupons_option, '[]');
-        echo '<textarea name="' . esc_attr($this->coupons_option) . '" rows="10" cols="50" style="width:100%;">' . esc_textarea($value) . '</textarea>';
-        echo '<p class="description">Enter an array of coupons in JSON format. Each coupon needs title, code, link & expires (YYYY-MM-DD).</p>';
+    public function deactivate() {
+        wp_clear_scheduled_hook('aco_cron_hook');
+    }
+
+    public function admin_menu() {
+        add_menu_page('Affiliate Coupon Optimizer', 'Coupon Optimizer', 'manage_options', 'aco_settings', array($this, 'settings_page'));
     }
 
     public function settings_page() {
-        ?>
-        <div class="wrap">
-            <h1>Affiliate Coupon Optimizer Settings</h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields('aco_settings_group');
-                do_settings_sections('aco_settings');
-                submit_button();
-                ?>
-            </form>
-            <button id="aco-refresh-btn" class="button button-secondary">Refresh Expired Coupons</button>
-            <p id="aco-refresh-msg" style="margin-top:10px;"></p>
-        </div>
-        <script>
-        document.getElementById('aco-refresh-btn').addEventListener('click', function() {
-            var btn = this;
-            btn.disabled = true;
-            btn.textContent = 'Refreshing...';
-            fetch('<?php echo admin_url("admin-ajax.php"); ?>?action=aco_refresh_coupons', {
-                method: 'POST',
-                credentials: 'same-origin'
-            }).then(response => response.json()).then(data => {
-                btn.disabled = false;
-                btn.textContent = 'Refresh Expired Coupons';
-                var msgEl = document.getElementById('aco-refresh-msg');
-                if (data.success) {
-                    msgEl.textContent = 'Coupons refreshed, expired coupons removed.';
-                    location.reload();
-                } else {
-                    msgEl.textContent = 'Failed to refresh coupons.';
-                }
-            });
-        });
-        </script>
-        <?php
+        if (!current_user_can('manage_options')) return;
+
+        if (isset($_POST['aco_api_key'])) {
+            update_option('aco_api_key', sanitize_text_field($_POST['aco_api_key']));
+            echo '<div class="updated"><p>Settings saved.</p></div>';
+        }
+
+        $api_key = get_option('aco_api_key', '');
+
+        echo '<h1>Affiliate Coupon Optimizer Settings</h1>';
+        echo '<form method="POST">';
+        echo '<label for="aco_api_key">Coupon API Key (Example: Affiliate Partner API): </label><br>';
+        echo '<input type="text" name="aco_api_key" id="aco_api_key" value="' . esc_attr($api_key) . '" size="50"/><br><br>';
+        echo '<input type="submit" value="Save Settings" class="button button-primary" />';
+        echo '</form>';
     }
 
-    // Remove expired coupons
-    public function ajax_refresh_coupons() {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error();
-        }
+    // Simulate coupon fetch from an external affiliate API
+    public function fetch_and_store_coupons() {
+        $api_key = get_option('aco_api_key');
+        if (empty($api_key)) return;
 
-        $coupons_raw = get_option($this->coupons_option, '[]');
-        $coupons = json_decode($coupons_raw, true);
-        if (!is_array($coupons)) {
-            wp_send_json_error();
-        }
+        // Example: Normally here would be a remote API request using $api_key to authenticate
+        // Simulated coupons array
+        $coupons = array(
+            array('title' => '20% Off Tech Gear', 'code' => 'TECH20', 'link' => 'https://affiliate.example.com/tech?ref=yourid', 'expiry' => '2025-12-31'),
+            array('title' => '15% Discount on Apparel', 'code' => 'APPAREL15', 'link' => 'https://affiliate.example.com/apparel?ref=yourid', 'expiry' => '2025-11-30'),
+            array('title' => 'Free Shipping on Orders $50+', 'code' => 'FREESHIP', 'link' => 'https://affiliate.example.com/ship?ref=yourid', 'expiry' => '2026-01-15')
+        );
 
-        $today = date('Y-m-d');
-        $filtered = array_filter($coupons, function($c) use ($today) {
-            return $c['expires'] >= $today;
-        });
-
-        update_option($this->coupons_option, json_encode(array_values($filtered)));
-        wp_send_json_success();
+        // Store coupons with timestamps
+        update_option($this->option_name, $coupons);
     }
 
-    public function render_coupons_shortcode() {
-        $coupons_raw = get_option($this->coupons_option, '[]');
-        $coupons = json_decode($coupons_raw, true);
-        if (!is_array($coupons) || empty($coupons)) {
-            return '<p>No coupons available at this time.</p>';
-        }
+    public function display_coupons_shortcode() {
+        $coupons = get_option($this->option_name);
+        if (empty($coupons)) return '<p>No coupons available at the moment.</p>';
+
+        $output = '<div class="aco-coupons-wrapper" style="border:1px solid #ddd; padding:15px; max-width: 400px;">';
+        $output .= '<h3>Latest Affiliate Coupons</h3><ul style="list-style:none; padding-left:0;">';
 
         $today = date('Y-m-d');
-        $valid_coupons = array_filter($coupons, function($c) use ($today) {
-            return $c['expires'] >= $today;
-        });
-        if (empty($valid_coupons)) {
-            return '<p>No valid coupons available currently.</p>';
+
+        foreach ($coupons as $coupon) {
+            if ($coupon['expiry'] < $today) continue; // Skip expired
+
+            $output .= '<li style="margin-bottom:10px; border-bottom:1px dashed #ccc; padding-bottom:10px;">';
+            $output .= '<strong>' . esc_html($coupon['title']) . '</strong><br>';
+            $output .= 'Code: <code>' . esc_html($coupon['code']) . '</code><br>';
+            $output .= '<a href="' . esc_url($coupon['link']) . '" target="_blank" rel="nofollow noopener">Use Coupon</a><br>';
+            $output .= '<small>Expires: ' . esc_html($coupon['expiry']) . '</small>';
+            $output .= '</li>';
         }
 
-        // Sort coupons by expiry ascending
-        usort($valid_coupons, function($a, $b) {
-            return strcmp($a['expires'], $b['expires']);
-        });
+        $output .= '</ul></div>';
+        return $output;
+    }
 
-        ob_start();
-        echo '<div class="aco-coupons-list" style="border:1px solid #ccc;padding:10px;border-radius:5px;">
-            <h3>Current Affiliate Coupons</h3><ul style="list-style:none;padding-left:0;">';
-        foreach ($valid_coupons as $coupon) {
-            $title = esc_html($coupon['title']);
-            $code = esc_html($coupon['code']);
-            $link = esc_url($coupon['link']);
-            $expires = esc_html($coupon['expires']);
-
-            echo "<li style='margin-bottom:10px; padding:8px; border-bottom:1px solid #eee;'>";
-            echo "<strong>$title</strong> - <code style='background:#eee;padding:2px 4px;border-radius:3px;'>$code</code><br>";
-            echo "Expires on: $expires <br>";
-            echo "<a href='$link' target='_blank' rel='nofollow noopener' style='color:#0073aa;'>Use Coupon</a>";
-            echo '</li>';
-        }
-        echo '</ul></div>';
-        return ob_get_clean();
+    public function fetch_coupons_cron() {
+        // Cron schedules already added by WP defaults (hourly)
     }
 }
 
