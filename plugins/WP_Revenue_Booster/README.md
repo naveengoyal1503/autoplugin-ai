@@ -1,25 +1,24 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by rotating and optimizing affiliate links, ads, and sponsored content.
+Automate coupon distribution, affiliate tracking, and ad optimization for your WordPress site.
 
 ## Features
-- Rotates affiliate links, display ads, and sponsored content on your site.
-- Easy-to-use admin interface for managing revenue elements.
-- Supports multiple links, ads, and sponsored posts.
-- Lightweight and non-intrusive.
+- Shortcode for displaying coupons, affiliate links, and ad codes
+- Admin panel for configuring affiliate tracking and ad placement
+- AJAX conversion tracking
+- Easy integration with existing themes
 
 ## Installation
-1. Upload the `wp-revenue-booster` folder to the `/wp-content/plugins/` directory.
+1. Upload the plugin folder to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure your affiliate links, ads, and sponsored content.
+3. Go to the 'Revenue Booster' menu in your admin panel to configure settings.
 
 ## Setup
-- In the admin panel, add your affiliate links, ad codes, and sponsored content.
-- The plugin will automatically rotate these elements on your site to maximize revenue.
+- Enter your affiliate tracking ID in the admin panel.
+- Set your ad placement zone.
 
 ## Usage
-- Once configured, the plugin will inject a randomly selected revenue element into your site's footer.
-- Monitor your revenue and adjust your elements as needed.
+Use the shortcode `[revenue_booster coupon="SAVE10" affiliate_link="https://example.com" ad_code="<script>...</script>"]` to display coupons, affiliate links, and ads.
 
 ## Support
-For support and feature requests, visit our website or contact us directly.
+For support, visit our website or contact us via email.
