@@ -1,25 +1,32 @@
 # WP Revenue Booster
 
-Automatically optimizes ad, affiliate, and coupon placements for maximum revenue on WordPress sites.
+Automatically optimize ad placements, affiliate links, and premium content access to maximize revenue for your WordPress site.
 
 ## Features
-- One-click optimization for ads, affiliate links, and coupons
-- Easy-to-use admin settings
-- Real-time content injection
-- Supports freemium upgrades for advanced features
+- Inject custom ad code into your site's header.
+- Automatically insert affiliate links for specified keywords in your content.
+- Restrict access to premium content for non-logged-in users.
+- Simple admin interface for managing settings.
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure options.
+1. Upload the plugin file to your WordPress plugins directory (`/wp-content/plugins/`).
+2. Activate the plugin from the WordPress admin panel.
+3. Go to Settings > Revenue Booster to configure ad code, affiliate links, and premium content.
 
 ## Setup
-- Enable or disable ad, affiliate, and coupon optimization in the settings.
-- Save your changes.
+- **Ad Code:** Paste your ad network code (e.g., Google AdSense) in the Ad Code field.
+- **Affiliate Links:** Enter one keyword and URL per line, separated by a pipe (|). Example: `WordPress|https://example.com/wordpress`
+- **Premium Content:** Enter comma-separated post IDs that should be restricted to logged-in users.
 
 ## Usage
-- The plugin will automatically inject optimized content into your site's footer.
-- For advanced features, upgrade to the premium version.
+- The plugin will automatically inject your ad code and affiliate links into your site.
+- Premium content will be restricted to logged-in users as specified.
 
-## Support
-Visit our website for documentation and support.
+## Notes
+- For advanced features (analytics, A/B testing, more ad networks), upgrade to the premium version.
+- Always test your site after making changes to ensure everything works as expected.
+
+---
+
+**Version:** 1.0
+**Author:** WP Revenue Team
