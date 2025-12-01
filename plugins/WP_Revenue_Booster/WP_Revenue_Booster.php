@@ -5,24 +5,57 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Plugin URI: https://example.com/wp-revenue-booster
- * Description: Boost your WordPress site revenue with smart affiliate, coupon, and sponsored content placement.
+ * Description: Rotate affiliate links, coupons, and sponsored content for maximum revenue.
  * Version: 1.0
- * Author: Your Name
- * Author URI: https://example.com
- * License: GPL2
+ * Author: WP Dev Team
  */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('init', array($this, 'init'));
+        add_shortcode('revenue_booster', array($this, 'shortcode'));
+        add_action('admin_menu', array($this, 'admin_menu'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_footer', array($this, 'display_smart_content'));
-        add_action('admin_post_save_revenue_settings', array($this, 'save_settings'));
     }
 
-    public function add_admin_menu() {
+    public function init() {
+        if (!get_option('wp_revenue_booster_options')) {
+            add_option('wp_revenue_booster_options', array(
+                'links' => array(
+                    array('url' => 'https://example.com/affiliate1', 'weight' => 50, 'type' => 'affiliate'),
+                    array('url' => 'https://example.com/coupon1', 'weight' => 30, 'type' => 'coupon'),
+                    array('url' => 'https://example.com/sponsored1', 'weight' => 20, 'type' => 'sponsored')
+                )
+            ));
+        }
+    }
+
+    public function shortcode($atts) {
+        $options = get_option('wp_revenue_booster_options');
+        $links = $options['links'];
+
+        if (empty($links)) return '';
+
+        $total_weight = array_sum(array_column($links, 'weight'));
+        $rand = mt_rand(1, $total_weight);
+        $current_weight = 0;
+
+        foreach ($links as $link) {
+            $current_weight += $link['weight'];
+            if ($rand <= $current_weight) {
+                $selected = $link;
+                break;
+            }
+        }
+
+        $label = $selected['type'] === 'affiliate' ? 'Affiliate Link' : ($selected['type'] === 'coupon' ? 'Coupon Code' : 'Sponsored Content');
+        return '<div class="wp-revenue-booster">
+                    <p><strong>' . $label . ':</strong> <a href="' . esc_url($selected['url']) . '" target="_blank" rel="nofollow">Click here</a></p>
+                </div>';
+    }
+
+    public function admin_menu() {
         add_options_page(
             'WP Revenue Booster',
             'Revenue Booster',
@@ -33,96 +66,62 @@ class WP_Revenue_Booster {
     }
 
     public function admin_page() {
-        $settings = get_option('wp_revenue_booster_settings', array());
+        if (isset($_POST['wp_revenue_booster_save'])) {
+            $links = array();
+            if (isset($_POST['link_url']) && is_array($_POST['link_url'])) {
+                foreach ($_POST['link_url'] as $index => $url) {
+                    if (!empty($url)) {
+                        $links[] = array(
+                            'url' => sanitize_text_field($url),
+                            'weight' => intval($_POST['link_weight'][$index]),
+                            'type' => sanitize_text_field($_POST['link_type'][$index])
+                        );
+                    }
+                }
+            }
+            update_option('wp_revenue_booster_options', array('links' => $links));
+            echo '<div class="updated"><p>Settings saved.</p></div>';
+        }
+
+        $options = get_option('wp_revenue_booster_options');
+        $links = $options['links'];
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form method="post" action="admin-post.php">
-                <input type="hidden" name="action" value="save_revenue_settings">
+            <form method="post">
                 <table class="form-table">
                     <tr>
-                        <th><label>Affiliate Offers</label></th>
-                        <td><textarea name="affiliate_offers" rows="5" cols="50"><?php echo esc_textarea($settings['affiliate_offers'] ?? ''); ?></textarea><br>
-                        <small>One offer per line: Title|URL|Description</small></td>
+                        <th>URL</th>
+                        <th>Weight</th>
+                        <th>Type</th>
                     </tr>
+                    <?php for ($i = 0; $i < 5; $i++): ?>
                     <tr>
-                        <th><label>Coupons</label></th>
-                        <td><textarea name="coupons" rows="5" cols="50"><?php echo esc_textarea($settings['coupons'] ?? ''); ?></textarea><br>
-                        <small>One coupon per line: Code|Store|Description</small></td>
+                        <td><input type="text" name="link_url[]" value="<?php echo isset($links[$i]) ? esc_attr($links[$i]['url']) : ''; ?>" class="regular-text" /></td>
+                        <td><input type="number" name="link_weight[]" value="<?php echo isset($links[$i]) ? esc_attr($links[$i]['weight']) : '10'; ?>" min="1" max="100" /></td>
+                        <td>
+                            <select name="link_type[]">
+                                <option value="affiliate" <?php selected(isset($links[$i]) ? $links[$i]['type'] : 'affiliate', 'affiliate'); ?>>Affiliate</option>
+                                <option value="coupon" <?php selected(isset($links[$i]) ? $links[$i]['type'] : 'affiliate', 'coupon'); ?>>Coupon</option>
+                                <option value="sponsored" <?php selected(isset($links[$i]) ? $links[$i]['type'] : 'affiliate', 'sponsored'); ?>>Sponsored</option>
+                            </select>
+                        </td>
                     </tr>
-                    <tr>
-                        <th><label>Sponsored Content</label></th>
-                        <td><textarea name="sponsored_content" rows="5" cols="50"><?php echo esc_textarea($settings['sponsored_content'] ?? ''); ?></textarea><br>
-                        <small>One item per line: Title|URL|Description</small></td>
-                    </tr>
+                    <?php endfor; ?>
                 </table>
-                <?php wp_nonce_field('save_revenue_settings'); ?>
-                <p class="submit">
-                    <input type="submit" class="button-primary" value="Save Settings">
-                </p>
+                <?php submit_button('Save Settings', 'primary', 'wp_revenue_booster_save'); ?>
             </form>
+            <p>Use <code>[revenue_booster]</code> shortcode to display a rotating link.</p>
         </div>
         <?php
-    }
-
-    public function save_settings() {
-        if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['_wpnonce'], 'save_revenue_settings')) {
-            wp_die('Unauthorized');
-        }
-
-        $settings = array(
-            'affiliate_offers' => sanitize_textarea_field($_POST['affiliate_offers']),
-            'coupons' => sanitize_textarea_field($_POST['coupons']),
-            'sponsored_content' => sanitize_textarea_field($_POST['sponsored_content'])
-        );
-
-        update_option('wp_revenue_booster_settings', $settings);
-        wp_redirect(admin_url('options-general.php?page=wp-revenue-booster&updated=1'));
-        exit;
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'style.css');
-    }
-
-    public function display_smart_content() {
-        $settings = get_option('wp_revenue_booster_settings', array());
-        if (empty($settings)) return;
-
-        $offers = $this->parse_items($settings['affiliate_offers']);
-        $coupons = $this->parse_items($settings['coupons']);
-        $sponsored = $this->parse_items($settings['sponsored_content']);
-
-        $all_items = array_merge($offers, $coupons, $sponsored);
-        if (empty($all_items)) return;
-
-        // Simple random selection for demo
-        $item = $all_items[array_rand($all_items)];
-        ?>
-        <div id="wp-revenue-booster-widget">
-            <h3><?php echo esc_html($item['title']); ?></h3>
-            <p><?php echo esc_html($item['description']); ?></p>
-            <a href="<?php echo esc_url($item['url']); ?>" target="_blank">Learn More</a>
-        </div>
-        <?php
-    }
-
-    private function parse_items($text) {
-        $lines = explode("\n", $text);
-        $items = array();
-        foreach ($lines as $line) {
-            $parts = explode('|', $line);
-            if (count($parts) >= 3) {
-                $items[] = array(
-                    'title' => trim($parts),
-                    'url' => trim($parts[1]),
-                    'description' => trim($parts[2])
-                );
-            }
-        }
-        return $items;
+        wp_enqueue_style('wp-revenue-booster', plugins_url('style.css', __FILE__));
     }
 }
 
 new WP_Revenue_Booster;
-?>
+
+// style.css
+// .wp-revenue-booster { padding: 10px; background: #f0f0f0; border: 1px solid #ccc; margin: 10px 0; }
