@@ -1,142 +1,86 @@
 # Smart Content Locker Pro
 
-## Description
-
-Smart Content Locker Pro is a powerful WordPress monetization plugin that allows you to lock premium content behind email gates and payment paywalls. Perfect for bloggers, publishers, and content creators who want to build subscriber lists and generate recurring revenue from their WordPress websites.
+A powerful WordPress plugin for monetizing content through paywalls, email gates, and subscription-based access control. Unlock recurring revenue streams with multiple monetization strategies.
 
 ## Features
 
-- **Email Gate Locker**: Collect email addresses by gating content behind an email submission form
-- **Paid Content Locker**: Charge visitors for access to premium content via Stripe or PayPal
-- **Easy Shortcode Integration**: Use `[content_locker]` shortcode to protect any content
-- **Per-Post Configuration**: Enable/disable lockers and customize settings for individual posts
-- **Comprehensive Analytics**: Track unlock rates, revenue, and engagement metrics
-- **Email List Management**: Build your email subscriber list automatically
-- **Customizable Messages**: Personalize unlock prompts and messaging
-- **Cookie-Based Tracking**: Remember user unlocks across sessions
-- **One-Click Setup**: Simple configuration in WordPress admin panel
-- **Multi-Payment Gateway Support**: Accept payments via Stripe or PayPal
+- **Email Gate Locker**: Require email submission to access content
+- **Paywall System**: Lock premium content behind a payment wall
+- **Tiered Access Levels**: Create multiple subscription tiers with different benefits
+- **Advanced Analytics**: Track unlocks, revenue, and user engagement
+- **Easy Shortcode Integration**: Use `[content_locker type="email"]` or `[content_locker type="paywall" price="9.99"]`
+- **User Management**: Monitor who unlocked what content and when
+- **Customizable Settings**: Configure prices, email templates, and messaging
+- **AJAX Functionality**: Seamless unlock experience without page reloads
 
 ## Installation
 
-1. Download the plugin ZIP file
-2. Go to WordPress Admin Dashboard → Plugins → Add New
-3. Click "Upload Plugin" and select the ZIP file
-4. Click "Install Now" and then "Activate Plugin"
-5. The plugin will create necessary database tables on activation
+1. Download the plugin files
+2. Extract to `/wp-content/plugins/smart-content-locker-pro/`
+3. Activate the plugin in WordPress admin
+4. Navigate to Content Locker > Settings to configure
 
 ## Setup
 
-### Step 1: Configure Payment Gateways
-1. Navigate to **Content Locker → Settings** from the WordPress admin menu
-2. Enter your Stripe API Key (optional, for paid content)
-3. Enter your PayPal Client ID (optional, for paid content)
-4. Customize the unlock message that displays to visitors
-5. Click **Save Settings**
-
-### Step 2: Set Unlock Message
-- In the Settings page, customize the message shown in the lock overlay
-- This message appears when visitors encounter locked content
-- Example: "This content is locked. Unlock it to see the full content."
+1. Go to WordPress Admin Dashboard
+2. Click on "Content Locker" in the left sidebar
+3. Navigate to "Settings" tab
+4. Configure:
+   - Paywall Price (in USD)
+   - Email Gate Subject Line
+   - Email Body Template
+5. Click "Save Settings"
 
 ## Usage
 
-### Method 1: Shortcode in Posts/Pages
+### Email Gate Locker
 
-Use the `[content_locker]` shortcode to protect specific content blocks:
-
-#### Email Gate Example:
-
-[content_locker type="email"]Your premium content goes here[/content_locker]
+Wrap content with the shortcode:
 
 
-#### Paid Content Example:
-
-[content_locker type="paid" price="9.99"]Your premium content goes here[/content_locker]
-
-
-#### With Custom ID:
-
-[content_locker type="email" id="my_unique_locker"]Your premium content[/content_locker]
+[content_locker type="email"]
+Your premium content here that requires email to view
+[/content_locker]
 
 
-### Method 2: Automatic Post-Level Locker
+### Paywall Locker
 
-1. Create or edit a blog post
-2. Scroll to the **Content Locker** meta box on the right sidebar
-3. Check **"Enable Content Locker"**
-4. Select lock type: **Email Gate** or **Paid**
-5. Enter price for paid content (e.g., 9.99)
-6. Publish or update the post
+Set custom pricing per content piece:
+
+
+[content_locker type="paywall" price="7.99"]
+Exclusive premium article content
+[/content_locker]
+
+
+### Automatic Post Locking
+
+1. Edit any post and scroll to the Content Locker metabox
+2. Select lock type (Paywall or Email Gate)
+3. Configure lock settings
+4. Update post
+
+## Monetization Models
+
+- **Freemium**: Free basic content with premium unlocks
+- **Subscription Tiers**: Monthly or yearly recurring payments
+- **Pay-Per-Article**: One-time purchase for individual content
+- **Email Capture**: Build mailing list while monetizing
 
 ## Dashboard
 
-The main **Content Locker** dashboard displays:
-- **Locked Content**: Number of posts with active lockers
-- **Total Unlocks**: Cumulative unlocks across all content
-- **Revenue Generated**: Total revenue from paid unlocks and subscriptions
+Track key metrics:
+- Total content unlocks
+- Revenue by content piece
+- User unlock patterns
+- Email capture rates
 
-## Analytics
+## Requirements
 
-View detailed metrics in **Content Locker → Analytics**:
-- Content title and unlock performance
-- Total views vs. unlocks
-- Unlock conversion rate percentage
-- Revenue generated per content piece
-
-## Shortcode Parameters
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `type` | "email" | Lock type: "email" or "paid" |
-| `price` | "0" | Price for paid content (numeric value) |
-| `id` | auto-generated | Unique locker identifier |
-
-## Monetization Models Supported
-
-1. **Email Capture**: Build your mailing list while providing value
-2. **Paid Content**: Charge $0.99 to $99.99 per unlock
-3. **Subscription Tiers**: Create recurring revenue with monthly memberships
-4. **Hybrid Model**: Offer some content free, gate premium content
-
-## Security Features
-
-- Nonce verification for AJAX requests
-- Sanitized and validated input data
-- Secure cookie handling for unlock tracking
-- Email validation before unlock
-
-## Troubleshooting
-
-**Content not showing as locked?**
-- Ensure shortcode syntax is correct
-- Check that plugin is activated
-- Clear browser cookies if unlock cookies are cached
-
-**Email form not submitting?**
-- Verify JavaScript is enabled in browser
-- Check browser console for JavaScript errors
-- Ensure valid email format is entered
-
-**Payment gateway errors?**
-- Verify API keys are correct in Settings
-- Check payment gateway account is active
-- Ensure website has SSL certificate for payments
-
-## Support
-
-For support, documentation, and feature requests, visit the plugin website or contact the support team.
+- WordPress 5.0+
+- PHP 7.4+
+- MySQL 5.7+
 
 ## License
 
-This plugin is licensed under the GPL v2 or later license.
-
-## Changelog
-
-### Version 1.0.0
-- Initial release
-- Email gate locker functionality
-- Paid content locker with Stripe/PayPal support
-- Basic analytics dashboard
-- Post-level configuration
-- Customizable unlock messages
+GPL v2 or later
