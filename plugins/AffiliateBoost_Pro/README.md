@@ -1,41 +1,27 @@
 # AffiliateBoost Pro
 
-AffiliateBoost Pro is an advanced affiliate marketing plugin for WordPress that automates affiliate link tracking, management, and revenue optimization with dynamic analytics.
+AffiliateBoost Pro is a smart affiliate link manager for WordPress. It helps you boost conversions with AI-powered recommendations, geolocation targeting, and automated link rotation.
 
 ## Features
-
-- Automatically tracks clicks on affiliate links site-wide using JavaScript beacon API
-- Stores click data with date, IP, and user agent for detailed analysis
-- Admin dashboard with top affiliate link performance report
-- Shortcode `[aff_boost_report]` to display affiliate click reports on frontend pages
-- Lightweight and fully self-contained single PHP file
-- Simple and intuitive admin interface for managing and viewing affiliate data
+- Manage affiliate links in a dedicated admin area
+- AI-powered recommendations for better link placement
+- Geolocation targeting for region-specific offers
+- Automated link rotation for limited-time promotions
+- Shortcode support for easy integration
 
 ## Installation
-
-1. Upload the `affiliateboostpro.php` file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the ‘Plugins’ menu in WordPress.
-3. The plugin will automatically create a database table for storing click data.
-4. Navigate to the AffiliateBoost Pro menu in the admin sidebar to view reports.
+1. Upload the `affiliateboost-pro` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to 'AffiliateBoost Pro' in the admin menu to manage your links
 
 ## Setup
-
-- Affiliate link detection currently targets links containing the word 'affiliate'. Customize the JavaScript selector as needed.
-- Use the shortcode `[aff_boost_report]` on any page or post to display affiliate click statistics.
+- Add new affiliate links in the admin area
+- Set geolocation targeting and fallback URLs
+- Use the shortcode `[affiliate_link id="123" fallback="https://example.com"]` to display links
 
 ## Usage
-
-- Insert affiliate links in your content normally.
-- The plugin tracks user clicks on affiliate links and logs them automatically.
-- View the performance dashboard in the WordPress admin area to analyze clicks.
-- Use insights to optimize your affiliate marketing strategies.
-
-## Monetization
-
-AffiliateBoost Pro is designed as a freemium plugin:
-- Basic tracking and reports are free.
-- Premium versions (planned) will offer enhanced analytics, auto-link optimization, and personalized support through subscription.
+- Place shortcodes in posts, pages, or widgets
+- Monitor performance and adjust targeting as needed
 
 ## Support
-
-For support and feedback, please contact the plugin author or visit the support forums.
+For support, visit our website or contact support@example.com
