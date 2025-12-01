@@ -1,39 +1,55 @@
 # Affiliate Coupon Booster
 
-Affiliate Coupon Booster is a WordPress plugin designed to **boost affiliate marketing revenue** by allowing website owners to create, manage, and display exclusive coupon codes and deals tailored to their visitors, helping increase conversions effectively.
+## Description
+Affiliate Coupon Booster is a powerful WordPress plugin that enables affiliate marketers, bloggers, and e-commerce sites to create, manage, and display affiliate-linked coupons and deals efficiently. It automatically tracks click-throughs to maximize affiliate commissions and improve conversions with minimal setup.
 
 ## Features
 
-- Easy admin interface to add, edit, and remove affiliate coupons.
-- Shortcode `[affiliate_coupons]` to display active coupons anywhere on your site.
-- Automatic filtering of expired coupons.
-- Clean, simple coupon display with clickable affiliate links.
-- Supports unlimited coupons with expiration dates.
-- Freemium-ready architecture for future premium extensions.
+- Custom post type for easy coupon creation with title, description, coupon code, affiliate link, and expiry date.
+- Frontend shortcode `[acb_coupons]` to display active coupons elegantly.
+- Click tracking with AJAX to record coupon claim clicks for better affiliate performance analysis.
+- Supports coupon codes display for easy copying by users.
+- Responsive and simple design, customizable via CSS.
+- No configuration needed to start.
 
 ## Installation
 
-1. Download the plugin file or copy the code into a new PHP file named `affiliate-coupon-booster.php`.
-2. Upload to your WordPress `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Upload the `affiliate-coupon-booster.php` file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Create new Coupons via the WordPress admin menu «Coupons».
+4. Add coupon details including affiliate link and coupon code.
+5. Insert the shortcode `[acb_coupons]` into any post or page where you want to show coupons.
 
 ## Setup
 
-1. Under the WordPress admin menu, find "Coupon Booster".
-2. Add your affiliate coupons with codes, descriptions, affiliate URLs, and optional expiration dates.
-3. Save settings.
+1. Navigate to the new "Coupons" menu in your WordPress dashboard.
+2. Click "Add New" to create a new coupon.
+3. Enter a title, description, coupon code, and the affiliate URL.
+4. (Optional) Set an expiry date using a custom field named `expiry_date` (format YYYY-MM-DD).
+5. Publish the coupon.
+6. Use the `[acb_coupons]` shortcode in pages or widgets to display all published coupons.
 
 ## Usage
 
-- Place the `[affiliate_coupons]` shortcode in posts, pages, or widgets to display active coupons.
-- Each coupon will show the code, description, and a clickable button linking to your affiliate URL.
+- Place the shortcode `[acb_coupons]` in posts, pages, or widgets to display a list of coupons.
+- Visitors click "Claim Deal" buttons which redirect through tracking to your affiliate URLs.
+- Use the click tracking data (stored transiently) to understand coupon popularity (extendable).
+- Style and customize the look via the included CSS or your theme.
 
-## Monetization Potential
+## FAQ
 
-- Basic plugin is free to build user base.
-- Premium add-ons can include analytics dashboards, integration with retailer coupon feeds, enhanced styling options, and automatic coupon update features.
-- Can be bundled with affiliate marketing courses or consulting for upsell.
+**Q: Can I add coupons with just affiliate links and no coupon codes?**
+
+A: Yes, the coupon code field is optional. Coupons can work just with the affiliate link.
+
+**Q: How can I see analytics for clicks?**
+
+A: Currently, clicks are stored transiently server-side. For advanced analytics, integration with Google Analytics or a custom dashboard would be needed.
+
+**Q: Can I limit coupons by categories or tags?**
+
+A: The current version doesn't support categories. This could be added in future updates.
 
 ---
 
-Affiliate Coupon Booster is a practical solution for anyone looking to optimize affiliate coupon conversions and grow affiliate income efficiently.
+© 2025 Affiliate Coupon Booster Plugin by GeneratedAI
