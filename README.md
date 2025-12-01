@@ -38,3 +38,6 @@ Environment vars used:
 ## Notes
 - Author metadata is enforced as `Author: Auto Plugin Factory` and `Author URI: <tracker-link>` on every download.
 - Protected downloads include both plugin PHP and README in a zip via the tracker.
+
+## Developer
+Developed and managed by [Naveen Goyal](https://naveen.bhandarum.in)
