@@ -1,32 +1,33 @@
 # AffiliateDeal Booster
 
-## Description
-AffiliateDeal Booster is a WordPress plugin that dynamically generates personalized affiliate coupon deals and notifications to your visitors. This helps increase affiliate conversions by showing timely discount coupons and encouraging clicks through friendly pop-ups.
+AffiliateDeal Booster is a unique WordPress plugin that automatically aggregates and displays targeted affiliate coupons and deals from multiple affiliate programs based on visitor interests to boost affiliate commissions and user engagement.
 
 ## Features
-- Automatically shows relevant affiliate coupon deals randomly to visitors
-- Click tracking for deal performance insights
-- Supports multiple affiliate networks
-- Lightweight and self-contained single-file plugin
-- Easy to customize affiliate coupons and URLs
+
+- Aggregates deals from multiple JSON feed URLs of affiliate programs
+- Displays up to 10 curated deals with titles, descriptions, and affiliate links
+- Easy shortcode `[affiliate_deals]` to display deals anywhere
+- Admin settings page to manage deal sources and widget title
+- Basic affiliate link cloaking by appending referral parameters
+- Freemium-ready architecture for future premium targeting and filtering
 
 ## Installation
-1. Download the plugin PHP file.
-2. Upload it to your WordPress plugin directory (`/wp-content/plugins/`).
-3. Activate "AffiliateDeal Booster" from the WordPress admin Plugins page.
+
+1. Upload the `affiliate-deal-booster.php` file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to 'AffiliateDeal Booster' menu under WordPress admin to configure.
+4. Enter one or more JSON feed URLs providing affiliate coupon/deal data (one URL per line).
+5. Set a widget title if desired and save settings.
 
 ## Setup
-1. Edit the plugin PHP file to configure your affiliate programs:
-   - Update the `$deals` array with your affiliate program names, coupon codes, and affiliate URLs.
-2. Save the file and refresh your site to see notifications.
+
+- Add your affiliate network coupon feed URLs to the sources textarea in the plugin settings.
+- Use the shortcode `[affiliate_deals]` in posts, pages, or widgets where you want the curated deals to appear.
 
 ## Usage
-- Visitors on your site will randomly see pop-up coupon offers for your affiliate partners.
-- When a user clicks the offer, it opens the affiliate link in a new tab and tracks the click.
-- View aggregated click counts via the WordPress options table (for advanced users).
 
-This plugin helps boost affiliate commission revenue by increasing user engagement with personalized deals.
+Place the shortcode `[affiliate_deals]` anywhere on your site to show a shuffled list of active affiliate deals sourced from your defined JSON feeds. It helps increase conversions by presenting timely, relevant discounts and promotions to your visitors.
 
 ---
 
-**Note:** For advanced usage, consider extending this plugin with admin panels, detailed analytics, and more affiliate networks support.
+This plugin provides a unique, scalable way to boost affiliate revenue on WordPress sites by automating deal aggregation and display customized for your audience.
