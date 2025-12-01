@@ -1,106 +1,117 @@
-<?php
 /*
-Plugin Name: WP Affiliate Link Manager
-Description: Manage, cloak, and track affiliate links with analytics.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Affiliate_Link_Manager.php
 */
-
-if (!defined('ABSPATH')) exit;
+<?php
+/**
+ * Plugin Name: WP Affiliate Link Manager
+ * Plugin URI: https://example.com/wp-affiliate-link-manager
+ * Description: Manage, track, and optimize affiliate links on your WordPress site.
+ * Version: 1.0
+ * Author: Your Name
+ * Author URI: https://example.com
+ * License: GPL2
+ */
 
 class WPAffiliateLinkManager {
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_menu'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_shortcode('affiliate_link', array($this, 'render_affiliate_link'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'settings_init'));
+        add_shortcode('aff_link', array($this, 'aff_link_shortcode'));
         add_action('wp_head', array($this, 'track_click'));
     }
 
-    public function add_menu() {
+    public function add_admin_menu() {
         add_menu_page(
             'Affiliate Links',
             'Affiliate Links',
             'manage_options',
-            'wp-affiliate-link-manager',
-            array($this, 'admin_page'),
+            'wp_affiliate_link_manager',
+            array($this, 'plugin_settings_page'),
             'dashicons-admin-links'
         );
     }
 
-    public function register_settings() {
-        register_setting('wp_affiliate_link_manager', 'wp_affiliate_links');
+    public function settings_init() {
+        register_setting('wp_affiliate_link_manager', 'wp_affiliate_link_manager_options');
+
+        add_settings_section(
+            'wp_affiliate_link_manager_section',
+            'Manage Your Affiliate Links',
+            null,
+            'wp_affiliate_link_manager'
+        );
+
+        add_settings_field(
+            'affiliate_links',
+            'Affiliate Links',
+            array($this, 'affiliate_links_render'),
+            'wp_affiliate_link_manager',
+            'wp_affiliate_link_manager_section'
+        );
     }
 
-    public function admin_page() {
-        $links = get_option('wp_affiliate_links', array());
-        if (isset($_POST['add_link'])) {
-            $links[] = array(
-                'name' => sanitize_text_field($_POST['name']),
-                'url' => esc_url_raw($_POST['url']),
-                'slug' => sanitize_title($_POST['slug'])
-            );
-            update_option('wp_affiliate_links', $links);
-            echo '<div class="notice notice-success"><p>Link added!</p></div>';
+    public function affiliate_links_render() {
+        $options = get_option('wp_affiliate_link_manager_options');
+        $links = isset($options['affiliate_links']) ? $options['affiliate_links'] : array();
+        echo '<div id="affiliate-links-container">';
+        foreach ($links as $index => $link) {
+            echo '<div class="affiliate-link-item">
+                    <input type="text" name="wp_affiliate_link_manager_options[affiliate_links][' . $index . '][name]" placeholder="Link Name" value="' . esc_attr($link['name']) . '" />
+                    <input type="url" name="wp_affiliate_link_manager_options[affiliate_links][' . $index . '][url]" placeholder="Affiliate URL" value="' . esc_attr($link['url']) . '" />
+                    <input type="text" name="wp_affiliate_link_manager_options[affiliate_links][' . $index . '][slug]" placeholder="Slug" value="' . esc_attr($link['slug']) . '" />
+                    <button type="button" class="remove-link">Remove</button>
+                  </div>';
         }
-        if (isset($_GET['delete'])) {
-            unset($links[$_GET['delete']]);
-            update_option('wp_affiliate_links', $links);
-            wp_redirect(admin_url('admin.php?page=wp-affiliate-link-manager'));
-            exit;
-        }
+        echo '</div>';
+        echo '<button type="button" id="add-link">Add Link</button>';
+        echo '<script>
+            document.getElementById("add-link").addEventListener("click", function() {
+                var container = document.getElementById("affiliate-links-container");
+                var index = container.children.length;
+                var div = document.createElement("div");
+                div.className = "affiliate-link-item";
+                div.innerHTML = `<input type="text" name="wp_affiliate_link_manager_options[affiliate_links][${index}][name]" placeholder="Link Name" />
+                                <input type="url" name="wp_affiliate_link_manager_options[affiliate_links][${index}][url]" placeholder="Affiliate URL" />
+                                <input type="text" name="wp_affiliate_link_manager_options[affiliate_links][${index}][slug]" placeholder="Slug" />
+                                <button type="button" class="remove-link">Remove</button>`;
+                container.appendChild(div);
+            });
+            document.addEventListener("click", function(e) {
+                if (e.target && e.target.classList.contains("remove-link")) {
+                    e.target.parentElement.remove();
+                }
+            });
+        </script>';
+    }
+
+    public function plugin_settings_page() {
         ?>
         <div class="wrap">
             <h1>Affiliate Link Manager</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th><label for="name">Name</label></th>
-                        <td><input type="text" name="name" id="name" required /></td>
-                    </tr>
-                    <tr>
-                        <th><label for="url">Affiliate URL</label></th>
-                        <td><input type="url" name="url" id="url" required /></td>
-                    </tr>
-                    <tr>
-                        <th><label for="slug">Slug</label></th>
-                        <td><input type="text" name="slug" id="slug" required /></td>
-                    </tr>
-                </table>
-                <p class="submit"><input type="submit" name="add_link" class="button-primary" value="Add Link" /></p>
+            <form action='options.php' method='post'>
+                <?php
+                settings_fields('wp_affiliate_link_manager');
+                do_settings_sections('wp_affiliate_link_manager');
+                submit_button();
+                ?>
             </form>
-            <h2>Existing Links</h2>
-            <table class="widefat">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>URL</th>
-                        <th>Slug</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($links as $i => $link): ?>
-                    <tr>
-                        <td><?php echo esc_html($link['name']); ?></td>
-                        <td><?php echo esc_url($link['url']); ?></td>
-                        <td><?php echo esc_html($link['slug']); ?></td>
-                        <td><a href="<?php echo admin_url('admin.php?page=wp-affiliate-link-manager&delete=' . $i); ?>" class="button">Delete</a></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
         </div>
         <?php
     }
 
-    public function render_affiliate_link($atts) {
-        $atts = shortcode_atts(array('slug' => ''), $atts);
-        $links = get_option('wp_affiliate_links', array());
+    public function aff_link_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'slug' => '',
+        ), $atts, 'aff_link');
+
+        $options = get_option('wp_affiliate_link_manager_options');
+        $links = isset($options['affiliate_links']) ? $options['affiliate_links'] : array();
+
         foreach ($links as $link) {
             if ($link['slug'] === $atts['slug']) {
-                return '<a href="' . home_url('/go/' . $link['slug']) . '" target="_blank">' . esc_html($link['name']) . '</a>';
+                return '<a href="' . esc_url(home_url('/go/' . $link['slug'])) . '" target="_blank">' . esc_html($link['name']) . '</a>';
             }
         }
         return '';
@@ -108,11 +119,12 @@ class WPAffiliateLinkManager {
 
     public function track_click() {
         if (isset($_GET['go'])) {
-            $slug = sanitize_title($_GET['go']);
-            $links = get_option('wp_affiliate_links', array());
+            $slug = sanitize_text_field($_GET['go']);
+            $options = get_option('wp_affiliate_link_manager_options');
+            $links = isset($options['affiliate_links']) ? $options['affiliate_links'] : array();
             foreach ($links as $link) {
                 if ($link['slug'] === $slug) {
-                    // Log click (could be extended with analytics)
+                    // Log click (could be extended to store in database)
                     wp_redirect($link['url']);
                     exit;
                 }
@@ -122,4 +134,3 @@ class WPAffiliateLinkManager {
 }
 
 new WPAffiliateLinkManager();
-?>
