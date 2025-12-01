@@ -1,36 +1,41 @@
 # Content Monetizer Pro
 
-Content Monetizer Pro is a powerful WordPress plugin that enables site owners and content creators to monetize their digital content via direct sales, subscription upgrades, and integrated affiliate promotions.
+Content Monetizer Pro is an all-in-one WordPress plugin designed to help you easily monetize your site through multiple revenue streams, including subscription-based plans, affiliate marketing, and custom ad placement.
 
 ## Features
 
-- Custom post type for sellable content (articles, videos, music, podcasts).
-- Simple shortcode `[cmp_sale_button]` to embed purchase buttons on content.
-- AJAX-powered purchase simulation with user access management.
-- Freemium model: basic sales functionality for free.
-- Ability to extend with premium features like subscriptions and affiliate integrations (future).
-- Easy integration into any WordPress theme.
+- Subscription form shortcode to collect subscriber emails
+- Affiliate ID integration for tracking and referrals
+- Customizable ad code insertion at the end of posts
+- Simple settings panel to configure affiliate and ad settings
+- Support for freemium and subscription monetization models
 
 ## Installation
 
-1. Upload the `content-monetizer-pro.php` file to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to "Sales" in the WordPress admin menu to add content you want to sell.
+1. Download the `content-monetizer-pro.php` file.
+2. Upload it to your WordPress site’s `/wp-content/plugins/` directory.
+3. Go to your WordPress dashboard -> Plugins and activate **Content Monetizer Pro**.
 
 ## Setup
 
-1. Create new sale items under the "Sales" post type.
-2. Set the price for each item as a custom field with key `_cmp_price`.
-3. Add the shortcode `[cmp_sale_button]` inside your post or page content to show a buy button.
+1. Navigate to **Content Monetizer** menu in the admin dashboard.
+2. Enter your Affiliate ID if applicable.
+3. Paste your ad code (e.g., Google AdSense) into the Ad Code field.
+4. Enable or disable subscription feature with the checkbox.
+5. Save changes.
 
 ## Usage
 
-- Visitors can click the "Buy Now" button to purchase content. (Note: The current version simulates purchase; integrate a payment gateway for real transactions.)
-- After purchase, access to content can be managed via user meta or cookies.
-- Extend with premium add-ons for subscriptions, affiliate marketing, and analytics.
+- Use the shortcode `[cmp_subscribe_form]` in any post or page to display the subscription form.
+- Subscribers will be saved in the WordPress options table.
+- Ads will automatically display at the end of post content.
 
-This plugin provides a foundation for WordPress content monetization with an easy setup and flexibility for future growth.
+This plugin provides a streamlined method to diversify your WordPress site’s income with easy-to-use subscription and affiliate features.
+
+## Support & Contribution
+
+For support, please open an issue in the plugin repository or contact the author.
 
 ---
 
-Developed for content creators who want to turn their digital assets into revenue efficiently and effectively.
+**Content Monetizer Pro** — Monetize smartly, earn steadily.
