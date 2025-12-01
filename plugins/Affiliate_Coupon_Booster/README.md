@@ -1,40 +1,35 @@
 # Affiliate Coupon Booster
 
-## Description
-Affiliate Coupon Booster is a unique WordPress plugin designed to automatically aggregate affiliate coupons from popular affiliate networks and display them elegantly on your website, helping you increase affiliate conversions by offering targeted discounts.
+Affiliate Coupon Booster is a WordPress plugin that automatically aggregates and displays relevant affiliate coupons and deals tailored to your site's niche, helping increase affiliate income and user engagement.
 
 ## Features
-- Display a curated list of active affiliate coupons as shortcode or widget
-- Automatic expiration check to disable outdated coupons
-- Clean, modern styling for high user engagement
-- Simple shortcode: `[affiliate_coupons]` to display the coupon list anywhere
-- Lightweight and self-contained for high performance
+
+- Automatically fetches affiliate coupons based on your niche keyword
+- Displays coupons via a simple shortcode `[affiliate_coupon_booster]`
+- Customizable affiliate ID for tracking
+- Admin settings page to configure affiliate ID, fetch interval, and niche keyword
+- Periodic automatic coupon updates via scheduled tasks
+- Clean and responsive coupon display
 
 ## Installation
-1. Download the plugin ZIP file.
-2. In your WordPress admin dashboard, go to **Plugins > Add New > Upload Plugin**.
-3. Upload the ZIP file and click **Install Now**.
-4. Activate the plugin.
+
+1. Upload the plugin file to your WordPress `/wp-content/plugins/` directory or install via the WordPress plugin uploader.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to 'Affiliate Coupon Booster' settings in the admin menu.
+4. Enter your affiliate ID, niche keyword (e.g., 'technology', 'fashion'), and set how often coupons should be fetched (in hours).
+5. Save settings.
 
 ## Setup
-No setup required for the free version. Coupons are hardcoded for demonstration. The premium upgrade will allow you to connect your affiliate accounts and auto-import real coupons.
+
+- Replace the placeholder `affiliate_id` in settings with your real affiliate tracking ID.
+- Choose a niche keyword that closely matches your site's focus to get relevant coupons.
+- The plugin will fetch example coupon data periodically. (For live use, extend the fetch function to integrate with real affiliate coupon APIs.)
 
 ## Usage
-- Insert the shortcode `[affiliate_coupons]` into any post, page, or widget area to display a list of affiliate coupons.
 
-Example:
+- Place the shortcode `[affiliate_coupon_booster]` in any post, page, or widget area to show a list of the latest coupons.
+- Coupons link out with your affiliate ID for tracking.
 
-    [affiliate_coupons]
+---
 
-## Premium Version (Coming Soon)
-- Real-time coupon import from affiliate networks
-- Advanced coupon targeting by category, user behavior, or geolocation
-- Analytics dashboard to track coupon clicks and conversions
-- Customizable coupon templates and styling options
-- Priority support and updates
-
-## Support
-For plugin support, please contact the developer or visit the plugin support forum on WordPress.org.
-
-## License
-GPLv2 or later.
+This plugin boosts your WordPress site’s monetization by turning your content into a dynamic coupon hub that drives affiliate conversions.
