@@ -1,160 +1,100 @@
-<?php
 /*
-Plugin Name: Affiliate Coupon Aggregator
-Plugin URI: https://example.com/affiliate-coupon-aggregator
-Description: Aggregates affiliate coupons from multiple networks and displays them with customizable categories.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Coupon_Aggregator.php
-License: GPLv2 or later
 */
+<?php
+/**
+ * Plugin Name: Affiliate Coupon Aggregator
+ * Description: Aggregates and displays affiliate coupons from multiple stores with shortcode.
+ * Version: 1.0
+ * Author: Plugin Generator
+ */
 
-if (!defined('ABSPATH')) exit; // Exit if accessed directly
+if (!defined('ABSPATH')) exit;
 
 class AffiliateCouponAggregator {
-    private $option_name = 'aca_coupons_data';
-    private $update_interval = 12 * HOUR_IN_SECONDS; // update every 12 hours
+    private $coupons_option = 'aca_coupons_data';
+    private $nonce = 'aca_nonce_action';
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-        add_shortcode('affiliate_coupons', array($this, 'render_coupons_shortcode'));
-        add_action('affiliate_coupon_update_event', array($this, 'update_coupons_data'));
-        register_activation_hook(__FILE__, array($this, 'activation'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivation'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_post_save_coupons', array($this, 'save_coupons_data'));
+        add_shortcode('affiliate_coupons', array($this, 'render_coupons'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
     }
 
-    public function activation() {
-        if (!wp_next_scheduled('affiliate_coupon_update_event')) {
-            wp_schedule_event(time(), 'twicedaily', 'affiliate_coupon_update_event');
+    public function admin_menu() {
+        add_menu_page('Affiliate Coupon Aggregator', 'Coupon Aggregator', 'manage_options', 'aca_settings', array($this, 'settings_page'));
+    }
+
+    public function settings_page() {
+        if (!current_user_can('manage_options')) return;
+        $coupons = get_option($this->coupons_option, array());
+        ?>
+        <div class="wrap">
+            <h1>Affiliate Coupon Aggregator Settings</h1>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <?php wp_nonce_field($this->nonce); ?>
+                <input type="hidden" name="action" value="save_coupons">
+                <label for="coupons_data">Enter coupons JSON (array of objects with keys: title, code, url, description):</label><br>
+                <textarea id="coupons_data" name="coupons_data" rows="15" cols="70" style="font-family: monospace;"><?php echo esc_textarea(json_encode($coupons)); ?></textarea><br><br>
+                <input type="submit" class="button button-primary" value="Save Coupons">
+            </form>
+            <h2>Usage</h2>
+            <p>Add shortcode <code>[affiliate_coupons]</code> wherever you want to display coupons.</p>
+        </div>
+        <?php
+    }
+
+    public function save_coupons_data() {
+        if (!current_user_can('manage_options') || !check_admin_referer($this->nonce)) {
+            wp_die('Permission denied');
         }
-        $this->update_coupons_data();
-    }
-
-    public function deactivation() {
-        wp_clear_scheduled_hook('affiliate_coupon_update_event');
-    }
-
-    public function add_admin_menu() {
-        add_options_page('Affiliate Coupon Aggregator', 'Affiliate Coupons', 'manage_options', 'affiliate_coupon_aggregator', array($this, 'options_page'));
-    }
-
-    public function settings_init() {
-        register_setting('affiliateCouponGroup', 'aca_settings');
-
-        add_settings_section(
-            'aca_section_main',
-            __('Coupon Source Settings', 'affiliate-coupon-aggregator'),
-            function() { echo '<p>'.__('Configure coupon source API keys and categories.', 'affiliate-coupon-aggregator').'</p>'; },
-            'affiliateCouponGroup'
-        );
-
-        add_settings_field(
-            'aca_affiliate_api_key',
-            __('Affiliate API Key', 'affiliate-coupon-aggregator'),
-            array($this, 'render_text_field'),
-            'affiliateCouponGroup',
-            'aca_section_main',
-            array('label_for' => 'aca_affiliate_api_key', 'name' => 'affiliate_api_key')
-        );
-
-        add_settings_field(
-            'aca_categories',
-            __('Coupon Categories (comma separated)', 'affiliate-coupon-aggregator'),
-            array($this, 'render_text_field'),
-            'affiliateCouponGroup',
-            'aca_section_main',
-            array('label_for' => 'aca_categories', 'name' => 'categories')
-        );
-    }
-
-    public function render_text_field($args) {
-        $options = get_option('aca_settings');
-        $value = isset($options[$args['name']]) ? esc_attr($options[$args['name']]) : '';
-        echo "<input type='text' id='".esc_attr($args['label_for'])."' name='aca_settings[".esc_attr($args['name'])."]' value='$value' style='width: 50%;' />";
-    }
-
-    public function options_page() {
-        echo '<form action="options.php" method="post">';
-        settings_fields('affiliateCouponGroup');
-        do_settings_sections('affiliateCouponGroup');
-        submit_button('Save Settings');
-        echo '</form>';
-    }
-
-    public function update_coupons_data() {
-        $options = get_option('aca_settings');
-        $api_key = isset($options['affiliate_api_key']) ? $options['affiliate_api_key'] : '';
-
-        if (empty($api_key)) {
-            // No API key, clear coupons
-            update_option($this->option_name, array());
-            return;
+        $raw = isset($_POST['coupons_data']) ? wp_unslash($_POST['coupons_data']) : '';
+        $decoded = json_decode($raw, true);
+        if (!is_array($decoded)) {
+            wp_redirect(admin_url('admin.php?page=aca_settings&error=invalid_json'));
+            exit;
         }
-
-        // Simulated coupon data fetching (replace with real API calls)
-        $coupons = array(
-            array(
-                'title' => '10% Off on Electronics',
-                'code' => 'ELEC10',
-                'description' => 'Save 10% on all electronics items.',
-                'url' => 'https://affiliatesite.com/deal1',
-                'category' => 'Electronics',
-                'expiry' => date('Y-m-d', strtotime('+10 days'))
-            ),
-            array(
-                'title' => 'Free Shipping on Orders $50+',
-                'code' => 'FREESHIP50',
-                'description' => 'Get free shipping on orders over $50.',
-                'url' => 'https://affiliatesite.com/deal2',
-                'category' => 'Shipping',
-                'expiry' => date('Y-m-d', strtotime('+5 days'))
-            ),
-            array(
-                'title' => '20% Off Apparel',
-                'code' => 'APPAREL20',
-                'description' => '20% discount on all apparel products.',
-                'url' => 'https://affiliatesite.com/deal3',
-                'category' => 'Apparel',
-                'expiry' => date('Y-m-d', strtotime('+15 days'))
-            )
-        );
-        update_option($this->option_name, $coupons);
+        // Basic validation of keys
+        foreach ($decoded as $c) {
+            if (!isset($c['title']) || !isset($c['code']) || !isset($c['url'])) {
+                wp_redirect(admin_url('admin.php?page=aca_settings&error=missing_fields'));
+                exit;
+            }
+        }
+        update_option($this->coupons_option, $decoded);
+        wp_redirect(admin_url('admin.php?page=aca_settings&updated=1'));
+        exit;
     }
 
-    public function render_coupons_shortcode($atts) {
-        $atts = shortcode_atts(array('category' => ''), $atts);
-        $coupons = get_option($this->option_name, array());
-
+    public function render_coupons($atts) {
+        $coupons = get_option($this->coupons_option, array());
         if (empty($coupons)) {
-            return '<p>No coupons available at the moment. Please check back later.</p>';
+            return '<p>No coupons available at the moment.</p>';
         }
-
-        $category_filter = trim(strtolower($atts['category']));
-
-        $output = '<div class="aca-coupons">';
-
-        $filtered = array_filter($coupons, function($coupon) use ($category_filter) {
-            if (empty($category_filter)) return true;
-            return strtolower($coupon['category']) == $category_filter;
-        });
-
-        if (empty($filtered)) {
-            return '<p>No coupons found for this category.</p>';
+        $output = '<div class="aca-coupons-list">';
+        foreach ($coupons as $coupon) {
+            $title = esc_html($coupon['title']);
+            $code = esc_html($coupon['code']);
+            $url = esc_url($coupon['url']);
+            $desc = isset($coupon['description']) ? esc_html($coupon['description']) : '';
+            $output .= "<div class='aca-coupon-item' style='border:1px solid #ddd;padding:10px;margin-bottom:10px;'>";
+            $output .= "<h3 style='margin:0 0 5px 0;'>$title</h3>";
+            if ($desc) {
+                $output .= "<p style='margin:0 0 5px 0;'>$desc</p>";
+            }
+            $output .= "<p><strong>Coupon Code: </strong><code>$code</code></p>";
+            $output .= "<p><a href='$url' target='_blank' rel='nofollow noopener' style='background:#0073aa;color:#fff;padding:5px 10px;text-decoration:none;border-radius:3px;'>Use Coupon</a></p>";
+            $output .= "</div>";
         }
-
-        foreach ($filtered as $coupon) {
-            $output .= '<div class="aca-coupon" style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">';
-            $output .= '<h3 style="margin:0 0 5px 0;">'.esc_html($coupon['title']).'</h3>';
-            $output .= '<p>'.esc_html($coupon['description']).'</p>';
-            $output .= '<p><strong>Code: </strong><code>'.esc_html($coupon['code']).'</code></p>';
-            $output .= '<p><strong>Expires: </strong>'.esc_html($coupon['expiry']).'</p>';
-            $output .= '<a href="'.esc_url($coupon['url']).'" target="_blank" rel="nofollow noopener" style="display:inline-block; background:#0073aa; color:#fff; padding:8px 12px; text-decoration:none; border-radius:3px;">Use Coupon</a>';
-            $output .= '</div>';
-        }
-
         $output .= '</div>';
         return $output;
+    }
+
+    public function enqueue_styles() {
+        wp_register_style('aca-style', false);
+        wp_enqueue_style('aca-style');
     }
 }
 
