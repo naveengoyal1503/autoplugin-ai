@@ -1,49 +1,34 @@
 # AffiliateDeal Booster
 
 ## Description
-
-AffiliateDeal Booster is a unique WordPress plugin designed to automatically aggregate and display highly relevant affiliate coupons and deals from multiple networks. It provides seamless integration with your site, enabling you to increase affiliate conversions with minimal manual effort. Track user clicks on deals to optimize your affiliate marketing strategy.
+AffiliateDeal Booster is a WordPress plugin designed to dynamically generate and display exclusive, personalized affiliate coupon deals for your visitors. By showing relevant, attractive discounts from various affiliate partners based on visitor browsing behavior (simulated here by random selection), it helps maximize affiliate conversions and increase revenue.
 
 ## Features
-
-- Auto-fetch and display affiliate coupons based on your settings
-- Customizable number of deals to show via shortcode
-- Click tracking for all affiliate links using AJAX
-- Easy to configure API key for sourcing deals (mock/demo included)
-- Lightweight and self-contained single PHP file plugin
-- Shortcode `[affiliate_deals]` for embedding deals list anywhere
-- Freemium-ready for advanced features and analytics (planned)
+- Dynamically display an exclusive coupon offer from multiple affiliate networks
+- Simple shortcode `[affiliate_deal_booster]` to display deals anywhere on your site
+- Personalized deal selection logic (randomized for basic version)
+- Clean, responsive styling for deal widget
+- Freemium design allowing expansion with advanced targeting and analytics
 
 ## Installation
-
-1. Download the `affiliate-deal-booster.php` plugin file.
-2. Upload the file to your WordPress site's `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
-4. Go to **Settings > AffiliateDeal Booster** to enter your API key and configure display options.
+1. Download the plugin file.
+2. In your WordPress admin, navigate to Plugins > Add New > Upload Plugin.
+3. Upload the `affiliate-deal-booster.php` file and click "Install Now".
+4. Activate the plugin.
 
 ## Setup
-
-- Enter your affiliate coupon API key to enable dynamic deal fetching (the current version uses static sample data).
-- Set how many deals you want displayed via shortcode.
+- Insert the shortcode `[affiliate_deal_booster]` in any post, page, or widget area where you want the deal to appear.
+- Customize affiliate deals by editing the `$affiliates` array inside the plugin PHP file (for developers).
 
 ## Usage
+- Place shortcode to showcase personalized affiliate deals and coupon codes.
+- Encourage visitors to click on the deals to boost affiliate sales.
 
-- To display the affiliate deal list, add the shortcode `[affiliate_deals]` to any post, page, or widget supporting shortcodes.
-- The deals will show as clickable titles with descriptions.
-- Clicks on the links are tracked to monitor performance.
+## Premium Plans
+The free version uses simple randomization. Premium plans will offer:
+- Advanced visitor behavior tracking for tailored deals
+- Integration with affiliate network APIs for real-time coupon updates
+- Detailed analytics dashboard to track clicks and conversions
+- Ability to add custom coupon codes and affiliate URLs via admin UI
 
-## Changelog
-
-### 1.0
-- Initial release with static deal aggregation and click tracking.
-
-## FAQ
-
-**Q: How do I get the API key?**
-A: This demo uses static data. For real use, integrate with your affiliate networks providing coupon APIs.
-
-**Q: Can I customize link style?**
-A: Yes, you can style via CSS targeting `.adb-deal-list` and `.adb-deal-link` classes.
-
-**Q: Is this plugin free?**
-A: Current version is free with basic features. Premium with analytics and automation planned.
+Leverage AffiliateDeal Booster to drive affiliate revenue effectively by optimizing which deals are shown to which visitors with minimal setup.
