@@ -1,66 +1,114 @@
 <?php
 /*
 Plugin Name: WP Revenue Booster
-Description: Maximize revenue with smart affiliate link rotation, coupon display, and sponsored content management.
+Description: Automatically optimizes and manages multiple monetization streams for WordPress sites.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
 
-define('WP_REVENUE_BOOSTER_VERSION', '1.0');
+class WP_Revenue_Booster {
 
-class WPRevenueBooster {
     public function __construct() {
-        add_action('init', array($this, 'init'));        
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('revenue_booster', array($this, 'shortcode_handler'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('wp_footer', array($this, 'inject_monetization_code'));
+        add_action('admin_init', array($this, 'settings_init'));
     }
 
-    public function init() {
-        // Register custom post type for coupons and sponsored content
-        register_post_type('wp_revenue_coupon', array(
-            'labels' => array('name' => 'Coupons', 'singular_name' => 'Coupon'),
-            'public' => false,
-            'show_ui' => true,
-            'supports' => array('title', 'editor')
-        ));
-        register_post_type('wp_revenue_sponsored', array(
-            'labels' => array('name' => 'Sponsored Content', 'singular_name' => 'Sponsored Post'),
-            'public' => false,
-            'show_ui' => true,
-            'supports' => array('title', 'editor')
-        ));
+    public function add_admin_menu() {
+        add_menu_page(
+            'WP Revenue Booster',
+            'Revenue Booster',
+            'manage_options',
+            'wp_revenue_booster',
+            array($this, 'options_page')
+        );
     }
 
-    public function admin_menu() {
-        add_menu_page('Revenue Booster', 'Revenue Booster', 'manage_options', 'wp-revenue-booster', array($this, 'admin_page'));
+    public function settings_init() {
+        register_setting('wp_revenue_booster', 'wp_revenue_booster_settings');
+
+        add_settings_section(
+            'wp_revenue_booster_section',
+            'Monetization Settings',
+            null,
+            'wp_revenue_booster'
+        );
+
+        add_settings_field(
+            'ads_enabled',
+            'Enable Ads',
+            array($this, 'ads_enabled_render'),
+            'wp_revenue_booster',
+            'wp_revenue_booster_section'
+        );
+
+        add_settings_field(
+            'affiliate_enabled',
+            'Enable Affiliate Links',
+            array($this, 'affiliate_enabled_render'),
+            'wp_revenue_booster',
+            'wp_revenue_booster_section'
+        );
+
+        add_settings_field(
+            'premium_content_enabled',
+            'Enable Premium Content',
+            array($this, 'premium_content_enabled_render'),
+            'wp_revenue_booster',
+            'wp_revenue_booster_section'
+        );
     }
 
-    public function admin_page() {
-        echo '<div class="wrap"><h1>WP Revenue Booster</h1><p>Manage coupons, affiliate links, and sponsored content here.</p></div>';
+    public function ads_enabled_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        ?>
+        <input type='checkbox' name='wp_revenue_booster_settings[ads_enabled]' <?php checked($options['ads_enabled'] ?? 0, 1); ?> value='1'>
+        <?php
     }
 
-    public function shortcode_handler($atts) {
-        $atts = shortcode_atts(array(
-            'type' => 'coupon',
-            'count' => 1
-        ), $atts);
+    public function affiliate_enabled_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        ?>
+        <input type='checkbox' name='wp_revenue_booster_settings[affiliate_enabled]' <?php checked($options['affiliate_enabled'] ?? 0, 1); ?> value='1'>
+        <?php
+    }
 
-        $output = '';
-        if ($atts['type'] === 'coupon') {
-            $coupons = get_posts(array('post_type' => 'wp_revenue_coupon', 'numberposts' => $atts['count']));
-            foreach ($coupons as $coupon) {
-                $output .= '<div class="revenue-coupon"><strong>' . esc_html($coupon->post_title) . '</strong>: ' . esc_html($coupon->post_content) . '</div>';
-            }
-        } elseif ($atts['type'] === 'sponsored') {
-            $posts = get_posts(array('post_type' => 'wp_revenue_sponsored', 'numberposts' => $atts['count']));
-            foreach ($posts as $post) {
-                $output .= '<div class="revenue-sponsored"><h3>' . esc_html($post->post_title) . '</h3><p>' . esc_html($post->post_content) . '</p></div>';
-            }
+    public function premium_content_enabled_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        ?>
+        <input type='checkbox' name='wp_revenue_booster_settings[premium_content_enabled]' <?php checked($options['premium_content_enabled'] ?? 0, 1); ?> value='1'>
+        <?php
+    }
+
+    public function options_page() {
+        ?>
+        <form action='options.php' method='post'>
+            <?php
+            settings_fields('wp_revenue_booster');
+            do_settings_sections('wp_revenue_booster');
+            submit_button();
+            ?>
+        </form>
+        <?php
+    }
+
+    public function inject_monetization_code() {
+        $options = get_option('wp_revenue_booster_settings');
+
+        if ($options['ads_enabled'] ?? 0) {
+            echo '<div class="wp-revenue-ads">Ad placeholder</div>';
         }
-        return $output;
+
+        if ($options['affiliate_enabled'] ?? 0) {
+            echo '<div class="wp-revenue-affiliate">Affiliate link placeholder</div>';
+        }
+
+        if ($options['premium_content_enabled'] ?? 0) {
+            echo '<div class="wp-revenue-premium">Premium content placeholder</div>';
+        }
     }
 }
 
-new WPRevenueBooster();
+new WP_Revenue_Booster();
 ?>
