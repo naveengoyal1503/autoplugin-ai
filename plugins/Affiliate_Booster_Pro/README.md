@@ -1,35 +1,38 @@
 # Affiliate Booster Pro
 
-Affiliate Booster Pro is a WordPress plugin designed to **automate affiliate link management**, **integrate coupon codes effortlessly**, and provide **performance tracking features** for affiliate marketers and content creators.
+## Description
+Affiliate Booster Pro is a powerful WordPress plugin that automatically detects product mentions in your posts and inserts optimized affiliate links accompanied by real-time coupon and discount information. This helps increase your affiliate revenue effortlessly by converting casual mentions into high-converting affiliate links.
 
 ## Features
 
-- Automatically convert affiliate domain URLs in posts into clickable, tracked affiliate links.
-- Append a customizable list of exclusive coupon codes to posts, enhancing user engagement and conversions.
-- Simple settings panel for adding affiliate domains and managing coupon codes.
-- Freemium-ready architecture allows for future upgrades with advanced analytics, link cloaking, and auto coupon imports.
+- Automatically detects predefined product keywords in your posts.
+- Inserts affiliate links dynamically with your tracking IDs.
+- Displays real-time coupons or discounts fetched from affiliate network APIs.
+- Simple admin settings to customize product keywords.
+- Supports multiple affiliate network configurations.
+- No setup required for default demo network (example affiliate).
+- SEO-friendly and lightweight.
 
 ## Installation
 
-1. Upload the `affiliate-booster-pro.php` file to your `/wp-content/plugins/` directory or install via WordPress admin.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to 'Affiliate Booster' in the admin menu.
-4. Enter your affiliate domains (comma separated).
-5. Add coupon codes in the format `CODE|Description` one per line.
-6. Save settings.
+1. Upload the `affiliate-booster-pro.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the Plugins menu in WordPress.
+3. Go to **Settings > Affiliate Booster Pro** to configure product keywords (optional).
 
 ## Setup
 
-- In the settings page, add affiliate network domains to watch for auto-linking (e.g., `exampleaffiliatesite.com, anotheraff.com`).
-- Add coupon codes you want to display for products linked.
-- Optionally customize the fixed affiliate ID in the code for your tracking.
+- By default, the plugin uses a demo affiliate network with example product keywords like "widget", "gadget", "tool", and "device".
+- Customize the product keywords in the settings page by entering a comma-separated list.
+- For production use, update or extend the affiliate networks and coupon API URLs inside the plugin code.
 
 ## Usage
 
-- Write your posts normally including affiliate URLs from the configured domains.
-- The plugin will automatically convert plain URLs from those domains to tracked affiliate links.
-- Coupon codes will display at the end of each post automatically.
+- Simply write blog posts or pages containing mentions of your product keywords.
+- When viewing the content on the frontend, the plugin will automatically replace the first instance of each keyword with a linked affiliate URL and show a coupon if available.
+- No shortcodes or manual link insertion required.
 
-This simple yet powerful tool helps maximize your affiliate marketing revenue with minimal effort.
+## Support
+For support or feature requests, please contact the author.
 
-**Upgrade to premium coming soon with enhanced features!**
+## License
+GPL v2 or later.
