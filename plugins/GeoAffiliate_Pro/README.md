@@ -1,52 +1,64 @@
 # GeoAffiliate Pro
 
-GeoAffiliate Pro is a WordPress plugin for affiliate marketers and bloggers who want to boost affiliate revenue by automatically geo-targeting affiliate links and scheduling their activation.
+**GeoAffiliate Pro** is an advanced WordPress plugin for affiliate marketers that provides **automatic affiliate link cloaking, geolocation targeting**, and **promotion scheduling**.
+
+---
 
 ## Features
 
-- Create affiliate links identified by a customizable slug.
-- Assign default URLs and multiple geo-targeted URLs by country code.
-- Schedule start and end times to activate/deactivate affiliate URLs.
-- Automatically redirect visitors to region-specific affiliate links based on their IP.
-- Shortcode `[geoaffiliate slug="yourlink"]` outputs the dynamically resolved URL.
-- Admin panel to manage all affiliate links with geo and schedule settings.
+- Create custom cloaked affiliate links (e.g., yoursite.com/promo)
+- Assign affiliate destination URLs per cloaked link
+- Geolocation targeting: redirect visitors based on their country
+- Schedule promotions with start and end dates
+- Shortcode support to dynamically display cloaked affiliate links
+- Easy-to-use admin interface for link management
+- Use native WordPress hooks and standards
+
+---
 
 ## Installation
 
-1. Upload the `geoaffiliate-pro.php` file to your WordPress plugins directory or install via the WP admin plugin uploader.
-2. Activate the plugin through the Plugins menu in WordPress.
-3. You will see a new admin menu "GeoAffiliate Pro" where you can add and manage your affiliate links.
+1. Upload the `geoaffiliate-pro.php` file to your WordPress plugins directory `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Access the plugin settings from the admin sidebar menu "GeoAffiliate Pro".
+
+---
 
 ## Setup
 
-1. In the GeoAffiliate Pro admin page, fill out the form to create a new affiliate link:
-   - **Slug:** Unique identifier used in shortcode
-   - **Default URL:** URL to use if no geo-targeting applies
-   - **Geo Targets:** One per line using ISO country codes, e.g., `US=https://amazon.com`
-   - **Schedule Start/End:** Optional activation window using `YYYY-MM-DD HH:MM` format
-2. Save the link.
-3. Repeat to add more links.
+1. Add affiliate links through the settings page.
+2. Provide a **unique base URL slug** for cloaking (e.g., `promo`).
+3. Enter the full affiliate URL where visitors should be redirected.
+4. Optionally, enter country codes (ISO 3166-1 alpha-2) to restrict redirection geographically.
+5. Optionally, set start and end dates to schedule active promotions.
+6. Save your settings.
+
+---
 
 ## Usage
 
-Place the shortcode anywhere in your posts or pages:
+- Insert cloaked links anywhere via shortcode:
 
+  
+  [geoaffiliate_link name="promo"]
+  
 
-[geoaffiliate slug="mylink"]
-
-
-This will output the correct affiliate URL based on the visitor's location and active schedule.
-
-For clickable affiliate links that update dynamically, use an anchor tag with a special attribute:
-
-html
-<a href="#" data-geoaffiliate="mylink">Buy now</a>
-
-
-The plugin will replace the href dynamically on page load.
-
-## Monetization Model
-
-GeoAffiliate Pro uses a freemium model. Basic features are free; premium upgrades could add detailed analytics, multi-network integration, branded link shortening, and prioritized support.
+- This generates a clickable link with the cloaked URL (e.g., yoursite.com/promo).
+- Visitors are redirected automatically to the correct affiliate URL based on their country and promotion schedule.
 
 ---
+
+## Monetization
+
+GeoAffiliate Pro uses a **freemium model**:
+
+- Base plugin is free with core features.
+- Premium version (planned for future) adds advanced analytics, multiple geotarget rules, and scheduled bulk link management.
+
+---
+
+## Support
+
+For support and feature requests, please visit the plugin support forum or contact the author directly.
+
+Thank you for choosing GeoAffiliate Pro to maximize your affiliate marketing revenue!
