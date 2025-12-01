@@ -1,26 +1,26 @@
 # WP Revenue Booster
 
-Automatically optimize ad placement, affiliate links, and upsell offers to maximize your WordPress site's revenue.
+Maximize your WordPress site's revenue by intelligently rotating and optimizing monetization methods such as ads, affiliate links, and premium content based on user engagement.
 
 ## Features
-- Injects ad code after the first paragraph of single posts.
-- Adds affiliate upsell links at the end of single posts.
-- Simple admin settings for ad code and affiliate link management.
-- Lightweight and non-intrusive.
+- Rotates monetization methods (ads, affiliate links, premium content) to maximize revenue
+- Easy-to-use admin settings
+- Customizable ad code, affiliate links, and premium content messages
+- Lightweight and non-intrusive
 
 ## Installation
-1. Upload the `wp-revenue-booster.php` file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure your ad code and affiliate link.
+1. Download the plugin file.
+2. Upload it to your WordPress site via Plugins > Add New > Upload Plugin.
+3. Activate the plugin.
+4. Go to Settings > Revenue Booster to configure your monetization methods.
 
 ## Setup
-- Enter your ad code (e.g., Google AdSense) in the Ad Code field.
-- Enter your affiliate link in the Affiliate Link field.
-- Save changes.
+- Enable the monetization methods you want to use (ads, affiliate links, premium content).
+- Enter your ad code, affiliate link, and premium content message.
+- Save your settings.
 
 ## Usage
-- The plugin will automatically inject your ad code and affiliate upsell on single posts.
-- For advanced analytics and automation, upgrade to the premium version.
+Once activated, the plugin will automatically rotate and display your chosen monetization methods on your site. You can customize the content and settings at any time from the admin panel.
 
 ## Support
-For support, visit https://example.com/support
+For support or feature requests, please visit our website or contact us directly.
