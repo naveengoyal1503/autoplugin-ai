@@ -1,142 +1,171 @@
-<?php
 /*
-Plugin Name: Affiliate Booster Pro
-Description: Create and manage a customizable affiliate marketing program with automated link cloaking and commission tracking.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Booster_Pro.php
 */
+<?php
+/**
+ * Plugin Name: Affiliate Booster Pro
+ * Description: Auto-convert product URLs to affiliate links, track clicks, and insert coupons dynamically.
+ * Version: 1.0
+ * Author: Your Name
+ * License: GPLv2 or later
+ */
 
-if (!defined('ABSPATH')) { exit; }
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class AffiliateBoosterPro {
-    private $plugin_slug = 'affiliate_booster_pro';
-    private $affiliates_option = 'abp_affiliates';
-    private $commissions_option = 'abp_commissions';
+    private $option_name = 'affbp_settings';
 
     public function __construct() {
-        add_action('admin_menu', [$this, 'add_admin_menu']);
-        add_action('admin_post_abp_add_affiliate', [$this, 'handle_add_affiliate']);
-        add_shortcode('abp_affiliate_link', [$this, 'affiliate_link_shortcode']);
-        add_action('wp', [$this, 'track_commission']);
-        add_action('admin_post_abp_payout_commissions', [$this, 'handle_payout_commissions']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts']);
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'settings_init'));
+        add_filter('the_content', array($this, 'convert_links_and_insert_coupons'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_affbp_track_click', array($this, 'track_click')); 
+        add_action('wp_ajax_nopriv_affbp_track_click', array($this, 'track_click'));
     }
 
-    public function enqueue_admin_scripts($hook) {
-        if ($hook !== 'toplevel_page_' . $this->plugin_slug) return;
-        wp_enqueue_style('abp_admin_css', plugin_dir_url(__FILE__) . 'admin.css');
+    public function enqueue_scripts() {
+        wp_enqueue_script('affbp-main-js', plugin_dir_url(__FILE__) . 'affbp-main.js', array('jquery'), '1.0', true);
+        wp_localize_script('affbp-main-js', 'affbp_ajax_obj', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 
     public function add_admin_menu() {
-        add_menu_page('Affiliate Booster Pro', 'Affiliate Booster', 'manage_options', $this->plugin_slug, [$this, 'admin_page'], 'dashicons-megaphone');
+        add_options_page('Affiliate Booster Pro Settings', 'Affiliate Booster Pro', 'manage_options', 'affbp', array($this, 'options_page'));
     }
 
-    public function admin_page() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized user');
-        }
-        $affiliates = get_option($this->affiliates_option, []);
-        $commissions = get_option($this->commissions_option, []);
+    public function settings_init() {
+        register_setting('affbp_settings_group', $this->option_name);
 
-        echo '<div class="wrap"><h1>Affiliate Booster Pro</h1>';
-        echo '<h2>Add New Affiliate</h2>';
-        echo '<form method="post" action="' . admin_url('admin-post.php') . '">';
-        echo '<input type="hidden" name="action" value="abp_add_affiliate">';
-        wp_nonce_field('abp_add_affiliate_nonce', 'abp_nonce');
-        echo '<table class="form-table"><tbody>';
-        echo '<tr><th><label for="affiliate_name">Name</label></th><td><input name="affiliate_name" type="text" required></td></tr>';
-        echo '<tr><th><label for="affiliate_email">Email</label></th><td><input name="affiliate_email" type="email" required></td></tr>';
-        echo '</tbody></table>';
-        submit_button('Add Affiliate');
-        echo '</form>';
+        add_settings_section(
+            'affbp_section_main',
+            'Affiliate Booster Pro Settings',
+            null,
+            'affbp'
+        );
 
-        echo '<h2>Affiliates</h2>';
-        if (count($affiliates) === 0) {
-            echo '<p>No affiliates added yet.</p>';
-        } else {
-            echo '<table class="wp-list-table widefat fixed striped"><thead><tr><th>Name</th><th>Email</th><th>Affiliate ID</th><th>Total Commissions ($)</th></tr></thead><tbody>';
-            foreach ($affiliates as $id => $affiliate) {
-                $total_commission = 0.0;
-                foreach ($commissions as $commission) {
-                    if ($commission['affiliate_id'] === $id && !$commission['paid']) {
-                        $total_commission += floatval($commission['amount']);
+        add_settings_field(
+            'affbp_affiliate_prefix', 
+            'Affiliate ID or Prefix', 
+            array($this, 'affiliate_prefix_render'), 
+            'affbp', 
+            'affbp_section_main'
+        );
+
+        add_settings_field(
+            'affbp_coupon_code', 
+            'Global Coupon Code (optional)', 
+            array($this, 'coupon_code_render'), 
+            'affbp', 
+            'affbp_section_main'
+        );
+    }
+
+    public function affiliate_prefix_render() {
+        $options = get_option($this->option_name);
+        ?>
+        <input type='text' name='<?php echo $this->option_name; ?>[affiliate_prefix]' value='<?php echo esc_attr($options['affiliate_prefix'] ?? ''); ?>' placeholder='e.g. ref=12345'/>
+        <p class="description">Enter your affiliate ID or URL parameter to be appended.</p>
+        <?php
+    }
+
+    public function coupon_code_render() {
+        $options = get_option($this->option_name);
+        ?>
+        <input type='text' name='<?php echo $this->option_name; ?>[coupon_code]' value='<?php echo esc_attr($options['coupon_code'] ?? ''); ?>' placeholder='e.g. SAVE10'/>
+        <p class="description">Enter a coupon code to append or display near affiliate links.</p>
+        <?php
+    }
+
+    public function options_page() {
+        ?>
+        <form action='options.php' method='post'>
+            <h2>Affiliate Booster Pro</h2>
+            <?php
+            settings_fields('affbp_settings_group');
+            do_settings_sections('affbp');
+            submit_button();
+            ?>
+        </form>
+        <?php
+    }
+
+    public function convert_links_and_insert_coupons($content) {
+        $options = get_option($this->option_name);
+        $affiliate_prefix = isset($options['affiliate_prefix']) ? trim($options['affiliate_prefix']) : '';
+        $coupon_code = isset($options['coupon_code']) ? trim($options['coupon_code']) : '';
+
+        if (empty($affiliate_prefix)) return $content;
+
+        // Use DOMDocument to parse content safely
+        libxml_use_internal_errors(true);
+        $dom = new DOMDocument();
+        $dom->loadHTML(mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8'));
+
+        $links = $dom->getElementsByTagName('a');
+        foreach ($links as $link) {
+            $href = $link->getAttribute('href');
+            // Skip if already contains affiliate param
+            if (strpos($href, $affiliate_prefix) !== false) continue;
+            // Append affiliate ID to supported URLs only
+            if (preg_match('/https?:\/\/([\w.-]+)\/(.+)/', $href)) {
+                $delimiter = (strpos($href, '?') !== false) ? '&' : '?';
+                $new_href = $href . $delimiter . $affiliate_prefix;
+                // Modify link href
+                $link->setAttribute('href', $new_href);
+                // Add tracking onclick
+                $link->setAttribute('onclick', 'affbpTrackClick(this.href);');
+
+                // Insert coupon badge if coupon_code set
+                if (!empty($coupon_code)) {
+                    $coupon_span = $dom->createElement('span', ' (Use Coupon: ' . htmlspecialchars($coupon_code) . ')');
+                    $coupon_span->setAttribute('style', 'color:#D35400; font-weight:bold;');
+                    if ($link->nextSibling) {
+                        $link->parentNode->insertBefore($coupon_span, $link->nextSibling);
+                    } else {
+                        $link->parentNode->appendChild($coupon_span);
                     }
                 }
-                echo '<tr><td>' . esc_html($affiliate['name']) . '</td><td>' . esc_html($affiliate['email']) . '</td><td>' . esc_html($id) . '</td><td>' . number_format($total_commission, 2) . '</td></tr>';
-            }
-            echo '</tbody></table>';
-            echo '<form method="post" action="' . admin_url('admin-post.php') . '">';
-            echo '<input type="hidden" name="action" value="abp_payout_commissions">';
-            wp_nonce_field('abp_payout_commissions_nonce', 'abp_nonce');
-            submit_button('Mark All Commissions as Paid');
-            echo '</form>';
-        }
-        echo '</div>';
-    }
-
-    public function handle_add_affiliate() {
-        if (!current_user_can('manage_options') || !isset($_POST['abp_nonce']) || !wp_verify_nonce($_POST['abp_nonce'], 'abp_add_affiliate_nonce')) {
-            wp_die('Unauthorized request');
-        }
-        $name = sanitize_text_field($_POST['affiliate_name'] ?? '');
-        $email = sanitize_email($_POST['affiliate_email'] ?? '');
-        if (empty($name) || empty($email)) {
-            wp_redirect(admin_url('admin.php?page=' . $this->plugin_slug . '&error=missing_fields'));
-            exit;
-        }
-        $affiliates = get_option($this->affiliates_option, []);
-        // Generate unique affiliate ID
-        $affiliate_id = 'aff_' . md5($email . time());
-        $affiliates[$affiliate_id] = ['name' => $name, 'email' => $email];
-        update_option($this->affiliates_option, $affiliates);
-        wp_redirect(admin_url('admin.php?page=' . $this->plugin_slug . '&success=affiliate_added'));
-        exit;
-    }
-
-    public function affiliate_link_shortcode($atts) {
-        $atts = shortcode_atts(['id' => ''], $atts, 'abp_affiliate_link');
-        $affiliate_id = sanitize_text_field($atts['id']);
-        if (empty($affiliate_id)) {
-            return 'Affiliate ID not specified';
-        }
-        $target_url = home_url('/');
-        // Build cloaked affiliate link
-        $link = add_query_arg('ref', $affiliate_id, $target_url);
-        return esc_url($link);
-    }
-
-    public function track_commission() {
-        if (!isset($_GET['ref'])) return;
-        $affiliate_id = sanitize_text_field($_GET['ref']);
-        $affiliates = get_option($this->affiliates_option, []);
-        if (!isset($affiliates[$affiliate_id])) return;
-        // Simulate commission tracking: For demo, add $1 per visit with referral param
-        $commissions = get_option($this->commissions_option, []);
-        $commissions[] = [
-            'affiliate_id' => $affiliate_id,
-            'amount' => 1.00,
-            'paid' => false,
-            'date' => current_time('mysql')
-        ];
-        update_option($this->commissions_option, $commissions);
-    }
-
-    public function handle_payout_commissions() {
-        if (!current_user_can('manage_options') || !isset($_POST['abp_nonce']) || !wp_verify_nonce($_POST['abp_nonce'], 'abp_payout_commissions_nonce')) {
-            wp_die('Unauthorized request');
-        }
-        $commissions = get_option($this->commissions_option, []);
-        // Mark all unpaid commissions as paid
-        foreach ($commissions as &$commission) {
-            if (!$commission['paid']) {
-                $commission['paid'] = true;
             }
         }
-        update_option($this->commissions_option, $commissions);
-        wp_redirect(admin_url('admin.php?page=' . $this->plugin_slug . '&success=payout_complete'));
-        exit;
+
+        return $this->save_dom_inner_html($dom);
+    }
+
+    private function save_dom_inner_html($dom) {
+        $body = $dom->getElementsByTagName('body')->item(0);
+        $html = '';
+        foreach ($body->childNodes as $child) {
+            $html .= $dom->saveHTML($child);
+        }
+        return $html;
+    }
+
+    public function track_click() {
+        if (isset($_POST['url'])) {
+            $url = esc_url_raw($_POST['url']);
+            $count = (int) get_option('affbp_click_count_' . md5($url), 0);
+            update_option('affbp_click_count_' . md5($url), $count + 1);
+            wp_send_json_success(['message' => 'Click recorded']);
+        } else {
+            wp_send_json_error(['message' => 'Invalid request']);
+        }
     }
 }
 
 new AffiliateBoosterPro();
+
+// Inline JS for click tracking (for illustration, enqueue in real)
+add_action('wp_footer', function() {
+    ?>
+    <script type="text/javascript">
+    function affbpTrackClick(url) {
+        if (!url) return;
+        jQuery.post(ajaxurl || '<?php echo admin_url('admin-ajax.php'); ?>', {
+            action: 'affbp_track_click',
+            url: url
+        });
+    }
+    </script>
+    <?php
+});
