@@ -1,26 +1,25 @@
 # WP Revenue Booster
 
-Boost your WordPress site's revenue with smart, context-aware affiliate offers, coupons, and sponsored content.
+Automatically optimize ad placement, affiliate links, and upsell offers to maximize revenue on every page.
 
 ## Features
-- Automatically injects monetized content into posts
-- Shortcode support for manual placement
-- Admin dashboard for managing offers
-- Responsive and customizable styling
+- Insert custom ad code after content
+- Add affiliate links to posts
+- Display upsell text or offers
+- Easy-to-use admin settings
 
 ## Installation
-1. Upload the plugin folder to your `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Configure settings under 'Revenue Booster' in the admin menu
+1. Upload the plugin file to your WordPress plugins directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to Settings > Revenue Booster to configure your ad code, affiliate link, and upsell text.
 
 ## Setup
-- Add your affiliate links, coupon codes, and sponsored content in the admin dashboard
-- Use the shortcode `[wp_revenue_booster type="affiliate|coupon|sponsored" id=""]` to manually place offers
+- Enter your ad code (e.g., Google AdSense) in the Ad Code field.
+- Add your affiliate link in the Affiliate Link field.
+- Enter any upsell text or offer in the Upsell Text field.
 
 ## Usage
-- The plugin automatically adds offers to single posts
-- Customize appearance with CSS in your theme
-- Monitor performance and adjust offers as needed
+Once configured, the plugin will automatically insert your ad code, affiliate link, and upsell text at the end of every post or page.
 
 ## Support
-For help or feature requests, visit the plugin support page.
+For support, please contact the plugin developer.
