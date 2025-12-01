@@ -1,23 +1,28 @@
 # WP Affiliate Vault
 
-Securely store, manage, and share affiliate links with advanced tracking and analytics.
+WP Affiliate Vault is a WordPress plugin that lets site owners create, manage, and track private affiliate programs with automated payouts and real-time analytics.
 
 ## Features
-- Add, edit, and remove affiliate links
-- Label each link for easy organization
-- Simple interface for managing multiple affiliate programs
-- Secure storage within WordPress
+- Create and manage private affiliate programs
+- Track affiliate signups and commissions
+- Real-time analytics dashboard
+- Automated payout system (premium)
+- Integration with popular payment gateways (premium)
+- Easy setup and management
 
 ## Installation
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
+1. Upload the `wp-affiliate-vault` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to 'Affiliate Vault' in the admin menu to start managing your links
+3. Go to 'Affiliate Vault' in your admin menu to start managing your program
 
 ## Setup
-- Add your affiliate links and labels in the admin panel
-- Save your settings
+- Add affiliates manually or allow self-registration
+- Set commission rates and payout schedules
+- Customize tracking and reporting options
 
 ## Usage
-- Access your affiliate links from the admin dashboard
-- Copy and share links as needed
-- Track performance using built-in analytics (premium feature)
+- Use the admin dashboard to monitor affiliate activity
+- View real-time analytics and commission reports
+- Process payouts manually or automate with premium add-ons
+
+For premium features and support, visit our website.
