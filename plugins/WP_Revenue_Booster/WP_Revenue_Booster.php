@@ -1,99 +1,124 @@
-<?php
 /*
-Plugin Name: WP Revenue Booster
-Description: Automatically optimizes ad placement, affiliate links, and coupon offers to maximize revenue.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
+<?php
+/**
+ * Plugin Name: WP Revenue Booster
+ * Description: Maximize revenue by rotating affiliate links, displaying targeted ads, and promoting digital products.
+ * Version: 1.0
+ * Author: WP Revenue Team
+ */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_head', array($this, 'inject_optimized_ads'));
-        add_action('the_content', array($this, 'inject_affiliate_links'));
-        add_action('wp_footer', array($this, 'inject_coupon_offers'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_footer', array($this, 'display_promo'));
+        add_shortcode('wp_revenue_promo', array($this, 'promo_shortcode'));
     }
 
-    public function add_admin_menu() {
-        add_options_page(
-            'WP Revenue Booster',
-            'Revenue Booster',
-            'manage_options',
-            'wp-revenue-booster',
-            array($this, 'admin_page')
-        );
+    public function enqueue_scripts() {
+        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'assets/style.css');
     }
 
-    public function admin_page() {
-        if (!current_user_can('manage_options')) return;
-        if (isset($_POST['save_settings'])) {
-            update_option('wp_revenue_booster_ads', $_POST['ads']);
-            update_option('wp_revenue_booster_affiliates', $_POST['affiliates']);
-            update_option('wp_revenue_booster_coupons', $_POST['coupons']);
-            echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
-        }
-        $ads = get_option('wp_revenue_booster_ads', '');
-        $affiliates = get_option('wp_revenue_booster_affiliates', '');
-        $coupons = get_option('wp_revenue_booster_coupons', '');
-        ?>
-        <div class="wrap">
-            <h1>WP Revenue Booster</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th><label>Ad Code</label></th>
-                        <td><textarea name="ads" rows="5" cols="50"><?php echo esc_textarea($ads); ?></textarea></td>
-                    </tr>
-                    <tr>
-                        <th><label>Affiliate Links (JSON)</label></th>
-                        <td><textarea name="affiliates" rows="5" cols="50"><?php echo esc_textarea($affiliates); ?></textarea></td>
-                    </tr>
-                    <tr>
-                        <th><label>Coupons (JSON)</label></th>
-                        <td><textarea name="coupons" rows="5" cols="50"><?php echo esc_textarea($coupons); ?></textarea></td>
-                    </tr>
-                </table>
-                <input type="submit" name="save_settings" class="button button-primary" value="Save Settings">
-            </form>
-        </div>
-        <?php
+    public function display_promo() {
+        if (is_user_logged_in()) return; // Don't show to logged-in users
+        $promos = get_option('wp_revenue_promos', array());
+        if (empty($promos)) return;
+
+        $random_promo = $promos[array_rand($promos)];
+        echo '<div class="wp-revenue-promo">';
+        echo '<a href="' . esc_url($random_promo['url']) . '" target="_blank">';
+        echo '<img src="' . esc_url($random_promo['image']) . '" alt="' . esc_attr($random_promo['title']) . '"/>';
+        echo '<p>' . esc_html($random_promo['title']) . '</p>';
+        echo '</a></div>';
     }
 
-    public function inject_optimized_ads() {
-        $ads = get_option('wp_revenue_booster_ads', '');
-        if (!empty($ads)) {
-            echo $ads;
-        }
-    }
+    public function promo_shortcode($atts) {
+        $atts = shortcode_atts(array('id' => ''), $atts);
+        $promos = get_option('wp_revenue_promos', array());
+        if (empty($promos)) return '';
 
-    public function inject_affiliate_links($content) {
-        $affiliates = get_option('wp_revenue_booster_affiliates', '');
-        if (!empty($affiliates)) {
-            $links = json_decode($affiliates, true);
-            if (is_array($links)) {
-                foreach ($links as $keyword => $url) {
-                    $content = str_replace($keyword, '<a href="' . esc_url($url) . '" target="_blank">' . $keyword . '</a>', $content);
-                }
+        $promo = null;
+        foreach ($promos as $p) {
+            if ($p['id'] == $atts['id']) {
+                $promo = $p;
+                break;
             }
         }
-        return $content;
-    }
 
-    public function inject_coupon_offers() {
-        $coupons = get_option('wp_revenue_booster_coupons', '');
-        if (!empty($coupons)) {
-            $offers = json_decode($coupons, true);
-            if (is_array($offers)) {
-                echo '<div class="wp-revenue-booster-coupons"><h3>Special Offers</h3><ul>';
-                foreach ($offers as $offer) {
-                    echo '<li><a href="' . esc_url($offer['url']) . '" target="_blank">' . esc_html($offer['title']) . '</a>: ' . esc_html($offer['code']) . '</li>';
-                }
-                echo '</ul></div>';
-            }
-        }
+        if (!$promo) return '';
+
+        return '<div class="wp-revenue-promo-shortcode">
+            <a href="' . esc_url($promo['url']) . '" target="_blank">
+                <img src="' . esc_url($promo['image']) . '" alt="' . esc_attr($promo['title']) . '"/>
+                <p>' . esc_html($promo['title']) . '</p>
+            </a>
+        </div>';
     }
 }
 
+// Admin settings page
+function wp_revenue_booster_settings_page() {
+    add_options_page(
+        'WP Revenue Booster',
+        'Revenue Booster',
+        'manage_options',
+        'wp-revenue-booster',
+        'wp_revenue_booster_settings_page_html'
+    );
+}
+add_action('admin_menu', 'wp_revenue_booster_settings_page');
+
+function wp_revenue_booster_settings_page_html() {
+    if (!current_user_can('manage_options')) return;
+
+    if (isset($_POST['wp_revenue_promos'])) {
+        update_option('wp_revenue_promos', $_POST['wp_revenue_promos']);
+        echo '<div class="updated"><p>Promotions saved.</p></div>';
+    }
+
+    $promos = get_option('wp_revenue_promos', array());
+    ?>
+    <div class="wrap">
+        <h1>WP Revenue Booster</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Promotions</th>
+                    <td>
+                        <div id="promos-container">
+                            <?php foreach ($promos as $promo): ?>
+                                <div class="promo-item">
+                                    <input type="text" name="wp_revenue_promos[][id]" value="<?php echo esc_attr($promo['id']); ?>" placeholder="ID" />
+                                    <input type="text" name="wp_revenue_promos[][title]" value="<?php echo esc_attr($promo['title']); ?>" placeholder="Title" />
+                                    <input type="text" name="wp_revenue_promos[][url]" value="<?php echo esc_url($promo['url']); ?>" placeholder="URL" />
+                                    <input type="text" name="wp_revenue_promos[][image]" value="<?php echo esc_url($promo['image']); ?>" placeholder="Image URL" />
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <button type="button" onclick="addPromo()">Add Promotion</button>
+                    </td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <script>
+        function addPromo() {
+            const container = document.getElementById('promos-container');
+            const div = document.createElement('div');
+            div.className = 'promo-item';
+            div.innerHTML = '<input type="text" name="wp_revenue_promos[][id]" placeholder="ID" />' +
+                '<input type="text" name="wp_revenue_promos[][title]" placeholder="Title" />' +
+                '<input type="text" name="wp_revenue_promos[][url]" placeholder="URL" />' +
+                '<input type="text" name="wp_revenue_promos[][image]" placeholder="Image URL" />';
+            container.appendChild(div);
+        }
+    </script>
+    <?php
+}
+
 new WP_Revenue_Booster();
+?>
