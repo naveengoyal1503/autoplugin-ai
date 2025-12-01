@@ -1,45 +1,45 @@
 # Affiliate Link Booster
 
 ## Description
-Affiliate Link Booster automatically inserts affiliate links into your WordPress posts by matching keywords you specify. It tracks clicks on these links to help optimize your affiliate marketing strategy.
+Affiliate Link Booster automatically converts plain product URLs on your WordPress site into optimized, trackable affiliate links with link cloaking and performance tracking. This plugin helps boost your affiliate revenue by ensuring all eligible product links contain your affiliate ID and are routed through a secure redirect.
 
 ## Features
-- Automatically link keywords with your affiliate URLs
-- Click tracking with analytics dashboard in WordPress admin
-- No manual link insertion needed
-- One-click setup of keyword-URL pairs
-- Open affiliate links in new tab with nofollow attributes
-- Lightweight and fast, no external dependencies
+
+- Auto-detects and converts links from specified domains (e.g., amazon.com) to affiliate links
+- Supports Amazon affiliate tags with automatic parameter injection
+- Cloaks affiliate links by redirecting through the plugin for tracking and improved click-through
+- Adds rel="nofollow noopener sponsored" and target="_blank" attributes for SEO compliance
+- Settings page to configure affiliate ID and domains to convert
+- Lightweight and easy to use
 
 ## Installation
-1. Upload the plugin file `affiliate-link-booster.php` to the `/wp-content/plugins/` directory.
+
+1. Upload the `affiliate-link-booster.php` file to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Link Booster** to add your keyword and affiliate URL pairs.
+3. Go to **Settings > Affiliate Link Booster** to configure your affiliate ID (e.g., your Amazon tag) and domains to convert.
 
 ## Setup
-- In the settings page, enter each affiliate keyword and its corresponding affiliate URL, one pair per line, separated by a comma.
-- Example:
-  
-  widget, https://affiliate.example.com/widget
-  gadget, https://affiliate.example.com/gadget
-  
+
+- Enter your affiliate network ID in the settings page. For Amazon, this is your affiliate tag (e.g., "yourtag-20").
+- Set the list of domains you want the plugin to convert links for (default includes amazon.com).
 - Save changes.
 
 ## Usage
-- The plugin will automatically hyperlink the first occurrence of each keyword in your post content to its affiliate URL.
-- Clicks on these links are tracked and displayed under the settings page as a clicks report.
-- Use the click data to identify your best-performing affiliate keywords and optimize accordingly.
 
-## FAQ
-**Q: Can I customize how many links per post?**
-A: Currently, only the first occurrence of each keyword in the content is linked.
+- Simply add links to supported domains in your posts or pages as usual.
+- The plugin will automatically convert those links into affiliate links with cloaking when displaying your content.
+- Clicks on links will be redirected through the plugin for tracking purposes.
 
-**Q: Does this plugin interfere with existing links?**
-A: No, it skips keywords that are already inside links.
+## Monetization
 
-**Q: Is the plugin compatible with all themes?**
-A: Yes, since it filters post content before output, it is theme-independent.
+The plugin uses a freemium approach:
+- Basic affiliate link auto-conversion and cloaking for free.
+- Advanced add-ons can be built offering detailed real-time analytics, integration with multiple affiliate networks, and custom branding options.
 
-## Changelog
-### 1.0
-- Initial release with keyword-based affiliate linking and click tracking.
+## Support
+
+For issues or feature requests, please use the WordPress support forum or contact the author directly.
+
+---
+
+Enjoy boosting your affiliate revenue with Affiliate Link Booster!
