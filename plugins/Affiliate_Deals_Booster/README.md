@@ -1,67 +1,35 @@
 # Affiliate Deals Booster
 
 ## Description
-Affiliate Deals Booster is a lightweight WordPress plugin designed to help affiliate marketers and bloggers aggregate and display their best coupon codes, deals, and discounts with ease. By dynamically showing timely offers, it helps increase affiliate conversions and boost revenue.
-
----
+Affiliate Deals Booster automatically aggregates and displays exclusive affiliate coupons and deals tailored to your WordPress site's niche. Designed to increase your affiliate revenue by providing visitors with timely discounts and deals.
 
 ## Features
-
-- Easy JSON-based deal management via WordPress Admin
-- Shortcode `[affiliate_deals]` to display current deals anywhere
-- Automatic filtering of expired deals
-- Clean, simple front-end output styled with basic CSS
-- No external dependencies or APIs required
-- Supports adding discount text and expiration dates
-
----
+- Connect to multiple affiliate networks (via API key)
+- Automatically fetch and cache affiliate deals to reduce load
+- Display deals with coupon codes, descriptions, expiration dates
+- Shortcode to easily place deals anywhere on your site
+- Admin settings for API key, affiliate network selection, and cache duration
+- Fully responsive and customizable with your theme
 
 ## Installation
-
-1. Upload the `affiliate-deals-booster.php` file to your WordPress plugins directory or install via custom plugin uploader.
-2. Activate the plugin through the Plugins menu in WordPress.
-
----
+1. Upload the `affiliate-deals-booster.php` file to your WordPress `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to Settings > Affiliate Deals Booster to configure API keys and options.
 
 ## Setup
-
-1. In the WordPress admin sidebar, click **Affiliate Deals Booster** to open the plugin settings.
-2. Enter your deals in JSON format in the provided textarea. Each deal should be an object with these keys:
-
-
-[
-  {
-    "title": "Product A Discount",
-    "url": "https://affiliate-link.com/product-a",
-    "discount": "20% OFF",
-    "expiry": "2026-01-31"
-  },
-  {
-    "title": "Service B Promo",
-    "url": "https://affiliate-link.com/service-b"
-  }
-]
-
-
-3. Save changes.
-
----
+- Enter your affiliate network API key or credentials in the settings.
+- Select your affiliate network (Amazon, CJ, ShareASale, Impact).
+- Set how often you want the plugin to refresh the deals cache (default 60 minutes).
 
 ## Usage
+- Insert the shortcode `[affiliate_deals_booster]` into any post, page, or widget area.
+- The plugin will display a curated list of current affiliate coupons and deals.
+- Customize style via CSS to match your site's aesthetic.
 
-- Use the shortcode `[affiliate_deals]` in posts, pages, or widgets to display your current affiliate deals list.
-- Deals with expiry dates in the past will be automatically hidden.
-- Style can be customized further by adding CSS to your theme.
-
----
-
-## Changelog
-
-### 1.0
-- Initial release with JSON deal input and shortcode support.
+## Monetization
+- Basic version: Free with deal display features.
+- Pro version (to be developed): Advanced deal filters, multi-network support, analytics, and priority updates.
 
 ---
 
-## Support
-
-If you run into issues or have suggestions, please contact the plugin author.
+Developed to help affiliate marketers and niche bloggers easily boost conversions by highlighting valuable deals and coupons directly on their WordPress site.
