@@ -1,32 +1,27 @@
 # WP SmartPaywall
 
-WP SmartPaywall is a dynamic paywall plugin for WordPress that intelligently restricts content based on user engagement, location, and subscription status. Maximize your conversion rates and revenue with smart paywall technology.
-
 ## Features
-- Dynamic paywall based on scroll depth
-- Customizable paywall message
-- Freemium model with premium add-ons
-- Subscription-based access to advanced features
-- Easy integration with shortcodes
+- Adaptive paywall that triggers after a set number of visited pages
+- Multiple monetization paths: subscription, one-time payment, affiliate
+- Admin settings for easy configuration
+- Conversion tracking for analytics
+- Shortcode for manual paywall placement
 
 ## Installation
-1. Upload the `wp-smartpaywall` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Configure settings under Settings > WP SmartPaywall
+1. Upload the plugin file to your WordPress plugins directory
+2. Activate the plugin from the WordPress admin panel
+3. Go to Settings > SmartPaywall to configure
 
 ## Setup
-- Enable/disable the paywall
-- Set the scroll threshold for triggering the paywall
-- Customize the paywall message
+- Set the number of pages a visitor can view before the paywall appears
+- Choose the default offer type (subscription, one-time, affiliate)
+- Use the shortcode `[smartpaywall type="subscription"]` to manually place paywall offers
 
 ## Usage
-Use the shortcode `[smartpaywall threshold="75" message="Subscribe to unlock more content!"]Your content here[/smartpaywall]` to wrap content that should be protected by the paywall.
+- The paywall will automatically appear after the configured number of pages
+- Visitors see a personalized offer based on your settings
+- Conversion events are tracked in the admin panel
 
-## Premium Add-ons
-- Advanced analytics
-- Location-based paywall rules
-- Subscription management
-- Custom paywall designs
-
-## Support
-For support and feature requests, please visit our website or contact our support team.
+## Notes
+- For advanced features and analytics, consider upgrading to the premium version
+- Compatible with most WordPress themes and plugins
