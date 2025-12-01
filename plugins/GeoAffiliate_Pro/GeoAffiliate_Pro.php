@@ -1,13 +1,10 @@
 <?php
 /*
 Plugin Name: GeoAffiliate Pro
-Plugin URI: https://example.com/geoaffiliate-pro
-Description: Geo-targeted Affiliate Link Manager with scheduling
+Description: Affiliate link management with geolocation targeting, link cloaking, and scheduled promotions.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=GeoAffiliate_Pro.php
-License: GPL2
-Text Domain: geoaffiliate-pro
 */
 
 if (!defined('ABSPATH')) exit;
@@ -17,248 +14,151 @@ class GeoAffiliatePro {
     private $option_name = 'geoaffiliate_links';
 
     public function __construct() {
-        add_action('admin_menu', [$this, 'admin_menu']);
-        add_action('admin_post_geoaffiliate_save', [$this, 'save_link']);
-        add_shortcode('geoaffiliate', [$this, 'shortcode_handler']);
-        add_action('wp_footer', [$this, 'footer_scripts']);
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_shortcode('geoaffiliate_link', array($this, 'geoaffiliate_link_shortcode'));
+        add_action('init', array($this, 'handle_redirects'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+    }
+
+    public function activate() {
+        if (get_option($this->option_name) === false) {
+            update_option($this->option_name, array());
+        }
+    }
+
+    public function deactivate() {
+        // Cleanup or options remove if needed
     }
 
     public function admin_menu() {
-        add_menu_page(
-            'GeoAffiliate Pro',
-            'GeoAffiliate Pro',
-            'manage_options',
-            'geoaffiliate-pro',
-            [$this, 'admin_page'],
-            'dashicons-location-alt'
-        );
+        add_menu_page('GeoAffiliate Pro', 'GeoAffiliate Pro', 'manage_options', 'geoaffiliate-pro', array($this, 'settings_page'), 'dashicons-admin-links');
     }
 
-    public function admin_page() {
+    public function enqueue_scripts() {
+        wp_enqueue_style('geoaffiliate-style', plugin_dir_url(__FILE__) . 'style.css');
+    }
+
+    public function settings_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(__('Unauthorized access'));
+            wp_die(__('Unauthorized user')); 
         }
 
-        $links = get_option($this->option_name, []);
-        ?>
-        <div class="wrap">
-            <h1>GeoAffiliate Pro - Manage Affiliate Links</h1>
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-                <input type="hidden" name="action" value="geoaffiliate_save">
-                <?php wp_nonce_field('geoaffiliate_save_nonce', 'geoaffiliate_nonce'); ?>
-                <table class="form-table" style="max-width:600px;">
-                    <tr>
-                        <th><label for="slug">Link Slug (shortcode attr)</label></th>
-                        <td><input type="text" name="slug" id="slug" required class="regular-text" placeholder="example: mylink"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="default_url">Default URL</label></th>
-                        <td><input type="url" name="default_url" id="default_url" required class="regular-text" placeholder="https://example.com"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="geo_targets">Geo Targets (country code => URL, one per line)</label></th>
-                        <td><textarea name="geo_targets" id="geo_targets" rows="5" class="large-text" placeholder="US=https://amazon.com
-CA=https://amazon.ca"></textarea>
-                        <p class="description">Use uppercase ISO 2-letter country codes, one mapping per line.</p></td>
-                    </tr>
-                    <tr>
-                        <th><label for="schedule_start">Schedule Start (YYYY-MM-DD HH:MM)</label></th>
-                        <td><input type="text" name="schedule_start" id="schedule_start" class="regular-text" placeholder="Optional"></td>
-                    </tr>
-                    <tr>
-                        <th><label for="schedule_end">Schedule End (YYYY-MM-DD HH:MM)</label></th>
-                        <td><input type="text" name="schedule_end" id="schedule_end" class="regular-text" placeholder="Optional"></td>
-                    </tr>
-                </table>
-                <?php submit_button('Save Link'); ?>
-            </form>
-            <h2>Existing Links</h2>
-            <table class="widefat fixed">
-                <thead><tr><th>Slug</th><th>Default URL</th><th>Geo Targets</th><th>Schedule</th></tr></thead>
-                <tbody>
-                <?php if ($links): foreach ($links as $slug => $link): ?>
-                    <tr>
-                        <td><?php echo esc_html($slug); ?></td>
-                        <td><a href="<?php echo esc_url($link['default_url']); ?>" target="_blank"><?php echo esc_html($link['default_url']); ?></a></td>
-                        <td>
-                            <?php
-                            if (!empty($link['geo_targets']) && is_array($link['geo_targets'])) {
-                                foreach ($link['geo_targets'] as $cc => $url) {
-                                    echo '<code>' . esc_html($cc) . '</code> &rarr; <a href="' . esc_url($url) . '" target="_blank">' . esc_html($url) . '</a><br>'; 
-                                }
-                            } else {
-                                echo 'None';
-                            }
-                            ?>
-                        </td>
-                        <td>
-                            <?php
-                            if (!empty($link['schedule_start']) || !empty($link['schedule_end'])) {
-                                echo esc_html($link['schedule_start']) . ' to ' . esc_html($link['schedule_end']);
-                            } else {
-                                echo 'Always Active';
-                            }
-                            ?></td>
-                    </tr>
-                <?php endforeach; else: ?>
-                    <tr><td colspan="4">No links added yet.</td></tr>
-                <?php endif; ?></tbody>
-            </table>
-        </div>
-        <?php
+        $links = get_option($this->option_name, array());
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('geoaffiliate_save_links')) {
+            $new_links = $this->sanitize_links($_POST['geoaffiliate_links']);
+            update_option($this->option_name, $new_links);
+            $links = $new_links;
+            echo '<div class="updated"><p>Links updated successfully.</p></div>';
+        }
+
+        echo '<div class="wrap"><h1>GeoAffiliate Pro Settings</h1><form method="post">';
+        wp_nonce_field('geoaffiliate_save_links');
+
+        echo '<table class="widefat fixed">
+                <thead><tr><th>Link Name</th><th>Base URL (Cloaked)</th><th>Affiliate URL</th><th>Country Codes (comma separated)</th><th>Start Date (Y-m-d)</th><th>End Date (Y-m-d)</th></tr></thead><tbody>';
+
+        if (empty($links)) {
+            $links = array(array('name' => '', 'base_url' => '', 'affiliate_url' => '', 'countries' => '', 'start_date' => '', 'end_date' => ''));
+        }
+
+        foreach ($links as $index => $link) {
+            echo '<tr>' .
+                '<td><input type="text" name="geoaffiliate_links[' . $index . '][name]" value="' . esc_attr($link['name']) . '" required></td>' .
+                '<td><input type="text" name="geoaffiliate_links[' . $index . '][base_url]" value="' . esc_attr($link['base_url']) . '" placeholder="e.g. promo" required></td>' .
+                '<td><input type="url" name="geoaffiliate_links[' . $index . '][affiliate_url]" value="' . esc_url($link['affiliate_url']) . '" required></td>' .
+                '<td><input type="text" name="geoaffiliate_links[' . $index . '][countries]" value="' . esc_attr($link['countries']) . '" placeholder="e.g. US,CA,UK"></td>' .
+                '<td><input type="date" name="geoaffiliate_links[' . $index . '][start_date]" value="' . esc_attr($link['start_date']) . '"></td>' .
+                '<td><input type="date" name="geoaffiliate_links[' . $index . '][end_date]" value="' . esc_attr($link['end_date']) . '"></td>' .
+                '</tr>';
+        }
+
+        echo '</tbody></table>';
+        echo '<p><button type="submit" class="button button-primary">Save Links</button></p>';
+        echo '</form></div>';
     }
 
-    public function save_link() {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Unauthorized access'));
+    private function sanitize_links($links) {
+        $clean = array();
+        foreach ($links as $link) {
+            $clean[] = array(
+                'name' => sanitize_text_field($link['name']),
+                'base_url' => sanitize_title($link['base_url']),
+                'affiliate_url' => esc_url_raw($link['affiliate_url']),
+                'countries' => sanitize_text_field($link['countries']),
+                'start_date' => sanitize_text_field($link['start_date']),
+                'end_date' => sanitize_text_field($link['end_date'])
+            );
         }
-        if (!isset($_POST['geoaffiliate_nonce']) || !wp_verify_nonce($_POST['geoaffiliate_nonce'], 'geoaffiliate_save_nonce')) {
-            wp_die(__('Security check failed')); 
-        }
-
-        $slug = sanitize_title($_POST['slug'] ?? '');
-        $default_url = esc_url_raw($_POST['default_url'] ?? '');
-        $geo_targets_raw = trim($_POST['geo_targets'] ?? '');
-        $schedule_start = sanitize_text_field($_POST['schedule_start'] ?? '');
-        $schedule_end = sanitize_text_field($_POST['schedule_end'] ?? '');
-
-        if (!$slug || !$default_url) {
-            wp_redirect(admin_url('admin.php?page=geoaffiliate-pro&error=missing_fields'));
-            exit;
-        }
-
-        $geo_targets = [];
-        if ($geo_targets_raw) {
-            $lines = explode("\n", $geo_targets_raw);
-            foreach ($lines as $line) {
-                $line = trim($line);
-                if (!$line) continue;
-                list($cc, $url) = array_map('trim', explode('=', $line . '='));
-                if ($cc && $url) {
-                    $cc = strtoupper($cc);
-                    $geo_targets[$cc] = esc_url_raw($url);
-                }
-            }
-        }
-
-        $links = get_option($this->option_name, []);
-        $links[$slug] = [
-            'default_url' => $default_url,
-            'geo_targets' => $geo_targets,
-            'schedule_start' => $schedule_start,
-            'schedule_end' => $schedule_end
-        ];
-
-        update_option($this->option_name, $links);
-
-        wp_redirect(admin_url('admin.php?page=geoaffiliate-pro&success=1'));
-        exit;
+        return $clean;
     }
 
-    private function get_user_country_code() {
-        // Simple IP geolocation using a free API
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-        if (filter_var($ip, FILTER_VALIDATE_IP)) {
-            $response = wp_remote_get('https://ipapi.co/' . $ip . '/country/');
-            if (!is_wp_error($response)) {
-                $body = wp_remote_retrieve_body($response);
-                if ($body && strlen($body) === 2) {
-                    return strtoupper(trim($body));
-                }
+    public function geoaffiliate_link_shortcode($atts) {
+        $atts = shortcode_atts(array('name' => ''), $atts, 'geoaffiliate_link');
+        $name = sanitize_text_field($atts['name']);
+        if (!$name) return '';
+
+        $links = get_option($this->option_name, array());
+        foreach ($links as $link) {
+            if ($link['name'] === $name) {
+                $cloaked_url = site_url('/') . $link['base_url'];
+                return '<a href="' . esc_url($cloaked_url) . '" target="_blank" rel="nofollow noopener">' . esc_html($link['name']) . '</a>';
             }
         }
         return '';
     }
 
-    public function shortcode_handler($atts) {
-        $atts = shortcode_atts(['slug' => ''], $atts, 'geoaffiliate');
-        if (!$atts['slug']) return '';
+    public function handle_redirects() {
+        global $wp;
+        $links = get_option($this->option_name, array());
+        $request = trim($wp->request, '/');
 
-        $links = get_option($this->option_name, []);
-        if (!isset($links[$atts['slug']])) return '';
-
-        $link = $links[$atts['slug']];
-
-        // Check schedule
-        $now = current_time('Y-m-d H:i');
-        if ($link['schedule_start'] && $now < $link['schedule_start']) {
-            return esc_url($link['default_url']);
-        }
-        if ($link['schedule_end'] && $now > $link['schedule_end']) {
-            return esc_url($link['default_url']);
-        }
-
-        // Geo-target
-        $country = $this->get_user_country_code();
-        if ($country && isset($link['geo_targets'][$country])) {
-            return esc_url($link['geo_targets'][$country]);
-        }
-
-        return esc_url($link['default_url']);
-    }
-
-    public function footer_scripts() {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var links = document.querySelectorAll('a[data-geoaffiliate]');
-            links.forEach(function(link) {
-                var slug = link.getAttribute('data-geoaffiliate');
-                if (!slug) return;
-                fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=geoaffiliate_get_link&slug=' + encodeURIComponent(slug))
-                    .then(response => response.text())
-                    .then(url => {
-                        if(url) link.setAttribute('href', url);
-                    });
-            });
-        });
-        </script>
-        <?php
-    }
-}
-
-new GeoAffiliatePro();
-
-// AJAX handler for frontend dynamic links
-add_action('wp_ajax_geoaffiliate_get_link', 'geoaffiliate_get_link_callback');
-add_action('wp_ajax_nopriv_geoaffiliate_get_link', 'geoaffiliate_get_link_callback');
-function geoaffiliate_get_link_callback() {
-    $slug = sanitize_title($_GET['slug'] ?? '');
-    if (!$slug) wp_die('');
-
-    $links = get_option('geoaffiliate_links', []);
-    if (!isset($links[$slug])) wp_die('');
-
-    $link = $links[$slug];
-    $now = current_time('Y-m-d H:i');
-
-    if ($link['schedule_start'] && $now < $link['schedule_start']) {
-        echo esc_url($link['default_url']);
-        wp_die();
-    }
-
-    if ($link['schedule_end'] && $now > $link['schedule_end']) {
-        echo esc_url($link['default_url']);
-        wp_die();
-    }
-
-    // Simple IP geolocation server side
-    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-    $country = '';
-    if (filter_var($ip, FILTER_VALIDATE_IP)) {
-        $response = wp_remote_get('https://ipapi.co/' . $ip . '/country/');
-        if (!is_wp_error($response)) {
-            $body = wp_remote_retrieve_body($response);
-            if ($body && strlen($body) === 2) {
-                $country = strtoupper(trim($body));
+        foreach ($links as $link) {
+            if ($link['base_url'] === $request) {
+                // Check schedule
+                $now = current_time('Y-m-d');
+                if ((empty($link['start_date']) || $now >= $link['start_date']) && (empty($link['end_date']) || $now <= $link['end_date'])) {
+                    $country = $this->get_user_country();
+                    $target_url = $link['affiliate_url'];
+                    if (!empty($link['countries'])) {
+                        $allowed_countries = array_map('trim', explode(',', strtoupper($link['countries'])));
+                        if (!in_array(strtoupper($country), $allowed_countries)) {
+                            // If country not allowed, redirect to base affiliate URL without targeting
+                            $target_url = $link['affiliate_url'];
+                        }
+                    }
+                    wp_redirect($target_url, 301);
+                    exit();
+                } else {
+                    wp_redirect(home_url('/'), 302);
+                    exit();
+                }
             }
         }
     }
 
-    if ($country && isset($link['geo_targets'][$country])) {
-        echo esc_url($link['geo_targets'][$country]);
-    } else {
-        echo esc_url($link['default_url']);
+    private function get_user_country() {
+        if (isset($_SERVER['HTTP_CF_IPCOUNTRY'])) {
+            return $_SERVER['HTTP_CF_IPCOUNTRY']; // Cloudflare header
+        }
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        } else {
+            return '';
+        }
+
+        // Basic IP to country lookup fallback using a free API (could cache results in real plugin)
+        $response = wp_remote_get('https://ipapi.co/' . $ip . '/country/');
+        if (is_wp_error($response)) {
+            return '';
+        }
+        $country_code = trim(wp_remote_retrieve_body($response));
+        return $country_code ? $country_code : '';
     }
-    wp_die();
 }
+
+new GeoAffiliatePro();
