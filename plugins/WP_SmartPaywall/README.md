@@ -1,28 +1,32 @@
 # WP SmartPaywall
 
-WP SmartPaywall is a flexible paywall plugin for WordPress that allows you to monetize your content with one-time payments or recurring subscriptions.
+Monetize your WordPress content with flexible pay-per-view, subscriptions, and micropayments.
 
 ## Features
-- Enable paywalls on any post or page
-- Set custom prices for each piece of content
-- Support for one-time and subscription payment models
+- Pay-per-view content monetization
+- Subscription and recurring payment support (premium add-on)
+- Micropayment integration (premium add-on)
 - Easy shortcode integration
-- Admin settings for global configuration
+- Admin settings panel
+- AJAX-powered payment handling
 
 ## Installation
-1. Upload the plugin folder to your `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > SmartPaywall to configure global options
+1. Upload the `wp-smartpaywall.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to Settings > SmartPaywall to configure your paywall options.
 
 ## Setup
-- Edit any post or page and enable the SmartPaywall option
-- Set the price and payment type (one-time or subscription)
-- Use the `[smartpaywall price="5" type="one-time"]Your content here[/smartpaywall]` shortcode to wrap protected content
+- Enable paywall for posts by setting the `_paywall_enabled` meta to true and specifying a price with `_paywall_price`.
+- Use the shortcode `[paywall price="5" type="pay_per_view"]Your content here[/paywall]` to wrap content.
 
 ## Usage
-- Visitors will see a pay button to unlock content
-- After payment, content is unlocked for the user
-- Admins can manage payments and access through the plugin settings
+- Only logged-in users can pay to view content.
+- Admins can view all content without payment.
+- Payment status is stored as user meta.
+
+## Premium Add-ons
+- Upgrade for subscription and micropayment features.
+- Access advanced analytics and reporting.
 
 ## Support
-For support and feature requests, please visit our website or contact support@wpsmartpaywall.com.
+For support, visit our website or contact support@wpsmartpaywall.com.
