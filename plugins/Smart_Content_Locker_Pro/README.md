@@ -1,106 +1,116 @@
 # Smart Content Locker Pro
 
-A powerful WordPress plugin for gating and monetizing your content. Lock premium articles, guides, and resources behind email signups, social shares, or payment walls to grow your email list and generate revenue.
+A powerful WordPress plugin that allows you to monetize your content by locking premium articles, guides, and resources behind paywalls, membership requirements, or engagement gates.
 
 ## Features
 
-- **Multiple Unlock Methods**: Email capture, social media shares, or payment-based access
-- **Easy Shortcode Integration**: Simple `[content_locker]` shortcode for quick implementation
-- **Analytics Dashboard**: Track unlocks, email captures, and revenue in real-time
-- **A/B Testing Ready**: Customize unlock messages and methods per campaign
-- **Stripe Integration**: Accept payments directly from your WordPress site
-- **Email Marketing Integration**: Connect with Mailchimp to auto-add subscribers to your lists
-- **Conversion Tracking**: Detailed statistics on unlock rates and revenue
-- **Responsive Design**: Mobile-friendly locker interface
-- **GDPR Compliant**: Built-in consent management for email captures
+**Core Monetization Features:**
+- Lock individual posts or pages behind paywalls
+- Membership role-based content access
+- Social sharing unlock requirements
+- Email subscription gating
+- Custom unlock messages and calls-to-action
+
+**Analytics & Insights:**
+- Track unlock attempts and engagement
+- Monitor conversion rates per locked post
+- Identify your most valuable content
+- User behavior analytics dashboard
+
+**Customization:**
+- Customize lock messages and button text
+- Adjust button colors and styling
+- Multiple unlock methods per post
+- Shortcode support for granular content locking
+
+**Integration:**
+- Compatible with all major payment plugins
+- Works with membership plugin ecosystems
+- Email list builder integration
+- REST API support for developers
 
 ## Installation
 
-1. Download the plugin file
-2. Upload to `/wp-content/plugins/` directory
-3. Activate the plugin through the WordPress Plugins menu
-4. Navigate to Content Locker → Settings to configure API keys
+1. Download the plugin ZIP file
+2. Go to WordPress Admin > Plugins > Add New
+3. Click "Upload Plugin" and select the ZIP file
+4. Click "Install Now" and then "Activate"
+5. Navigate to Content Locker in the admin menu to begin setup
 
 ## Setup
 
-### Step 1: Configure Payment Gateway (Optional)
-
-1. Go to Content Locker → Settings
-2. Enter your Stripe API key (get one at stripe.com)
-3. Save settings
-
-### Step 2: Connect Email Service
-
-1. Retrieve your Mailchimp API key from Mailchimp account settings
-2. Paste in Content Locker → Settings
-3. Save and verify connection
-
-### Step 3: Create Your First Campaign
-
-1. Go to Content Locker → Campaigns
-2. Click "New Campaign"
-3. Set unlock type (email, social, or payment)
-4. Customize your unlock message
-5. Publish campaign
+1. Go to **Content Locker > Settings** to configure default options
+2. Set your default lock message and customize button appearance
+3. Choose your monetization model (paywall, membership, or engagement-based)
+4. Configure payment gateway integration if using paywall mode
 
 ## Usage
 
-### Basic Email Capture Locker
+### Basic Content Locking
+
+To lock the main content of a post:
+1. Edit any post or page
+2. Look for the "Content Locker" metabox
+3. Enable locking and select your unlock method
+4. Configure the specific settings for that post
+5. Publish or update the post
+
+### Using Shortcodes
+
+For more granular control, use the shortcode within your post content:
 
 
-[content_locker id="123" unlock_type="email" message="Sign up to read more"]
+[scl-locker message="Premium content below" button_text="Unlock Now"]
+Your premium content here
+[/scl-locker]
 
 
-Place your premium content here. Users will see the unlock prompt first.
+### Shortcode Parameters
 
+- `message` - The message shown before unlocking (default: "This content is locked.")
+- `button_text` - Custom unlock button text (default: "Unlock")
+- `unlock_type` - Method of unlocking (email, paywall, share, role)
 
-[/content_locker]
+## Monetization Models
 
+**Email List Building:**
+Require email subscription to unlock content. Perfect for growing your email list while providing value.
 
-### Social Share Locker
+**Membership Tiers:**
+Lock premium content to specific user roles. Create tiered access levels with different subscription prices.
 
+**Paywall:**
+Direct payment per article or tiered access plans. Integrate with Stripe, PayPal, or other payment processors.
 
-[content_locker id="456" unlock_type="social" message="Share this post to unlock premium insights"]
+**Social Engagement:**
+Require social shares to unlock. Drive traffic and engagement while monetizing simultaneously.
 
+## Analytics Dashboard
 
-### Payment Locker
+Access real-time data about your locked content:
+- View unlock attempts by post
+- Track conversion rates
+- Identify high-performing content
+- Monitor user engagement patterns
 
+## Frequently Asked Questions
 
-[content_locker id="789" unlock_type="payment" message="Access premium content for $4.99"]
+**Q: Does this work with WooCommerce?**
+A: Yes, you can integrate it with WooCommerce membership plugins for advanced ecommerce functionality.
 
+**Q: Can I lock partial content?**
+A: Yes, use the shortcode method to lock specific sections of your post while leaving other parts visible.
 
-## Monetization Strategies
+**Q: What payment methods are supported?**
+A: Smart Content Locker integrates with any WordPress payment plugin including Stripe, PayPal, 2Checkout, and more.
 
-- **Freemium Model**: Offer basic locker functionality free, premium features for $9.99/month
-- **Agency Reselling**: White-label the plugin for WordPress agencies
-- **Affiliate Partnerships**: Earn commissions on referred Stripe/Mailchimp signups
-- **Premium Support**: Offer setup and customization services for additional revenue
-
-## Dashboard Metrics
-
-- **Total Unlocks**: Count of all content unlock events
-- **Email Captures**: Unique email addresses collected
-- **Revenue Generated**: Total payments received through payment lockers
-- **Conversion Rate**: Percentage of visitors who unlock content
-
-## FAQ
-
-**Q: Will this plugin slow down my site?**
-A: No, Smart Content Locker uses lightweight JavaScript and database queries optimized for performance.
-
-**Q: Can I customize the unlock button styling?**
-A: Yes, CSS classes are available for custom styling via your theme's style.css or child theme.
-
-**Q: Does it work with my email service?**
-A: Currently supports Mailchimp. Additional integrations (ConvertKit, ActiveCampaign) available in Pro versions.
-
-**Q: How much can I earn with this plugin?**
-A: Earnings depend on traffic and content value. Typical WordPress creators see $500-5000/month with proper implementation.
+**Q: Will this slow down my site?**
+A: No, Smart Content Locker is optimized for performance with minimal database queries and lazy-loading of lock elements.
 
 ## Support
 
-For issues or feature requests, contact our support team or visit our documentation.
+For questions, bug reports, or feature requests, visit our documentation or support forum.
 
 ## License
 
-GPL2 - Free to use and modify
+GPL v2 or later
