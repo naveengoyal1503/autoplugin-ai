@@ -1,133 +1,96 @@
 # Smart Affiliate Link Manager Pro
 
-## Overview
+## Description
 
-Smart Affiliate Link Manager Pro is a powerful WordPress plugin designed to streamline affiliate marketing operations. It automatically converts keywords into trackable affiliate links, manages multiple affiliate programs, and provides comprehensive analytics to maximize commission revenue.
+Smart Affiliate Link Manager Pro is a comprehensive affiliate link management plugin designed to help content creators and bloggers maximize their affiliate marketing earnings. It provides advanced link tracking, performance analytics, and automated optimization features.
 
 ## Features
 
-### Core Functionality
-- **Keyword-to-Link Conversion**: Automatically convert specified keywords in your content to affiliate links
-- **Link Management Dashboard**: View all affiliate links with click and conversion metrics
-- **Click Tracking**: Track every click on affiliate links with detailed statistics
-- **Conversion Tracking**: Monitor conversions for each affiliate link
-- **Bulk Link Creation**: Create and manage multiple affiliate links efficiently
-- **Custom Link Text**: Display custom text instead of the actual keyword
-- **Enable/Disable Links**: Toggle link status without deletion
+### Core Features (Free)
+- **Link Management Dashboard**: Create, organize, and manage unlimited affiliate links
+- **Click Tracking**: Automatically track clicks on your affiliate links
+- **Basic Analytics**: View top-performing links and total click statistics
+- **Shortcode Integration**: Use `[affiliate_link code="link_name"]` to insert links anywhere
+- **Multiple Categories**: Organize links by category for better management
+- **Revenue Dashboard**: View total clicks and commission earned at a glance
 
-### Advanced Analytics
-- Real-time click counts per link
-- Conversion tracking and metrics
-- Total clicks and conversions dashboard
-- Performance-based link sorting
-
-### User Experience
-- Open links in new tab (configurable)
-- SEO-friendly affiliate link structure
-- Automatic content integration
-- No manual link insertion needed
-- AJAX-powered interface for smooth interactions
+### Premium Features
+- **Advanced Analytics**: Detailed performance metrics and conversion data
+- **AI-Powered Recommendations**: Get suggestions for optimal link placement
+- **Geolocation Targeting**: Show different links based on visitor location
+- **Bulk Import/Export**: Manage large link collections efficiently
+- **Custom Conversion Tracking**: Set commission values per link
+- **Priority Support**: Get dedicated support from the development team
 
 ## Installation
 
-1. Download the plugin files
-2. Upload the plugin folder to `/wp-content/plugins/`
-3. Activate the plugin through the WordPress admin panel
-4. Navigate to **Affiliate Links** in the WordPress dashboard
+1. Download the plugin file
+2. Go to WordPress Admin Dashboard → Plugins → Add New → Upload Plugin
+3. Select the plugin file and click "Install Now"
+4. Click "Activate Plugin"
+5. Navigate to "Affiliate Manager" in the sidebar to begin
 
 ## Setup
 
 ### Initial Configuration
 
-1. Go to **Affiliate Links > Settings**
-2. Configure the following options:
-   - **Auto-Linkify Content**: Enable to automatically convert keywords to affiliate links in your posts
-   - **Open Links in New Tab**: Check to open affiliate links in new tabs
-   - **Link Prefix**: (Premium feature) Customize link tracking prefix
+1. Go to **Affiliate Manager → Settings**
+2. Enter your affiliate network API key (optional for basic tracking)
+3. Enable click tracking if desired
+4. Configure auto-linking keywords for automatic link insertion
 
-### Creating Your First Affiliate Link
+### Creating Your First Link
 
-1. Navigate to **Affiliate Links > Create Link**
-2. Enter the keyword you want to replace (e.g., "best hosting")
-3. Paste your affiliate URL
-4. (Optional) Add custom link text
-5. Click **Create Link**
+1. Navigate to **Affiliate Manager → Manage Links**
+2. Fill in the following:
+   - **Affiliate URL**: The full URL from your affiliate network
+   - **Short Code**: A unique identifier (e.g., "product-xyz")
+   - **Category**: Organize links by type or niche
+3. Click "Add Link"
 
 ## Usage
 
-### Managing Links
+### Using Affiliate Links
 
-- **Dashboard View**: Access **Affiliate Links** to see all active links sorted by performance
-- **View Statistics**: Check click count and conversion metrics for each link
-- **Delete Links**: Remove links from the management panel
-- **Edit Links**: Update keyword mapping and affiliate URLs
+**Method 1: Shortcode**
 
-### Content Integration
+[affiliate_link code="product-xyz"]
 
-Once auto-linkify is enabled, any instance of your keyword in blog posts automatically becomes a clickable affiliate link. For example:
 
-- Keyword: "best hosting"
-- Your text: "The best hosting solution I use is..."
-- Result: "The [best hosting](affiliate-url) solution I use is..."
+**Method 2: Auto-Linking**
+Configure keywords in Settings to automatically convert text into affiliate links within your content.
 
-### Tracking Performance
+### Viewing Analytics
 
-1. Review the dashboard statistics for overall performance
-2. Check individual link metrics to identify top performers
-3. Focus on keywords with high click-through rates
-4. Optimize underperforming links or keywords
+1. Go to **Affiliate Manager → Analytics**
+2. View your top-performing links sorted by click volume
+3. Monitor commission earnings in real-time
+4. Track performance trends over time
 
-## Monetization Models
+### Dashboard Overview
 
-### Free Tier
-- Up to 50 affiliate links
-- Basic click tracking
-- Auto-linkify functionality
-- Dashboard analytics
-
-### Premium Tier ($9.99/month)
-- Unlimited affiliate links
-- Advanced analytics and reports
-- API access for integrations
-- Priority support
-- Conversion tracking
-- Custom link prefixes
+The main dashboard displays:
+- Total clicks across all links
+- Total commission earned
+- Number of active affiliate links
+- Current subscription status
 
 ## Best Practices
 
-1. **Keyword Relevance**: Use keywords that naturally appear in your content
-2. **Authenticity**: Only promote products/services you genuinely use
-3. **Link Placement**: Don't overload content with too many affiliate links
-4. **Update URLs**: Regularly update affiliate URLs to maintain current commission structures
-5. **Monitor Performance**: Track which keywords convert best and optimize accordingly
-6. **Transparency**: Disclose affiliate relationships to your audience
+- **Strategic Placement**: Position affiliate links in high-engagement areas
+- **Relevant Recommendations**: Only promote products relevant to your content
+- **Disclosure**: Always disclose affiliate relationships to comply with regulations
+- **Testing**: Monitor which links perform best and optimize placement
+- **Regular Updates**: Keep your links current with your content strategy
 
-## Troubleshooting
+## Upgrade to Premium
 
-### Links Not Converting
-- Verify auto-linkify is enabled in settings
-- Check that the keyword exactly matches your content
-- Ensure the link is enabled (not disabled)
-
-### Clicks Not Tracking
-- Confirm the database table was created during activation
-- Check that JavaScript is enabled on your site
-- Verify no caching plugins are interfering
-
-### Performance Issues
-- Disable auto-linkify for very long posts
-- Limit the number of active keywords
-- Use a caching plugin to optimize database queries
+Unlock advanced features like geolocation targeting, AI recommendations, and detailed conversion analytics. Visit the plugin settings to subscribe or contact support for more information.
 
 ## Support
 
-For issues or feature requests, visit the plugin documentation or contact support at help@smartaffiliatelinkmanager.com
+For issues, feature requests, or support, contact our team through the plugin settings page.
 
-## Changelog
+## License
 
-### Version 1.0.0
-- Initial release
-- Core link management functionality
-- Auto-linkify feature
-- Basic analytics
-- Dashboard interface
+GPL v2 or later
