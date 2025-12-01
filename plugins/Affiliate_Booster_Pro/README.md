@@ -1,34 +1,33 @@
 # Affiliate Booster Pro
 
-## Description
-Affiliate Booster Pro is a powerful WordPress plugin designed to help affiliate marketers, bloggers, and e-commerce site owners boost affiliate revenue by automating product displays with tracking and conversion optimization.
+Affiliate Booster Pro is a WordPress plugin designed to help website owners create and manage affiliate marketing campaigns with easy-to-use tracking and commission features.
 
 ## Features
-- Easy shortcode to embed affiliate product cards with image, price, and buy button
-- Click tracking per affiliate product to monitor performance
-- Simple admin dashboard to view click statistics by affiliate IDs
-- Responsive, clean product card design for high engagement
-- Freemium architecture to allow basic use and monetize advanced analytics and automation
+- Manage multiple affiliate URLs linked to unique affiliate IDs
+- Track clicks with referrer and IP address logging
+- Simple shortcode `[affiliate_links]` to display affiliate links
+- Redirect users through affiliate links for accurate conversion tracking
+- Admin panel to configure affiliates and view recent clicks
+- Lightweight and self-contained PHP plugin
 
 ## Installation
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory.
+1. Upload the `affiliate-booster-pro.php` file to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use the shortcode `[affiliate_product]` to insert product displays on posts, pages, or widgets.
+3. Navigate to 'Affiliate Booster' in the admin menu to configure your affiliates.
 
 ## Setup
-Use the shortcode with these attributes:
+- In the plugin settings, enter affiliates in the format:
+  
+  `affiliate_id|https://affiliate-url.com`
 
-[affiliate_product product_name="Awesome Widget" product_url="https://affiliatelink.com" image_url="https://example.com/image.jpg" price="$49.99" affiliate_id="YOURID"]
+  one per line.
 
-- `product_name`: The name of the product.
-- `product_url`: The affiliate URL.
-- `image_url`: URL of the product image.
-- `price`: Display price.
-- `affiliate_id`: Your unique affiliate identifier for click tracking.
+- Save your changes.
+- Use the shortcode `[affiliate_links]` in any post or page to display the affiliate links.
 
 ## Usage
-- Insert shortcode in your posts or pages to display affiliate products.
-- Users clicking 'Buy Now' will be tracked in the admin stats.
-- Visit the Affiliate Booster menu in the WordPress admin to monitor click counts by affiliate ID.
+- Visitors clicking the affiliate links will be redirected to the configured URL while the plugin logs the click details.
+- Monitor clicks and affiliate performance from the admin dashboard.
 
-This simple yet powerful tool helps optimize affiliate performance and monetize your WordPress site efficiently.
+## Monetization
+This plugin can be offered as a free core with a premium subscription unlocking advanced integrations, analytics, and enhanced commission models.
