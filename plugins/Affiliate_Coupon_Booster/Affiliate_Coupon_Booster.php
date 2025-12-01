@@ -1,143 +1,97 @@
-<?php
 /*
-Plugin Name: Affiliate Coupon Booster
-Plugin URI: https://example.com/affiliate-coupon-booster
-Description: Auto-aggregates and displays affiliate coupons customized to your niche to boost affiliate revenue.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Coupon_Booster.php
-License: GPLv2 or later
-Text Domain: affiliate-coupon-booster
 */
+<?php
+/**
+ * Plugin Name: Affiliate Coupon Booster
+ * Description: Automatically generates and displays dynamic affiliate coupon codes and deals to boost conversions on your WordPress site.
+ * Version: 1.0
+ * Author: YourName
+ * License: GPL2
+ */
 
-if (!defined('ABSPATH')) exit; // Exit if accessed directly
+if (!defined('ABSPATH')) exit;
 
 class AffiliateCouponBooster {
-    private $coupons;
+    private $option_name = 'acb_coupons';
 
     public function __construct() {
-        add_shortcode('affiliate_coupons', array($this, 'render_coupons'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_init', array($this, 'register_settings'));
-        // Load coupons on plugin load
-        $this->load_coupons();
-    }
-
-    public function enqueue_styles() {
-        wp_enqueue_style('affiliate-coupon-booster-style', plugin_dir_url(__FILE__).'style.css');
+        add_action('admin_init', array($this, 'settings_init'));
+        add_shortcode('affiliate_coupon_boost', array($this, 'render_coupon'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate Coupon Booster', 'Affiliate Coupon Booster', 'manage_options', 'affiliate-coupon-booster', array($this, 'settings_page'));
+        add_menu_page('Affiliate Coupon Booster', 'Affiliate Coupons', 'manage_options', 'acb_settings', array($this, 'settings_page'), 'dashicons-tickets', 80);
     }
 
-    public function register_settings() {
-        register_setting('acb_settings_group', 'acb_affiliate_links');
-        register_setting('acb_settings_group', 'acb_custom_coupons');
+    public function settings_init() {
+        register_setting('acb_settings_group', $this->option_name);
+
+        add_settings_section('acb_section', 'Manage Coupons', null, 'acb_settings');
+
+        add_settings_field(
+            'acb_coupons_field',
+            'Coupons JSON',
+            array($this, 'coupons_field_render'),
+            'acb_settings',
+            'acb_section'
+        );
+    }
+
+    public function coupons_field_render() {
+        $options = get_option($this->option_name, '[]');
+        echo '<textarea cols="80" rows="10" name="' . esc_attr($this->option_name) . '">' . esc_textarea($options) . '</textarea>';
+        echo '<p class="description">Enter coupon data as JSON array. Example:<br>[{"code":"SAVE10","description":"Save 10% at Store","affiliate_url":"https://affiliatelink.com/product?affid=123"}]</p>';
     }
 
     public function settings_page() {
         ?>
         <div class="wrap">
-        <h1>Affiliate Coupon Booster Settings</h1>
-        <form method="post" action="options.php">
-            <?php settings_fields('acb_settings_group'); ?>
-            <?php do_settings_sections('acb_settings_group'); ?>
-
-            <h2>Affiliate Links (format: brand|url)</h2>
-            <textarea name="acb_affiliate_links" rows="8" cols="50" placeholder="Amazon|https://amzn.to/...\nBestBuy|https://bit.ly/..." style="width:100%;"><?php echo esc_textarea(get_option('acb_affiliate_links')); ?></textarea>
-
-            <h2>Custom Coupons (format: brand|coupon code|description)</h2>
-            <textarea name="acb_custom_coupons" rows="8" cols="50" placeholder="Amazon|SAVE10|10% off sitewide\nBestBuy|FREESHIP|Free shipping" style="width:100%;"><?php echo esc_textarea(get_option('acb_custom_coupons')); ?></textarea>
-
-            <?php submit_button(); ?>
-        </form>
+            <h1>Affiliate Coupon Booster Settings</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('acb_settings_group');
+                do_settings_sections('acb_settings');
+                submit_button();
+                ?>
+            </form>
+            <h2>How to Use</h2>
+            <p>Add your coupons in JSON format above. Then insert the shortcode <code>[affiliate_coupon_boost]</code> where you want to display the coupon offer.</p>
         </div>
         <?php
     }
 
-    private function load_coupons() {
-        // Get affiliate links and custom coupons from options
-        $affiliate_links_raw = get_option('acb_affiliate_links', '');
-        $custom_coupons_raw = get_option('acb_custom_coupons', '');
-
-        $affiliate_links = $this->parse_affiliate_links($affiliate_links_raw);
-        $custom_coupons = $this->parse_custom_coupons($custom_coupons_raw);
-
-        // Combine and randomize coupons
-        $coupons = array();
-        foreach ($affiliate_links as $brand => $url) {
-            $coupon = isset($custom_coupons[$brand]) ? $custom_coupons[$brand] : array('code' => '', 'description' => '');
-            $coupons[] = array(
-                'brand' => $brand,
-                'url' => $url,
-                'code' => $coupon['code'],
-                'description' => $coupon['description']
-            );
-        }
-        shuffle($coupons);
-        $this->coupons = $coupons;
+    public function enqueue_scripts() {
+        wp_enqueue_style('acb-style', plugin_dir_url(__FILE__) . 'acb-style.css');
     }
 
-    private function parse_affiliate_links($raw) {
-        $lines = explode("\n", trim($raw));
-        $links = array();
-        foreach ($lines as $line) {
-            $parts = explode('|', trim($line));
-            if (count($parts) === 2) {
-                $brand = sanitize_text_field($parts);
-                $url = esc_url_raw(trim($parts[1]));
-                if ($brand && $url) {
-                    $links[$brand] = $url;
-                }
-            }
+    public function render_coupon($atts) {
+        $coupons_json = get_option($this->option_name, '[]');
+        $coupons = json_decode($coupons_json, true);
+        if (!$coupons || !is_array($coupons) || count($coupons) === 0) {
+            return '<p>No coupons available.</p>';
         }
-        return $links;
-    }
 
-    private function parse_custom_coupons($raw) {
-        $lines = explode("\n", trim($raw));
-        $coupons = array();
-        foreach ($lines as $line) {
-            $parts = explode('|', trim($line));
-            if (count($parts) === 3) {
-                $brand = sanitize_text_field($parts);
-                $code = sanitize_text_field($parts[1]);
-                $desc = sanitize_text_field($parts[2]);
-                if ($brand) {
-                    $coupons[$brand] = array('code' => $code, 'description' => $desc);
-                }
-            }
-        }
-        return $coupons;
-    }
+        $coupon = $coupons[array_rand($coupons)];
+        $code = esc_html($coupon['code']);
+        $desc = esc_html($coupon['description']);
+        $url = esc_url($coupon['affiliate_url']);
 
-    public function render_coupons($atts) {
-        if (empty($this->coupons)) return '<p>No coupons available yet. Configure in plugin settings.</p>';
+        $output = '<div class="acb-coupon">';
+        $output .= '<p class="acb-desc">' . $desc . '</p>';
+        $output .= '<a class="acb-button" href="' . $url . '" target="_blank" rel="nofollow noopener">Use Coupon: <strong>' . $code . '</strong></a>';
+        $output .= '</div>';
 
-        ob_start();
-        echo '<div class="acb-coupons-container">';
-        foreach ($this->coupons as $coupon) {
-            echo '<div class="acb-coupon">';
-            echo '<h3>' . esc_html($coupon['brand']) . '</h3>';
-            if (!empty($coupon['code'])) {
-                echo '<p><strong>Code:</strong> <code>' . esc_html($coupon['code']) . '</code></p>';
-            }
-            if (!empty($coupon['description'])) {
-                echo '<p>' . esc_html($coupon['description']) . '</p>';
-            }
-            echo '<p><a class="acb-button" href="' . esc_url($coupon['url']) . '" target="_blank" rel="nofollow noopener">Shop Now</a></p>';
-            echo '</div>';
-        }
-        echo '</div>';
-        return ob_get_clean();
+        return $output;
     }
 }
 
 new AffiliateCouponBooster();
 
-// Basic styling
+// Minimal CSS embedded for self-containment, added inline for plugin simplicity
 add_action('wp_head', function() {
-    echo '<style>.acb-coupons-container{display:flex;flex-wrap:wrap;gap:1em;}.acb-coupon{border:1px solid #ddd;padding:1em;border-radius:5px;flex:1 1 250px;max-width:300px;background:#f9f9f9;}.acb-coupon h3{margin-top:0;color:#2c3e50;}.acb-button{display:inline-block;margin-top:0.5em;padding:0.5em 1em;background:#0073aa;color:#fff;text-decoration:none;border-radius:3px;transition:background-color 0.3s ease;} .acb-button:hover{background:#005177;}</style>';
+    echo '<style>.acb-coupon{border:1px solid #ddd;padding:15px;border-radius:6px;background:#f9f9f9;max-width:320px;margin:10px auto;text-align:center;}.acb-desc{font-size:1.1em;margin-bottom:10px;color:#333;}.acb-button{text-decoration:none;background:#28a745;color:#fff;padding:10px 20px;border-radius:4px;display:inline-block;font-weight:bold;transition:background 0.3s ease;}.acb-button:hover{background:#218838;}</style>';
 });
