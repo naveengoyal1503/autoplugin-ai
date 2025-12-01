@@ -1,28 +1,25 @@
 # WP Revenue Booster
 
-Automatically suggests and inserts high-converting affiliate links, coupons, and sponsored content into your posts based on context and performance data.
+Maximize your WordPress site's revenue with smart affiliate link rotation, targeted ads, and exclusive offer promotion.
 
 ## Features
-- Auto-insert affiliate links in posts
-- Insert coupon codes and discounts
-- Add sponsored content blocks
-- Easy admin configuration
-- Tracking code for analytics
+- Rotates affiliate links to increase click-through rates
+- Displays targeted ads from your chosen ad codes
+- Promotes exclusive offers to boost conversions
+- Easy-to-use admin interface for managing links, ads, and offers
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory.
-2. Activate the plugin from the WordPress admin panel.
-3. Go to Settings > Revenue Booster to configure your affiliate links, coupons, and sponsored content.
+1. Upload the `wp-revenue-booster` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to Settings > Revenue Booster to configure your affiliate links, ad codes, and exclusive offers
 
 ## Setup
-- Enter affiliate links as JSON (keyword => link)
-- Enter coupons as JSON (keyword => coupon code)
-- Enter sponsored content as JSON (keyword => content)
+- Enter your affiliate links, one per line
+- Add your ad codes (HTML), one per line
+- Input your exclusive offers (HTML), one per line
 
 ## Usage
-- Publish or update a post. The plugin will automatically insert your configured links, coupons, and sponsored content.
-- View tracking in browser console.
+Once configured, the plugin will automatically display a random affiliate link, ad, and offer on your site's footer. Customize the appearance by editing the included CSS file.
 
-## Monetization
-- Free version: basic auto-insertion
-- Premium version: advanced analytics, automation, and more features (coming soon)
+## Support
+For support and feature requests, visit our website or contact us directly.
