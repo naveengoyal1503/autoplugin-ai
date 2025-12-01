@@ -1,32 +1,34 @@
 # AutoAffiliate Manager
 
-AutoAffiliate Manager simplifies the creation and management of your WordPress affiliate program by automating affiliate onboarding and offering flexible commission tiers.
+## Description
+AutoAffiliate Manager automatically scans your WordPress posts to find product identifiers (like Amazon ASINs), converts them to affiliate links, and tracks click performance with real-time analytics.
 
 ## Features
-
-- Easy affiliate addition from the WordPress admin dashboard.
-- Default and custom commission rates per affiliate.
-- Affiliate list display with essential details.
-- Secure admin setup using WordPress nonces and permissions.
-- Fully self-contained single PHP file plugin.
-- Ideal for e-commerce and digital product sellers.
+- Automatically detects product mentions and converts them to affiliate links
+- Supports Amazon affiliate links by default (expandable to multiple networks)
+- Tracks clicks on affiliate links for performance monitoring
+- Lightweight, single PHP file plugin
+- Freemium ready: basic link conversion and tracking included
 
 ## Installation
-
-1. Download the `autoaffiliate-manager.php` file.
-2. Upload it to your WordPress `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Upload the `autoaffiliate-manager.php` plugin file to your WordPress `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' screen in WordPress.
+3. Configure your Amazon affiliate tag by editing the `$affiliate_networks` property in the plugin code or by future admin UI.
 
 ## Setup
-
-1. Go to **AutoAffiliate** in the WordPress admin menu.
-2. Set your default commission rate (percentage) under Affiliate Program Settings.
-3. Use the form to add new affiliates with custom commission rates if desired.
+Currently requires minimal setup; just embed ASINs (e.g., B08XYZ1234) in your posts. The plugin replaces them with Amazon affiliate links automatically.
 
 ## Usage
+- Add product ASIN codes anywhere in your posts' content.
+- Affiliate links are auto-generated and opened in new tabs with `nofollow` and `noopener` attributes.
+- Track clicks on affiliate links via WordPress options (`aam_clicks`) stored in the database.
 
-- Track and manage affiliates easily within the dashboard.
-- Use the affiliates' emails to communicate and send unique referral links (extensions can be developed).
-- Adjust commission rates anytime.
+## Future Premium Features
+- Multiple affiliate network integration
+- Link split-testing and performance suggestions
+- Admin dashboard with detailed metrics
+- Automatic keyword-to-link scanning and linking
 
-This plugin can be further extended to include referral tracking, payouts, and AI-driven influencer suggestions through future premium updates.
+---
+
+Feel free to contribute and report issues via the repository. This plugin helps get started with automatic affiliate monetization with simple setup and proven models.
