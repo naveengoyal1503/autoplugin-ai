@@ -1,119 +1,119 @@
-# ContentVault Pro
+# ContentVault Pro - WordPress Monetization Plugin
 
-A comprehensive membership and digital product management plugin for WordPress monetization. Easily manage premium content, sell digital products, and build sustainable recurring revenue through flexible subscription tiers.
+## Overview
+
+ContentVault Pro is a powerful WordPress plugin that enables site owners to monetize individual posts and pages through flexible paywalls and micro-transactions. Transform your content into a revenue stream without the complexity of traditional membership systems.
 
 ## Features
 
-- **Membership Management**: Create tiered membership plans with automatic renewals
-- **Digital Product Sales**: Sell eBooks, courses, templates, and downloadable files
-- **Content Restrictions**: Restrict post and page access to members or specific membership tiers
-- **Paywall System**: Automatically display paywalls for restricted content
-- **Member Dashboard**: Track active members, revenue, and purchase history
-- **Stripe Integration**: Accept payments securely through Stripe
-- **Shortcodes**: Easy-to-use shortcodes for displaying products and member content
-- **User-Friendly Admin**: Intuitive admin interface for managing products and members
+- **Individual Post/Page Paywalls**: Set custom prices for specific content pieces
+- **One-Click Activation**: Enable paywalls directly from the post editor
+- **Flexible Pricing**: Set your own price point for each piece of content
+- **Transaction Dashboard**: Track all sales and revenue in real-time
+- **Customizable Messages**: Personalize paywall messaging for your audience
+- **Guest Purchase Support**: Allow both logged-in users and guests to purchase
+- **Multiple Currency Support**: Accept payments in USD, EUR, and GBP
+- **AJAX Checkout**: Fast, seamless payment processing without page reloads
+- **Admin Analytics**: View monthly revenue, total transactions, and earnings trends
+- **Shortcode Integration**: Use `[contentvault price="9.99" message="Unlock exclusive content"]` anywhere
 
 ## Installation
 
-1. Download the plugin files
-2. Upload to `/wp-content/plugins/contentvault-pro/` directory
-3. Activate the plugin through WordPress admin dashboard
-4. Navigate to ContentVault Pro → Settings to configure
+1. Download the ContentVault Pro plugin files
+2. Upload the plugin folder to `/wp-content/plugins/` directory
+3. Activate the plugin through the WordPress admin dashboard
+4. Navigate to ContentVault Pro → Settings to configure your preferences
+5. Create database tables by visiting the Dashboard
 
-## Setup & Configuration
+## Setup
 
-### Step 1: Get Stripe Keys
+### Initial Configuration
 
-1. Sign up for a Stripe account at stripe.com
-2. Go to API Keys section in your Stripe Dashboard
-3. Copy your Publishable Key and Secret Key
+1. Go to **ContentVault Pro → Settings**
+2. Choose your preferred currency (USD, EUR, GBP)
+3. Set minimum price threshold (default: $0.99)
+4. Toggle guest purchase option if desired
+5. Customize success message for transactions
+6. Click **Save Settings**
 
-### Step 2: Configure Plugin Settings
+### Enable Paywall on Posts
 
-1. Go to ContentVault Pro → Settings
-2. Enter your Stripe Publishable Key and Secret Key
-3. Save changes
-
-### Step 3: Create Membership Tiers
-
-Define your membership tiers (e.g., Basic, Premium, VIP) with associated permissions and pricing.
-
-### Step 4: Create Digital Products
-
-1. Go to Digital Products
-2. Click "Add New"
-3. Set product title, description, price, and download file URL
-4. Publish
+1. Edit any post or create a new one
+2. Scroll to the **ContentVault Pro Settings** meta box
+3. Check "Enable Paywall for this post"
+4. Enter the price in USD
+5. Add a custom paywall message (optional)
+6. Publish or update the post
 
 ## Usage
 
-### Display Digital Products
+### For Content Creators
 
-Use the shortcode to display all available products:
+**Setting Paywalls**: Simply check the paywall option in the post editor and set your price. Your content preview (first 50 words) will display before the paywall.
 
+**Viewing Analytics**: Access the Dashboard to monitor total revenue, monthly earnings, and transaction count. The Transactions page shows detailed purchase history.
 
-[contentvault_products]
+### For Site Visitors
 
+When accessing paywalled content, visitors see:
+- A content preview (excerpt)
+- Your custom paywall message
+- The price in their configured currency
+- An "Unlock Content" button for immediate purchase
 
-### Restrict Post Content
+### Using Shortcodes
 
-1. Create or edit a post
-2. Scroll to "Content Restrictions" meta box
-3. Select "Members Only" or "Specific Tiers"
-4. Save post
-
-### Display Member-Only Content
-
-Wrap content in shortcode:
-
-
-[contentvault_member_content]
-This content is only for premium members
-[/contentvault_member_content]
+Add paywalls anywhere using the shortcode:
 
 
-### Add Paywall
-
-Manually insert paywall shortcode:
+[contentvault price="14.99" message="Premium tutorial unlock" button_text="Get Access"]
 
 
-[contentvault_paywall post_id="123"]
+**Parameters**:
+- `price` (required): Price in dollars
+- `message`: Custom paywall message
+- `button_text`: Button label
 
+## Transaction Tracking
 
-## Monetization Models Supported
+All purchases are stored in the wp_cv_transactions table with:
+- Unique transaction ID
+- User and post information
+- Purchase amount and currency
+- Transaction status (completed/pending)
+- Timestamp
 
-- **Freemium**: Offer free content with premium upgrades
-- **Tiered Memberships**: Multiple subscription levels
-- **Digital Products**: One-time purchases
-- **Hybrid**: Combine memberships with product sales
+Access this data via ContentVault Pro → Transactions in the admin.
 
-## Dashboard Metrics
+## Pricing & Monetization Model
 
-The main ContentVault Pro dashboard displays:
+- **License**: $99/year annual subscription (auto-renews)
+- **Transaction Fee**: 2% of each sale
+- **Example**: $10 sale = $0.20 transaction fee
 
-- Total Active Members
-- Total Revenue Generated
-- Recent Transactions
-- Member Activity
+This recurring revenue model ensures continuous plugin updates, customer support, and feature development.
 
-## Frequently Asked Questions
+## Requirements
 
-**Q: How do users sign up for memberships?**
-A: Users can sign up through membership signup buttons that trigger Stripe checkout.
-
-**Q: Can I offer trial periods?**
-A: Yes, configure trial periods in your Stripe account for recurring subscriptions.
-
-**Q: Is there a license system?**
-A: The plugin tracks purchases per user. Digital product licenses are tied to user accounts.
-
-**Q: Can I restrict content to multiple membership tiers?**
-A: Yes, specify multiple comma-separated tier names in the Content Restrictions meta box.
+- WordPress 5.0+
+- PHP 7.2+
+- MySQL 5.6+
+- jQuery
 
 ## Support
 
-For issues or questions, contact support through the plugin documentation.
+For issues, feature requests, or assistance, visit the ContentVault Pro support portal or email support@contentvault.local
 
 ## License
 
-GPL v2 or later
+GPL v2 or later - See LICENSE file for details
+
+## Changelog
+
+### Version 1.0.0
+- Initial release
+- Core paywall functionality
+- Admin dashboard and analytics
+- Transaction tracking
+- Multi-currency support
+- Shortcode integration
