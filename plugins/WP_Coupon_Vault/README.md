@@ -1,30 +1,26 @@
 # WP Coupon Vault
 
-WP Coupon Vault is a WordPress plugin that lets you create, manage, and display exclusive coupons and deals for your audience. Boost affiliate revenue and user engagement by offering custom discounts and deals.
+WP Coupon Vault is a WordPress plugin that helps bloggers and affiliate marketers create, manage, and display exclusive coupon codes from brands. Track usage and earn commissions through affiliate partnerships.
 
 ## Features
-- Create and manage coupons as custom post types
-- Display coupons using a shortcode
-- Customize display style (default, compact, grid)
-- Easy-to-use admin settings
+- Create and manage coupon codes
+- Set expiry dates for coupons
+- Add affiliate links for each coupon
+- Display coupons via shortcode
+- Track active and expired coupons
 
 ## Installation
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
+1. Upload the plugin folder to your `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Coupons > Settings to configure display style
+3. Go to 'Coupons' to add new coupons
 
 ## Setup
-- Add new coupons under the 'Coupons' menu
-- Set coupon code and URL in custom fields
-- Use the `[coupon_vault]` shortcode to display coupons on any page or post
+- Add a new coupon and fill in the details (code, expiry, affiliate link, brand)
+- Use the shortcode `[coupon_vault limit="10"]` to display coupons on any page or post
 
 ## Usage
-- `[coupon_vault limit="5" category="tech" style="grid"]` - Display 5 tech coupons in grid style
-- `[coupon_vault limit="10"]` - Display 10 coupons in default style
+- Place the shortcode in your content to show a list of active coupons
+- Customize the display with CSS in your theme
 
 ## Support
-For support and feature requests, visit the plugin page or contact the developer.
-
----
-
-**Note:** This is a basic version. Premium features include analytics, expiration dates, and advanced styling options.
+For support, visit the plugin page or contact the developer.
