@@ -2,6 +2,9 @@
 
 This repository powers the **AI Plugin Factory** platform: an AI-first workflow for generating, auditing, documenting, and launching WordPress plugins. The core site (see `index.php` plus the `assets/` and `api/` directories) already includes the following AI assistants:
 
+## Developer
+Developed and managed by [Naveen Goyal](https://naveen.bhandarum.in).
+
 ## Current AI Suite
 
 - **Plugin Library & Concierge** – Search/download AI-generated plugins and chat with the Gemini + Perplexity concierge for instant guidance.
