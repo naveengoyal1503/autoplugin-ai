@@ -5,131 +5,150 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Affiliate Deal Booster
- * Description: Automatically fetch and display affiliate coupons and deals with click tracking.
+ * Description: Automates coupon/deal aggregation with affiliate link management and displays them in a customizable widget.
  * Version: 1.0
- * Author: Plugin Dev
- * License: GPL2
+ * Author: PluginDev
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) { exit; }
 
-class Affiliate_Deal_Booster {
-    private $table_name;
+class AffiliateDealBooster {
+    private $deals_option = 'adb_deals';
 
-    public function __construct(){
-        global $wpdb;
-        $this->table_name = $wpdb->prefix . 'adb_clicks';
-        register_activation_hook(__FILE__, array($this, 'activate'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('affiliate_deals', array($this, 'display_deals_shortcode'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_adb_track_click', array($this, 'track_click')); 
-        add_action('wp_ajax_nopriv_adb_track_click', array($this, 'track_click'));
+    public function __construct() {
+        add_action('admin_menu', [$this, 'admin_menu']);
+        add_action('admin_post_adb_save_deal', [$this, 'save_deal']);
+        add_action('widgets_init', function() {
+            register_widget('ADB_Deals_Widget');
+        });
+        add_shortcode('adb_deals', [$this, 'shortcode']);
     }
 
-    public function activate(){
-        global $wpdb;
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        $charset_collate = $wpdb->get_charset_collate();
-
-        $sql = "CREATE TABLE $this->table_name (
-          id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-          deal_url varchar(255) NOT NULL,
-          clicked_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          user_ip varchar(100) DEFAULT NULL,
-          PRIMARY KEY  (id)
-        ) $charset_collate;";
-        dbDelta($sql);
+    public function admin_menu() {
+        add_menu_page('Affiliate Deal Booster', 'Affiliate Deals', 'manage_options', 'adb_deals', [$this, 'admin_page']);
     }
 
-    public function enqueue_scripts(){
-        wp_enqueue_script('adb_main_js', plugin_dir_url(__FILE__) . 'adb_main.js', array('jquery'), '1.0', true);
-        wp_localize_script('adb_main_js', 'adb_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
-        wp_enqueue_style('adb_styles', plugin_dir_url(__FILE__) . 'adb_styles.css');
-    }
-
-    public function admin_menu(){
-        add_menu_page('Affiliate Deal Booster', 'Affiliate Deals', 'manage_options', 'affiliate-deal-booster', array($this, 'admin_page'), 'dashicons-megaphone', 26);
-    }
-
-    public function admin_page(){
-        global $wpdb;
-        echo '<div class="wrap"><h1>Affiliate Deal Booster - Click Stats</h1>';
-        $results = $wpdb->get_results("SELECT deal_url, COUNT(*) as clicks FROM $this->table_name GROUP BY deal_url ORDER BY clicks DESC LIMIT 20");
-        echo '<table class="widefat"><thead><tr><th>Deal URL</th><th>Clicks</th></tr></thead><tbody>';
-        if($results){
-            foreach($results as $row){
-                $safe_url = esc_url($row->deal_url);
-                echo "<tr><td><a href='$safe_url' target='_blank'>$safe_url</a></td><td>{$row->clicks}</td></tr>";
-            }
-        } else {
-            echo '<tr><td colspan="2">No clicks recorded yet.</td></tr>';
+    public function admin_page() {
+        if (!current_user_can('manage_options')) {
+            wp_die('Unauthorized');
         }
-        echo '</tbody></table></div>';
+
+        $deals = get_option($this->deals_option, []);
+        ?>
+        <div class="wrap">
+            <h1>Affiliate Deal Booster</h1>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <input type="hidden" name="action" value="adb_save_deal">
+                <?php wp_nonce_field('adb_save_deal_nonce'); ?>
+
+                <h2>Add New Deal</h2>
+                <table class="form-table">
+                    <tr><th><label for="title">Title</label></th><td><input type="text" id="title" name="title" required class="regular-text"></td></tr>
+                    <tr><th><label for="description">Description</label></th><td><textarea id="description" name="description" rows="3" class="large-text" required></textarea></td></tr>
+                    <tr><th><label for="url">Affiliate URL</label></th><td><input type="url" id="url" name="url" required class="regular-text"></td></tr>
+                    <tr><th><label for="expiration">Expiration Date</label></th><td><input type="date" id="expiration" name="expiration"></td></tr>
+                </table>
+                <input type="submit" class="button button-primary" value="Add Deal">
+            </form>
+
+            <h2>Existing Deals</h2>
+            <table class="wp-list-table widefat fixed striped">
+                <thead><tr><th>Title</th><th>Description</th><th>URL</th><th>Expires</th><th>Actions</th></tr></thead>
+                <tbody>
+                <?php
+                if(!empty($deals)) {
+                    foreach($deals as $index => $deal) {
+                        $exp = empty($deal['expiration']) ? 'None' : esc_html($deal['expiration']);
+                        echo '<tr>' .
+                             '<td>' . esc_html($deal['title']) . '</td>' .
+                             '<td>' . esc_html($deal['description']) . '</td>' .
+                             '<td><a href="' . esc_url($deal['url']) . '" target="_blank">Link</a></td>' .
+                             '<td>' . $exp . '</td>' .
+                             '<td><a href="' . esc_url(admin_url('admin-post.php?action=adb_delete_deal&index=' . $index)) . '">Delete</a></td>' .
+                             '</tr>';
+                    }
+                } else {
+                    echo '<tr><td colspan="5">No deals added yet.</td></tr>';
+                }
+                ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
     }
 
-    public function track_click(){
-        if(empty($_POST['url'])) wp_send_json_error('No URL');
+    public function save_deal() {
+        if (!current_user_can('manage_options') || !check_admin_referer('adb_save_deal_nonce')) {
+            wp_die('Unauthorized');
+        }
+
+        $title = sanitize_text_field($_POST['title']);
+        $description = sanitize_textarea_field($_POST['description']);
         $url = esc_url_raw($_POST['url']);
-        global $wpdb;
-        $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field($_SERVER['REMOTE_ADDR']) : '';
-        $wpdb->insert($this->table_name, array('deal_url' => $url, 'user_ip' => $ip), array('%s', '%s'));
-        wp_send_json_success();
+        $expiration = sanitize_text_field($_POST['expiration']);
+
+        $deals = get_option($this->deals_option, []);
+        $deals[] = compact('title', 'description', 'url', 'expiration');
+
+        update_option($this->deals_option, $deals);
+
+        wp_redirect(admin_url('admin.php?page=adb_deals'));
+        exit;
     }
 
-    public function display_deals_shortcode($atts){
-        $deals = array(
-            array(
-                'title' => 'Save 20% on Hosting',
-                'url' => 'https://example-affiliate.com/deal1?ref=yourID',
-                'desc' => 'Get 20% off your hosting with this exclusive coupon!'
-            ),
-            array(
-                'title' => '50% Discount on SEO Tool',
-                'url' => 'https://another-affiliate.com/deal2?ref=yourID',
-                'desc' => 'Boost your SEO with half price on this pro tool.'
-            ),
-            array(
-                'title' => 'Buy One Get One Free Plugin',
-                'url' => 'https://plugin-affiliate.com/deal3?ref=yourID',
-                'desc' => 'Exclusive offer - BOGO deal on popular WordPress plugin.'
-            )
-        );
+    public function shortcode() {
+        $deals = get_option($this->deals_option, []);
+        if(empty($deals)) return '<p>No deals available now. Check back soon!</p>';
 
-        $html = '<div class="adb-deals-container">';
-        foreach($deals as $deal){
-            $title = esc_html($deal['title']);
-            $desc = esc_html($deal['desc']);
-            $url = esc_url($deal['url']);
-            $html .= "<div class='adb-deal'><h3>$title</h3><p>$desc</p><a href='$url' target='_blank' class='adb-link' data-url='$url'>Grab Deal</a></div>";
+        $output = '<div class="adb-deals">';
+
+        foreach($deals as $deal) {
+            if (!empty($deal['expiration']) && strtotime($deal['expiration']) < time()) continue;
+            $output .= '<div class="adb-deal" style="margin-bottom:15px; padding:10px; border:1px solid #ccc;">';
+            $output .= '<h3>' . esc_html($deal['title']) . '</h3>';
+            $output .= '<p>' . esc_html($deal['description']) . '</p>';
+            $output .= '<a href="' . esc_url($deal['url']) . '" target="_blank" rel="nofollow noopener" style="background:#0073aa;color:#fff;padding:8px 12px;text-decoration:none;border-radius:3px;">Grab Deal</a>';
+            $output .= '</div>';
         }
-        $html .= '</div>';
 
-        return $html;
+        $output .= '</div>';
+
+        return $output;
     }
 }
 
-new Affiliate_Deal_Booster();
+// Widget
+class ADB_Deals_Widget extends WP_Widget {
+    public function __construct() {
+        parent::__construct(
+            'adb_deals_widget',
+            'Affiliate Deal Booster Widget',
+            ['description' => 'Displays current affiliate deals and coupons']
+        );
+    }
 
-// Inline JS file content (adb_main.js) must be saved alongside plugin for click tracking:
-// (This string is for demonstration only; in reality, plugin would instruct to create adb_main.js file.)
+    public function widget($args, $instance) {
+        echo $args['before_widget'];
+        if (!empty($instance['title'])) {
+            echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
+        }
+        echo do_shortcode('[adb_deals]');
+        echo $args['after_widget'];
+    }
 
-/*
-jQuery(document).ready(function($){
-  $('.adb-link').on('click', function(e){
-    var clickUrl = $(this).data('url');
-    $.post(adb_ajax.ajax_url, {action: 'adb_track_click', url: clickUrl});
-  });
-});
-*/
+    public function form($instance) {
+        $title = !empty($instance['title']) ? $instance['title'] : 'Special Deals';
+        ?>
+        <p><label for="<?php echo esc_attr($this->get_field_id('title')); ?>">Title:</label>
+        <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>" name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text" value="<?php echo esc_attr($title); ?>"></p>
+        <?php
+    }
 
-// Inline CSS file content (adb_styles.css) must be saved alongside plugin for minimal styling:
-// (This string is for demonstration only; in reality, plugin would instruct to create adb_styles.css file.)
+    public function update($new_instance, $old_instance) {
+        $instance = [];
+        $instance['title'] = sanitize_text_field($new_instance['title']);
+        return $instance;
+    }
+}
 
-/*
-.adb-deals-container { display: flex; flex-wrap: wrap; gap: 15px; }
-.adb-deal { border: 1px solid #ccc; padding: 15px; width: 30%; box-sizing: border-box; background: #fafafa; }
-.adb-deal h3 { margin-top: 0; }
-.adb-link { display: inline-block; margin-top: 10px; padding: 8px 12px; background: #0073aa; color: white; text-decoration: none; border-radius: 3px; }
-.adb-link:hover { background: #005177; }
-*/
+new AffiliateDealBooster();
