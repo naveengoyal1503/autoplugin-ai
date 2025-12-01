@@ -1,26 +1,61 @@
-<?php
 /*
-Plugin Name: WP Affiliate Link Manager
-Description: Manage, track, and optimize affiliate links with analytics and cloaking.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Affiliate_Link_Manager.php
 */
+<?php
+/**
+ * Plugin Name: WP Affiliate Link Manager
+ * Description: Manage, cloak, and track affiliate links with analytics.
+ * Version: 1.0
+ * Author: Your Name
+ */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-class WPAffiliateLinkManager {
+define('WPALM_VERSION', '1.0');
+define('WPALM_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('WPALM_PLUGIN_URL', plugin_dir_url(__FILE__));
+
+class WP_Affiliate_Link_Manager {
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_menu'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_shortcode('affiliate_link', array($this, 'render_affiliate_link'));
-        add_action('wp_head', array($this, 'track_click'));
+        add_action('init', array($this, 'init'));        
+        add_action('admin_menu', array($this, 'admin_menu'));        
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));        
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_scripts'));        
+        add_action('wp_ajax_wpalm_track_click', array($this, 'track_click'));        
+        add_action('wp_ajax_nopriv_wpalm_track_click', array($this, 'track_click'));        
+        add_action('wp_ajax_wpalm_get_stats', array($this, 'get_stats'));        
+        add_action('wp_ajax_nopriv_wpalm_get_stats', array($this, 'get_stats'));        
+        add_shortcode('wpalm_link', array($this, 'shortcode_link'));        
     }
 
-    public function add_menu() {
+    public function init() {
+        $this->create_table();
+    }
+
+    private function create_table() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'wpalm_links';
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            slug varchar(200) NOT NULL,
+            url text NOT NULL,
+            clicks int(11) DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY slug (slug)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    public function admin_menu() {
         add_menu_page(
-            'Affiliate Link Manager',
+            'WP Affiliate Link Manager',
             'Affiliate Links',
             'manage_options',
             'wp-affiliate-link-manager',
@@ -29,102 +64,69 @@ class WPAffiliateLinkManager {
         );
     }
 
-    public function register_settings() {
-        register_setting('wp_affiliate_link_manager', 'wp_affiliate_links');
-    }
-
     public function admin_page() {
-        $links = get_option('wp_affiliate_links', array());
-        if (isset($_POST['add_link'])) {
-            $links[] = array(
-                'name' => sanitize_text_field($_POST['name']),
-                'url' => esc_url_raw($_POST['url']),
-                'slug' => sanitize_title($_POST['slug']),
-                'clicks' => 0
-            );
-            update_option('wp_affiliate_links', $links);
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.'));
         }
-        if (isset($_POST['delete_link'])) {
-            unset($links[$_POST['index']]);
-            update_option('wp_affiliate_links', array_values($links));
-        }
-        ?>
-        <div class="wrap">
-            <h1>Affiliate Link Manager</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th><label>Name</label></th>
-                        <td><input type="text" name="name" required /></td>
-                    </tr>
-                    <tr>
-                        <th><label>URL</label></th>
-                        <td><input type="url" name="url" required /></td>
-                    </tr>
-                    <tr>
-                        <th><label>Slug</label></th>
-                        <td><input type="text" name="slug" required /></td>
-                    </tr>
-                </table>
-                <p class="submit"><input type="submit" name="add_link" class="button-primary" value="Add Link" /></p>
-            </form>
-            <h2>Existing Links</h2>
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>URL</th>
-                        <th>Slug</th>
-                        <th>Clicks</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($links as $i => $link): ?>
-                    <tr>
-                        <td><?php echo esc_html($link['name']); ?></td>
-                        <td><?php echo esc_url($link['url']); ?></td>
-                        <td><?php echo esc_html($link['slug']); ?></td>
-                        <td><?php echo intval($link['clicks']); ?></td>
-                        <td>
-                            <form method="post" style="display:inline;">
-                                <input type="hidden" name="index" value="<?php echo $i; ?>" />
-                                <input type="submit" name="delete_link" class="button" value="Delete" />
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <?php
+        include_once(WPALM_PLUGIN_DIR . 'admin/page.php');
     }
 
-    public function render_affiliate_link($atts) {
-        $atts = shortcode_atts(array('slug' => ''), $atts);
-        $links = get_option('wp_affiliate_links', array());
-        foreach ($links as $link) {
-            if ($link['slug'] === $atts['slug']) {
-                return '<a href="' . home_url('/go/' . $link['slug']) . '" target="_blank">' . esc_html($link['name']) . '</a>';
-            }
+    public function enqueue_admin_scripts($hook) {
+        if ('toplevel_page_wp-affiliate-link-manager' !== $hook) {
+            return;
         }
-        return '';
+        wp_enqueue_style('wpalm-admin', WPALM_PLUGIN_URL . 'admin/style.css');
+        wp_enqueue_script('wpalm-admin', WPALM_PLUGIN_URL . 'admin/script.js', array('jquery'), WPALM_VERSION, true);
+        wp_localize_script('wpalm-admin', 'wpalm_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+    }
+
+    public function enqueue_frontend_scripts() {
+        wp_enqueue_script('wpalm-frontend', WPALM_PLUGIN_URL . 'frontend/script.js', array('jquery'), WPALM_VERSION, true);
+        wp_localize_script('wpalm-frontend', 'wpalm_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
     }
 
     public function track_click() {
-        if (isset($_GET['go'])) {
-            $slug = sanitize_title($_GET['go']);
-            $links = get_option('wp_affiliate_links', array());
-            foreach ($links as $i => $link) {
-                if ($link['slug'] === $slug) {
-                    $links[$i]['clicks']++;
-                    update_option('wp_affiliate_links', $links);
-                    wp_redirect($link['url']);
-                    exit;
-                }
-            }
+        global $wpdb;
+        $slug = sanitize_text_field($_POST['slug']);
+        $table_name = $wpdb->prefix . 'wpalm_links';
+        $wpdb->query($wpdb->prepare("UPDATE $table_name SET clicks = clicks + 1 WHERE slug = %s", $slug));
+        wp_die();
+    }
+
+    public function get_stats() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'wpalm_links';
+        $results = $wpdb->get_results("SELECT * FROM $table_name ORDER BY clicks DESC");
+        wp_send_json($results);
+    }
+
+    public function shortcode_link($atts) {
+        $atts = shortcode_atts(array(
+            'slug' => '',
+            'text' => 'Click here'
+        ), $atts, 'wpalm_link');
+        
+        if (empty($atts['slug'])) {
+            return 'Invalid slug';
         }
+        
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'wpalm_links';
+        $link = $wpdb->get_row($wpdb->prepare("SELECT url FROM $table_name WHERE slug = %s", $atts['slug']));
+        
+        if (!$link) {
+            return 'Link not found';
+        }
+        
+        return '<a href="' . esc_url($link->url) . '" class="wpalm-link" data-slug="' . esc_attr($atts['slug']) . '" target="_blank">' . esc_html($atts['text']) . '</a>';
     }
 }
 
-new WPAffiliateLinkManager();
+new WP_Affiliate_Link_Manager();
+
+// Include admin and frontend files
+if (is_admin()) {
+    include_once(WPALM_PLUGIN_DIR . 'admin/functions.php');
+}
+
+include_once(WPALM_PLUGIN_DIR . 'frontend/functions.php');
