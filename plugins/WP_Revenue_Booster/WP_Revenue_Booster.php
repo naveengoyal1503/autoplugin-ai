@@ -1,138 +1,137 @@
-<?php
 /*
-Plugin Name: WP Revenue Booster
-Description: Boost your WordPress site revenue with smart affiliate, coupon, and sponsored content recommendations.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
+<?php
+/**
+ * Plugin Name: WP Revenue Booster
+ * Plugin URI: https://example.com/wp-revenue-booster
+ * Description: Automatically optimizes ad placement, affiliate links, and upsell offers to maximize revenue on any WordPress site.
+ * Version: 1.0
+ * Author: Revenue Labs
+ * Author URI: https://example.com
+ * License: GPL2
+ */
 
-class WP_Revenue_Booster {
+// Prevent direct access
+define('ABSPATH') or die('No script kiddies please!');
 
-    public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_head', array($this, 'insert_tracking_code'));
-        add_filter('the_content', array($this, 'insert_smart_monetization'));
-        add_action('admin_init', array($this, 'settings_init'));
-    }
+// Register activation and deactivation hooks
+register_activation_hook(__FILE__, 'wp_revenue_booster_activate');
+register_deactivation_hook(__FILE__, 'wp_revenue_booster_deactivate');
 
-    public function add_admin_menu() {
-        add_options_page(
-            'WP Revenue Booster',
-            'Revenue Booster',
-            'manage_options',
-            'wp_revenue_booster',
-            array($this, 'options_page')
-        );
-    }
-
-    public function settings_init() {
-        register_setting('wp_revenue_booster', 'wp_revenue_booster_settings');
-
-        add_settings_section(
-            'wp_revenue_booster_section',
-            'Monetization Settings',
-            null,
-            'wp_revenue_booster'
-        );
-
-        add_settings_field(
-            'affiliate_links',
-            'Affiliate Links (JSON)',
-            array($this, 'affiliate_links_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-
-        add_settings_field(
-            'coupons',
-            'Coupons (JSON)',
-            array($this, 'coupons_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-
-        add_settings_field(
-            'sponsored_content',
-            'Sponsored Content (JSON)',
-            array($this, 'sponsored_content_render'),
-            'wp_revenue_booster',
-            'wp_revenue_booster_section'
-        );
-    }
-
-    public function affiliate_links_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        echo '<textarea cols="60" rows="5" name="wp_revenue_booster_settings[affiliate_links]">';
-        echo isset($options['affiliate_links']) ? esc_textarea($options['affiliate_links']) : '';
-        echo '</textarea>';
-    }
-
-    public function coupons_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        echo '<textarea cols="60" rows="5" name="wp_revenue_booster_settings[coupons]">';
-        echo isset($options['coupons']) ? esc_textarea($options['coupons']) : '';
-        echo '</textarea>';
-    }
-
-    public function sponsored_content_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        echo '<textarea cols="60" rows="5" name="wp_revenue_booster_settings[sponsored_content]">';
-        echo isset($options['sponsored_content']) ? esc_textarea($options['sponsored_content']) : '';
-        echo '</textarea>';
-    }
-
-    public function options_page() {
-        ?>
-        <form action='options.php' method='post'>
-            <h2>WP Revenue Booster</h2>
-            <?php
-            settings_fields('wp_revenue_booster');
-            do_settings_sections('wp_revenue_booster');
-            submit_button();
-            ?>
-        </form>
-        <?php
-    }
-
-    public function insert_tracking_code() {
-        echo "<script>console.log('WP Revenue Booster tracking active');</script>";
-    }
-
-    public function insert_smart_monetization($content) {
-        $options = get_option('wp_revenue_booster_settings');
-        $affiliate_links = isset($options['affiliate_links']) ? json_decode($options['affiliate_links'], true) : array();
-        $coupons = isset($options['coupons']) ? json_decode($options['coupons'], true) : array();
-        $sponsored_content = isset($options['sponsored_content']) ? json_decode($options['sponsored_content'], true) : array();
-
-        // Example: Insert affiliate links based on keywords
-        foreach ($affiliate_links as $keyword => $link) {
-            $content = str_replace($keyword, '<a href="' . esc_url($link) . '" target="_blank">' . $keyword . '</a>', $content);
-        }
-
-        // Example: Insert coupon section
-        if (!empty($coupons)) {
-            $coupon_html = '<div class="wp-revenue-booster-coupons"><h3>Exclusive Coupons</h3><ul>';
-            foreach ($coupons as $coupon) {
-                $coupon_html .= '<li>' . esc_html($coupon['code']) . ' - ' . esc_html($coupon['description']) . '</li>';
-            }
-            $coupon_html .= '</ul></div>';
-            $content .= $coupon_html;
-        }
-
-        // Example: Insert sponsored content
-        if (!empty($sponsored_content)) {
-            $sponsored_html = '<div class="wp-revenue-booster-sponsored"><h3>Sponsored Content</h3>';
-            foreach ($sponsored_content as $sp) {
-                $sponsored_html .= '<p>' . esc_html($sp['title']) . ': ' . esc_html($sp['description']) . '</p>';
-            }
-            $sponsored_html .= '</div>';
-            $content .= $sponsored_html;
-        }
-
-        return $content;
-    }
+function wp_revenue_booster_activate() {
+    // Add default options
+    add_option('wp_revenue_booster_ads_enabled', 1);
+    add_option('wp_revenue_booster_affiliate_enabled', 1);
+    add_option('wp_revenue_booster_upsells_enabled', 1);
 }
 
-new WP_Revenue_Booster();
+function wp_revenue_booster_deactivate() {
+    // Clean up if needed
+}
+
+// Add admin menu
+add_action('admin_menu', 'wp_revenue_booster_menu');
+function wp_revenue_booster_menu() {
+    add_menu_page(
+        'WP Revenue Booster',
+        'Revenue Booster',
+        'manage_options',
+        'wp-revenue-booster',
+        'wp_revenue_booster_settings_page',
+        'dashicons-chart-line'
+    );
+}
+
+// Settings page
+function wp_revenue_booster_settings_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die('You do not have sufficient permissions to access this page.');
+    }
+    ?>
+    <div class="wrap">
+        <h1>WP Revenue Booster Settings</h1>
+        <form method="post" action="options.php">
+            <?php settings_fields('wp_revenue_booster_options'); ?>
+            <?php do_settings_sections('wp-revenue-booster'); ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Enable Ad Optimization</th>
+                    <td><input type="checkbox" name="wp_revenue_booster_ads_enabled" value="1" <?php checked(1, get_option('wp_revenue_booster_ads_enabled')); ?> /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Enable Affiliate Link Optimization</th>
+                    <td><input type="checkbox" name="wp_revenue_booster_affiliate_enabled" value="1" <?php checked(1, get_option('wp_revenue_booster_affiliate_enabled')); ?> /></td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row">Enable Upsell Offers</th>
+                    <td><input type="checkbox" name="wp_revenue_booster_upsells_enabled" value="1" <?php checked(1, get_option('wp_revenue_booster_upsells_enabled')); ?> /></td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
+
+// Register settings
+add_action('admin_init', 'wp_revenue_booster_settings');
+function wp_revenue_booster_settings() {
+    register_setting('wp_revenue_booster_options', 'wp_revenue_booster_ads_enabled');
+    register_setting('wp_revenue_booster_options', 'wp_revenue_booster_affiliate_enabled');
+    register_setting('wp_revenue_booster_options', 'wp_revenue_booster_upsells_enabled');
+}
+
+// Main optimization logic
+add_action('the_content', 'wp_revenue_booster_optimize_content');
+function wp_revenue_booster_optimize_content($content) {
+    if (is_admin()) return $content;
+
+    if (get_option('wp_revenue_booster_ads_enabled')) {
+        $ad_code = '<div class="wp-revenue-booster-ad">[Your Ad Here]</div>';
+        $content = wp_revenue_booster_insert_after_paragraph($ad_code, 2, $content);
+    }
+
+    if (get_option('wp_revenue_booster_affiliate_enabled')) {
+        $affiliate_link = '<div class="wp-revenue-booster-affiliate"><a href="https://example.com/affiliate">Check out this product!</a></div>';
+        $content = wp_revenue_booster_insert_after_paragraph($affiliate_link, 4, $content);
+    }
+
+    if (get_option('wp_revenue_booster_upsells_enabled')) {
+        $upsell = '<div class="wp-revenue-booster-upsell">Upgrade now for exclusive content!</div>';
+        $content = wp_revenue_booster_insert_after_paragraph($upsell, 6, $content);
+    }
+
+    return $content;
+}
+
+// Helper function to insert after Nth paragraph
+function wp_revenue_booster_insert_after_paragraph($insertion, $paragraph_id, $content) {
+    $closing_p = '</p>';
+    $paragraphs = explode($closing_p, $content);
+    foreach ($paragraphs as $index => $paragraph) {
+        if (trim($paragraph)) {
+            $paragraphs[$index] .= $closing_p;
+        }
+        if ($paragraph_id == $index + 1) {
+            $paragraphs[$index] .= $insertion;
+        }
+    }
+    return implode('', $paragraphs);
+}
+
+// Add CSS
+add_action('wp_head', 'wp_revenue_booster_styles');
+function wp_revenue_booster_styles() {
+    echo '<style>
+        .wp-revenue-booster-ad, .wp-revenue-booster-affiliate, .wp-revenue-booster-upsell {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>';
+}
 ?>
