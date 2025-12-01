@@ -1,47 +1,32 @@
 # Affiliate Coupon Booster
 
-Affiliate Coupon Booster is a simple, effective WordPress plugin that automates displaying attractive coupon offers linked with your affiliate marketing URLs to boost conversions and site revenue.
+## Description
+Affiliate Coupon Booster automatically aggregates and displays affiliate coupons on your WordPress site, tailored to the brands you promote. It simplifies affiliate marketing by showing attractive discount codes and links that encourage visitor conversions.
 
 ## Features
-
-- Easy management of coupons via a JSON input in the admin panel
-- Shortcode `[affiliate_coupons]` to display all coupons in a neat, responsive layout
-- Click-to-copy coupon codes for user convenience
-- Affiliate link integration to drive sales
-- Lightweight, self-contained, no external dependencies
+- Easily add affiliate links and custom coupons via plugin settings.
+- Display coupons anywhere with a simple shortcode `[affiliate_coupons]`.
+- Clean, responsive coupon layouts to attract visitor attention.
+- Shuffle coupons for varied display each page load.
+- No external API dependence for simple, reliable performance.
 
 ## Installation
-
-1. Upload the `affiliate-coupon-booster.php` file to the `/wp-content/plugins/` directory.
+1. Upload `affiliate-coupon-booster.php` to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to the **Affiliate Coupons** menu in admin to add your coupons as a JSON array.
+3. Go to **Settings > Affiliate Coupon Booster** to configure your affiliate brand URLs and coupon codes.
 
 ## Setup
-
-- Enter coupons data as JSON in the format:
-
-
-[
-  {
-    "title": "10% Off",
-    "code": "SAVE10",
-    "link": "https://affiliate.example.com/product?ref=123"
-  },
-  {
-    "title": "Free Shipping",
-    "code": "FREESHIP",
-    "link": "https://affiliate.example.com/shipping?ref=123"
-  }
-]
-
-
-- Save changes.
+- Enter your affiliate brand names and their affiliate URLs (format: `Brand|https://affiliate.link`).
+- Enter any custom coupons you have for these brands (format: `Brand|CouponCode|Description`).
+- Save settings.
 
 ## Usage
-
-- Use the shortcode `[affiliate_coupons]` in posts, pages, or widgets to show the coupons.
-- Visitors can click coupon codes to copy easily and click the button to navigate through your affiliate links.
+- Add the shortcode `[affiliate_coupons]` to any post, page, or widget to display your affiliate coupons.
 
 ## Monetization
+The plugin boosts affiliate marketing revenue by making coupon offers visible and attractive to site visitors, increasing click-through and conversions.
 
-This plugin facilitates affiliate marketing, a strategy that can generate passive income by promoting products through unique affiliate links with coupons to enhance conversion rates and sales volume.
+## Support
+Visit the support forum or contact the author for assistance.
+
+---
