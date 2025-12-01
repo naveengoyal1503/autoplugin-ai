@@ -1,32 +1,26 @@
 # WP Affiliate Link Manager
 
-A WordPress plugin that helps users manage, track, and optimize affiliate links with analytics, link cloaking, and automated reporting.
+Manage, cloak, and track affiliate links with built-in analytics and link cloaking.
 
 ## Features
-- Create and manage affiliate links with custom slugs
+- Add, edit, and delete affiliate links
 - Cloak affiliate URLs for cleaner links
-- Track clicks and view analytics
-- Shortcode support for easy link insertion
-- Simple admin dashboard for link management
+- Track clicks (basic analytics)
+- Shortcode support for easy embedding
 
 ## Installation
-1. Upload the `wp-affiliate-link-manager` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to 'Affiliate Links' in the admin menu to start managing your links
+1. Upload the plugin file to your WordPress plugins directory.
+2. Activate the plugin from the WordPress admin panel.
+3. Go to the new "Affiliate Links" menu to add your links.
 
 ## Setup
-- Add new affiliate links with a custom slug and destination URL
-- Use the shortcode `[wpalm_link slug="your-slug" text="Link Text"]` to display cloaked links
-- View click statistics in the admin dashboard
+- Add your affiliate links with a name, URL, and slug.
+- Use the shortcode `[affiliate_link slug="your-slug"]` to display the link on your site.
 
 ## Usage
-- Manage all your affiliate links from one place
-- Track performance and optimize your campaigns
-- Use shortcodes to insert links anywhere on your site
+- Manage all affiliate links from the admin dashboard.
+- View and delete links as needed.
+- Track clicks via the plugin (extendable for advanced analytics).
 
-## Requirements
-- WordPress 5.0 or higher
-- PHP 7.0 or higher
-
-## Support
-For support and feature requests, please visit the plugin page or contact the developer.
+## License
+MIT
