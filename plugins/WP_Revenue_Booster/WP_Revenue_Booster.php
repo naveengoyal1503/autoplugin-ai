@@ -5,116 +5,148 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Description: Maximize revenue with smart affiliate link rotation, contextual ads, and dynamic coupon codes.
+ * Description: Maximize your WordPress site's revenue with smart affiliate link rotation, targeted ad display, and exclusive offer promotion.
  * Version: 1.0
- * Author: RevenueBoost Team
+ * Author: WP Revenue Team
  */
 
-define('WP_REVENUE_BOOSTER_VERSION', '1.0');
+// Prevent direct access
+define('ABSPATH') or die('No script kiddies please!');
 
-class WP_Revenue_Booster {
+// Register activation and deactivation hooks
+register_activation_hook(__FILE__, 'wp_revenue_booster_activate');
+register_deactivation_hook(__FILE__, 'wp_revenue_booster_deactivate');
 
-    public function __construct() {
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_footer', array($this, 'inject_revenue_elements'));
-        add_shortcode('revenue_coupon', array($this, 'coupon_shortcode'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
+function wp_revenue_booster_activate() {
+    // Add default options
+    add_option('wp_revenue_booster_affiliate_links', array());
+    add_option('wp_revenue_booster_ads', array());
+    add_option('wp_revenue_booster_offers', array());
+}
+
+function wp_revenue_booster_deactivate() {
+    // Clean up options (optional)
+    // delete_option('wp_revenue_booster_affiliate_links');
+    // delete_option('wp_revenue_booster_ads');
+    // delete_option('wp_revenue_booster_offers');
+}
+
+// Add admin menu
+add_action('admin_menu', 'wp_revenue_booster_menu');
+
+function wp_revenue_booster_menu() {
+    add_menu_page(
+        'WP Revenue Booster',
+        'Revenue Booster',
+        'manage_options',
+        'wp-revenue-booster',
+        'wp_revenue_booster_settings_page',
+        'dashicons-chart-line',
+        81
+    );
+}
+
+// Settings page
+function wp_revenue_booster_settings_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die('You do not have sufficient permissions to access this page.');
     }
 
-    public function enqueue_scripts() {
-        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'assets/style.css');
-        wp_enqueue_script('wp-revenue-booster', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), WP_REVENUE_BOOSTER_VERSION, true);
+    // Handle form submission
+    if (isset($_POST['submit'])) {
+        update_option('wp_revenue_booster_affiliate_links', $_POST['affiliate_links']);
+        update_option('wp_revenue_booster_ads', $_POST['ads']);
+        update_option('wp_revenue_booster_offers', $_POST['offers']);
+        echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
     }
 
-    public function inject_revenue_elements() {
-        if (is_single()) {
-            $affiliate_links = get_option('wp_revenue_booster_affiliate_links', array());
-            $ads = get_option('wp_revenue_booster_ads', array());
-            $coupons = get_option('wp_revenue_booster_coupons', array());
+    $affiliate_links = get_option('wp_revenue_booster_affiliate_links', array());
+    $ads = get_option('wp_revenue_booster_ads', array());
+    $offers = get_option('wp_revenue_booster_offers', array());
+    ?>
+    <div class="wrap">
+        <h1>WP Revenue Booster</h1>
+        <form method="post">
+            <h2>Affiliate Links</h2>
+            <p>Add your affiliate links. The plugin will rotate them for better conversion.</p>
+            <textarea name="affiliate_links" rows="5" cols="50"><?php echo esc_textarea(implode('\n', $affiliate_links)); ?></textarea>
 
-            if (!empty($affiliate_links)) {
-                $random_link = $affiliate_links[array_rand($affiliate_links)];
-                echo '<div class="wp-revenue-booster-affiliate"><a href="' . esc_url($random_link['url']) . '" target="_blank">' . esc_html($random_link['text']) . '</a></div>';
-            }
+            <h2>Ads</h2>
+            <p>Add your ad codes (HTML/JS). The plugin will display them based on user behavior.</p>
+            <textarea name="ads" rows="5" cols="50"><?php echo esc_textarea(implode('\n', $ads)); ?></textarea>
 
-            if (!empty($ads)) {
-                $random_ad = $ads[array_rand($ads)];
-                echo '<div class="wp-revenue-booster-ad">' . wp_kses_post($random_ad['content']) . '</div>';
-            }
+            <h2>Exclusive Offers</h2>
+            <p>Add exclusive offers for your visitors. The plugin will promote them at strategic times.</p>
+            <textarea name="offers" rows="5" cols="50"><?php echo esc_textarea(implode('\n', $offers)); ?></textarea>
 
-            if (!empty($coupons)) {
-                $random_coupon = $coupons[array_rand($coupons)];
-                echo '<div class="wp-revenue-booster-coupon">Coupon: <strong>' . esc_html($random_coupon['code']) . '</strong> - ' . esc_html($random_coupon['description']) . '</div>';
-            }
-        }
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
+
+// Display affiliate links, ads, and offers on the front end
+add_action('wp_footer', 'wp_revenue_booster_display_content');
+
+function wp_revenue_booster_display_content() {
+    $affiliate_links = get_option('wp_revenue_booster_affiliate_links', array());
+    $ads = get_option('wp_revenue_booster_ads', array());
+    $offers = get_option('wp_revenue_booster_offers', array());
+
+    // Rotate affiliate links
+    if (!empty($affiliate_links)) {
+        $random_link = $affiliate_links[array_rand($affiliate_links)];
+        echo '<div class="wp-revenue-booster-affiliate">
+            <p>Check out this offer: <a href="' . esc_url($random_link) . '" target="_blank">Click here</a></p>
+        </div>';
     }
 
-    public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'brand' => '',
-        ), $atts, 'revenue_coupon');
-
-        $coupons = get_option('wp_revenue_booster_coupons', array());
-        foreach ($coupons as $coupon) {
-            if (strtolower($coupon['brand']) == strtolower($atts['brand'])) {
-                return '<div class="wp-revenue-booster-coupon">Coupon: <strong>' . esc_html($coupon['code']) . '</strong> - ' . esc_html($coupon['description']) . '</div>';
-            }
-        }
-        return '';
+    // Display ads
+    if (!empty($ads)) {
+        $random_ad = $ads[array_rand($ads)];
+        echo '<div class="wp-revenue-booster-ad">
+            ' . $random_ad . '
+        </div>';
     }
 
-    public function admin_menu() {
-        add_options_page(
-            'WP Revenue Booster',
-            'Revenue Booster',
-            'manage_options',
-            'wp-revenue-booster',
-            array($this, 'admin_page')
-        );
-    }
-
-    public function settings_init() {
-        register_setting('wp_revenue_booster', 'wp_revenue_booster_affiliate_links');
-        register_setting('wp_revenue_booster', 'wp_revenue_booster_ads');
-        register_setting('wp_revenue_booster', 'wp_revenue_booster_coupons');
-    }
-
-    public function admin_page() {
-        ?>
-        <div class="wrap">
-            <h1>WP Revenue Booster</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('wp_revenue_booster'); ?>
-                <?php do_settings_sections('wp_revenue_booster'); ?>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">Affiliate Links</th>
-                        <td>
-                            <textarea name="wp_revenue_booster_affiliate_links" rows="5" cols="50"><?php echo esc_textarea(json_encode(get_option('wp_revenue_booster_affiliate_links', array()))); ?></textarea><br />
-                            Format: [{"url":"https://example.com", "text":"Visit Example"}]
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Ads</th>
-                        <td>
-                            <textarea name="wp_revenue_booster_ads" rows="5" cols="50"><?php echo esc_textarea(json_encode(get_option('wp_revenue_booster_ads', array()))); ?></textarea><br />
-                            Format: [{"content":"<img src=\"ad.jpg\" />"}]
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Coupons</th>
-                        <td>
-                            <textarea name="wp_revenue_booster_coupons" rows="5" cols="50"><?php echo esc_textarea(json_encode(get_option('wp_revenue_booster_coupons', array()))); ?></textarea><br />
-                            Format: [{"brand":"Brand", "code":"ABC123", "description":"10% off"}]
-                        </td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-        </div>
-        <?php
+    // Display offers
+    if (!empty($offers)) {
+        $random_offer = $offers[array_rand($offers)];
+        echo '<div class="wp-revenue-booster-offer">
+            <p>' . esc_html($random_offer) . '</p>
+        </div>';
     }
 }
 
-new WP_Revenue_Booster();
+// Shortcode to display affiliate links
+add_shortcode('wp_revenue_booster_affiliate', 'wp_revenue_booster_affiliate_shortcode');
+
+function wp_revenue_booster_affiliate_shortcode() {
+    $affiliate_links = get_option('wp_revenue_booster_affiliate_links', array());
+    if (empty($affiliate_links)) return '';
+    $random_link = $affiliate_links[array_rand($affiliate_links)];
+    return '<a href="' . esc_url($random_link) . '" target="_blank">Click here</a>';
+}
+
+// Shortcode to display offers
+add_shortcode('wp_revenue_booster_offer', 'wp_revenue_booster_offer_shortcode');
+
+function wp_revenue_booster_offer_shortcode() {
+    $offers = get_option('wp_revenue_booster_offers', array());
+    if (empty($offers)) return '';
+    $random_offer = $offers[array_rand($offers)];
+    return '<p>' . esc_html($random_offer) . '</p>';
+}
+
+// Enqueue styles
+add_action('wp_enqueue_scripts', 'wp_revenue_booster_enqueue_styles');
+
+function wp_revenue_booster_enqueue_styles() {
+    wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'style.css');
+}
+
+// Create style.css if it doesn't exist
+if (!file_exists(plugin_dir_path(__FILE__) . 'style.css')) {
+    file_put_contents(plugin_dir_path(__FILE__) . 'style.css', ".wp-revenue-booster-affiliate, .wp-revenue-booster-ad, .wp-revenue-booster-offer { margin: 10px 0; padding: 10px; border: 1px solid #ddd; background: #f9f9f9; }\n");
+}
+?>
