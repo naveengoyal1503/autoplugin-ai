@@ -1,31 +1,33 @@
 # WP Course Locker
 
+WP Course Locker is a WordPress plugin that helps educators, trainers, and bloggers create, manage, and monetize interactive online courses with built-in quizzes, certificates, and drip content.
+
 ## Features
-- Create and manage online courses
-- Set course prices and drip content schedules
-- Enroll users and track progress
-- Shortcode to display courses on any page
-- Admin dashboard for course management
+- Create and manage courses and lessons
+- Display courses using a shortcode
+- Built-in quiz and certificate support (premium)
+- Drip content scheduling (premium)
+- Easy integration with payment gateways (premium)
 
 ## Installation
-1. Upload the `wp-course-locker.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
-2. Activate the plugin from the WordPress admin panel.
-3. Go to the new "Course Locker" menu to start creating courses.
+1. Upload the `wp-course-locker` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to the 'Course Locker' menu to start creating courses
 
 ## Setup
-- Create a new course using the "Courses" post type.
-- Set the course price and drip content days in the course settings.
-- Use the `[course id="123"]` shortcode to display a course on any page or post.
+- Create a new course from the admin dashboard
+- Add lessons to your course
+- Use the shortcode `[course id="123"]` to display a course on any page or post
 
 ## Usage
-- Manage enrollments and user progress from the admin dashboard.
-- Customize course display with CSS in `style.css`.
-- Extend functionality with premium add-ons (quizzes, certificates, advanced analytics).
+- Customize course and lesson content
+- Manage access and monetization settings (premium)
+- Track student progress and issue certificates (premium)
 
-## Monetization
-- Freemium model: Free base plugin with premium add-ons available for purchase.
-- Annual subscription for advanced features and support.
+## Premium Add-ons
+- Quizzes and certificates
+- Drip content scheduling
+- Payment gateway integration
+- Advanced analytics
 
----
-
-**Note:** This is a basic version. For full monetization and advanced features, consider upgrading to the premium version.
+Upgrade to premium for full functionality and support.
