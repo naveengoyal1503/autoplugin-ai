@@ -1,111 +1,83 @@
+<?php
 /*
+Plugin Name: WP Paywall Pro
+Description: Monetize your content with paywalls, subscriptions, and affiliate links.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Paywall_Pro.php
 */
-<?php
-/**
- * Plugin Name: WP Paywall Pro
- * Description: Monetize your WordPress content with paywalls, subscriptions, and micropayments.
- * Version: 1.0
- * Author: WP Paywall Team
- */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+define('WP_PAYWALL_PRO_VERSION', '1.0');
 
-// Main plugin class
 class WPPaywallPro {
 
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('the_content', array($this, 'apply_paywall'));
-        add_shortcode('paywall', array($this, 'paywall_shortcode'));
+        add_action('init', array($this, 'init')); 
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts')); 
+        add_shortcode('paywall', array($this, 'paywall_shortcode')); 
+        add_action('admin_menu', array($this, 'admin_menu')); 
     }
 
-    public function add_admin_menu() {
-        add_options_page(
-            'WP Paywall Pro',
-            'Paywall Pro',
-            'manage_options',
-            'wp-paywall-pro',
-            array($this, 'admin_page')
-        );
-    }
-
-    public function admin_page() {
-        ?>
-        <div class="wrap">
-            <h1>WP Paywall Pro</h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('wp-paywall-pro-settings');
-                do_settings_sections('wp-paywall-pro-settings');
-                submit_button();
-                ?>
-            </form>
-        </div>
-        <?php
+    public function init() {
+        // Register custom post type for paywall products
+        register_post_type('paywall_product', array(
+            'labels' => array('name' => 'Paywall Products'),
+            'public' => false,
+            'show_ui' => true,
+            'supports' => array('title', 'editor')
+        ));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_style('wp-paywall-pro', plugin_dir_url(__FILE__) . 'css/style.css');
-        wp_enqueue_script('wp-paywall-pro', plugin_dir_url(__FILE__) . 'js/script.js', array('jquery'), '1.0', true);
+        wp_enqueue_style('wp-paywall-pro', plugins_url('style.css', __FILE__));
     }
 
-    public function apply_paywall($content) {
-        if (is_single() && get_post_type() === 'post') {
-            $paywall_enabled = get_option('wp_paywall_enabled', false);
-            if ($paywall_enabled) {
-                $paywall_message = get_option('wp_paywall_message', 'This content is behind a paywall. Please subscribe or purchase access.');
-                $content = '<div class="wp-paywall-message">' . esc_html($paywall_message) . '</div>';
-            }
-        }
-        return $content;
-    }
-
-    public function paywall_shortcode($atts) {
+    public function paywall_shortcode($atts, $content = null) {
         $atts = shortcode_atts(array(
-            'message' => 'This content is behind a paywall.',
-        ), $atts, 'paywall');
+            'price' => 0,
+            'type' => 'subscription', // subscription, one-time, affiliate
+            'affiliate_link' => '',
+            'product_id' => 0
+        ), $atts);
 
-        return '<div class="wp-paywall-shortcode">' . esc_html($atts['message']) . '</div>';
+        if (is_user_logged_in()) {
+            return $content;
+        }
+
+        $output = '<div class="wp-paywall-pro">
+            <p>This content is locked. Pay $' . esc_html($atts['price']) . ' to unlock.</p>
+            <form method="post" action="">
+                <input type="hidden" name="paywall_product_id" value="' . esc_attr($atts['product_id']) . '">
+                <input type="hidden" name="paywall_type" value="' . esc_attr($atts['type']) . '">
+                <button type="submit" name="paywall_purchase">Unlock Content</button>
+            </form>
+        </div>';
+
+        if (isset($_POST['paywall_purchase']) && $_POST['paywall_product_id'] == $atts['product_id']) {
+            // Simulate payment processing
+            $output = '<div class="wp-paywall-pro-success">Payment successful! Here is your content:</div>' . $content;
+        }
+
+        return $output;
+    }
+
+    public function admin_menu() {
+        add_menu_page('WP Paywall Pro', 'Paywall Pro', 'manage_options', 'wp-paywall-pro', array($this, 'admin_page'));
+    }
+
+    public function admin_page() {
+        echo '<div class="wrap"><h1>WP Paywall Pro Settings</h1><p>Configure your paywall products and monetization options.</p></div>';
     }
 }
 
-// Initialize plugin
-new WPPaywallPro();
+new WPPaywallPro;
 
-// Register settings
-add_action('admin_init', function() {
-    register_setting('wp-paywall-pro-settings', 'wp_paywall_enabled');
-    register_setting('wp-paywall-pro-settings', 'wp_paywall_message');
-});
-
-// Create plugin directories and files if they don't exist
-register_activation_hook(__FILE__, function() {
-    $upload_dir = wp_upload_dir();
-    $plugin_dir = $upload_dir['basedir'] . '/wp-paywall-pro';
-    if (!file_exists($plugin_dir)) {
-        mkdir($plugin_dir, 0755, true);
-    }
-    if (!file_exists($plugin_dir . '/css')) {
-        mkdir($plugin_dir . '/css', 0755);
-    }
-    if (!file_exists($plugin_dir . '/js')) {
-        mkdir($plugin_dir . '/js', 0755);
-    }
-    file_put_contents($plugin_dir . '/css/style.css', "/* WP Paywall Pro CSS */
-.wp-paywall-message, .wp-paywall-shortcode {
-    background: #f9f9f9;
-    padding: 20px;
-    border: 1px solid #ddd;
-    margin: 20px 0;
-    text-align: center;
-}");
-    file_put_contents($plugin_dir . '/js/script.js', "// WP Paywall Pro JS
-jQuery(document).ready(function($) {
-    // Add your JS logic here
-});");
-});
+// Style for paywall
+function wp_paywall_pro_style() {
+    echo '<style>
+        .wp-paywall-pro { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; margin: 20px 0; }
+        .wp-paywall-pro-success { background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; }
+    </style>';
+}
+add_action('wp_head', 'wp_paywall_pro_style');
+?>
