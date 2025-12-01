@@ -1,26 +1,26 @@
 # WP Revenue Booster
 
-Boost your WordPress site's revenue by intelligently displaying affiliate offers, coupons, and sponsored content.
+Automatically optimize ad placement, affiliate links, and upsells to maximize revenue on your WordPress site.
 
 ## Features
-- Easy-to-use admin interface for managing affiliate links, coupons, and sponsored content.
-- Shortcode support for placing offers anywhere on your site.
-- Smart display of offers in the footer of posts and pages.
-- Supports multiple offer types: affiliate links, coupons, and sponsored content.
+- Smart ad injection after the first paragraph
+- Easy affiliate link placement at the end of content
+- Customizable upsell text section
+- Lightweight and non-intrusive
+- Simple admin settings panel
 
 ## Installation
-1. Upload the `wp-revenue-booster.php` file to the `/wp-content/plugins/` directory.
+1. Upload the `wp-revenue-booster.php` file to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure your offers.
+3. Go to Settings > Revenue Booster to configure your ad code, affiliate link, and upsell text.
 
 ## Setup
-- Add your affiliate links, coupons, and sponsored content in the plugin settings.
-- Use the shortcode `[revenue_booster type="affiliate"]`, `[revenue_booster type="coupon"]`, or `[revenue_booster type="sponsored"]` to display specific offers.
-- The plugin will automatically display a random offer in the footer of posts and pages.
+- Enter your ad code (e.g., Google AdSense) in the Ad Code field.
+- Add your affiliate link in the Affiliate Link field.
+- Customize your upsell message in the Upsell Text field.
 
 ## Usage
-- Customize the appearance by editing the `revenue-booster.css` file.
-- Monitor your revenue and adjust your offers as needed.
+Once configured, the plugin will automatically inject your ad, affiliate link, and upsell text into your posts and pages. No additional coding required.
 
-## License
-This plugin is released under the GPL2 License.
+## Support
+For support or feature requests, visit https://example.com/wp-revenue-booster
