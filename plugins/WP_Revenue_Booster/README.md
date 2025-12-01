@@ -1,26 +1,31 @@
 # WP Revenue Booster
 
-Boost your WordPress site's revenue with automated affiliate links, smart ad placement, and dynamic coupon offers.
+Maximize your site's revenue by rotating affiliate links, displaying targeted ads, and promoting exclusive offers based on visitor behavior.
 
 ## Features
-- Automatically inject affiliate links into your content
-- Place ad code in the footer for maximum visibility
-- Display exclusive coupons via shortcode
-- Easy-to-use admin settings
+- Rotates high-paying affiliate links and offers
+- Displays targeted offers in the footer and via shortcode
+- Easy-to-use admin interface to manage offers
+- Only shows offers to non-logged-in users (configurable)
+- Freemium model: free basic version, premium version with advanced analytics and automation
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Revenue Booster to configure your affiliate links, ad code, and coupons
+3. Go to Settings > Revenue Booster to add your offers
 
 ## Setup
-- Enter your affiliate links (one per line)
-- Paste your ad code (e.g., Google AdSense)
-- Add coupons in the format: code|description|brand
+1. In the admin panel, navigate to Settings > Revenue Booster
+2. Add your offers by entering the offer text, URL, and call-to-action
+3. Save your changes
 
 ## Usage
-- Affiliate links and ads are automatically injected
-- Use the shortcode `[wp_revenue_coupons]` to display coupons on any page or post
+- The plugin will automatically display a random offer in the footer of your site
+- Use the shortcode `[wp_revenue_booster]` to display an offer in any post or page
+
+## Monetization
+- Free version: basic offer rotation and display
+- Premium version: advanced analytics, automation, and more targeting options
 
 ## Support
-For support, please visit our website or contact us directly.
+For support and feature requests, please visit our website.
