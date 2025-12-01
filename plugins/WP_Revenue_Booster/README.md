@@ -1,24 +1,28 @@
 # WP Revenue Booster
 
-WP Revenue Booster helps WordPress site owners maximize revenue by rotating and optimizing affiliate links, ads, and sponsored content based on user behavior.
+Automate and optimize monetization strategies for WordPress sites.
 
 ## Features
-- Rotates affiliate links, ad codes, and sponsored content for higher conversion rates.
-- Easy-to-use admin interface for managing all monetization elements.
-- Supports multiple ad codes, affiliate links, and sponsored content blocks.
+- Insert affiliate links automatically based on keywords
+- Insert ad code in posts
+- Display premium content to logged-in users
+- Show a coupon section with custom codes
+- Easy admin configuration
 
 ## Installation
-1. Upload the `wp-revenue-booster` folder to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure your affiliate links, ad codes, and sponsored content.
+1. Upload the plugin folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to the 'Revenue Booster' menu to configure settings
 
 ## Setup
-- Enter your affiliate links (comma-separated) in the affiliate links field.
-- Enter your ad codes (separated by `|||`) in the ad codes field.
-- Enter your sponsored content (separated by `|||`) in the sponsored content field.
+- Enter affiliate keywords and URLs in the format: `keyword|url` (one per line)
+- Paste your ad code
+- Add coupon codes (one per line)
 
 ## Usage
-Once configured, the plugin will automatically rotate and display your monetization content on your site. Monitor your analytics to see which content performs best and adjust accordingly.
+- Use the shortcode `[premium_content]Your premium content here[/premium_content]` to gate content
+- Use the shortcode `[coupon_section]` to display coupons
+- Affiliate links and ads will be inserted automatically in posts
 
 ## Support
-For support, please contact revenueboost@example.com.
+For support and premium add-ons, visit our website.
