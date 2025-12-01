@@ -1,24 +1,28 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by intelligently rotating and optimizing affiliate links, ads, and sponsored content based on visitor behavior and conversion rates.
+Automatically optimize ad placements, affiliate links, and upsell offers to maximize revenue on your WordPress site.
 
 ## Features
-- Rotates affiliate links, ad codes, and sponsored content for higher conversion rates.
-- Easy-to-use admin interface for managing content.
-- Lightweight and non-intrusive.
+- Smart ad placement optimization
+- Affiliate link management and tracking
+- Easy-to-use settings panel
+- Real-time revenue analytics (premium)
+- Supports multiple ad networks and affiliate programs
 
 ## Installation
-1. Upload the `wp-revenue-booster` folder to the `/wp-content/plugins/` directory.
+1. Upload the `wp-revenue-booster.php` file to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure your affiliate links, ad codes, and sponsored content.
+3. Go to Settings > Revenue Booster to configure your preferences.
 
 ## Setup
-- Enter your affiliate links, ad codes, and sponsored content in the admin settings (comma-separated).
-- The plugin will automatically rotate and display these on your site.
+- Enable ad optimization to automatically place ads in high-performing locations.
+- Enable affiliate optimization to insert and track affiliate links in your content.
+- Customize settings to match your site's monetization strategy.
 
 ## Usage
-- The plugin injects content into your site's footer. You can customize the display by editing the plugin's CSS or JavaScript.
-- Monitor your analytics to see which content performs best and adjust accordingly.
+- Visit your site to see optimized ads and affiliate links.
+- Monitor performance in the plugin dashboard (premium).
+- Adjust settings as needed to maximize revenue.
 
 ## Support
-For support, please contact the plugin developer or visit the plugin's support page.
+For support and feature requests, visit our website or contact support@wprevenuebooster.com.
