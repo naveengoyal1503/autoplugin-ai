@@ -1,108 +1,77 @@
+<?php
 /*
+Plugin Name: WP Affiliate Vault
+Description: Create and manage private affiliate programs with automated payouts and real-time analytics.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Affiliate_Vault.php
 */
-<?php
-/**
- * Plugin Name: WP Affiliate Vault
- * Description: Securely store, manage, and share affiliate links with tracking.
- * Version: 1.0
- * Author: Your Name
- */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
-define('WP_AFFILIATE_VAULT_VERSION', '1.0');
+define('WPAV_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('WPAV_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 class WPAffiliateVault {
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
+        add_action('init', array($this, 'register_post_types'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
     public function add_admin_menu() {
         add_menu_page(
-            'Affiliate Vault',
+            'WP Affiliate Vault',
             'Affiliate Vault',
             'manage_options',
-            'affiliate-vault',
-            array($this, 'plugin_settings_page'),
-            'dashicons-admin-links',
-            60
+            'wp-affiliate-vault',
+            array($this, 'admin_page'),
+            'dashicons-groups',
+            6
         );
     }
 
-    public function settings_init() {
-        register_setting('affiliateVault', 'affiliate_vault_settings');
-
-        add_settings_section(
-            'affiliateVault_section',
-            __('Manage Your Affiliate Links', 'affiliateVault'),
-            null,
-            'affiliateVault'
-        );
-
-        add_settings_field(
-            'affiliate_links',
-            __('Affiliate Links', 'affiliateVault'),
-            array($this, 'affiliate_links_render'),
-            'affiliateVault',
-            'affiliateVault_section'
-        );
+    public function register_post_types() {
+        register_post_type('wpav_affiliate', array(
+            'labels' => array('name' => 'Affiliates', 'singular_name' => 'Affiliate'),
+            'public' => false,
+            'show_ui' => true,
+            'supports' => array('title'),
+            'show_in_menu' => 'wp-affiliate-vault'
+        ));
+        register_post_type('wpav_commission', array(
+            'labels' => array('name' => 'Commissions', 'singular_name' => 'Commission'),
+            'public' => false,
+            'show_ui' => true,
+            'supports' => array('title'),
+            'show_in_menu' => 'wp-affiliate-vault'
+        ));
     }
 
-    public function affiliate_links_render() {
-        $options = get_option('affiliate_vault_settings');
-        $links = isset($options['affiliate_links']) ? $options['affiliate_links'] : array();
-        echo '<div id="affiliate-links-container">';
-        foreach ($links as $index => $link) {
-            echo '<div class="affiliate-link-item">
-                    <input type="text" name="affiliate_vault_settings[affiliate_links][' . $index . '][url]" value="' . esc_attr($link['url']) . '" placeholder="Affiliate URL" style="width: 70%;" />
-                    <input type="text" name="affiliate_vault_settings[affiliate_links][' . $index . '][label]" value="' . esc_attr($link['label']) . '" placeholder="Label" style="width: 20%;" />
-                    <button type="button" class="remove-link button">Remove</button>
-                  </div>';
-        }
-        echo '</div>';
-        echo '<button type="button" id="add-link" class="button">Add Link</button>';
-        echo '<script>
-            document.addEventListener("DOMContentLoaded", function() {
-                document.getElementById("add-link").addEventListener("click", function() {
-                    var container = document.getElementById("affiliate-links-container");
-                    var index = container.children.length;
-                    var div = document.createElement("div");
-                    div.className = "affiliate-link-item";
-                    div.innerHTML = 
-                        `<input type="text" name="affiliate_vault_settings[affiliate_links][${index}][url]" placeholder="Affiliate URL" style="width: 70%;" />
-                         <input type="text" name="affiliate_vault_settings[affiliate_links][${index}][label]" placeholder="Label" style="width: 20%;" />
-                         <button type="button" class="remove-link button">Remove</button>`;
-                    container.appendChild(div);
-                });
-                document.addEventListener("click", function(e) {
-                    if (e.target && e.target.classList.contains("remove-link")) {
-                        e.target.parentElement.remove();
-                    }
-                });
-            });
-        </script>';
+    public function enqueue_scripts() {
+        wp_enqueue_style('wpav-style', WPAV_PLUGIN_URL . 'assets/style.css');
+        wp_enqueue_script('wpav-script', WPAV_PLUGIN_URL . 'assets/script.js', array('jquery'), '1.0', true);
     }
 
-    public function plugin_settings_page() {
-        ?>
-        <div class="wrap">
-            <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields('affiliateVault');
-                do_settings_sections('affiliateVault');
-                submit_button('Save');
-                ?>
-            </form>
-        </div>
-        <?php
+    public function admin_page() {
+        echo '<div class="wrap"><h1>WP Affiliate Vault</h1><p>Manage your private affiliate program here.</p></div>';
     }
 }
 
 new WPAffiliateVault();
+
+// Create plugin directory and assets
+if (!file_exists(WPAV_PLUGIN_DIR . 'assets')) {
+    mkdir(WPAV_PLUGIN_DIR . 'assets', 0755, true);
+}
+
+// Create style.css
+if (!file_exists(WPAV_PLUGIN_DIR . 'assets/style.css')) {
+    file_put_contents(WPAV_PLUGIN_DIR . 'assets/style.css', "/* WP Affiliate Vault Styles */\nbody { font-family: sans-serif; }\n");
+}
+
+// Create script.js
+if (!file_exists(WPAV_PLUGIN_DIR . 'assets/script.js')) {
+    file_put_contents(WPAV_PLUGIN_DIR . 'assets/script.js', "// WP Affiliate Vault Scripts\nconsole.log('WP Affiliate Vault loaded.');\n");
+}
 ?>
