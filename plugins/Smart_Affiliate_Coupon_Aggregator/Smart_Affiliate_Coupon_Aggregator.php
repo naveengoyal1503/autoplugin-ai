@@ -1,113 +1,170 @@
-<?php
 /*
-Plugin Name: Smart Affiliate Coupon Aggregator
-Description: Aggregates affiliate coupons from multiple retailers and displays them with affiliate links in a customizable widget.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Smart_Affiliate_Coupon_Aggregator.php
 */
+<?php
+/**
+ * Plugin Name: Smart Affiliate Coupon Aggregator
+ * Description: Automatically aggregate affiliate coupons from multiple sources, customize display, and increase affiliate conversions.
+ * Version: 1.0
+ * Author: Plugin Generator
+ */
 
 // Prevent direct access
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) { exit; }
 
 class SmartAffiliateCouponAggregator {
-    private $coupons_option_key = 'saca_coupons_data';
-    private $last_update_option_key = 'saca_last_update';
-    private $update_interval = 86400; // 24 hours
+
+    private $coupon_data_option = 'saca_coupon_data';
 
     public function __construct() {
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
-        add_shortcode('saca_coupons', array($this, 'coupons_shortcode'));
-        add_action('init', array($this, 'schedule_coupon_update'));
-        add_action('saca_update_coupons_event', array($this, 'fetch_and_store_coupons'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+        add_shortcode('saca_coupons', array($this, 'render_coupons_shortcode'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+        add_action('wp_ajax_saca_refresh_coupons', array($this, 'ajax_refresh_coupons'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
-    public function enqueue_styles() {
-        wp_enqueue_style('saca-main-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0');
+    public function enqueue_scripts() {
+        wp_enqueue_style('saca_style', plugin_dir_url(__FILE__) . 'style.css');
+        // Simple JS could be added if needed
     }
 
-    public function activate() {
-        if (!wp_next_scheduled('saca_update_coupons_event')) {
-            wp_schedule_event(time(), 'daily', 'saca_update_coupons_event');
-        }
-        $this->fetch_and_store_coupons();
+    // Admin menu for plugin settings
+    public function add_admin_menu() {
+        add_options_page('SACA Settings', 'SACA Coupons', 'manage_options', 'saca-settings', array($this, 'settings_page'));
     }
 
-    public function deactivate() {
-        wp_clear_scheduled_hook('saca_update_coupons_event');
+    public function register_settings() {
+        register_setting('saca_settings_group', 'saca_coupon_sources');
+        register_setting('saca_settings_group', $this->coupon_data_option);
     }
 
-    public function schedule_coupon_update() {
-        if (!wp_next_scheduled('saca_update_coupons_event')) {
-            wp_schedule_event(time(), 'daily', 'saca_update_coupons_event');
-        }
+    public function settings_page() {
+        ?>
+        <div class="wrap">
+            <h1>Smart Affiliate Coupon Aggregator Settings</h1>
+            <form method="post" action="options.php">
+                <?php settings_fields('saca_settings_group'); ?>
+                <?php do_settings_sections('saca_settings_group'); ?>
+                <h2>Coupon Sources (RSS feed URLs, one per line)</h2>
+                <textarea name="saca_coupon_sources" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(get_option('saca_coupon_sources')); ?></textarea>
+                <?php submit_button(); ?>
+            </form>
+            <form method="post" id="refresh_coupons_form">
+                <input type="hidden" name="action" value="saca_refresh_coupons" />
+                <?php wp_nonce_field('saca_refresh_coupons_nonce', '_saca_nonce'); ?>
+                <p><button type="submit" class="button button-primary">Refresh Coupons Now</button></p>
+            </form>
+            <p><em>Refresh coupons fetches and updates all coupons from your configured sources.</em></p>
+        </div>
+        <?php
     }
 
-    public function fetch_and_store_coupons() {
-        // In a real-world plugin, here APIs or scrapers would be used.
-        // For demonstration, create static sample coupons with affiliate links.
-        $sample_coupons = array(
-            array(
-                'title' => '20% Off Electronics at ShopZone',
-                'code' => 'ELECTRO20',
-                'description' => 'Save 20% on all electronics at ShopZone. Limited time offer!',
-                'affiliate_url' => 'https://affiliate.shopzone.com/?ref=youraffiliateid',
-                'expiry' => date('Y-m-d', strtotime('+30 days'))
-            ),
-            array(
-                'title' => 'Free Shipping on Orders Over $50 at StyleCenter',
-                'code' => 'FREESHIP50',
-                'description' => 'Enjoy free shipping when you spend $50 or more.',
-                'affiliate_url' => 'https://stylecenter.com/affiliate?aid=youraffiliateid',
-                'expiry' => date('Y-m-d', strtotime('+15 days'))
-            ),
-            array(
-                'title' => '15% Discount on Home Essentials at HomeLiving',
-                'code' => 'HOME15',
-                'description' => 'Get 15% off home essentials with this exclusive coupon.',
-                'affiliate_url' => 'https://homeliving.com/aff?id=youraffiliateid',
-                'expiry' => date('Y-m-d', strtotime('+20 days'))
-            ),
-        );
-
-        update_option($this->coupons_option_key, $sample_coupons);
-        update_option($this->last_update_option_key, time());
-    }
-
-    public function coupons_shortcode($atts) {
-        $coupons = get_option($this->coupons_option_key, array());
-        $now = current_time('Y-m-d');
-
-        if (empty($coupons)) {
-            return '<p>No coupons available at the moment. Please check back later.</p>';
+    public function ajax_refresh_coupons() {
+        if (!current_user_can('manage_options') || !check_admin_referer('saca_refresh_coupons_nonce', '_saca_nonce')) {
+            wp_send_json_error('Unauthorized');
         }
 
-        $output = '<div class="saca-coupons">';
-        foreach ($coupons as $coupon) {
-            // Skip expired coupons
-            if ($coupon['expiry'] < $now) {
+        $result = $this->fetch_and_store_coupons();
+
+        if ($result === false) {
+            wp_send_json_error('Failed to fetch coupons');
+        } else {
+            wp_send_json_success('Coupons updated: ' . count($result));
+        }
+    }
+
+    private function fetch_and_store_coupons() {
+        $sources = get_option('saca_coupon_sources', '');
+        $urls = array_filter(array_map('trim', explode("\n", $sources)));
+
+        if (empty($urls)) {
+            return false;
+        }
+
+        $coupons = array();
+
+        foreach ($urls as $url) {
+            $feed = fetch_feed($url);
+            if (is_wp_error($feed)) {
                 continue;
             }
-            $output .= '<div class="saca-coupon">';
-            $output .= '<h3 class="saca-coupon-title">' . esc_html($coupon['title']) . '</h3>';
-            $output .= '<p class="saca-coupon-desc">' . esc_html($coupon['description']) . '</p>';
-            $output .= '<p class="saca-coupon-code">Code: <strong>' . esc_html($coupon['code']) . '</strong></p>';
-            $output .= '<p><a class="saca-coupon-link" href="' . esc_url($coupon['affiliate_url']) . '" target="_blank" rel="nofollow noopener">Shop Now & Save</a></p>';
-            $output .= '</div>';
-        }
-        $output .= '</div>';
 
-        return $output;
+            $max_items = $feed->get_item_quantity(10);
+            $feed_items = $feed->get_items(0, $max_items);
+
+            foreach ($feed_items as $item) {
+                $title = $item->get_title();
+                $link = $item->get_permalink();
+                $desc = strip_tags($item->get_description());
+
+                // Basic coupon data extraction
+                $coupon_code = $this->extract_coupon_code($title . ' ' . $desc);
+
+                $coupons[] = array(
+                    'title' => $title,
+                    'link' => esc_url($link),
+                    'code' => $coupon_code,
+                    'description' => $desc,
+                );
+            }
+        }
+
+        // Store coupons transient for 12 hours for free/basic usage
+        update_option($this->coupon_data_option, $coupons);
+
+        return $coupons;
     }
+
+    private function extract_coupon_code($text) {
+        // Naive coupon code extraction: looks for uppercase alphanumeric strings 5-15 chars
+        preg_match('/([A-Z0-9]{5,15})/', $text, $matches);
+        return isset($matches[1]) ? $matches[1] : '';
+    }
+
+    public function render_coupons_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'max' => 5,
+        ), $atts, 'saca_coupons');
+
+        $coupons = get_option($this->coupon_data_option, array());
+
+        if (empty($coupons)) {
+            // Try to fetch fresh coupons if none
+            $coupons = $this->fetch_and_store_coupons();
+            if (empty($coupons)) {
+                return '<p>No coupons available right now. Please check back later.</p>';
+            }
+        }
+
+        $coupons = array_slice($coupons, 0, intval($atts['max']));
+
+        ob_start();
+        echo '<div class="saca-coupon-list">';
+        foreach ($coupons as $coupon) {
+            $esc_title = esc_html($coupon['title']);
+            $esc_code = esc_html($coupon['code']);
+            $esc_desc = esc_html($coupon['description']);
+            $esc_link = esc_url($coupon['link']);
+
+            echo '<div class="saca-coupon-item" style="border:1px solid #ccc;margin:8px;padding:8px;border-radius:4px;">';
+            echo '<h4><a href="' . $esc_link . '" target="_blank" rel="nofollow noopener">' . $esc_title . '</a></h4>';
+
+            if ($esc_code) {
+                echo '<p><strong>Use Code:</strong> <code>' . $esc_code . '</code></p>';
+            }
+
+            echo '<p>' . $esc_desc . '</p>';
+
+            echo '<p><a href="' . $esc_link . '" target="_blank" rel="nofollow noopener" class="button">Get Deal</a></p>';
+            echo '</div>';
+        }
+        echo '</div>';
+        return ob_get_clean();
+    }
+
 }
 
+// Initialize plugin
 new SmartAffiliateCouponAggregator();
-
-// Minimal CSS to style the coupons (embedded inline style)
-add_action('wp_head', function(){
-    echo '<style>.saca-coupons{max-width:600px;margin:20px auto;padding:10px;border:1px solid #ddd;background:#f9f9f9;border-radius:6px;}.saca-coupon{border-bottom:1px solid #eee;padding:10px 0;}.saca-coupon:last-child{border-bottom:none;}.saca-coupon-title{font-size:1.2em;color:#0073aa;margin:0 0 5px 0;}.saca-coupon-desc{margin:0 0 5px 0;color:#555;}.saca-coupon-code{font-weight:bold;margin:0 0 5px 0;color:#333;}.saca-coupon-link{display:inline-block;padding:6px 12px;background:#0073aa;color:#fff;text-decoration:none;border-radius:4px;}.saca-coupon-link:hover{background:#005177;}</style>';
-});
