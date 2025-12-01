@@ -1,40 +1,20 @@
 # WP Revenue Booster
 
-Automatically optimize your WordPress content for higher conversion rates by injecting dynamic affiliate links, coupons, and sponsored content.
+Automate coupon/deal aggregation, affiliate link management, and sponsored content scheduling for WordPress sites.
 
 ## Features
-- Automatically insert affiliate links into your posts based on keywords.
-- Display coupons for brands directly within your content.
-- Add sponsored content blocks to your posts.
-- Easy-to-use admin settings for managing monetization elements.
+- Add and manage coupons, affiliate links, and sponsored posts via custom post types.
+- Display coupons and affiliate links with shortcodes.
+- Easy admin interface for content management.
 
 ## Installation
-1. Upload the `wp-revenue-booster.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
-2. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Upload the plugin file to your WordPress plugins directory.
+2. Activate the plugin from the WordPress admin panel.
 
 ## Setup
-1. Go to **Settings > Revenue Booster** in your WordPress admin.
-2. Enter your affiliate links, coupons, and sponsored content in JSON format.
-3. Save your settings.
+- Go to Revenue Booster in your admin menu to add coupons, affiliate links, and sponsored posts.
 
 ## Usage
-- The plugin will automatically inject monetization elements into your posts based on your settings.
-- Edit your affiliate links, coupons, and sponsored content anytime from the admin panel.
-
-## Example JSON Format
-
-{
-  "affiliate_links": {
-    "WordPress": "https://example.com/affiliate/wordpress"
-  },
-  "coupons": {
-    "Brand A": "SAVE20"
-  },
-  "sponsored_content": {
-    "Brand B": "<p>This is a sponsored message.</p>"
-  }
-}
-
-
-## Support
-For support or feature requests, please contact us at support@wprevenuebooster.com.
+- Use `[revenue_booster_coupons limit="5"]` to display up to 5 coupons.
+- Use `[revenue_booster_affiliates limit="5"]` to display up to 5 affiliate links.
+- Manage sponsored content from the admin panel.
