@@ -2,6 +2,13 @@
 
 Generate WordPress plugins automatically and sync them to Notion + GitHub.
 
+## What users can do on the site
+- Trigger automatic WordPress plugin generation (AI-driven) and get a full plugin + README.
+- Download each plugin safely as a ZIP (PHP + README) via the protected tracker link.
+- View plugin details (name, description, category, target users, monetization) synced to Notion.
+- Rely on fresh builds even if one AI provider fails, thanks to Perplexity → Gemini fallback.
+- Track provenance: every plugin is stored in this repo under `plugins/<PluginName>/` with history.
+
 ## What it does
 - Polls Perplexity (with Gemini fallback) to generate a full WordPress plugin + README for each run.
 - Saves artifacts to `generated-plugins/_protected_files` on the server.
