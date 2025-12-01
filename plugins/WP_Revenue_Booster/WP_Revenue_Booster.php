@@ -5,113 +5,42 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Description: Rotate affiliate links, coupons, and sponsored content for maximum revenue.
+ * Description: Boost your WordPress site revenue with smart affiliate, coupon, and sponsored content placement.
  * Version: 1.0
- * Author: WP Dev Team
+ * Author: WP Revenue Team
  */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('init', array($this, 'init'));
-        add_shortcode('revenue_booster', array($this, 'shortcode'));
-        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('the_content', array($this, 'inject_monetization_content'));
+        add_shortcode('wp_revenue_booster', array($this, 'shortcode_handler'));
     }
 
-    public function init() {
-        if (!get_option('wp_revenue_booster_options')) {
-            add_option('wp_revenue_booster_options', array(
-                'links' => array(
-                    array('url' => 'https://example.com/affiliate1', 'weight' => 50, 'type' => 'affiliate'),
-                    array('url' => 'https://example.com/coupon1', 'weight' => 30, 'type' => 'coupon'),
-                    array('url' => 'https://example.com/sponsored1', 'weight' => 20, 'type' => 'sponsored')
-                )
-            ));
-        }
-    }
-
-    public function shortcode($atts) {
-        $options = get_option('wp_revenue_booster_options');
-        $links = $options['links'];
-
-        if (empty($links)) return '';
-
-        $total_weight = array_sum(array_column($links, 'weight'));
-        $rand = mt_rand(1, $total_weight);
-        $current_weight = 0;
-
-        foreach ($links as $link) {
-            $current_weight += $link['weight'];
-            if ($rand <= $current_weight) {
-                $selected = $link;
-                break;
-            }
-        }
-
-        $label = $selected['type'] === 'affiliate' ? 'Affiliate Link' : ($selected['type'] === 'coupon' ? 'Coupon Code' : 'Sponsored Content');
-        return '<div class="wp-revenue-booster">
-                    <p><strong>' . $label . ':</strong> <a href="' . esc_url($selected['url']) . '" target="_blank" rel="nofollow">Click here</a></p>
-                </div>';
-    }
-
-    public function admin_menu() {
-        add_options_page(
+    public function add_admin_menu() {
+        add_menu_page(
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
             'wp-revenue-booster',
-            array($this, 'admin_page')
+            array($this, 'admin_page'),
+            'dashicons-chart-line'
         );
     }
 
     public function admin_page() {
-        if (isset($_POST['wp_revenue_booster_save'])) {
-            $links = array();
-            if (isset($_POST['link_url']) && is_array($_POST['link_url'])) {
-                foreach ($_POST['link_url'] as $index => $url) {
-                    if (!empty($url)) {
-                        $links[] = array(
-                            'url' => sanitize_text_field($url),
-                            'weight' => intval($_POST['link_weight'][$index]),
-                            'type' => sanitize_text_field($_POST['link_type'][$index])
-                        );
-                    }
-                }
-            }
-            update_option('wp_revenue_booster_options', array('links' => $links));
-            echo '<div class="updated"><p>Settings saved.</p></div>';
-        }
-
-        $options = get_option('wp_revenue_booster_options');
-        $links = $options['links'];
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>URL</th>
-                        <th>Weight</th>
-                        <th>Type</th>
-                    </tr>
-                    <?php for ($i = 0; $i < 5; $i++): ?>
-                    <tr>
-                        <td><input type="text" name="link_url[]" value="<?php echo isset($links[$i]) ? esc_attr($links[$i]['url']) : ''; ?>" class="regular-text" /></td>
-                        <td><input type="number" name="link_weight[]" value="<?php echo isset($links[$i]) ? esc_attr($links[$i]['weight']) : '10'; ?>" min="1" max="100" /></td>
-                        <td>
-                            <select name="link_type[]">
-                                <option value="affiliate" <?php selected(isset($links[$i]) ? $links[$i]['type'] : 'affiliate', 'affiliate'); ?>>Affiliate</option>
-                                <option value="coupon" <?php selected(isset($links[$i]) ? $links[$i]['type'] : 'affiliate', 'coupon'); ?>>Coupon</option>
-                                <option value="sponsored" <?php selected(isset($links[$i]) ? $links[$i]['type'] : 'affiliate', 'sponsored'); ?>>Sponsored</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <?php endfor; ?>
-                </table>
-                <?php submit_button('Save Settings', 'primary', 'wp_revenue_booster_save'); ?>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('wp_revenue_booster_settings');
+                do_settings_sections('wp-revenue-booster');
+                submit_button();
+                ?>
             </form>
-            <p>Use <code>[revenue_booster]</code> shortcode to display a rotating link.</p>
         </div>
         <?php
     }
@@ -119,9 +48,57 @@ class WP_Revenue_Booster {
     public function enqueue_scripts() {
         wp_enqueue_style('wp-revenue-booster', plugins_url('style.css', __FILE__));
     }
+
+    public function inject_monetization_content($content) {
+        if (is_single()) {
+            $offer = $this->get_smart_offer();
+            if ($offer) {
+                $content .= '<div class="wp-revenue-offer">' . $offer . '</div>';
+            }
+        }
+        return $content;
+    }
+
+    public function shortcode_handler($atts) {
+        $atts = shortcode_atts(array(
+            'type' => 'affiliate',
+            'id' => '',
+        ), $atts, 'wp_revenue_booster');
+
+        return $this->get_offer_by_type($atts['type'], $atts['id']);
+    }
+
+    private function get_smart_offer() {
+        // Simulate smart offer selection
+        $offers = array(
+            '<p><strong>Special Offer:</strong> Get 20% off with code <em>WPREV20</em> at our partner store!</p>',
+            '<p><strong>Sponsored:</strong> Try our recommended tool for boosting your site traffic.</p>',
+            '<p><strong>Coupon:</strong> Use code <em>SAVE15</em> for 15% off your next purchase.</p>'
+        );
+        return $offers[array_rand($offers)];
+    }
+
+    private function get_offer_by_type($type, $id) {
+        return '<p>Custom ' . esc_html($type) . ' offer (ID: ' . esc_html($id) . ').</p>';
+    }
 }
 
-new WP_Revenue_Booster;
+function wp_revenue_booster_init() {
+    new WP_Revenue_Booster();
+}
+add_action('plugins_loaded', 'wp_revenue_booster_init');
 
-// style.css
-// .wp-revenue-booster { padding: 10px; background: #f0f0f0; border: 1px solid #ccc; margin: 10px 0; }
+// Style for the offer
+function wp_revenue_booster_style() {
+    echo '<style>
+        .wp-revenue-offer {
+            background: #f0f8ff;
+            border-left: 4px solid #0073aa;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+    </style>';
+}
+add_action('wp_head', 'wp_revenue_booster_style');
+?>
