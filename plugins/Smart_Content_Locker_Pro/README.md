@@ -1,131 +1,87 @@
 # Smart Content Locker Pro
 
-Advanced content gating and membership plugin for WordPress that lets you monetize your content with flexible paywalls, email captures, and membership access controls.
+A powerful WordPress plugin that enables content creators to monetize their website by locking premium content behind email capture, social shares, or payment gates.
 
 ## Features
 
-### Core Features (Free Tier)
-- **Content Gating**: Lock posts and pages behind simple paywalls
-- **Email Capture**: Collect emails before revealing content
-- **Social Share Gates**: Unlock content when users share on social media
-- **Basic Analytics**: Track locks and unlock attempts
-- **Shortcodes**: Use `[sclp_lock]` and `[sclp_locked_content]` to gate content
-- **Post Meta Controls**: Simple per-post lock configuration
-
-### Premium Features (Pro Tier - $9.99/month)
-- **Advanced Membership Tiers**: Create multiple subscription levels with different content access
-- **Payment Integration**: Stripe and PayPal integration for recurring payments
-- **Detailed Conversion Analytics**: Track conversion rates by lock type
-- **A/B Testing**: Test different unlock messages and designs
-- **Custom CSS Editor**: Personalize lock appearance
-
-### Enterprise Features (Elite Tier - $49.99/month)
-- **White Label Solution**: Remove Smart Content Locker branding
-- **Advanced User Roles**: Custom user access levels
-- **API Access**: Integrate with third-party tools
-- **Priority Support**: Dedicated support team
-- **Advanced Reporting**: Custom reports and exports
+- **Email Capture Locker**: Collect emails from visitors in exchange for content access
+- **Social Share Locker**: Require social media shares to unlock premium content
+- **Payment Locker**: Accept payments via integrated payment gateways
+- **Flexible Lock Rules**: Set different lock types for different content pieces
+- **Email Provider Integration**: Connect with Mailchimp, ConvertKit, and other email platforms
+- **Analytics Dashboard**: Track unlock rates and conversion metrics
+- **Cookie-Based Access**: Remember unlocked content for returning visitors (30 days)
+- **Easy Shortcode System**: Use `[locked_content id="unique-id" type="email" preview="Preview text"]` to lock content
+- **Mobile Responsive**: Works seamlessly on all devices
 
 ## Installation
 
-1. Download the Smart Content Locker Pro plugin files
-2. Upload the `smart-content-locker-pro` folder to `/wp-content/plugins/` via FTP or WordPress plugin uploader
-3. Activate the plugin through the 'Plugins' menu in WordPress
-4. Navigate to Content Locker > Settings to configure your preferences
+1. Upload the `smart-content-locker` folder to the `/wp-content/plugins/` directory
+2. Activate the plugin through the WordPress Plugins menu
+3. Navigate to Content Locker in the WordPress admin to configure settings
 
-## Quick Setup
+## Setup
 
-### Basic Configuration
-
-1. Go to **Content Locker > Settings**
-2. Configure your default lock message and unlock button text
-3. Choose your preferred payment gateway (if upgrading to Pro)
+1. Go to **Content Locker** in the WordPress admin menu
+2. Select your preferred default lock type (Email, Social, or Payment)
+3. Connect your email list provider (optional but recommended)
 4. Save your settings
 
-### Locking Content with Shortcodes
+## Usage
 
-Use the shortcode method to gate specific content sections:
-
-
-[sclp_lock id="lock-1" type="paywall" message="Upgrade to read this exclusive content"]
-This content will appear locked
-[/sclp_lock]
-
-[sclp_locked_content lock_id="lock-1"]
-This content appears after unlock
-[/sclp_locked_content]
+### Basic Email Locker
 
 
-### Per-Post Configuration
-
-1. Edit any post or page
-2. Scroll to the "Content Locker" meta box
-3. Enable locking and choose lock type
-4. Set your custom message
-5. Publish or update the post
-
-## Usage Examples
-
-### Example 1: Email Capture Gate
-
-Require email before showing content:
+[locked_content type="email" preview="Get exclusive access to this premium guide" message="Enter your email to unlock"]
+Your premium content goes here
+[/locked_content]
 
 
-[sclp_lock id="lead-gen" type="email" message="Enter your email to access this guide"]
+### Social Share Locker
 
 
-### Example 2: Social Share Gate
-
-Unlock content after social share:
-
-
-[sclp_lock id="social-1" type="social" message="Share this post to unlock exclusive tips"]
+[locked_content type="social" preview="This content is worth sharing!" message="Share on social media to unlock"]
+Your exclusive content goes here
+[/locked_content]
 
 
-### Example 3: Paid Membership Gate
-
-Restrict to paid members only (Pro feature):
+### Payment Locker
 
 
-[sclp_lock id="premium" type="paywall" message="This content is reserved for members"]
+[locked_content type="payment" preview="Premium content preview" message="Unlock for just $2.99"]
+Your premium paid content
+[/locked_content]
 
 
-## Supported Lock Types
+## Monetization Models
 
-- **paywall**: Simple button to purchase or subscribe
-- **email**: Email capture form
-- **social**: Social media share requirement
-- **membership**: Membership-only access (Pro)
-- **preview**: Show preview text before unlock (Pro)
+This plugin supports multiple revenue streams:
 
-## Analytics
+- **Email List Building**: Grow your audience and email marketing list
+- **Direct Payments**: Accept micropayments for content access
+- **Affiliate Commissions**: Partner with email service providers for referrals
+- **Subscription Integration**: Combine with membership plugins for recurring revenue
 
-Track your content performance:
+## Requirements
 
-1. Navigate to **Content Locker > Analytics**
-2. View total locks, unlock attempts, and conversion rates
-3. Filter by date range, lock type, or post
-4. Export reports (Pro feature)
+- WordPress 5.0 or higher
+- PHP 7.2 or higher
+- jQuery
 
-## Monetization Strategy
+## Frequently Asked Questions
 
-Smart Content Locker Pro uses a **freemium subscription model** combined with **upselling**:
+**Can I track conversions?**
+Yes, the plugin includes basic analytics tracking. Premium version offers advanced metrics.
 
-- **Free users** get basic content locking with email and social gates
-- **Pro subscribers ($9.99/month)** unlock payment integrations, advanced analytics, and A/B testing
-- **Elite subscribers ($49.99/month)** gain white-label functionality and API access
-- Revenue is generated through monthly recurring subscriptions with annual billing discounts
+**Is my email data secure?**
+All email data is encrypted and complies with GDPR standards.
 
-## Compatibility
-
-- WordPress 5.0+
-- PHP 7.2+
-- Works with all WordPress themes
-- Compatible with WooCommerce, MemberPress, and other membership plugins
+**Can I customize the unlock form?**
+Yes, the premium version includes extensive customization options and CSS controls.
 
 ## Support
 
-For support, visit our documentation or contact support@smartcontentlocker.com
+For support, visit our website or contact our support team.
 
 ## License
 
