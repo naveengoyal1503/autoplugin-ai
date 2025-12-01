@@ -1,28 +1,38 @@
 # Affiliate Deal Booster
 
-## Description
-Affiliate Deal Booster is a WordPress plugin designed to help affiliate marketers, bloggers, and niche websites dynamically display exclusive coupons and deals, thereby increasing affiliate sales and commissions.
+Affiliate Deal Booster is a WordPress plugin designed to enhance your affiliate marketing efforts by dynamically showing personalized, geo-targeted deals and coupons from multiple affiliate programs to your visitors.
 
 ## Features
-- Simple shortcode `[affiliate_deals]` to display a curated list of affiliate deals anywhere.
-- Option to enter your Affiliate ID to append automatically to deal URLs.
-- Responsive and clean design compatible with most themes.
-- Basic free version with static deals; premium upgrades can enable automatic deal fetching and detailed analytics.
+
+- Automatically detects visitor's country via IP to display relevant affiliate deals
+- Supports multiple affiliate networks with various deal types
+- Simple shortcode `[affiliate_deals]` to embed deals anywhere on your site
+- Responsive styling for clean, attractive deal cards
+- Basic built-in caching fallback when geo-location fails
 
 ## Installation
-1. Upload the `affiliate-deal-booster.php` file to the `/wp-content/plugins/` directory.
+
+1. Upload the `affiliate-deal-booster.php` file to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Deal Booster** to enter your Affiliate ID.
+3. Insert the shortcode `[affiliate_deals]` into any post, page, or widget where you want deals to appear.
 
 ## Setup
-- Enter your primary affiliate tracking ID in the settings page to ensure your links get credited properly.
-- Insert the shortcode `[affiliate_deals]` into any post or page where you want the deals to appear.
+
+- No API keys required for basic functionality.
+- To customize or add your own deals, modify the `get_all_deals` function inside the plugin file or extend the plugin further.
 
 ## Usage
-- The deals list will display clickable deal titles with coupon codes.
-- Visitors clicking on links will be referred to merchants with your affiliate ID applied.
-- Consider upgrading to premium for dynamic deal updates and revenue analytics.
 
----
+- Place shortcode `[affiliate_deals]` where you want to show deals.
+- Visitors will see deals targeted to their country.
+- Clicking on deal links redirects through your affiliate URLs.
 
-Make your affiliate marketing easier and more profitable with Affiliate Deal Booster!
+## Monetization Idea
+
+Offer a free version with basic geo-targeted deal display and a premium add-on providing:
+- Dashboard for managing deals via WordPress admin UI
+- Integration with major affiliate APIs for dynamic deal updates
+- Enhanced analytics tracking clicks and conversions
+- Automated A/B testing of deals for higher commissions
+
+Become a valuable tool for affiliate marketers to boost conversions and commissions efficiently.
