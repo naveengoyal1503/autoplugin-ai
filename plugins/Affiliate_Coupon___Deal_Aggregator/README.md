@@ -2,40 +2,40 @@
 
 ## Description
 
-Affiliate Coupon & Deal Aggregator helps WordPress site owners monetize by aggregating affiliate coupons and deals from various sources. Easily add, manage, and display coupons with affiliate tracking to boost your revenue.
+This plugin aggregates coupon and deal RSS feeds from multiple providers, automatically integrates your affiliate tracking parameters into coupon links, and displays them in a clean, mobile-friendly list. It enables bloggers, affiliate marketers, and ecommerce websites to monetize through affiliate commissions by offering their visitors a curated collection of active coupons and deals.
 
 ## Features
 
-- Easy coupon management via admin settings page
-- Supports coupon title, code, link, and description
-- Shortcode `[affiliate_coupons]` to display coupons anywhere
-- Sanitize and validate coupon data
-- Responsive simple UI for coupon display
-- Affiliate link support with `nofollow` for SEO best practices
+- Import and aggregate multiple coupon/deal RSS feeds
+- Automatically append affiliate tracking parameters to links
+- Limit displayed coupons for performance
+- Shortcode support to easily embed coupons anywhere
+- Admin settings page for managing feeds and affiliate ID
+- Clean and responsive coupon display
 
 ## Installation
 
-1. Download the `affiliate-coupon-deal-aggregator.php` plugin file.
-2. Upload it to your WordPress `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Upload the plugin file to the `/wp-content/plugins/` directory or install via WordPress plugin uploader.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to the "Affiliate Coupons" menu in the WordPress admin to configure coupon feed URLs and your affiliate ID.
+4. Save settings.
 
 ## Setup
 
-1. Go to the new menu **Coupon Aggregator** in the WordPress admin.
-2. Add coupons by filling in the coupon title, optional code, affiliate link, and description.
-3. Save changes.
+- Enter each coupon or deal RSS feed URL you want to aggregate, one per line.
+- Specify your affiliate tracking parameter (e.g., `affid=1234`) to automatically append to all coupon URLs.
+- Save the settings.
 
 ## Usage
 
-- Insert the shortcode `[affiliate_coupons]` into any post, page, or widget to display the coupons.
-- Coupons are displayed in a clean list with clickable affiliate links.
+- Use the shortcode `[acda_coupons]` in any page or post to display the aggregated coupon list.
+- The plugin will fetch the latest coupons from configured feeds and show them with your affiliate links.
 
-## Monetization
+## Monetization Notes
 
-The plugin can be offered for free with a potential pro upgrade adding automatic coupon imports, advanced affiliate tracking, and custom layouts, providing additional value to users and recurring revenue.
+- The plugin uses a freemium concept where the basic feed aggregation and affiliate linking are free.
+- You can extend the plugin later with premium features like automatic affiliate link cloaking, detailed analytics, or sponsored coupon slots.
 
 ## Support
 
-For support, open an issue on the plugin's GitHub or contact the developer.
-
----
+For any issues or feature requests, please contact the plugin author or contribute on the plugin's repository.
