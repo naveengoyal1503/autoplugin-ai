@@ -5,40 +5,17 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Revenue Booster
- * Plugin URI: https://example.com/wp-revenue-booster
- * Description: Maximize your WordPress site's revenue by rotating and optimizing affiliate links, ads, and sponsored content.
+ * Description: Automates and optimizes monetization streams like affiliate links, ads, and paywalls.
  * Version: 1.0
- * Author: Your Name
- * Author URI: https://example.com
- * License: GPL2
+ * Author: CozmosLabs
  */
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_footer', array($this, 'output_revenue_booster')); // Output logic in footer
         add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('wp_footer', array($this, 'inject_monetization_elements'));
         add_action('admin_init', array($this, 'settings_init'));
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('wp-revenue-booster', plugin_dir_url(__FILE__) . 'revenue-booster.js', array('jquery'), '1.0', true);
-        wp_localize_script('wp-revenue-booster', 'wpRevenueBooster', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wp_revenue_booster_nonce')
-        ));
-    }
-
-    public function output_revenue_booster() {
-        // Example: Rotate affiliate links based on simple logic
-        $links = get_option('wp_revenue_booster_links', array());
-        if (!empty($links)) {
-            $random_link = $links[array_rand($links)];
-            echo '<div class="wp-revenue-booster" style="display:none;">
-                    <a href="' . esc_url($random_link['url']) . '" target="_blank" rel="nofollow">' . esc_html($random_link['label']) . '</a>
-                  </div>';
-        }
     }
 
     public function add_admin_menu() {
@@ -46,45 +23,59 @@ class WP_Revenue_Booster {
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
-            'wp-revenue-booster',
+            'wp_revenue_booster',
             array($this, 'options_page')
         );
     }
 
     public function settings_init() {
-        register_setting('wpRevenueBooster', 'wp_revenue_booster_links');
+        register_setting('wp_revenue_booster', 'wp_revenue_booster_settings');
+
         add_settings_section(
-            'wpRevenueBooster_section',
-            'Affiliate Links & Ads',
+            'wp_revenue_booster_section',
+            'Monetization Settings',
             null,
-            'wpRevenueBooster'
+            'wp_revenue_booster'
         );
+
         add_settings_field(
-            'wp_revenue_booster_links',
-            'Links',
-            array($this, 'links_render'),
-            'wpRevenueBooster',
-            'wpRevenueBooster_section'
+            'affiliate_links',
+            'Affiliate Links (comma-separated)',
+            array($this, 'affiliate_links_render'),
+            'wp_revenue_booster',
+            'wp_revenue_booster_section'
+        );
+
+        add_settings_field(
+            'ad_code',
+            'Ad Code',
+            array($this, 'ad_code_render'),
+            'wp_revenue_booster',
+            'wp_revenue_booster_section'
+        );
+
+        add_settings_field(
+            'paywall_enabled',
+            'Enable Paywall',
+            array($this, 'paywall_enabled_render'),
+            'wp_revenue_booster',
+            'wp_revenue_booster_section'
         );
     }
 
-    public function links_render() {
-        $links = get_option('wp_revenue_booster_links', array());
-        echo '<div id="wp-revenue-booster-links">';
-        foreach ($links as $link) {
-            echo '<p><input type="text" name="wp_revenue_booster_links[url][]" value="' . esc_attr($link['url']) . '" placeholder="URL" />
-                    <input type="text" name="wp_revenue_booster_links[label][]" value="' . esc_attr($link['label']) . '" placeholder="Label" /></p>';
-        }
-        echo '</div>';
-        echo '<button type="button" onclick="addLinkField()">Add Link</button>';
-        echo '<script>
-            function addLinkField() {
-                var container = document.getElementById("wp-revenue-booster-links");
-                var p = document.createElement("p");
-                p.innerHTML = "<input type=\"text\" name=\"wp_revenue_booster_links[url][]\" placeholder=\"URL\" /> <input type=\"text\" name=\"wp_revenue_booster_links[label][]\" placeholder=\"Label\" />";
-                container.appendChild(p);
-            }
-        </script>';
+    public function affiliate_links_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        echo '<input type="text" name="wp_revenue_booster_settings[affiliate_links]" value="' . (isset($options['affiliate_links']) ? esc_attr($options['affiliate_links']) : '') . '" style="width: 100%;"/>';
+    }
+
+    public function ad_code_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        echo '<textarea name="wp_revenue_booster_settings[ad_code]" rows="5" style="width: 100%;">' . (isset($options['ad_code']) ? esc_textarea($options['ad_code']) : '') . '</textarea>';
+    }
+
+    public function paywall_enabled_render() {
+        $options = get_option('wp_revenue_booster_settings');
+        echo '<input type="checkbox" name="wp_revenue_booster_settings[paywall_enabled]" ' . (isset($options['paywall_enabled']) ? 'checked' : '') . ' />';
     }
 
     public function options_page() {
@@ -93,13 +84,29 @@ class WP_Revenue_Booster {
             <h1>WP Revenue Booster</h1>
             <form action="options.php" method="post">
                 <?php
-                settings_fields('wpRevenueBooster');
-                do_settings_sections('wpRevenueBooster');
+                settings_fields('wp_revenue_booster');
+                do_settings_sections('wp_revenue_booster');
                 submit_button();
                 ?>
             </form>
         </div>
         <?php
+    }
+
+    public function inject_monetization_elements() {
+        $options = get_option('wp_revenue_booster_settings');
+        if (!empty($options['ad_code'])) {
+            echo $options['ad_code'];
+        }
+        if (!empty($options['affiliate_links'])) {
+            $links = explode(',', $options['affiliate_links']);
+            foreach ($links as $link) {
+                echo '<a href="' . esc_url(trim($link)) . '" target="_blank" style="display:none;">Affiliate Link</a>';
+            }
+        }
+        if (!empty($options['paywall_enabled'])) {
+            echo '<div id="wp-revenue-paywall" style="display:none;">Premium content is locked. Subscribe to unlock.</div>';
+        }
     }
 }
 
