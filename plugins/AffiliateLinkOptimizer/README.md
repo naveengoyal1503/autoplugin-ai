@@ -1,26 +1,30 @@
 # AffiliateLinkOptimizer
 
-Automatically optimize and track affiliate links for higher conversions and revenue.
-
 ## Features
-- Track clicks and conversions for each affiliate link
-- Display analytics in the WordPress admin
-- Easy shortcode to insert affiliate links
-- Link cloaking for cleaner URLs
+
+- Automatically detects affiliate URLs in your posts and cloaks them with clean, trackable URLs.
+- Tracks clicks on each affiliate link with date and count for performance analysis.
+- Supports link rotation and smart suggestions for improving commissions (basic stub included).
+- Simple admin dashboard for viewing top clicked links.
+- Lightweight and easy to use with no complicated setup.
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to the Affiliate Link Optimizer menu to view your tracked links
+
+1. Upload the `affiliatelinkoptimizer.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. The plugin will automatically start detecting and cloaking affiliate links in your posts.
 
 ## Setup
-- Use the shortcode `[affiliate_link url="https://example.com" text="Click here"]` to insert affiliate links
-- View analytics in the admin dashboard
+
+- No initial configuration required.
+- Affiliate URLs commonly recognized include Amazon, ClickBank, ShareASale, CJ, and Impact Radius.
 
 ## Usage
-- Insert affiliate links using the shortcode
-- Monitor performance in the admin panel
-- Optimize your links based on click and conversion data
 
-## License
-GPL2
+- Simply write your posts with raw affiliate URLs; the plugin will cloak and track them automatically.
+- Visit 'Affiliate Link Optimizer' in the WordPress admin menu to view clicks and performance.
+- The plugin automatically redirects cloaked URLs to original affiliate URLs while counting clicks.
+
+## Monetization Model
+
+- Free basic plugin with monetization potential in future premium upgrades offering advanced analytics, automated link rotations, and AI-powered suggestions.
