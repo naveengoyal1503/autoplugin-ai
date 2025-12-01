@@ -1,27 +1,30 @@
 # WP Paywall Pro
 
-Monetize your WordPress content with flexible paywall options for subscriptions, one-time payments, and affiliate links.
+Monetize your WordPress content with flexible paywall options, including subscriptions, one-time payments, and affiliate integrations.
 
 ## Features
-- Lock posts, pages, or custom content behind a paywall
-- Support for subscription and one-time payment models
-- Affiliate link integration
-- Admin dashboard for managing paywall products
-- Easy shortcode integration
+- Lock content with paywalls
+- Support for subscription and one-time payment modes
+- Easy integration via shortcode
+- Admin settings for price, currency, and affiliate ID
+- Responsive design and user-friendly interface
 
 ## Installation
-1. Upload the plugin folder to `/wp-content/plugins/`
-2. Activate the plugin from the WordPress admin
-3. Go to **Paywall Pro** in the admin menu to configure products
+1. Upload the plugin folder to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to Settings > Paywall Pro to configure your paywall settings.
 
 ## Setup
-- Create a new paywall product in the admin dashboard
-- Use the shortcode `[paywall price="9.99" type="subscription" product_id="123"]Your locked content[/paywall]` in any post or page
+- Set your preferred mode (subscription or one-time).
+- Enter the price and currency.
+- Optionally, add your affiliate ID for affiliate integrations.
 
 ## Usage
-- Customize price, type (subscription, one-time, affiliate), and product ID
-- The paywall will show a payment button to unlock content
-- After payment, the content is revealed
+Use the shortcode `[paywall type="subscription" price="9.99" currency="USD"]Your locked content here[/paywall]` to wrap any content you want to monetize.
 
 ## Support
-For help or feature requests, visit our support page.
+For support and feature requests, visit our website or contact us directly.
+
+---
+
+**Note:** This is a simplified version. For production, integrate with payment gateways and add more robust security and user management.
