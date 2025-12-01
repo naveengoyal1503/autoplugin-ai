@@ -1,41 +1,38 @@
 # Affiliate Deal Booster
 
 ## Description
-Affiliate Deal Booster is a WordPress plugin designed to increase your affiliate marketing revenue by automatically creating and displaying exclusive coupon deals. It helps you engage visitors with timely discount alerts directly on your affiliate product pages, driving higher conversions and commissions.
+Affiliate Deal Booster is a WordPress plugin that **automatically detects mentions of popular affiliate products or brands** in your posts and appends dynamic deal coupon links to boost your affiliate conversions and commissions effortlessly.
 
 ## Features
-- Easy admin interface to add and manage coupon deals
-- Custom coupon title, code, description, and affiliate URL
-- Shortcode `[affiliate_deal_booster]` to display a random coupon anywhere
-- Shortcode attribute `id` to display a specific coupon by ID
-- Clean, responsive coupon display with prominent call-to-action button
-- Lightweight and self-contained in a single file
+
+- Automatically scans post content for keywords like Amazon, eBay, Best Buy
+- Inserts affiliate deal banners with dynamic links at the end of detected posts
+- Fully customizable affiliate URLs with your affiliate tag
+- Lightweight and minimal setup required
+- Freemium-ready for upcoming premium features like coupon aggregations and A/B testing
 
 ## Installation
-1. Download the plugin PHP file.
-2. Upload it to your WordPress site under `wp-content/plugins/`.
-3. Activate the plugin through the WordPress admin Plugins menu.
+
+1. Upload the `affiliate-deal-booster.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. The plugin works automatically with default keywords.
 
 ## Setup
-1. Navigate to **Affiliate Deals** menu in the WordPress admin dashboard.
-2. Add coupons with title, code, description, and affiliate URL.
-3. Save coupons, which will be stored securely in your WordPress options.
+
+Currently, Affiliate Deal Booster uses a predefined list of keywords and affiliate links in the plugin code. No additional setup is needed for basic functionality.
+
+Future premium versions will offer an admin panel to customize keywords, affiliate URLs, coupon codes, and analytics.
 
 ## Usage
-- To display a random coupon on any post or page, use the shortcode:
-  
-  [affiliate_deal_booster]
-  
-- To display a specific coupon by its ID (shown in the admin list), use:
-  
-  [affiliate_deal_booster id="123456789"]
-  
 
-Coupons will show as styled boxes with title, description, coupon code, and a "Shop Now" button linking to your affiliate URL.
+Simply write posts mentioning affiliated brands like Amazon or eBay. Affiliate Deal Booster automatically attaches a deal banner linking to corresponding affiliate product search pages with your affiliate tag.
 
-## Monetization
-- Provide the plugin free with basic coupon features.
-- Offer a Pro upgrade adding advanced analytics, geo-targeting, customizable templates, and prioritized support.
+Example:
 
-## License
-GPLv2 or later.
+> "Check out the latest Amazon deals on smartwatches."
+
+The plugin will add a link block at the end guiding visitors to Amazon product deals, increasing the chance of affiliate clicks and conversions.
+
+---
+
+**Note:** Replace `'youraffiliatetag'` in the plugin file with your real affiliate IDs to make money from referrals.
