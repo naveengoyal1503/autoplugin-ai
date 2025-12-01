@@ -1,26 +1,29 @@
 # WP Coupon Vault
 
-WP Coupon Vault is a WordPress plugin that helps bloggers and affiliate marketers create, manage, and display exclusive coupon codes from brands. Track usage and earn commissions through affiliate partnerships.
+WP Coupon Vault is a WordPress plugin that helps you create, manage, and display exclusive coupons and deals for affiliate products. Boost your affiliate revenue by offering valuable discounts to your audience.
 
 ## Features
-- Create and manage coupon codes
-- Set expiry dates for coupons
-- Add affiliate links for each coupon
-- Display coupons via shortcode
-- Track active and expired coupons
+- Create and manage coupons with custom codes, affiliate URLs, expiry dates, and store names.
+- Display coupons using a shortcode on any page or post.
+- Filter coupons by store name.
+- Simple admin interface for managing coupons.
 
 ## Installation
-1. Upload the plugin folder to your `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to 'Coupons' to add new coupons
+1. Upload the `wp-coupon-vault.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
+2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 ## Setup
-- Add a new coupon and fill in the details (code, expiry, affiliate link, brand)
-- Use the shortcode `[coupon_vault limit="10"]` to display coupons on any page or post
+1. Go to Posts > Coupons to add new coupons.
+2. Fill in the coupon details (code, affiliate URL, expiry date, store name).
+3. Use the shortcode `[coupon_vault]` to display coupons on your site.
 
 ## Usage
-- Place the shortcode in your content to show a list of active coupons
-- Customize the display with CSS in your theme
+- To display all coupons: `[coupon_vault]`
+- To display coupons from a specific store: `[coupon_vault store="Amazon"]`
+- To limit the number of coupons displayed: `[coupon_vault limit="5"]`
 
 ## Support
-For support, visit the plugin page or contact the developer.
+For support or feature requests, please visit our website or contact us directly.
+
+## License
+This plugin is released under the GPL2 license.
