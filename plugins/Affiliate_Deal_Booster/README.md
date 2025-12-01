@@ -1,28 +1,44 @@
 # Affiliate Deal Booster
 
-## Description
-Affiliate Deal Booster automates the creation and display of personalized affiliate coupon deals on your WordPress site. It tracks clicks for performance insights and incentivizes users with coupon codes, helping bloggers and affiliate marketers boost affiliate revenue effortlessly.
+Affiliate Deal Booster is a WordPress plugin designed to help bloggers and affiliate marketers easily display customizable coupon and deal widgets on their sites. This plugin boosts conversion rates by presenting enticing offers with expiration dates and affiliate link integration.
 
 ## Features
-- Easy admin interface to add, edit, and remove affiliate deals
-- Supports coupon codes with expiry dates
-- Frontend shortcode `[affiliate_deal_booster]` for listing deals
-- Click tracking with AJAX for performance analytics
-- Opens affiliate links in new tabs
-- Lightweight and self-contained single-file plugin
+
+- Simple shortcode-based coupon and deal display
+- Customizable title, coupon code, description, expiry date, and button text
+- Automatic expiration handling with messages
+- Clean, responsive, and attractive design
+- No external dependencies, lightweight and fast
 
 ## Installation
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the WordPress admin dashboard under Plugins.
-3. Go to **Affiliate Deal Booster** menu in dashboard to add and manage deals.
+
+1. Download the plugin PHP file and upload it to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the WordPress 'Plugins' menu.
+3. Optionally, customize your shortcode parameters for your coupon widgets.
 
 ## Setup
-- Add affiliate deals with Title, Affiliate Link, coupon code (optional), and expiry date (optional).
-- Use the shortcode `[affiliate_deal_booster]` in any post or page to display your active deals.
+
+No additional setup is required. Use the shortcode anywhere in posts, pages, or widgets to display deals.
 
 ## Usage
-- Visitors see a list of your affiliate deals including coupon codes.
-- When a visitor clicks a deal, the click is tracked internally and the affiliate link opens in a new tab.
-- Review click performance by inspecting stored click counts via the database or extend the plugin for dashboard stats.
 
-*For premium features like advanced analytics, customizable widgets, and priority support, upgrade to the premium version coming soon.*
+Use the `[affiliate_deal]` shortcode with optional attributes:
+
+
+[affiliate_deal title="Deal Title" coupon="COUPON123" deal_url="https://affiliate-link.com" description="Save 20% today!" expiry="2025-12-31" button_text="Shop Now"]
+
+
+### Attributes
+
+- `title` — Title of the deal (default: "Special Deal")
+- `coupon` — Coupon code to display (default: none)
+- `deal_url` — URL for the affiliate deal (required for button)
+- `description` — Short description of the offer
+- `expiry` — Expiry date in `YYYY-MM-DD` format; expired deals will show an expired notice
+- `button_text` — Text for the call-to-action button (default: "Get Deal")
+
+Place these shortcodes in posts, pages, or widgets where you want the affiliate deal to appear.
+
+---
+
+Affiliate Deal Booster helps monetize your WordPress site by driving affiliate sales with attractive and user-friendly discount widgets, supporting both free and premium upgrade paths for enhanced analytics and automation.
