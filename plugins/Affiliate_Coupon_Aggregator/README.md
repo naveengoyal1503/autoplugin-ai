@@ -1,52 +1,37 @@
 # Affiliate Coupon Aggregator
 
-## Description
-Automatically aggregate and display affiliate coupons from multiple ecommerce stores using a simple shortcode. Perfect for affiliate marketers and coupon bloggers to increase conversions and commissions.
+Affiliate Coupon Aggregator dynamically displays curated affiliate coupons and deals on your WordPress site, helping you boost user engagement and affiliate revenue.
 
 ## Features
 
-- Store and display multiple coupons with title, code, URL, and description
-- Easy shortcode `[affiliate_coupons]` for front-end display
-- Admin interface to manage coupon data via JSON input
-- Clean, minimal styling for coupon listings
+- Display affiliate coupons via shortcode `[affiliate_coupons]`
+- Easy JSON-based coupon management in admin settings
+- Automatically appends affiliate IDs to coupon URLs
+- Copy-to-clipboard button for coupon codes
+- Clean, responsive coupon list display
 
 ## Installation
 
-1. Upload the plugin PHP file to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
+1. Upload the plugin PHP file to your WordPress `/wp-content/plugins/` directory.
+2. Activate the plugin through the WordPress 'Plugins' menu.
+3. Navigate to **Settings > Affiliate Coupons** to configure coupons and your affiliate ID.
 
 ## Setup
 
-1. Navigate to **Coupon Aggregator** menu in the WordPress admin
-2. Enter your coupon data as JSON array with objects containing:
-   - `title` (string, required)
-   - `code` (string, required)
-   - `url` (string, required)
-   - `description` (string, optional)
-3. Save the coupons
-
-Example JSON:
+- Enter your coupons in JSON format, for example:
 
 
 [
-  {
-    "title": "20% Off Shoes",
-    "code": "SHOE20",
-    "url": "https://example.com/shoes",
-    "description": "Save 20% on all shoes storewide"
-  },
-  {
-    "title": "Free Shipping",
-    "code": "FREESHIP",
-    "url": "https://example.com/all",
-    "description": "Free shipping on orders over $50"
-  }
+  {"title":"20% off all products","code":"SAVE20","url":"https://shop.example.com/product?ref=affiliate"},
+  {"title":"Free Shipping","code":"FREESHIP","url":"https://shop.example.com/shipping?ref=affiliate"}
 ]
 
 
+- Add your affiliate ID to automatically append to all coupon URLs.
+
 ## Usage
 
-- Insert shortcode `[affiliate_coupons]` into any page, post, or widget to display the coupon list.
-- Coupons will show title, code, and a button linking to the affiliate product page.
+- Place the shortcode `[affiliate_coupons]` on any page or post to display the coupons list.
+- Visitors can copy coupon codes to clipboard with a single click.
 
----
+This plugin offers a simple, effective way for bloggers and affiliate marketers to monetize by promoting affiliate deals with a professional look and ease of use.
