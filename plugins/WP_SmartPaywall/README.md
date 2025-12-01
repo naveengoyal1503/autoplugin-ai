@@ -1,32 +1,26 @@
 # WP SmartPaywall
 
-Monetize your WordPress content with flexible pay-per-view, subscriptions, and micropayments.
+Monetize your WordPress content with flexible paywall options.
 
 ## Features
-- Pay-per-view content monetization
-- Subscription and recurring payment support (premium add-on)
-- Micropayment integration (premium add-on)
-- Easy shortcode integration
-- Admin settings panel
-- AJAX-powered payment handling
+- Pay-per-view, subscription, and freemium paywall models
+- Easy per-post paywall type selection
+- Admin settings for global paywall enable/disable
+- Clean, customizable paywall UI
 
 ## Installation
-1. Upload the `wp-smartpaywall.php` file to your WordPress plugins directory (`/wp-content/plugins/`).
+1. Upload `wp-smartpaywall.php` to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > SmartPaywall to configure your paywall options.
+3. Go to Settings > SmartPaywall to enable/disable the paywall.
 
 ## Setup
-- Enable paywall for posts by setting the `_paywall_enabled` meta to true and specifying a price with `_paywall_price`.
-- Use the shortcode `[paywall price="5" type="pay_per_view"]Your content here[/paywall]` to wrap content.
+- Edit any post or page and set the paywall type in the 'Paywall Settings' meta box.
+- Configure global settings in the SmartPaywall settings page.
 
 ## Usage
-- Only logged-in users can pay to view content.
-- Admins can view all content without payment.
-- Payment status is stored as user meta.
+- Content will be locked based on the selected paywall type.
+- Customize the paywall appearance by editing `style.css`.
 
-## Premium Add-ons
-- Upgrade for subscription and micropayment features.
-- Access advanced analytics and reporting.
-
-## Support
-For support, visit our website or contact support@wpsmartpaywall.com.
+## Notes
+- For advanced features (analytics, recurring billing, premium templates), upgrade to the premium version.
+- Always backup your site before installing new plugins.
