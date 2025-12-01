@@ -1,44 +1,40 @@
 # GeoAffiliate Pro
 
-## Description
-GeoAffiliate Pro automatically inserts geographically targeted affiliate links and coupons on your WordPress site to increase conversions and affiliate revenue by delivering region-specific offers to your visitors.
+GeoAffiliate Pro is an advanced WordPress plugin that enables affiliate marketers and online businesses to manage and optimize affiliate links using geolocation targeting, scheduling, and automatic insertion. This plugin helps maximize affiliate revenue by showing region-specific affiliate URLs and allowing scheduled promotions.
+
+---
 
 ## Features
 
-- Auto-detect visitor location by IP
-- Show affiliate links based on visitor country
-- Display custom coupon codes along with links
-- Simple shortcode for easy insertion: `[geo_affiliate_link text="Buy Now" coupon="SAVE10"]`
-- Lightweight and self-contained single PHP file plugin
-- Responsive and styled affiliate link output
+- Automatic affiliate link replacement based on visitor country
+- Geolocation detection using IP address (Cloudflare header or external API fallback)
+- Schedule affiliate link activation with start and end dates
+- Shortcode `[geoaffiliate text="Link Text"]` for adding affiliate links anywhere
+- Minimal click tracking via simple CSV log with IP and country
+- Works out-of-the-box with no setup needed for basic usage
 
 ## Installation
 
-1. Download the `geoaffiliate-pro.php` file.
-2. Upload it to your WordPress site's `/wp-content/plugins/` directory.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
-4. Insert shortcode `[geo_affiliate_link]` into posts, pages, or widgets where you want affiliate links.
+1. Upload the `geoaffiliate-pro.php` file to your WordPress `wp-content/plugins/` directory.
+2. Activate the plugin through the WordPress admin dashboard under Plugins.
+3. Use the shortcode `[geoaffiliate text="Buy Now"]` in your posts/pages to insert affiliate links.
 
 ## Setup
 
-- To customize affiliate URLs, edit the `$affiliate_links` array in the plugin code.
-- You can add new country codes and their corresponding affiliate URLs.
-- Use the shortcode attributes `text` and `coupon` to customize the display text and coupon code.
+- Currently, affiliate links and schedules are hardcoded for demonstration.
+- In future versions, an admin interface will allow managing links and timeframes.
 
 ## Usage
 
-Place the shortcode in your content like this:
+- Place the shortcode `[geoaffiliate text="Special Offer"]` wherever you want an affiliate link to appear.
+- The link will automatically redirect visitors based on their country.
+- Link records can be viewed in the CSV `click_log.csv` file inside the plugin folder (server file system access required).
 
-text
-[geo_affiliate_link text="Shop the deal" coupon="DISCOUNT20"]
+## Monetization
 
+- The plugin can be offered with a freemium model: basic features free, and advanced geotargeting, scheduling, and analytics via premium subscription.
+- Potential upsell to integration with popular affiliate networks and WooCommerce.
 
-This will render an affiliate link targeting the visitor's country with a coupon code.
+---
 
-## Support
-
-For support or feature requests, please contact [your-email@example.com].
-
-## License
-
-This plugin is licensed under the GPL2 license.
+Thank you for using GeoAffiliate Pro! Feel free to contact support for feedback or features requests.
