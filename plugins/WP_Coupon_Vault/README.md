@@ -1,25 +1,26 @@
 # WP Coupon Vault
 
-Manage and display exclusive coupons and deals for your audience to boost affiliate revenue and user engagement.
+Manage and display exclusive coupon codes for affiliate products on your WordPress site.
 
 ## Features
-- Create and manage coupons as custom posts
-- Set coupon codes, expiry dates, and affiliate URLs
-- Display coupons on your site using a shortcode
-- Admin dashboard for easy management
+- Create and manage coupon codes for affiliate products
+- Set expiry dates for coupons
+- Display coupons using a shortcode
+- Simple admin interface for managing coupons
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory
-2. Activate the plugin from the WordPress admin panel
-3. Go to Coupon Vault in the admin menu to manage coupons
+1. Upload the plugin file to your WordPress plugins directory (`/wp-content/plugins/`)
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to 'Coupons' in the admin menu to add new coupons
 
 ## Setup
-- Add new coupons with code, expiry, and affiliate URL
-- Use the shortcode `[coupon_vault limit="10"]` to display coupons on any page or post
+- Add a new coupon by entering the title, coupon code, affiliate URL, and expiry date
+- Use the shortcode `[coupon_vault limit="5"]` in any post or page to display active coupons
 
 ## Usage
-- Insert the shortcode in pages, posts, or widgets to show your coupon vault
-- Customize the number of coupons displayed with the `limit` attribute
+- Add coupons for your affiliate products
+- Place the shortcode where you want coupons to appear
+- Monitor and update coupon codes as needed
 
-## Requirements
-- WordPress 5.0 or higher
+## Support
+For support, please contact the plugin author.
