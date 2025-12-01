@@ -1,68 +1,95 @@
 # SmartAffiliate Optimizer
 
-## Description
-
-SmartAffiliate Optimizer automatically converts product mentions in your WordPress blog posts into affiliate links, eliminating manual link management while maximizing your earning potential. The plugin tracks clicks and conversions, providing real-time analytics to help you optimize your affiliate strategy.
+An intelligent WordPress plugin that automatically identifies, tracks, and optimizes affiliate links within your content to maximize commission revenue with minimal manual effort.
 
 ## Features
 
-- **Automatic Link Conversion**: Define keywords that automatically become affiliate links within your content
-- **Amazon Affiliate Integration**: Built-in support for Amazon Associates program
-- **Click Tracking**: Monitor which affiliate links generate the most engagement
-- **Analytics Dashboard**: View comprehensive stats on affiliate performance
-- **Flexible Keyword Management**: Add, edit, or remove keywords from the admin panel
-- **Non-Intrusive**: Links are marked with CSS classes for transparent identification
-- **Performance Optimized**: Minimal database overhead with efficient link processing
+- **Automatic Link Tracking**: Monitor clicks and conversions on all affiliate links in real-time
+- **Performance Analytics**: View detailed statistics including clicks, conversions, and revenue per link
+- **Optimization Suggestions**: Get AI-powered recommendations to improve underperforming links
+- **Multi-Network Support**: Compatible with Amazon Associates, CJ Affiliate, ShareASale, and more
+- **Easy Management**: Intuitive dashboard to manage all affiliate links from one place
+- **Revenue Reporting**: Track total earnings and identify your top-performing links
+- **Freemium Model**: Free version with essential features; upgrade for advanced analytics and link cloaking
 
 ## Installation
 
 1. Download the plugin files
-2. Upload the plugin folder to `/wp-content/plugins/`
-3. Activate the plugin through the WordPress Admin Panel
-4. Navigate to SmartAffiliate menu to configure settings
+2. Upload the plugin folder to `/wp-content/plugins/` directory
+3. Activate the plugin through the 'Plugins' menu in WordPress
+4. Navigate to SmartAffiliate > Dashboard to get started
 
 ## Setup
 
-### Step 1: Add Your Amazon Affiliate ID
+### Initial Configuration
 
 1. Go to **SmartAffiliate > Settings**
-2. Enter your Amazon Affiliate ID (from Amazon Associates Program)
-3. Save changes
+2. Enable link tracking
+3. Add your affiliate networks (Amazon, CJ, ShareASale, etc.)
+4. Configure your preferred monetization settings
 
-### Step 2: Define Keywords
+### Adding Affiliate Links
 
-1. In the Settings page, locate "Keywords to Monetize"
-2. Enter product names or terms separated by commas (e.g., "laptop, wireless mouse, USB-C cable")
-3. Save settings
-
-### Step 3: Enable the Plugin
-
-1. Check the "Enable Plugin" checkbox
-2. Click Save
+1. Go to **SmartAffiliate > Manage Links**
+2. Click 'Add New Link'
+3. Enter:
+   - Post/Page to link from
+   - Original URL
+   - Your affiliate link
+   - Anchor text
+   - Affiliate network
+4. Click Save
 
 ## Usage
 
-Once configured, the plugin automatically processes your blog posts:
+### Dashboard
 
-- Any mention of your defined keywords in post content becomes an affiliate link
-- Links open to Amazon search results for that product
-- Clicks and conversions are tracked in the Analytics dashboard
-- View real-time performance metrics under **SmartAffiliate > Analytics**
+The main dashboard shows:
+- Total number of affiliate links
+- Total clicks across all links
+- Total revenue generated
+- Total conversions
+- Smart optimization suggestions
 
-## Tips for Maximum Revenue
+### Manage Links
 
-- Choose high-intent keywords related to your niche
-- Add keywords for products you genuinely recommend
-- Monitor analytics to identify top-performing links
-- Update your keyword list based on trending content
-- Create content naturally around your affiliate keywords
+View all your affiliate links in a detailed table showing:
+- Associated post/page
+- Anchor text
+- Affiliate network
+- Click count
+- Conversion count
+- Revenue generated
+
+### Optimization Features
+
+- The plugin automatically suggests which links need optimization based on performance
+- Low-performing links are highlighted for review
+- Premium version includes A/B testing tools for anchor text variations
+
+## Premium Features (Optional)
+
+- Advanced analytics and reporting
+- Link cloaking for cleaner URLs
+- Performance predictions
+- Batch link management
+- Email reports
+
+## Monetization Model
+
+- **Free Version**: Full tracking and basic analytics
+- **Premium ($9.99/month)**: Advanced features, priority support, and premium optimizations
 
 ## Requirements
 
-- WordPress 5.0+
-- PHP 7.2+
-- Active Amazon Associates account
+- WordPress 5.0 or higher
+- PHP 7.2 or higher
+- MySQL 5.7 or higher
 
 ## Support
 
-For issues or feature requests, please check the plugin documentation or contact support through the plugin dashboard.
+For support and documentation, visit the plugin's official website or contact the support team.
+
+## License
+
+GNU General Public License v2 or later
