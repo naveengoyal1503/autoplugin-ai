@@ -1,32 +1,43 @@
 # Affiliate Deal Aggregator
 
-Automatically aggregate and display curated affiliate coupons and deals on your WordPress site to boost affiliate marketing revenue.
+**Version:** 1.0
+
+## Description
+Affiliate Deal Aggregator is a WordPress plugin designed to help niche bloggers and affiliate marketers easily collect, manage, and display affiliate coupons and deals on their websites. The plugin provides a simple admin interface for adding deals with descriptions, affiliate URLs, and expiration dates. It also offers a frontend shortcode to show curated affiliate deals helping monetize your site with affiliate commissions.
 
 ## Features
 
-- Fetch and display up to 10 affiliate deals from a customizable XML feed
-- Caches deals for 1 hour to optimize performance
-- Simple shortcode `[affiliate_deals]` to display deals anywhere
-- Admin settings page to change the affiliate deals feed URL
-- Clean design that integrates easily with your theme
+- Add and manage affiliate deals with title, description, affiliate link, and expiration date.
+- Automatically hide expired deals from frontend display.
+- Simple shortcode `[affiliate_deals]` to show current deals anywhere on your site.
+- Clean, minimal styling for deal listings.
+- Uses standard WordPress database table for scalability.
 
 ## Installation
 
-1. Upload the plugin file to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Settings > Affiliate Deal Aggregator** to configure the affiliate deals feed URL.
+1. Upload the `affiliate-deal-aggregator.php` file to your WordPress `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress admin.
+3. Navigate to the "Affiliate Deals" menu item to add your first deals.
 
 ## Setup
 
-- Provide your affiliate deals XML feed URL in the settings page.
-- Use a feed that contains deals with `<deal>`, `<title>`, `<link>`, and `<description>` tags.
-- Save settings.
+- Add deals one by one using the admin form under "Affiliate Deals".
+- Include the affiliate URL you wish to monetize.
+- Optionally set expiration date to automatically unpublish old deals.
 
 ## Usage
 
-- Insert the shortcode `[affiliate_deals]` into any post, page, or widget where you want the deals to appear.
-- Visitors will see a list of affiliate coupons and deals with clickable links.
+1. To display your affiliate deals on any page or post, add the shortcode:
+
+   
+   [affiliate_deals]
+   
+
+2. Customize your theme styling to adjust the display if desired by targeting `.ada-deal-list` and `.ada-deal-item` classes.
+
+## Monetization
+Your visitors clicking affiliate links can generate commissions automatically. Enhance monetization by adding premium features like import automation or advanced analytics in future versions.
 
 ---
 
-This plugin helps monetize your WordPress site by promoting affiliate deals effortlessly with minimal setup.
+**Note:** This is a simple, lightweight plugin targeting niche affiliate marketers to help increase affiliate revenue by centralizing offer presentation and tracking.
