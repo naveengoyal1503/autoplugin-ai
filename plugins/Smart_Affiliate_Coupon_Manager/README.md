@@ -1,27 +1,38 @@
 # Smart Affiliate Coupon Manager
 
 ## Description
-Smart Affiliate Coupon Manager is a lightweight WordPress plugin that automatically displays geo-targeted affiliate coupons and deals to your website visitors. By showing relevant discount codes based on visitor location, it maximizes affiliate conversions and revenue.
+
+Smart Affiliate Coupon Manager helps affiliate marketers and website owners create, manage, and display affiliate coupons easily on their WordPress site. This plugin boosts conversion rates by providing attractive clickable coupons linked with affiliate URLs.
 
 ## Features
-- Automatically detects user country via IP and displays matching coupons.
-- Simple shortcode [smart_affiliate_coupons] to insert coupon lists anywhere.
-- Click-to-copy coupon codes for user convenience.
-- Easy to extend with premium add-ons for API integration and analytics.
+
+- Manage multiple coupons with codes, descriptions, and affiliate URLs.
+- User-friendly admin interface with add/remove coupon rows.
+- Display coupons anywhere using `[affiliate_coupon code="COUPONCODE"]` shortcode.
+- Styled coupon output with clickable buttons linking to affiliate offers.
+- Lightweight, single-file plugin with no external dependencies.
 
 ## Installation
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. (Optional) Customize coupons via code or future admin UI.
+
+1. Download the plugin PHP file.
+2. Upload to your WordPress site's `/wp-content/plugins/` directory.
+3. Activate the plugin through the WordPress admin dashboard under Plugins.
 
 ## Setup
-- Insert the shortcode `[smart_affiliate_coupons]` in posts, pages, or widgets to display coupon deals tailored to the visitor's location.
-- Default coupons included demonstrate how to add geo-targeted offers.
+
+1. Go to the 'Affiliate Coupons' menu in your WordPress admin.
+2. Add new coupons by entering a code, optional description, and affiliate URL.
+3. Save your changes.
 
 ## Usage
-- Place the shortcode where you want the coupon list.
-- Visitors will see only the coupons relevant to their country.
-- Clicking on coupon codes copies them to clipboard for easy use.
+
+- To display a coupon in any post or page, use the shortcode:
 
 
-Thank you for using Smart Affiliate Coupon Manager. Boost your affiliate revenue by showing personalized deals to your visitors!
+[affiliate_coupon code="YOURCOUPONCODE"]
+
+
+- Replace `YOURCOUPONCODE` with the coupon code you previously added.
+- The coupon will display as a styled box with a clickable button linking to the affiliate URL.
+
+This plugin streamlines affiliate coupon management to increase affiliate marketing revenue effortlessly.
