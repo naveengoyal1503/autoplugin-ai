@@ -1,154 +1,102 @@
 # ContentRevenue Pro
 
-## Overview
-
-ContentRevenue Pro is a comprehensive WordPress monetization plugin that empowers bloggers and content creators to diversify their income streams. It combines affiliate link tracking, sponsored content management, and membership gatekeeping with built-in analytics to maximize revenue from your WordPress site.
+A powerful WordPress plugin designed to maximize your blog monetization through affiliate link management, sponsored content tracking, and comprehensive revenue analytics.
 
 ## Features
 
-### Affiliate Link Management
-- Track and shorten affiliate links with custom slugs
-- Monitor commission rates per program
-- Track click-through rates and user interactions
-- Redirect tracking for accurate performance metrics
-- Support for multiple affiliate programs
+### Core Features
+- **Affiliate Link Management**: Create, organize, and track all your affiliate links in one centralized dashboard
+- **Click Tracking**: Automatically log and track every click on your affiliate links
+- **Campaign Management**: Group affiliate links into campaigns for better organization and tracking
+- **Analytics Dashboard**: View performance metrics including total clicks, active links, and monthly statistics
+- **Revenue Insights**: Track which links perform best and optimize your content accordingly
 
-### Sponsored Content Management
-- Add sponsored badges to posts and pages
-- Manage sponsor partnerships and branding
-- Track sponsored content performance
-- Maintain content authenticity with clear sponsor attribution
-
-### Content Gating
-- Gate content behind membership levels
-- Create multiple membership tiers
-- Protect premium content from non-members
-- Flexible content restriction options
-
-### Analytics Dashboard
-- Real-time click tracking
-- Performance metrics for affiliate links
-- Daily click statistics
-- Revenue potential calculations
-- Interactive charts and reports
-
-### REST API
-- Create affiliate links programmatically
-- Track clicks via REST endpoints
-- Integrate with external tools and services
+### Advanced Features (Premium)
+- Unlimited affiliate campaigns
+- Advanced analytics with revenue projections
+- Sponsored content management integration
+- Email performance reports
+- Commission rate tracking and calculations
 
 ## Installation
 
-1. Download the plugin files
-2. Upload to `/wp-content/plugins/contentrevenue-pro/`
-3. Activate the plugin through the WordPress admin panel
-4. Navigate to ContentRevenue Pro menu to begin setup
+1. Download the ContentRevenue Pro plugin
+2. Go to your WordPress dashboard → Plugins → Add New
+3. Click "Upload Plugin" and select the plugin file
+4. Click "Install Now" and then "Activate Plugin"
+5. The plugin will automatically create necessary database tables
 
-## Setup Guide
+## Setup
 
-### First Steps
-1. Go to **ContentRevenue Pro > Dashboard** to see your monetization overview
-2. Visit **Affiliate Links** to start creating tracked affiliate links
-3. Set up **Gated Content** to protect premium posts
-4. Review analytics in the **Analytics** section
+### Initial Configuration
+1. Navigate to **ContentRevenue Pro** in your WordPress admin menu
+2. Go to **Settings** to verify your license status
+3. Start adding your affiliate links
 
-### Creating Affiliate Links
-1. Click "Add New Link" in the Affiliate Links section
-2. Enter your affiliate program name
-3. Paste your affiliate URL
-4. Set your expected commission rate
-5. The plugin generates a short slug for easy tracking
+### Adding Affiliate Links
+1. Go to **Affiliate Links** section
+2. Fill in the following details:
+   - **Link ID**: Unique identifier (e.g., "amazon-book-1")
+   - **Affiliate URL**: Your affiliate tracking link
+   - **Display Text**: The text shown on your website
+   - **Category**: Organize by product category (e.g., "Books", "Tools")
+   - **Commission Rate**: Your expected commission percentage
+3. Click "Add Link"
 
-### Gating Content
-1. Go to **Gated Content** manager
-2. Select posts or pages to protect
-3. Choose membership level requirements
-4. Logged-out users see login prompt; members see full content
+## Usage
 
-### Adding Sponsored Badges
-Use the shortcode in your posts:
+### Using Shortcodes
 
-[crp_sponsored_badge sponsor="Brand Name" url="https://brand-url.com"]
-
-
-### Inserting Affiliate Links
-Use this shortcode with your link ID:
-
-[crp_affiliate_link id="your_link_id" text="Click here" class="custom-class"]
+#### Affiliate Link Shortcode
+Insert affiliate links directly into your posts:
 
 
-## Monetization Model
-
-ContentRevenue Pro operates on a freemium model:
-
-- **Free Tier**: Basic affiliate tracking, up to 10 links, limited analytics
-- **Premium ($9.99/month)**: Unlimited affiliate links, advanced analytics, click patterns, conversion tracking, priority support
-
-## Usage Examples
-
-### Example 1: Product Recommendations
-Create an affiliate link to an Amazon product and use the shortcode:
-
-[crp_affiliate_link id="crp_amazon_12abc3" text="Check Price on Amazon"]
+[crp_affiliate_link id="amazon-book-1"]
 
 
-### Example 2: Gated Tutorial
-Protect advanced content:
+This displays as a clickable link that automatically tracks clicks and redirects to your affiliate URL.
 
-[crp_gated_content level="premium"]
-Your premium content and tutorial here
-[/crp_gated_content]
+#### Revenue Tracker Shortcode
+Display your total click statistics:
 
 
-### Example 3: Sponsored Post
-Add sponsorship attribution:
-
-[crp_sponsored_badge sponsor="Tech Company Pro" url="https://techcompany.com"]
+[crp_revenue_tracker]
 
 
-## Dashboard Statistics
+### Managing Campaigns
+1. Go to **Campaigns** section
+2. Click "Create New Campaign"
+3. Add a descriptive name and details
+4. Link affiliate items to campaigns for organized tracking
 
-The main dashboard displays:
-- Total number of active affiliate links
-- Lifetime click statistics
-- Recent affiliate program performance
-- Revenue potential estimates
-
-## Analytics Features
-
-- **Click Tracking**: See which links drive the most traffic
-- **Date Range Reports**: Analyze performance over time
-- **Program Comparison**: Compare different affiliate programs
-- **User Insights**: Track anonymous and registered user behavior
-- **Conversion Estimates**: Estimate potential earnings
-
-## Support & Documentation
-
-For detailed help with specific monetization strategies, visit our knowledge base or contact support. The plugin integrates with popular affiliate networks including Amazon Associates, Shareasale, and CJ Affiliate.
-
-## Shortcode Reference
-
-| Shortcode | Attributes | Purpose |
-|-----------|-----------|----------|
-| `[crp_affiliate_link]` | id, text, class | Display trackable affiliate link |
-| `[crp_gated_content]` | level | Gate content behind membership |
-| `[crp_sponsored_badge]` | sponsor, url | Add sponsor attribution badge |
+### Viewing Analytics
+1. Navigate to **Analytics** dashboard
+2. View:
+   - Top performing affiliate links
+   - Click-through rates by category
+   - Monthly performance trends
+   - Revenue insights
 
 ## Best Practices
 
-1. **Diversify Revenue**: Combine affiliate marketing with sponsored content and memberships
-2. **Quality Content**: Gate only premium, high-value content to maintain user trust
-3. **Transparency**: Always disclose sponsored content and affiliate relationships
-4. **Track Performance**: Regularly review analytics to optimize which programs to promote
-5. **User Experience**: Don't gate too much content; balance monetization with reader experience
+- Use descriptive Link IDs for easy identification
+- Organize links by category for better analysis
+- Regularly review analytics to identify top performers
+- Only promote products you genuinely recommend
+- Maintain disclosure compliance for affiliate links
+- Track commission rates to calculate potential earnings
 
-## Compatibility
+## Monetization Strategy
 
-- WordPress 5.0 and above
-- PHP 7.4 and above
-- Works with all WordPress themes
-- Compatible with Gutenberg editor
+ContentRevenue Pro follows a proven freemium model:
+
+- **Free Version**: Core affiliate link tracking, basic analytics, and campaign management
+- **Premium Version** ($9.99/month): Advanced analytics, unlimited campaigns, sponsored content integration, and automated reporting
+
+## Support
+
+For issues, feature requests, or support, visit the plugin support documentation or contact our team.
 
 ## License
 
-GPL v2 or later
+GPL2 - This plugin is free software and can be freely distributed and modified under the GPL2 license.
