@@ -1,39 +1,42 @@
 # AffiliateLink Booster
 
-AffiliateLink Booster is a WordPress plugin designed to automatically detect affiliate links in your website content, add attractive call-to-action (CTA) buttons next to them, track clicks, and provide you with insightful reports on affiliate link performance.
+## Description
+AffiliateLink Booster automatically converts specified keywords in your WordPress posts and pages into your affiliate links, helping you increase affiliate revenue effortlessly. It also tracks click counts for each keyword affiliate link to give you basic analytics.
+
+---
 
 ## Features
 
-- Automatic detection of common affiliate link patterns in your posts and pages.
-- Adds customizable "Save with Affiliate!" buttons next to affiliate links to increase conversion.
-- Tracks each CTA button click asynchronously.
-- Provides a simple admin dashboard with click statistics per affiliate link.
-- Lightweight and self-contained with no dependencies.
-- Freemium-ready architecture to allow future expansion.
+- Automatically convert keywords to affiliate links in post/page content.
+- Track clicks on each affiliate link to monitor performance.
+- Easy settings page to manage keywords and corresponding affiliate URLs.
+- Lightweight and self-contained without external dependencies.
 
 ## Installation
 
-1. Upload the `affiliatelink-booster.php` file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. The plugin will automatically scan your posts and enhance detected affiliate links.
+1. Upload the `affiliate-link-booster.php` file to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the WordPress Plugins menu.
+3. Go to **Settings > AffiliateLink Booster** to configure your keywords and affiliate URLs.
 
 ## Setup
 
-No setup required for the basic version. The plugin works immediately upon activation.
+- Enter your keywords as comma-separated words or phrases.
+- Enter the affiliate URLs matching the keywords in the same order, comma-separated.
+- Save changes.
 
 ## Usage
 
-- When editing posts, simply add your standard affiliate links.
-- The plugin will detect common affiliate URL parameters like `aff_id=`, `affiliate=`, `ref=`, and `partner=`.
-- On the front end, affiliate links will display a blue CTA button "Save with Affiliate!" next to them.
-- Clicking the button tracks the click and opens the affiliate link in a new tab.
-- To view reports, navigate to the WordPress Dashboard > AffiliateLink Booster menu.
+- Once configured, specified keywords in your posts and pages will automatically hyperlink to your affiliate URLs.
+- Clicks on these links are tracked and displayed in the plugin settings page for review.
 
-## Support
+---
 
-For support or feature requests, please open an issue on the plugin repository or contact the author.
+## Premium / Future Enhancements
+- Bulk keyword import/export.
+- Link cloaking and shortening.
+- Advanced analytics and reporting dashboard.
+- Integration with popular affiliate networks.
 
-## Changelog
+---
 
-### 1.0
-- Initial release with affiliate link detection, CTA button insertion, click tracking, and admin reports.
+Use AffiliateLink Booster to monetize your WordPress content efficiently by turning your text naturally into revenue streams with minimal effort.
