@@ -1,25 +1,26 @@
 # WP Revenue Booster
 
-Automatically inserts high-converting affiliate links, coupons, and sponsored content into your posts based on context and user behavior.
+Boost your WordPress site's revenue by intelligently displaying affiliate offers, coupons, and sponsored content.
 
 ## Features
-- Insert affiliate links for specific keywords
-- Display relevant coupons at the end of posts
-- Add sponsored content blocks
-- Easy-to-use admin interface
+- Easy-to-use admin interface for managing affiliate links, coupons, and sponsored content.
+- Shortcode support for placing offers anywhere on your site.
+- Smart display of offers in the footer of posts and pages.
+- Supports multiple offer types: affiliate links, coupons, and sponsored content.
 
 ## Installation
-1. Upload the plugin file to your WordPress plugins directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Revenue Booster to configure your monetization options
+1. Upload the `wp-revenue-booster.php` file to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to Settings > Revenue Booster to configure your offers.
 
 ## Setup
-- Enter affiliate links, coupons, and sponsored content in JSON format in the settings page
-- Each entry should include a keyword, URL, and (for coupons) a code
+- Add your affiliate links, coupons, and sponsored content in the plugin settings.
+- Use the shortcode `[revenue_booster type="affiliate"]`, `[revenue_booster type="coupon"]`, or `[revenue_booster type="sponsored"]` to display specific offers.
+- The plugin will automatically display a random offer in the footer of posts and pages.
 
 ## Usage
-- The plugin will automatically insert affiliate links, coupons, and sponsored content into your posts based on the keywords you specify
-- Edit your posts as usual; the plugin handles the rest
+- Customize the appearance by editing the `revenue-booster.css` file.
+- Monitor your revenue and adjust your offers as needed.
 
-## Support
-For support, visit our website or contact us directly.
+## License
+This plugin is released under the GPL2 License.
