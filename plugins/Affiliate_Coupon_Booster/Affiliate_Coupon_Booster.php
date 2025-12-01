@@ -1,172 +1,155 @@
-<?php
 /*
-Plugin Name: Affiliate Coupon Booster
-Plugin URI: https://example.com/affiliate-coupon-booster
-Description: Auto-create and display tailored affiliate coupons to boost revenue.
-Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Coupon_Booster.php
-License: GPL2
-Text Domain: affiliate-coupon-booster
 */
+<?php
+/**
+ * Plugin Name: Affiliate Coupon Booster
+ * Description: Create and display affiliate-linked coupons and deals with auto-tracking to boost affiliate revenue.
+ * Version: 1.0
+ * Author: GeneratedAI
+ * Text Domain: affiliate-coupon-booster
+ */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
 class AffiliateCouponBooster {
-    private static $instance = null;
-    private $coupons = [];
-    private $option_name = 'acb_coupons_data';
-
-    public static function instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
+    public function __construct() {
+        add_action('init', array($this, 'register_coupon_post_type'));
+        add_shortcode('acb_coupons', array($this, 'render_coupons_shortcode'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_acb_track_click', array($this, 'track_click')); // logged in
+        add_action('wp_ajax_nopriv_acb_track_click', array($this, 'track_click')); // guests
     }
 
-    private function __construct() {
-        add_action('admin_menu', [$this, 'admin_menu']);
-        add_action('admin_init', [$this, 'register_settings']);
-        add_shortcode('affiliate_coupons', [$this, 'render_coupons']);
-        $this->coupons = get_option($this->option_name, []);
+    public function register_coupon_post_type() {
+        $labels = array(
+            'name' => __('Coupons', 'affiliate-coupon-booster'),
+            'singular_name' => __('Coupon', 'affiliate-coupon-booster'),
+            'add_new_item' => __('Add New Coupon', 'affiliate-coupon-booster'),
+            'edit_item' => __('Edit Coupon', 'affiliate-coupon-booster'),
+            'new_item' => __('New Coupon', 'affiliate-coupon-booster'),
+            'view_item' => __('View Coupon', 'affiliate-coupon-booster'),
+            'search_items' => __('Search Coupons', 'affiliate-coupon-booster'),
+            'not_found' => __('No coupons found', 'affiliate-coupon-booster'),
+            'not_found_in_trash' => __('No coupons found in Trash', 'affiliate-coupon-booster'),
+        );
+
+        $args = array(
+            'labels' => $labels,
+            'public' => true,
+            'has_archive' => false,
+            'menu_icon' => 'dashicons-tag',
+            'supports' => array('title', 'editor', 'custom-fields'),
+            'capability_type' => 'post',
+        );
+
+        register_post_type('acb_coupon', $args);
     }
 
-    public function admin_menu() {
-        add_menu_page('Affiliate Coupon Booster', 'Coupon Booster', 'manage_options', 'affiliate-coupon-booster', [$this, 'settings_page'], 'dashicons-tickets-alt', 56);
+    public function enqueue_scripts() {
+        wp_enqueue_script('jquery');
+        wp_enqueue_script('acb_script', plugin_dir_url(__FILE__). 'acb-script.js', array('jquery'), '1.0', true);
+        wp_localize_script('acb_script', 'acb_ajax_obj', array('ajax_url' => admin_url('admin-ajax.php')));
+        wp_enqueue_style('acb_style', plugin_dir_url(__FILE__) . 'acb-style.css');
     }
 
-    public function register_settings() {
-        register_setting('acb_settings_group', $this->option_name, [$this, 'validate_coupons']);
-    }
+    public function render_coupons_shortcode($atts) {
+        $args = array(
+            'post_type' => 'acb_coupon',
+            'posts_per_page' => 10,
+            'post_status' => 'publish',
+        );
+        $coupons = new WP_Query($args);
 
-    public function validate_coupons($input) {
-        // Basic validation/filtering of coupon array
-        if (!is_array($input)) {
-            return [];
-        }
-        $clean = [];
-        foreach ($input as $coupon) {
-            if (!empty($coupon['code']) && !empty($coupon['description']) && !empty($coupon['affiliate_url'])) {
-                $clean[] = [
-                    'code' => sanitize_text_field($coupon['code']),
-                    'description' => sanitize_text_field($coupon['description']),
-                    'affiliate_url' => esc_url_raw($coupon['affiliate_url']),
-                    'expires' => isset($coupon['expires']) ? sanitize_text_field($coupon['expires']) : ''
-                ];
-            }
-        }
-        return $clean;
-    }
-
-    public function settings_page() {
-        ?>
-        <div class="wrap">
-            <h1>Affiliate Coupon Booster</h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('acb_settings_group');
-                $coupons = $this->coupons;
-                ?>
-                <table class="widefat fixed" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Coupon Code</th>
-                            <th>Description</th>
-                            <th>Affiliate URL</th>
-                            <th>Expires (YYYY-MM-DD)</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead>
-                    <tbody id="acb-coupons-list">
-                    <?php if (!empty($coupons)) : ?>
-                        <?php foreach ($coupons as $index => $coupon) : ?>
-                            <tr>
-                                <td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[<?php echo $index; ?>][code]" value="<?php echo esc_attr($coupon['code']); ?>" required></td>
-                                <td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[<?php echo $index; ?>][description]" value="<?php echo esc_attr($coupon['description']); ?>" required></td>
-                                <td><input type="url" name="<?php echo esc_attr($this->option_name); ?>[<?php echo $index; ?>][affiliate_url]" value="<?php echo esc_attr($coupon['affiliate_url']); ?>" required></td>
-                                <td><input type="date" name="<?php echo esc_attr($this->option_name); ?>[<?php echo $index; ?>][expires]" value="<?php echo esc_attr($coupon['expires']); ?>"></td>
-                                <td><button class="button acb-remove-row" type="button">Remove</button></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else : ?>
-                        <tr class="acb-no-data"><td colspan="5">No coupons added yet.</td></tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
-                <p><button id="acb-add-coupon" class="button button-primary" type="button">Add Coupon</button></p>
-                <?php submit_button('Save Coupons'); ?>
-            </form>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const tbody = document.getElementById('acb-coupons-list');
-                const addBtn = document.getElementById('acb-add-coupon');
-
-                addBtn.addEventListener('click', function() {
-                    const index = tbody.querySelectorAll('tr').length;
-                    if(tbody.querySelector('.acb-no-data')) {
-                        tbody.querySelector('.acb-no-data').remove();
-                    }
-
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[${index}][code]" required></td>
-                        <td><input type="text" name="<?php echo esc_attr($this->option_name); ?>[${index}][description]" required></td>
-                        <td><input type="url" name="<?php echo esc_attr($this->option_name); ?>[${index}][affiliate_url]" required></td>
-                        <td><input type="date" name="<?php echo esc_attr($this->option_name); ?>[${index}][expires]"></td>
-                        <td><button class="button acb-remove-row" type="button">Remove</button></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-
-                tbody.addEventListener('click', function(e) {
-                    if(e.target.classList.contains('acb-remove-row')) {
-                        const tr = e.target.closest('tr');
-                        tr.remove();
-                        if(tbody.children.length === 0) {
-                            const trEmpty = document.createElement('tr');
-                            trEmpty.classList.add('acb-no-data');
-                            trEmpty.innerHTML = '<td colspan="5">No coupons added yet.</td>';
-                            tbody.appendChild(trEmpty);
-                        }
-                    }
-                });
-            });
-        </script>
-        <?php
-    }
-
-    public function render_coupons() {
-        if (empty($this->coupons)) {
+        if (!$coupons->have_posts()) {
             return '<p>No coupons available at the moment.</p>';
         }
 
-        $today = strtotime(current_time('Y-m-d'));
-        $output = '<div class="acb-coupon-list">';
+        $output = '<div class="acb-coupons-container">';
 
-        foreach ($this->coupons as $coupon) {
-            $expires = !empty($coupon['expires']) ? strtotime($coupon['expires']) : null;
+        while ($coupons->have_posts()) {
+            $coupons->the_post();
+            $affiliate_link = get_post_meta(get_the_ID(), 'affiliate_link', true);
+            $coupon_code = get_post_meta(get_the_ID(), 'coupon_code', true);
+            $expiry = get_post_meta(get_the_ID(), 'expiry_date', true);
 
-            if ($expires && $expires < $today) {
-                continue; // Skip expired coupons
+            $expiry_text = $expiry ? 'Expires on ' . esc_html($expiry) : 'Valid while supplies last';
+
+            $output .= '<div class="acb-coupon-item">';
+            $output .= '<h3>' . get_the_title() . '</h3>';
+            $output .= '<p>' . get_the_content() . '</p>';
+
+            if ($coupon_code) {
+                $output .= '<div class="acb-coupon-code" tabindex="0">Code: <strong>' . esc_html($coupon_code) . '</strong></div>';
             }
 
-            $code = esc_html($coupon['code']);
-            $desc = esc_html($coupon['description']);
-            $url = esc_url($coupon['affiliate_url']);
+            if ($affiliate_link) {
+                $encoded_link = esc_url($affiliate_link);
+                $output .= '<a href="#" class="acb-claim-button" data-link="' . $encoded_link . '">Claim Deal</a>';
+            }
 
-            $output .= "<div class='acb-coupon' style='border:1px solid #ccc;padding:10px;margin:10px 0;'>";
-            $output .= "<p><strong>Coupon Code:</strong> <code>$code</code></p>";
-            $output .= "<p>$desc</p>";
-            $output .= "<p><a href='$url' target='_blank' rel='nofollow noopener' style='background:#0073aa;color:#fff;padding:6px 12px;text-decoration:none;border-radius:3px;'>Activate Coupon</a></p>";
-            $output .= "</div>";
+            $output .= '<small class="acb-expiry">' . $expiry_text . '</small>';
+            $output .= '</div>';
         }
 
         $output .= '</div>';
+        wp_reset_postdata();
         return $output;
     }
-}
 
-add_action('plugins_loaded', function() {
-    AffiliateCouponBooster::instance();
+    public function track_click() {
+        if (!isset($_POST['link'])) {
+            wp_send_json_error('Missing link data');
+            wp_die();
+        }
+
+        $link = esc_url_raw($_POST['link']);
+
+        // Simpler tracking: store counts in transient
+        $count_key = 'acb_click_count_' . md5($link);
+        $count = get_transient($count_key);
+        $count = $count ? $count + 1 : 1;
+        set_transient($count_key, $count, DAY_IN_SECONDS * 30);
+
+        // Return success with redirect URL
+        wp_send_json_success(array('redirect' => $link));
+
+        wp_die();
+    }
+}
+new AffiliateCouponBooster();
+
+// Inline JS for claiming and tracking clicks
+add_action('wp_footer', function() {
+    ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.acb-claim-button').on('click', function(e) {
+            e.preventDefault();
+            var link = $(this).data('link');
+            var button = $(this);
+            $.post(acb_ajax_obj.ajax_url, {
+                action: 'acb_track_click',
+                link: link
+            }, function(response) {
+                if (response.success) {
+                    window.open(response.data.redirect, '_blank');
+                    button.text('Redirecting...');
+                } else {
+                    alert('Failed to track coupon click.');
+                }
+            });
+        });
+    });
+    </script>
+    <style>
+    .acb-coupons-container{display:flex;flex-wrap:wrap;gap:15px;}
+    .acb-coupon-item{border:1px solid #ddd;padding:15px;width:100%;max-width:300px;box-shadow:0 0 5px rgba(0,0,0,0.05);background:#fff;border-radius:4px;}
+    .acb-coupon-code{background:#f4f4f4;padding:10px;margin-top:10px;cursor:pointer;user-select:none;}
+    .acb-claim-button{display:inline-block;margin-top:10px;padding:10px 15px;background:#0073aa;color:#fff;border-radius:3px;text-decoration:none;cursor:pointer;}
+    .acb-claim-button:hover{background:#005177;}
+    .acb-expiry{display:block;margin-top:8px;font-size:12px;color:#666;}
+    </style>
+    <?php
 });
