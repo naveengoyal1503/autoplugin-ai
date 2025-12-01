@@ -1,33 +1,38 @@
 # Affiliate Deal Booster
 
 ## Description
-Affiliate Deal Booster is a powerful WordPress plugin designed to automatically aggregate, display, and track affiliate deals and coupon codes tailored to your site's niche. By presenting engaging and relevant offers, it helps boost your affiliate revenue through increased visitor engagement and conversion rates.
+Affiliate Deal Booster is a WordPress plugin that automatically detects affiliate links inside your posts and replaces them with exclusive, personalized coupon codes and cashback offers from partner merchants. This increases user engagement and boosts your affiliate conversion rates.
 
 ## Features
-- Add, edit, and remove affiliate deals easily from the WordPress admin.
-- Display deals anywhere on your site using the `[adb_deals]` shortcode.
-- Track clicks on affiliate links directly within the plugin.
-- Expiry dates for deals to automatically hide expired offers.
-- Responsive and clean deals display layout.
-- Freemium-ready: Easily extendable for premium features such as analytics and personalized recommendations.
+- Automatically scans post content for affiliate links
+- Replaces affiliate links with styled offers showing coupon codes and cashback
+- Supports major affiliate merchants like Amazon and eBay
+- Lightweight and simple to set up
+- Freemium-ready architecture for premium personalization and analytics (future updates)
 
 ## Installation
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory or install it via the WordPress admin plugin installer.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Affiliate Deals** in the WordPress admin menu to add your deals.
+1. Upload the `affiliate-deal-booster.php` file to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Visit your posts/pages with affiliate links to see them automatically enhanced.
 
 ## Setup
-- In the Affiliate Deals admin page, click *Add New Deal* to insert your affiliate offers.
-- Enter the deal title, affiliate URL, optional description, expiry date, and save.
-- The plugin will track the number of clicks each deal receives automatically.
+No setup required for the free version.
 
 ## Usage
-- To display deals on any post/page or widget, insert the shortcode `[adb_deals count="3"]` where 3 is the number of deals to show (default is 5).
-- Use affiliate links provided in the plugin to allow click tracking and maximize your commission insights.
+- Add affiliate links as usual in your posts or pages.
+- The plugin automatically detects and decorates these links with coupon and cashback details when displayed.
+- Upgrade in future for premium features (not included in v1).
 
-## Support
-For support and feature requests, please contact the plugin author via [your support email or site].
+## FAQs
+**Q: Can I customize the coupons shown?**
+A: Currently, coupons are auto-assigned based on partner domain. Premium version will allow custom coupons.
+
+**Q: Does this affect SEO or link structure?**
+A: No link href is changed, only additional info appended for better user conversion.
+
+**Q: Does it track conversions?**
+A: Basic version does not. Premium plans will introduce analytics.
 
 ## Changelog
 ### 1.0
-- Initial release with deal management, shortcode display, and click tracking features.
+- Initial release with affiliate link detection and coupon/cashback display
