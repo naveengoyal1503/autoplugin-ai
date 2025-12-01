@@ -1,268 +1,314 @@
+<?php
 /*
+Plugin Name: ContentRevenue Pro
+Plugin URI: https://contentrevenuepro.com
+Description: Monetize your WordPress site with integrated affiliate tracking, sponsored content management, and membership gatekeeping
+Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=ContentRevenue_Pro.php
+License: GPL v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
-<?php
-/**
- * ContentRevenue Pro - Monetization Management Plugin
- * Version: 1.0.0
- * Author: ContentRevenue
- */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-define('CRP_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('CRP_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('CRP_VERSION', '1.0.0');
+define('CRP_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('CRP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 class ContentRevenuePro {
     private static $instance = null;
 
     public static function get_instance() {
-        if (self::$instance === null) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
     public function __construct() {
-        register_activation_hook(__FILE__, [$this, 'activate']);
-        register_deactivation_hook(__FILE__, [$this, 'deactivate']);
-        
-        add_action('init', [$this, 'init']);
-        add_action('admin_menu', [$this, 'admin_menu']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
-        add_filter('the_content', [$this, 'inject_affiliate_links']);
-        add_shortcode('crp_affiliate_link', [$this, 'affiliate_link_shortcode']);
-        add_shortcode('crp_sponsored_block', [$this, 'sponsored_block_shortcode']);
-        add_action('wp_ajax_crp_track_click', [$this, 'track_affiliate_click']);
-        add_action('wp_ajax_nopriv_crp_track_click', [$this, 'track_affiliate_click']);
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
+        add_shortcode('crp_affiliate_link', array($this, 'affiliate_link_shortcode'));
+        add_shortcode('crp_gated_content', array($this, 'gated_content_shortcode'));
+        add_shortcode('crp_sponsored_badge', array($this, 'sponsored_badge_shortcode'));
+        add_action('rest_api_init', array($this, 'register_rest_routes'));
+        register_activation_hook(__FILE__, array($this, 'activate_plugin'));
     }
 
-    public function activate() {
+    public function activate_plugin() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         
-        $sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}crp_affiliate_links (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            user_id bigint(20) NOT NULL,
-            affiliate_url varchar(500) NOT NULL,
-            display_text varchar(255) NOT NULL,
-            target_niche varchar(100),
-            clicks int(11) DEFAULT 0,
-            conversions int(11) DEFAULT 0,
-            revenue decimal(10, 2) DEFAULT 0,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;
+        $affiliate_table = $wpdb->prefix . 'crp_affiliate_links';
+        $gated_table = $wpdb->prefix . 'crp_gated_content';
+        $clicks_table = $wpdb->prefix . 'crp_link_clicks';
         
-        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}crp_sponsored_posts (
+        $sql_affiliate = "CREATE TABLE IF NOT EXISTS $affiliate_table (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            post_id bigint(20) NOT NULL,
-            brand_name varchar(255) NOT NULL,
-            payment_amount decimal(10, 2) NOT NULL,
-            disclosure_text text,
-            status varchar(20) DEFAULT 'active',
+            link_id varchar(255) NOT NULL UNIQUE,
+            original_url text NOT NULL,
+            short_slug varchar(100) NOT NULL UNIQUE,
+            program_name varchar(255),
+            commission_rate float,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;
-        
-        CREATE TABLE IF NOT EXISTS {$wpdb->prefix}crp_click_tracking (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            affiliate_id mediumint(9) NOT NULL,
-            ip_address varchar(100),
-            user_agent text,
-            referrer text,
-            click_time datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id)
         ) $charset_collate;";
         
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        dbDelta($sql);
+        $sql_gated = "CREATE TABLE IF NOT EXISTS $gated_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            post_id bigint(20) NOT NULL,
+            membership_level varchar(100),
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
         
-        add_option('crp_plugin_version', CRP_VERSION);
+        $sql_clicks = "CREATE TABLE IF NOT EXISTS $clicks_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            link_id varchar(255) NOT NULL,
+            user_id bigint(20),
+            ip_address varchar(45),
+            referrer text,
+            clicked_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY link_id (link_id)
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql_affiliate);
+        dbDelta($sql_gated);
+        dbDelta($sql_clicks);
+        
+        update_option('crp_version', CRP_VERSION);
     }
 
-    public function deactivate() {
-        // Cleanup if needed
-    }
-
-    public function init() {
-        wp_register_script('crp-admin', CRP_PLUGIN_URL . 'assets/admin.js', ['jquery'], CRP_VERSION);
-        wp_register_script('crp-frontend', CRP_PLUGIN_URL . 'assets/frontend.js', ['jquery'], CRP_VERSION);
-        wp_register_style('crp-admin', CRP_PLUGIN_URL . 'assets/admin.css', [], CRP_VERSION);
-    }
-
-    public function admin_menu() {
-        add_menu_page('ContentRevenue Pro', 'ContentRevenue', 'manage_options', 'crp_dashboard', [$this, 'dashboard_page'], 'dashicons-money-alt', 30);
-        add_submenu_page('crp_dashboard', 'Affiliate Links', 'Affiliate Links', 'manage_options', 'crp_affiliates', [$this, 'affiliates_page']);
-        add_submenu_page('crp_dashboard', 'Sponsored Content', 'Sponsored Content', 'manage_options', 'crp_sponsored', [$this, 'sponsored_page']);
-        add_submenu_page('crp_dashboard', 'Analytics', 'Analytics', 'manage_options', 'crp_analytics', [$this, 'analytics_page']);
-        add_submenu_page('crp_dashboard', 'Settings', 'Settings', 'manage_options', 'crp_settings', [$this, 'settings_page']);
+    public function add_admin_menu() {
+        add_menu_page(
+            'ContentRevenue Pro',
+            'ContentRevenue Pro',
+            'manage_options',
+            'crp_dashboard',
+            array($this, 'render_dashboard'),
+            'dashicons-money-alt',
+            25
+        );
+        
+        add_submenu_page(
+            'crp_dashboard',
+            'Affiliate Links',
+            'Affiliate Links',
+            'manage_options',
+            'crp_affiliate_links',
+            array($this, 'render_affiliate_links')
+        );
+        
+        add_submenu_page(
+            'crp_dashboard',
+            'Gated Content',
+            'Gated Content',
+            'manage_options',
+            'crp_gated_content',
+            array($this, 'render_gated_content')
+        );
+        
+        add_submenu_page(
+            'crp_dashboard',
+            'Analytics',
+            'Analytics',
+            'manage_options',
+            'crp_analytics',
+            array($this, 'render_analytics')
+        );
     }
 
     public function enqueue_admin_assets($hook) {
-        if (strpos($hook, 'crp_') === false) return;
-        wp_enqueue_script('crp-admin');
-        wp_enqueue_style('crp-admin');
-    }
-
-    public function dashboard_page() {
-        global $wpdb;
-        $total_clicks = $wpdb->get_var("SELECT SUM(clicks) FROM {$wpdb->prefix}crp_affiliate_links");
-        $total_revenue = $wpdb->get_var("SELECT SUM(revenue) FROM {$wpdb->prefix}crp_affiliate_links");
-        $active_links = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}crp_affiliate_links");
-        
-        echo '<div class="wrap"><h1>ContentRevenue Pro Dashboard</h1>';
-        echo '<div class="crp-dashboard-widgets">';
-        echo '<div class="crp-widget"><h3>Total Clicks</h3><p class="crp-stat">' . intval($total_clicks) . '</p></div>';
-        echo '<div class="crp-widget"><h3>Total Revenue</h3><p class="crp-stat">$' . number_format(floatval($total_revenue), 2) . '</p></div>';
-        echo '<div class="crp-widget"><h3>Active Links</h3><p class="crp-stat">' . intval($active_links) . '</p></div>';
-        echo '</div></div>';
-    }
-
-    public function affiliates_page() {
-        global $wpdb;
-        
-        if (isset($_POST['crp_add_affiliate'])) {
-            check_admin_referer('crp_affiliate_nonce');
-            $wpdb->insert($wpdb->prefix . 'crp_affiliate_links', [
-                'user_id' => get_current_user_id(),
-                'affiliate_url' => sanitize_url($_POST['affiliate_url']),
-                'display_text' => sanitize_text_field($_POST['display_text']),
-                'target_niche' => sanitize_text_field($_POST['target_niche'])
-            ]);
+        if (strpos($hook, 'crp_') === false) {
+            return;
         }
-        
-        $links = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}crp_affiliate_links WHERE user_id = " . get_current_user_id());
-        
-        echo '<div class="wrap"><h1>Affiliate Links</h1>';
-        echo '<form method="POST"><div class="crp-form-group">';
-        wp_nonce_field('crp_affiliate_nonce');
-        echo '<label>Affiliate URL: <input type="url" name="affiliate_url" required></label>';
-        echo '<label>Display Text: <input type="text" name="display_text" required></label>';
-        echo '<label>Niche: <input type="text" name="target_niche"></label>';
-        echo '<button type="submit" name="crp_add_affiliate" class="button button-primary">Add Link</button>';
-        echo '</div></form>';
-        
-        echo '<table class="wp-list-table widefat"><thead><tr><th>URL</th><th>Text</th><th>Clicks</th><th>Revenue</th></tr></thead><tbody>';
-        foreach ($links as $link) {
-            echo '<tr><td>' . esc_url($link->affiliate_url) . '</td><td>' . esc_html($link->display_text) . '</td><td>' . $link->clicks . '</td><td>$' . number_format($link->revenue, 2) . '</td></tr>';
-        }
-        echo '</tbody></table></div>';
+        wp_enqueue_style('crp-admin-css', CRP_PLUGIN_URL . 'admin/css/style.css', array(), CRP_VERSION);
+        wp_enqueue_script('crp-admin-js', CRP_PLUGIN_URL . 'admin/js/script.js', array('jquery'), CRP_VERSION, true);
+        wp_localize_script('crp-admin-js', 'crpAdmin', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('crp_nonce')
+        ));
     }
 
-    public function sponsored_page() {
+    public function enqueue_frontend_assets() {
+        wp_enqueue_style('crp-frontend-css', CRP_PLUGIN_URL . 'frontend/css/style.css', array(), CRP_VERSION);
+        wp_enqueue_script('crp-frontend-js', CRP_PLUGIN_URL . 'frontend/js/script.js', array('jquery'), CRP_VERSION, true);
+    }
+
+    public function register_rest_routes() {
+        register_rest_route('crp/v1', '/affiliate-links', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'create_affiliate_link'),
+            'permission_callback' => function() {
+                return current_user_can('manage_options');
+            }
+        ));
+        
+        register_rest_route('crp/v1', '/click-track', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'track_click'),
+            'permission_callback' => '__return_true'
+        ));
+    }
+
+    public function create_affiliate_link($request) {
+        $params = $request->get_json_params();
         global $wpdb;
         
-        if (isset($_POST['crp_add_sponsored'])) {
-            check_admin_referer('crp_sponsored_nonce');
-            $wpdb->insert($wpdb->prefix . 'crp_sponsored_posts', [
-                'post_id' => intval($_POST['post_id']),
-                'brand_name' => sanitize_text_field($_POST['brand_name']),
-                'payment_amount' => floatval($_POST['payment_amount']),
-                'disclosure_text' => sanitize_textarea_field($_POST['disclosure_text'])
-            ]);
+        $link_id = uniqid('crp_');
+        $short_slug = sanitize_title($params['program_name'] ?? 'link') . '_' . substr(md5($link_id), 0, 6);
+        
+        $inserted = $wpdb->insert(
+            $wpdb->prefix . 'crp_affiliate_links',
+            array(
+                'link_id' => $link_id,
+                'original_url' => esc_url_raw($params['url']),
+                'short_slug' => $short_slug,
+                'program_name' => sanitize_text_field($params['program_name']),
+                'commission_rate' => floatval($params['commission_rate'] ?? 0)
+            ),
+            array('%s', '%s', '%s', '%s', '%f')
+        );
+        
+        if ($inserted) {
+            return new WP_REST_Response(array(
+                'success' => true,
+                'link_id' => $link_id,
+                'short_slug' => $short_slug
+            ), 201);
         }
         
-        $sponsored = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}crp_sponsored_posts");
-        
-        echo '<div class="wrap"><h1>Sponsored Content</h1>';
-        echo '<form method="POST"><div class="crp-form-group">';
-        wp_nonce_field('crp_sponsored_nonce');
-        echo '<label>Post: <select name="post_id"><option>Select Post</option>';
-        $posts = get_posts(['numberposts' => -1]);
-        foreach ($posts as $post) {
-            echo '<option value="' . $post->ID . '">' . esc_html($post->post_title) . '</option>';
-        }
-        echo '</select></label>';
-        echo '<label>Brand Name: <input type="text" name="brand_name" required></label>';
-        echo '<label>Payment: <input type="number" name="payment_amount" step="0.01" required></label>';
-        echo '<label>Disclosure: <textarea name="disclosure_text"></textarea></label>';
-        echo '<button type="submit" name="crp_add_sponsored" class="button button-primary">Add Sponsored Post</button>';
-        echo '</div></form>';
-        
-        echo '<table class="wp-list-table widefat"><thead><tr><th>Brand</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
-        foreach ($sponsored as $item) {
-            echo '<tr><td>' . esc_html($item->brand_name) . '</td><td>$' . number_format($item->payment_amount, 2) . '</td><td>' . esc_html($item->status) . '</td></tr>';
-        }
-        echo '</tbody></table></div>';
+        return new WP_REST_Response(array('success' => false), 400);
     }
 
-    public function analytics_page() {
+    public function track_click($request) {
         global $wpdb;
-        $clicks = $wpdb->get_results("SELECT DATE(click_time) as date, COUNT(*) as count FROM {$wpdb->prefix}crp_click_tracking GROUP BY DATE(click_time) ORDER BY date DESC LIMIT 30");
+        $params = $request->get_json_params();
+        $link_id = sanitize_text_field($params['link_id']);
         
-        echo '<div class="wrap"><h1>Analytics</h1>';
-        echo '<h3>Recent Clicks (Last 30 Days)</h3>';
-        echo '<table class="wp-list-table widefat"><thead><tr><th>Date</th><th>Clicks</th></tr></thead><tbody>';
-        foreach ($clicks as $click) {
-            echo '<tr><td>' . esc_html($click->date) . '</td><td>' . $click->count . '</td></tr>';
+        $link = $wpdb->get_row($wpdb->prepare(
+            "SELECT original_url FROM {$wpdb->prefix}crp_affiliate_links WHERE link_id = %s",
+            $link_id
+        ));
+        
+        if ($link) {
+            $wpdb->insert(
+                $wpdb->prefix . 'crp_link_clicks',
+                array(
+                    'link_id' => $link_id,
+                    'user_id' => get_current_user_id(),
+                    'ip_address' => sanitize_text_field($_SERVER['REMOTE_ADDR']),
+                    'referrer' => sanitize_url($_SERVER['HTTP_REFERER'] ?? '')
+                ),
+                array('%s', '%d', '%s', '%s')
+            );
+            
+            return new WP_REST_Response(array(
+                'success' => true,
+                'redirect_url' => $link->original_url
+            ), 200);
         }
-        echo '</tbody></table></div>';
-    }
-
-    public function settings_page() {
-        echo '<div class="wrap"><h1>Settings</h1>';
-        echo '<form method="POST" action="options.php">';
-        settings_fields('crp_settings_group');
-        do_settings_sections('crp_settings_group');
-        submit_button();
-        echo '</form></div>';
-    }
-
-    public function inject_affiliate_links($content) {
-        if (is_admin()) return $content;
-        return $content;
+        
+        return new WP_REST_Response(array('success' => false), 404);
     }
 
     public function affiliate_link_shortcode($atts) {
-        global $wpdb;
-        $atts = shortcode_atts(['id' => 0], $atts, 'crp_affiliate_link');
-        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}crp_affiliate_links WHERE id = %d", $atts['id']));
+        $atts = shortcode_atts(array(
+            'id' => '',
+            'text' => 'Click here',
+            'class' => 'crp-affiliate-link'
+        ), $atts);
         
-        if (!$link) return '';
-        
-        return '<a href="javascript:void(0)" class="crp-affiliate-link" data-id="' . $link->id . '" onclick="crpTrackClick(this)">' . esc_html($link->display_text) . '</a>';
+        return sprintf(
+            '<a href="#" class="%s" data-link-id="%s">%s</a>',
+            esc_attr($atts['class']),
+            esc_attr($atts['id']),
+            esc_html($atts['text'])
+        );
     }
 
-    public function sponsored_block_shortcode($atts) {
-        global $wpdb;
-        $post_id = get_the_ID();
-        $sponsored = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}crp_sponsored_posts WHERE post_id = %d AND status = 'active'", $post_id));
+    public function gated_content_shortcode($atts, $content = '') {
+        $atts = shortcode_atts(array(
+            'level' => 'premium'
+        ), $atts);
         
-        if (!$sponsored) return '';
-        
-        return '<div class="crp-sponsored-block"><p class="crp-disclosure">' . esc_html($sponsored->disclosure_text) . '</p><p class="crp-brand">Sponsored by ' . esc_html($sponsored->brand_name) . '</p></div>';
-    }
-
-    public function track_affiliate_click() {
-        global $wpdb;
-        $affiliate_id = intval($_POST['affiliate_id']);
-        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}crp_affiliate_links WHERE id = %d", $affiliate_id));
-        
-        if ($link) {
-            $wpdb->insert($wpdb->prefix . 'crp_click_tracking', [
-                'affiliate_id' => $affiliate_id,
-                'ip_address' => sanitize_text_field($_SERVER['REMOTE_ADDR']),
-                'user_agent' => sanitize_text_field($_SERVER['HTTP_USER_AGENT']),
-                'referrer' => sanitize_url($_POST['referrer'] ?? '')
-            ]);
-            $wpdb->update($wpdb->prefix . 'crp_affiliate_links', ['clicks' => $link->clicks + 1], ['id' => $affiliate_id]);
-            wp_redirect($link->affiliate_url);
-            exit;
+        if (!is_user_logged_in()) {
+            return '<div class="crp-gated-message">Please <a href="' . esc_url(wp_login_url()) . '">log in</a> to view this content.</div>';
         }
-        wp_die('Invalid link');
+        
+        return do_shortcode($content);
+    }
+
+    public function sponsored_badge_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'sponsor' => 'Sponsored',
+            'url' => ''
+        ), $atts);
+        
+        $badge = '<span class="crp-sponsored-badge">';
+        if (!empty($atts['url'])) {
+            $badge .= '<a href="' . esc_url($atts['url']) . '" target="_blank">';
+        }
+        $badge .= esc_html($atts['sponsor']);
+        if (!empty($atts['url'])) {
+            $badge .= '</a>';
+        }
+        $badge .= '</span>';
+        
+        return $badge;
+    }
+
+    public function render_dashboard() {
+        global $wpdb;
+        $total_clicks = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}crp_link_clicks");
+        $total_links = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}crp_affiliate_links");
+        
+        echo '<div class="wrap">';
+        echo '<h1>ContentRevenue Pro Dashboard</h1>';
+        echo '<div class="crp-dashboard-stats">';
+        echo '<div class="stat-box"><h3>Total Affiliate Links</h3><p>' . intval($total_links) . '</p></div>';
+        echo '<div class="stat-box"><h3>Total Clicks</h3><p>' . intval($total_clicks) . '</p></div>';
+        echo '</div>';
+        echo '</div>';
+    }
+
+    public function render_affiliate_links() {
+        echo '<div class="wrap">';
+        echo '<h1>Manage Affiliate Links</h1>';
+        echo '<button class="button button-primary" id="crp-add-link">Add New Link</button>';
+        echo '<table class="wp-list-table widefat striped" id="crp-links-table"><thead><tr><th>Program</th><th>Short Slug</th><th>Commission</th><th>Clicks</th><th>Actions</th></tr></thead><tbody></tbody></table>';
+        echo '</div>';
+    }
+
+    public function render_gated_content() {
+        echo '<div class="wrap">';
+        echo '<h1>Gated Content Manager</h1>';
+        echo '<p>Select posts to gate behind membership levels.</p>';
+        echo '<div id="crp-gated-selector"></div>';
+        echo '</div>';
+    }
+
+    public function render_analytics() {
+        global $wpdb;
+        $clicks_data = $wpdb->get_results("SELECT DATE(clicked_at) as date, COUNT(*) as count FROM {$wpdb->prefix}crp_link_clicks GROUP BY DATE(clicked_at) ORDER BY date DESC LIMIT 30");
+        
+        echo '<div class="wrap">';
+        echo '<h1>Analytics</h1>';
+        echo '<div id="crp-analytics-chart"></div>';
+        echo '<table class="wp-list-table widefat striped"><thead><tr><th>Date</th><th>Clicks</th></tr></thead><tbody>';
+        foreach ($clicks_data as $row) {
+            echo '<tr><td>' . esc_html($row->date) . '</td><td>' . intval($row->count) . '</td></tr>';
+        }
+        echo '</tbody></table>';
+        echo '</div>';
     }
 }
 
 ContentRevenuePro::get_instance();
-
-// Activation hook for plugin initialization
-if (!function_exists('crp_init_plugin')) {
-    function crp_init_plugin() {
-        do_action('crp_loaded');
-    }
-    add_action('plugins_loaded', 'crp_init_plugin');
-}
 ?>
