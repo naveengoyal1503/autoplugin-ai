@@ -1,30 +1,24 @@
 # WP Revenue Booster
 
-Maximize your WordPress site's revenue by intelligently rotating monetization methods based on visitor behavior and content context.
+Boost your WordPress site's revenue with smart ad, affiliate, and sponsored content optimization.
 
 ## Features
-- Rotate ads, affiliate links, donation buttons, and membership offers.
-- Assign weights to each method for controlled rotation.
-- Easy-to-use admin interface for managing monetization methods.
-- Lightweight and compatible with any theme.
+- Automatically injects ad code, affiliate links, and sponsored content into your site.
+- Simple admin interface for managing all monetization elements.
+- Lightweight and easy to use.
 
 ## Installation
-1. Upload the `wp-revenue-booster` folder to the `/wp-content/plugins/` directory.
+1. Upload the `wp-revenue-booster.php` file to your WordPress plugins directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to Settings > Revenue Booster to configure your monetization methods.
+3. Go to the 'Revenue Booster' menu in your admin panel to configure your ad code, affiliate links, and sponsored content.
 
 ## Setup
-- Add monetization methods (ad, affiliate, donation, membership) in the admin panel.
-- Assign a weight to each method to control its display frequency.
-- Save your settings.
+- Enter your ad code (e.g., Google AdSense) in the Ad Code field.
+- Add your affiliate link in the Affiliate Link field.
+- Paste your sponsored content in the Sponsored Content field.
 
 ## Usage
-- The plugin will automatically display a monetization method on your site's front end based on the configured weights.
-- Customize the content and labels for each method as needed.
+Once configured, the plugin will automatically display your monetization elements on your site. Customize the placement and content as needed.
 
 ## Support
-For support or feature requests, visit our website or contact the developer.
-
----
-
-**Note:** This is a basic version. Premium features include advanced analytics, behavioral targeting, and integration with popular ad networks.
+For support and feature requests, visit our website or contact us directly.
