@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP Revenue Tracker
-Description: Track and visualize revenue from affiliate links, ads, digital sales, and memberships.
+Description: Track and visualize revenue from ads, affiliate links, and digital product sales.
 Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Tracker.php
@@ -24,16 +24,18 @@ class WP_Revenue_Tracker {
             'wp-revenue-tracker',
             array($this, 'render_dashboard'),
             'dashicons-chart-bar',
-            6
+            20
         );
     }
 
     public function enqueue_scripts($hook) {
         if ($hook !== 'toplevel_page_wp-revenue-tracker') return;
+        wp_enqueue_script('jquery');
         wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
-        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'assets/js/script.js', array('jquery'), '1.0', true);
-        wp_localize_script('wp-revenue-tracker-js', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
-        wp_enqueue_style('wp-revenue-tracker-css', plugin_dir_url(__FILE__) . 'assets/css/style.css', array(), '1.0');
+        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'js/tracker.js', array('jquery', 'chart-js'), '1.0', true);
+        wp_localize_script('wp-revenue-tracker-js', 'wp_revenue_tracker_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php')
+        ));
     }
 
     public function render_dashboard() {
@@ -41,49 +43,36 @@ class WP_Revenue_Tracker {
         <div class="wrap">
             <h1>WP Revenue Tracker</h1>
             <div id="revenue-form">
-                <h2>Add Revenue Entry</h2>
-                <form id="revenue-entry-form">
-                    <label>Source: <select name="source">
-                        <option value="affiliate">Affiliate</option>
+                <label>Revenue Type: 
+                    <select id="revenue-type">
                         <option value="ads">Ads</option>
-                        <option value="digital_sales">Digital Sales</option>
-                        <option value="memberships">Memberships</option>
-                    </select></label>
-                    <label>Amount: <input type="number" name="amount" step="0.01" required></label>
-                    <label>Date: <input type="date" name="date" required></label>
-                    <button type="submit">Add Entry</button>
-                </form>
+                        <option value="affiliate">Affiliate</option>
+                        <option value="digital_product">Digital Product</option>
+                    </select>
+                </label>
+                <label>Amount: <input type="number" id="revenue-amount" step="0.01" /></label>
+                <label>Date: <input type="date" id="revenue-date" /></label>
+                <button id="save-revenue">Add Revenue</button>
             </div>
-            <div id="revenue-chart-container">
-                <canvas id="revenue-chart"></canvas>
-            </div>
-            <div id="revenue-table-container">
-                <table id="revenue-table">
-                    <thead><tr><th>Date</th><th>Source</th><th>Amount</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+            <canvas id="revenue-chart" width="400" height="200"></canvas>
         </div>
         <?php
     }
 
     public function save_revenue_data() {
-        check_ajax_referer('revenue_nonce', 'nonce');
-        $source = sanitize_text_field($_POST['source']);
+        $type = sanitize_text_field($_POST['type']);
         $amount = floatval($_POST['amount']);
         $date = sanitize_text_field($_POST['date']);
-        $data = get_option('wp_revenue_data', array());
-        $data[] = array('source' => $source, 'amount' => $amount, 'date' => $date);
-        update_option('wp_revenue_data', $data);
+        $data = get_option('wp_revenue_tracker_data', array());
+        $data[] = array('type' => $type, 'amount' => $amount, 'date' => $date);
+        update_option('wp_revenue_tracker_data', $data);
         wp_die();
     }
 
     public function get_revenue_data() {
-        check_ajax_referer('revenue_nonce', 'nonce');
-        $data = get_option('wp_revenue_data', array());
+        $data = get_option('wp_revenue_tracker_data', array());
         wp_send_json($data);
     }
 }
 
 new WP_Revenue_Tracker();
-?>
