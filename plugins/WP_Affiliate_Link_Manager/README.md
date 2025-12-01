@@ -1,25 +1,25 @@
 # WP Affiliate Link Manager
 
-Manage, track, and optimize your affiliate links directly from your WordPress dashboard.
+Automatically convert keywords into affiliate links and manage all links from a single dashboard.
 
 ## Features
-- Add, edit, and remove affiliate links
-- Cloak affiliate URLs for cleaner links
-- Track clicks (basic)
-- Shortcode support for easy insertion
+- Auto-convert keywords in posts to affiliate links
+- Manage all affiliate links in one admin dashboard
+- Bulk add and edit affiliate links
+- Shortcode support for manual linking
 
 ## Installation
 1. Upload the plugin folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to the new 'Affiliate Links' menu to start managing your links
+3. Go to 'Affiliate Links' in the admin menu to manage your links
 
 ## Setup
-- Add your affiliate links with a name, URL, and slug
-- Use the shortcode `[aff_link slug="your-slug"]` in posts or pages
+1. In the 'Affiliate Links' admin page, enter keywords and their corresponding affiliate URLs
+2. Save your changes
 
 ## Usage
-- Insert the shortcode where you want the affiliate link to appear
-- Monitor clicks (basic tracking included; advanced analytics in premium version)
+- All keywords entered in the dashboard will be automatically converted to affiliate links in your posts
+- Use the shortcode `[wpaflm keyword="your keyword" url="your affiliate url"]` for manual linking
 
 ## Support
-For support, visit our website or contact us directly.
+For support, please contact us at support@example.com
