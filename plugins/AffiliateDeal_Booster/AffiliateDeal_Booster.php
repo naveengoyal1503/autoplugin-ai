@@ -5,159 +5,81 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: AffiliateDeal Booster
- * Description: Automatically fetch and display affiliate deals, coupons, and flash sales to increase commissions.
+ * Plugin URI: https://example.com/affiliate-deal-booster
+ * Description: Dynamically generates personalized affiliate coupon deals and discount notifications to boost affiliate conversions.
  * Version: 1.0
- * Author: OpenAI Assistant
- * License: GPLv2 or later
+ * Author: Your Name
+ * License: GPL2
  */
 
-if (!defined('ABSPATH')) { exit; } // Exit if accessed directly
+if (!defined('ABSPATH')) exit;
 
 class AffiliateDealBooster {
-    private $plugin_slug = 'affiliate-deal-booster';
-    private $option_name = 'adb_deals_cache';
+    private $cookie_name = 'adb_user_affiliates';
+    private $deals = array(
+        array('id' => 'amazon', 'name' => 'Amazon', 'coupon' => 'SAVE10', 'url' => 'https://amazon.com/?tag=youraffiliateid'),
+        array('id' => 'ebay', 'name' => 'eBay', 'coupon' => 'EBAY20', 'url' => 'https://ebay.com/?campid=youraffiliateid'),
+        array('id' => 'flipkart', 'name' => 'Flipkart', 'coupon' => 'FLIP25', 'url' => 'https://flipkart.com/?affid=youraffiliateid')
+    );
 
     public function __construct() {
-        add_shortcode('affiliate_deals', array($this, 'render_deals'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-        add_action('adb_cron_fetch_deals', array($this, 'fetch_and_cache_deals'));
-
-        // Schedule cron if not scheduled
-        if (!wp_next_scheduled('adb_cron_fetch_deals')) {
-            wp_schedule_event(time(), 'hourly', 'adb_cron_fetch_deals');
-        }
+        add_action('wp_footer', array($this, 'inject_deal_notification'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_adb_track_click', array($this, 'track_click')); 
+        add_action('wp_ajax_nopriv_adb_track_click', array($this, 'track_click'));
     }
 
-    public function admin_menu() {
-        add_options_page('AffiliateDeal Booster Settings', 'AffiliateDeal Booster', 'manage_options', $this->plugin_slug, array($this, 'settings_page'));
-    }
-
-    public function settings_init() {
-        register_setting($this->plugin_slug, 'adb_settings');
-
-        add_settings_section('adb_section_main', 'API & Settings', null, $this->plugin_slug);
-
-        add_settings_field(
-            'adb_field_affiliate_networks',
-            'Affiliate Network API Endpoints (JSON URLs)',
-            array($this, 'field_affiliate_networks_render'),
-            $this->plugin_slug,
-            'adb_section_main'
-        );
-    }
-
-    public function field_affiliate_networks_render() {
-        $options = get_option('adb_settings');
-        $value = isset($options['affiliate_networks']) ? esc_textarea($options['affiliate_networks']) : '';
-        echo '<textarea name="adb_settings[affiliate_networks]" rows="5" style="width:100%;" placeholder="Enter one API JSON URL per line">' . $value . '</textarea>';
-        echo '<p class="description">Enter one URL per line. Each URL should return deals in JSON format with fields: title, link, discount, expire_date.</p>';
-    }
-
-    public function settings_page() {
-        ?>
-        <div class="wrap">
-            <h1>AffiliateDeal Booster Settings</h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields($this->plugin_slug);
-                do_settings_sections($this->plugin_slug);
-                submit_button();
-                ?>
-            </form>
-            <h2>Manual Fetch</h2>
-            <form method="post">
-                <input type="hidden" name="adb_fetch_now" value="1">
-                <?php submit_button('Fetch Deals Now'); ?>
-            </form>
-        </div>
-        <?php
-
-        if (!empty($_POST['adb_fetch_now']) && current_user_can('manage_options')) {
-            $this->fetch_and_cache_deals(true);
-            echo '<div class="updated notice"><p>Deals fetched successfully.</p></div>';
-        }
-    }
-
-    public function fetch_and_cache_deals($manual = false) {
-        if (!$manual && !wp_doing_cron()) {
-            return;
-        }
-
-        $options = get_option('adb_settings');
-        if (empty($options['affiliate_networks'])) {
-            return;
-        }
-
-        $urls = array_filter(array_map('trim', explode("\n", $options['affiliate_networks'])));
-        $deals = [];
-
-        foreach ($urls as $url) {
-            $response = wp_remote_get($url, ['timeout' => 10]);
-            if (is_wp_error($response)) {
-                continue;
+    public function enqueue_scripts() {
+        wp_enqueue_script('adb-main-js', plugin_dir_url(__FILE__) . 'adb-main.js', array('jquery'), '1.0', true);
+        wp_localize_script('adb-main-js', 'adb_ajax_obj', array('ajax_url' => admin_url('admin-ajax.php')));
+        wp_add_inline_script('adb-main-js', 'var adb_deals = ' . json_encode($this->deals) . ';');
+        wp_add_inline_script('adb-main-js', '(function(){
+          jQuery(document).ready(function($){
+            // Show deal notification randomly
+            if(Math.random() < 0.5) {
+              var deal = adb_deals[Math.floor(Math.random() * adb_deals.length)];
+              var html = `<div id="adb-notification" style="position:fixed;bottom:20px;right:20px;background:#0085ba;color:#fff;padding:15px;border-radius:5px;box-shadow:0 0 10px rgba(0,0,0,0.3);z-index:9999;max-width:320px;font-family:sans-serif;">
+                <strong>Special Offer!</strong><br />Use coupon <strong>${deal.coupon}</strong> on <a href="#" id="adb-link" style="color:#fff;text-decoration:underline;">${deal.name}</a> and save now!
+              </div>`;
+              $('body').append(html);
+              $('#adb-link').attr('href', deal.url).on('click', function(e){
+                e.preventDefault();
+                $.post(adb_ajax_obj.ajax_url, {action:'adb_track_click', deal_id: deal.id}, function() {
+                  window.open(deal.url, '_blank');
+                  $('#adb-notification').fadeOut(400, function(){ $(this).remove(); });
+                });
+              });
             }
-
-            $body = wp_remote_retrieve_body($response);
-            $data = json_decode($body, true);
-            if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
-                continue;
-            }
-
-            foreach ($data as $deal) {
-                if (!empty($deal['title']) && !empty($deal['link'])) {
-                    $deals[] = [
-                        'title' => sanitize_text_field($deal['title']),
-                        'link' => esc_url_raw($deal['link']),
-                        'discount' => !empty($deal['discount']) ? sanitize_text_field($deal['discount']) : '',
-                        'expire_date' => !empty($deal['expire_date']) ? sanitize_text_field($deal['expire_date']) : '',
-                    ];
-                }
-            }
-        }
-
-        update_option($this->option_name, $deals);
+          });
+        })();');
     }
 
-    public function render_deals() {
-        $deals = get_option($this->option_name, []);
-        if (empty($deals)) {
-            return '<p>No affiliate deals available at the moment.</p>';
-        }
-
-        $output = '<ul class="adb-deal-list" style="list-style:none;padding-left:0;">';
-
-        $now = current_time('Y-m-d');
-        foreach ($deals as $deal) {
-            // Skip expired deals if expire_date is set
-            if (!empty($deal['expire_date']) && $deal['expire_date'] < $now) {
-                continue;
-            }
-            $title = esc_html($deal['title']);
-            $link = esc_url($deal['link']);
-            $discount = !empty($deal['discount']) ? esc_html($deal['discount']) : '';
-            $expiry = !empty($deal['expire_date']) ? esc_html($deal['expire_date']) : '';
-
-            $output .= '<li style="margin-bottom:1em;">';
-            $output .= '<a href="' . $link . '" target="_blank" rel="nofollow noopener noreferrer" style="font-weight:bold;color:#0073aa;">' . $title . '</a>';
-            if ($discount) {
-                $output .= ' - <span style="color:#d54e21;">' . $discount . '</span>';
-            }
-            if ($expiry) {
-                $output .= ' <small style="color:#666;">(Expires: ' . $expiry . ')</small>';
-            }
-            $output .= '</li>';
-        }
-
-        $output .= '</ul>';
-        return $output;
+    public function inject_deal_notification() {
+        // Inline script done in enqueue_scripts for async
     }
 
-    public function deactivate() {
-        wp_clear_scheduled_hook('adb_cron_fetch_deals');
+    public function track_click() {
+        $deal_id = sanitize_text_field($_POST['deal_id'] ?? '');
+        if ($deal_id && in_array($deal_id, array_column($this->deals, 'id'))) {
+            // For demo purposes log clicks in option; in production, integrate with analytics or affiliate tracking
+            $clicks = get_option('adb_clicks', array());
+            if (!isset($clicks[$deal_id])) $clicks[$deal_id] = 0;
+            $clicks[$deal_id]++;
+            update_option('adb_clicks', $clicks);
+            wp_send_json_success();
+        } else {
+            wp_send_json_error();
+        }
     }
 }
 
-$affiliateDealBooster = new AffiliateDealBooster();
+new AffiliateDealBooster();
 
-register_deactivation_hook(__FILE__, array($affiliateDealBooster, 'deactivate'));
+// Embedding JavaScript file content inline for single-file plugin compatibility
+add_action('wp_print_footer_scripts', function() {
+?>
+<script type="text/javascript">
+// Script content is added inline dynamically by wp_add_inline_script in enqueue_scripts
+</script>
+<?php
+});
