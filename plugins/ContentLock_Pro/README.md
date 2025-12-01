@@ -1,86 +1,82 @@
 # ContentLock Pro
 
-A powerful WordPress plugin for monetizing content through flexible gating, membership tiers, and subscription management.
+A powerful WordPress plugin for monetizing content through paywalls, membership tiers, and subscription-based access.
 
 ## Features
 
-- **Flexible Content Gating**: Lock any post or page behind membership, email capture, or payment walls
-- **Multiple Monetization Models**: Support for memberships, subscriptions, one-time payments, and email capture
-- **Payment Gateway Integration**: Built-in support for Stripe and PayPal
-- **Membership Tiers**: Create multiple subscription levels with different access permissions
-- **Shortcode Support**: Easy implementation with `[contentlock]` shortcode
-- **User-Friendly Dashboard**: Comprehensive admin interface for managing locked content
-- **Analytics**: Track engagement and revenue from locked content
-- **Email Integration**: Capture emails and sync with popular email marketing platforms
+- **Easy Content Locking**: Lock any post or page with a single click
+- **Multiple Lock Types**: Support for login-required and paid content
+- **Flexible Pricing**: Set custom prices for individual content pieces
+- **Subscription Support**: Enable recurring revenue through subscription tiers
+- **User Access Management**: Track and manage who has access to paid content
+- **Revenue Dashboard**: Monitor locked content and revenue potential
+- **AJAX-Powered**: Seamless unlocking experience without page reloads
+- **Freemium Model**: Free tier with limited locks; premium tier for unlimited access
 
 ## Installation
 
-1. Download the ContentLock Pro plugin
-2. Upload to `/wp-content/plugins/` directory
-3. Activate the plugin through WordPress admin panel
-4. Navigate to ContentLock Pro settings to configure
+1. Download the plugin files
+2. Upload the `contentlock-pro` folder to `/wp-content/plugins/`
+3. Activate the plugin through the 'Plugins' menu in WordPress
+4. Navigate to ContentLock Pro > Settings to configure basic options
 
 ## Setup
 
-### Payment Gateway Configuration
+1. **Initial Configuration**
+   - Go to ContentLock Pro > Settings
+   - Select your preferred currency (USD, EUR, GBP, etc.)
+   - Choose payment method (Stripe or PayPal)
+   - Enable subscriptions if desired
 
-1. Go to **ContentLock Pro > Settings**
-2. Enter your Stripe API Key (get from https://stripe.com)
-3. Enter your PayPal Business ID (get from https://paypal.com)
-4. Save settings
+2. **Create Locks**
+   - Go to ContentLock Pro > Manage Locks
+   - Click "New Lock" for any post or page
+   - Choose lock type: Login Required or Paid
+   - For paid content, enter the price
+   - Set subscription tier if applicable
 
-### Setting Default Lock Message
-
-In the Settings page, customize the default message shown when users encounter locked content. This message appears before the unlock button.
+3. **Payment Integration**
+   - Add your Stripe or PayPal credentials in Settings
+   - Configure webhook URLs for transaction notifications
+   - Set up email notifications for successful purchases
 
 ## Usage
 
-### Lock Entire Posts/Pages
+### For Site Owners
 
-1. Edit any post or page
-2. Use the ContentLock Pro metabox
-3. Select lock type (Email, Membership, Payment)
-4. Configure lock settings
-5. Publish
+- **Dashboard**: View statistics on locked content, total potential revenue, and unlock rates
+- **Manage Locks**: See all locked content, pricing, and access history
+- **User Access**: Manually grant or revoke access to paid content
+- **Reports**: Generate revenue reports by content type or time period
 
-### Use ContentLock Shortcode
+### For Visitors
 
-Add the shortcode to any post or page:
+- **Preview Content**: See a preview (first 50 words) of locked content
+- **Purchase Access**: Click "Unlock Now" to access paid content
+- **Subscriptions**: Subscribe to premium tiers for recurring access
+- **Account Dashboard**: Manage purchased content and subscription status
 
+## Monetization Methods
 
-[contentlock type="email" price="4.99" message="Subscribe to read the full article"]
+- **Per-Post Pricing**: Charge individually for valuable content
+- **Subscription Tiers**: Create tiered subscriptions (Basic, Premium, VIP)
+- **Freemium Model**: Offer limited free content with premium upgrades
+- **Membership Communities**: Build loyal communities with exclusive content
 
+## Frequently Asked Questions
 
-**Shortcode Parameters:**
-- `type`: Lock type (email, subscription, payment)
-- `price`: Price for one-time payment
-- `message`: Custom message for users
+**Q: Can I offer both free and paid content?**
+A: Yes. Only lock the content you want to monetize; other posts remain free.
 
-### Create Membership Tiers
+**Q: What payment methods are supported?**
+A: Stripe and PayPal are supported. Cryptocurrency payment coming in v2.0.
 
-1. Navigate to ContentLock Pro Dashboard
-2. Click "Membership Tiers"
-3. Create tier with name, price, and permissions
-4. Assign content to tiers
+**Q: Can users get refunds?**
+A: Refund policies can be configured per lock or globally in settings.
 
-## Monetization Models Supported
-
-- **Email Capture**: Collect emails in exchange for content
-- **One-Time Payment**: Charge per article or content piece
-- **Monthly Subscriptions**: Recurring revenue from members
-- **Tiered Memberships**: Basic, Standard, Premium access levels
-- **Sponsored Content**: Partner content from brands
-
-## Requirements
-
-- WordPress 5.0 or higher
-- PHP 7.4 or higher
-- MySQL 5.6 or higher
+**Q: Is there a free version?**
+A: Yes! The free tier allows up to 5 locked posts. Premium tier ($9.99/month) unlocks unlimited content.
 
 ## Support
 
-For support, documentation, and updates, visit https://contentlockpro.com
-
-## License
-
-GPL v2 or later
+For help, visit our website or email support@contentlockpro.com
