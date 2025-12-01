@@ -1,134 +1,152 @@
-<?php
 /*
-Plugin Name: Affiliate Deal Booster
-Plugin URI: https://example.com/affiliate-deal-booster
-Description: Automatically finds, verifies, and highlights affiliate coupons and deals in your posts to boost affiliate sales.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Affiliate_Deal_Booster.php
-License: GPL2
 */
+<?php
+/**
+ * Plugin Name: Affiliate Deal Booster
+ * Description: Generates and displays exclusive coupon codes for affiliate products to boost conversions and earnings.
+ * Version: 1.0
+ * Author: YourName
+ * License: GPLv2 or later
+ */
 
-// Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
 }
 
 class AffiliateDealBooster {
+    private $option_name = 'adb_coupons_data';
+
     public function __construct() {
-        add_filter('the_content', [$this, 'insert_affiliate_deals']);
-        add_action('admin_menu', [$this, 'add_admin_page']);
-        add_action('admin_init', [$this, 'register_settings']);
+        add_action('admin_menu', array($this, 'create_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+        add_shortcode('affiliate_deal_booster', array($this, 'display_coupon_shortcode'));
     }
 
-    // Insert deals block at the end of post content
-    public function insert_affiliate_deals($content) {
-        if (is_single()) {
-            $deals_html = $this->get_affiliate_deals_html(get_the_ID());
-            $content .= $deals_html;
-        }
-        return $content;
-    }
-
-    // Stub function for fetching deals - In free version, static demo data
-    private function get_affiliate_deals_html($post_id) {
-        $deals = get_post_meta($post_id, '_adb_deals', true);
-        if (!$deals || empty($deals)) {
-            // default demo deals
-            $deals = [
-                [
-                    'title' => 'Save 20% on Product A',
-                    'url' => 'https://affiliate.example.com/product-a?ref=123',
-                    'expires' => '2025-12-31'
-                ],
-                [
-                    'title' => 'Get $10 off your order',
-                    'url' => 'https://affiliate.example.com/offer?ref=123',
-                    'expires' => '2025-11-30'
-                ]
-            ];
-        }
-
-        $html = '<div class="adb-deals" style="border:1px solid #ccc;padding:15px;margin-top:30px;background:#f9f9f9;">';
-        $html .= '<h3>Exclusive Affiliate Deals:</h3><ul style="list-style-type:disc;margin-left:20px;">';
-        foreach ($deals as $deal) {
-            if (strtotime($deal['expires']) >= time()) {
-                $html .= '<li><a href="' . esc_url($deal['url']) . '" target="_blank" rel="nofollow noopener">' . esc_html($deal['title']) . '</a> (Expires: ' . esc_html($deal['expires']) . ')</li>';
-            }
-        }
-        $html .= '</ul></div>';
-        return $html;
-    }
-
-    // Add settings page
-    public function add_admin_page() {
-        add_options_page(
-            'Affiliate Deal Booster Settings',
+    public function create_admin_menu() {
+        add_menu_page(
             'Affiliate Deal Booster',
+            'Affiliate Deals',
             'manage_options',
             'affiliate-deal-booster',
-            [$this, 'settings_page_html']
+            array($this, 'admin_page'),
+            'dashicons-tickets'
         );
     }
 
-    // Register settings
     public function register_settings() {
-        register_setting('adb_settings_group', 'adb_deals_json', [
-            'sanitize_callback' => [$this, 'sanitize_deals_json']
-        ]);
-        add_settings_section('adb_main_section', 'Affiliate Deals Settings', null, 'affiliate-deal-booster');
-        add_settings_field('adb_deals_field', 'Affiliate Deals (JSON)', [$this, 'deals_field_html'], 'affiliate-deal-booster', 'adb_main_section');
+        register_setting('adb_options_group', $this->option_name);
     }
 
-    // Sanitize JSON input for deals
-    public function sanitize_deals_json($input) {
-        $decoded = json_decode($input, true);
-        if (!is_array($decoded)) {
-            add_settings_error('adb_deals_json', 'invalid_json', 'Invalid JSON format for affiliate deals.');
-            return get_option('adb_deals_json');
+    public function admin_page() {
+        // Save coupon if posted
+        if (isset($_POST['adb_submit']) && check_admin_referer('adb_save_coupon')) {
+            $coupons = get_option($this->option_name, array());
+            $new_coupon = array(
+                'id' => time(),
+                'title' => sanitize_text_field($_POST['adb_title']),
+                'code' => sanitize_text_field($_POST['adb_code']),
+                'description' => sanitize_textarea_field($_POST['adb_description']),
+                'url' => esc_url_raw($_POST['adb_url'])
+            );
+            $coupons[] = $new_coupon;
+            update_option($this->option_name, $coupons);
+            echo '<div class="updated"><p>Coupon added successfully.</p></div>';
         }
-        update_post_meta_for_all_posts('_adb_deals', $decoded);
-        return $input;
-    }
 
-    // Display the textarea field in admin
-    public function deals_field_html() {
-        $val = esc_textarea(get_option('adb_deals_json', ''));
-        echo '<textarea name="adb_deals_json" rows="10" cols="50" placeholder="[{\"title\":\"Deal title\", \"url\":\"https://example.com\", \"expires\":\"YYYY-MM-DD\"}]">' . $val . '</textarea>';
-        echo '<p class="description">Enter deals JSON array. Example: [
-{"title":"Get 30% off","url":"https://affiliate.link","expires":"2025-12-31"} ]</p>';
-    }
-
-    // Render admin settings page
-    public function settings_page_html() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
+        $coupons = get_option($this->option_name, array());
         ?>
         <div class="wrap">
-            <h1>Affiliate Deal Booster Settings</h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('adb_settings_group');
-                do_settings_sections('affiliate-deal-booster');
-                submit_button();
-                ?>
+            <h1>Affiliate Deal Booster</h1>
+            <form method="post" action="">
+                <?php wp_nonce_field('adb_save_coupon'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th><label for="adb_title">Coupon Title</label></th>
+                        <td><input type="text" id="adb_title" name="adb_title" class="regular-text" required></td>
+                    </tr>
+                    <tr>
+                        <th><label for="adb_code">Coupon Code</label></th>
+                        <td><input type="text" id="adb_code" name="adb_code" class="regular-text" required></td>
+                    </tr>
+                    <tr>
+                        <th><label for="adb_description">Description</label></th>
+                        <td><textarea id="adb_description" name="adb_description" rows="4" cols="50" required></textarea></td>
+                    </tr>
+                    <tr>
+                        <th><label for="adb_url">Affiliate URL</label></th>
+                        <td><input type="url" id="adb_url" name="adb_url" class="regular-text" placeholder="https://" required></td>
+                    </tr>
+                </table>
+                <p><input type="submit" name="adb_submit" class="button button-primary" value="Add Coupon"></p>
             </form>
+
+            <h2>Existing Coupons</h2>
+            <table class="widefat">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Affiliate URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if (!empty($coupons)) {
+                        foreach ($coupons as $coupon) {
+                            echo '<tr>' .
+                                '<td>' . esc_html($coupon['title']) . '</td>' .
+                                '<td><strong>' . esc_html($coupon['code']) . '</strong></td>' .
+                                '<td>' . esc_html($coupon['description']) . '</td>' .
+                                '<td><a href="' . esc_url($coupon['url']) . '" target="_blank" rel="nofollow noopener">Link</a></td>' .
+                                '</tr>';
+                        }
+                    } else {
+                        echo '<tr><td colspan="4">No coupons added yet.</td></tr>';
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
         <?php
     }
-}
 
-// Helper to update deals meta for all posts
-function update_post_meta_for_all_posts($meta_key, $deals_array) {
-    $args = [
-        'post_type' => 'post',
-        'post_status' => 'publish',
-        'numberposts' => -1
-    ];
-    $posts = get_posts($args);
-    foreach ($posts as $post) {
-        update_post_meta($post->ID, $meta_key, $deals_array);
+    public function display_coupon_shortcode($atts) {
+        $atts = shortcode_atts(array('id' => ''), $atts, 'affiliate_deal_booster');
+        $coupons = get_option($this->option_name, array());
+        if (empty($coupons)) {
+            return '<p>No coupons available.</p>';
+        }
+
+        $coupon = null;
+        if ($atts['id']) {
+            foreach ($coupons as $c) {
+                if ($c['id'] == intval($atts['id'])) {
+                    $coupon = $c;
+                    break;
+                }
+            }
+        } else {
+            // Pick a random coupon if id not specified
+            $coupon = $coupons[array_rand($coupons)];
+        }
+
+        if (!$coupon) {
+            return '<p>Coupon not found.</p>';
+        }
+
+        ob_start();
+        ?>
+        <div class="adb-coupon" style="border:1px solid #ddd;padding:10px;margin:10px 0;background:#f9f9f9;">
+            <h3 style="margin:0 0 5px 0;"><?php echo esc_html($coupon['title']); ?></h3>
+            <p style="margin:0 0 10px 0;"><?php echo esc_html($coupon['description']); ?></p>
+            <p style="font-weight:bold;font-size:1.2em;margin:0 0 10px 0;">Use Code: <span style="color:#d9534f;"><?php echo esc_html($coupon['code']); ?></span></p>
+            <p><a href="<?php echo esc_url($coupon['url']); ?>" target="_blank" rel="nofollow noopener" style="background:#0275d8;color:#fff;padding:8px 12px;text-decoration:none;border-radius:3px;">Shop Now</a></p>
+        </div>
+        <?php
+        return ob_get_clean();
     }
 }
 
