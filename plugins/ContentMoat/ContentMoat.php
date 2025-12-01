@@ -1,269 +1,351 @@
-<?php
 /*
-Plugin Name: ContentMoat
-Plugin URI: https://contentmoat.local
-Description: Create exclusive subscriber-only content and manage tiered memberships with recurring payments
-Version: 1.0.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=ContentMoat.php
-License: GPL v2 or later
-Text Domain: contentmoat
 */
+<?php
+/**
+ * Plugin Name: ContentMoat
+ * Plugin URI: https://contentmoat.io
+ * Description: Convert blog posts into multiple content formats and manage monetization across channels
+ * Version: 1.0.0
+ * Author: ContentMoat Team
+ * License: GPL2
+ */
 
 if (!defined('ABSPATH')) exit;
 
 define('CONTENTMOAT_VERSION', '1.0.0');
-define('CONTENTMOAT_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('CONTENTMOAT_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('CONTENTMOAT_PATH', plugin_dir_path(__FILE__));
+define('CONTENTMOAT_URL', plugin_dir_url(__FILE__));
 
 class ContentMoat {
+    private static $instance = null;
+    private $db_version = '1.0';
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
     public function __construct() {
-        add_action('init', [$this, 'register_post_type']);
-        add_action('init', [$this, 'register_taxonomy']);
-        add_action('admin_menu', [$this, 'add_admin_menu']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
-        add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
-        add_action('save_post_contentmoat', [$this, 'save_meta_boxes']);
-        add_filter('the_content', [$this, 'filter_exclusive_content']);
-        add_shortcode('contentmoat_login_form', [$this, 'render_login_form']);
-        add_shortcode('contentmoat_member_dashboard', [$this, 'render_member_dashboard']);
-        add_shortcode('contentmoat_subscription_plans', [$this, 'render_subscription_plans']);
-        add_action('wp_ajax_nopriv_cm_login', [$this, 'handle_login']);
-        add_action('wp_ajax_cm_cancel_subscription', [$this, 'handle_cancel_subscription']);
-        register_activation_hook(__FILE__, [$this, 'activate_plugin']);
-        register_deactivation_hook(__FILE__, [$this, 'deactivate_plugin']);
-    }
-
-    public function register_post_type() {
-        register_post_type('contentmoat', [
-            'labels' => ['name' => 'Exclusive Content', 'singular_name' => 'Exclusive Post'],
-            'public' => true,
-            'show_in_menu' => true,
-            'supports' => ['title', 'editor', 'excerpt', 'thumbnail'],
-            'menu_icon' => 'dashicons-lock',
-            'has_archive' => true,
-            'rewrite' => ['slug' => 'exclusive']
-        ]);
-    }
-
-    public function register_taxonomy() {
-        register_taxonomy('subscription_tier', 'contentmoat', [
-            'labels' => ['name' => 'Subscription Tiers'],
-            'public' => true,
-            'show_in_menu' => true
-        ]);
-    }
-
-    public function add_admin_menu() {
-        add_submenu_page('edit.php?post_type=contentmoat', 'Settings', 'Settings', 'manage_options', 'contentmoat-settings', [$this, 'render_settings_page']);
-        add_submenu_page('edit.php?post_type=contentmoat', 'Members', 'Members', 'manage_options', 'contentmoat-members', [$this, 'render_members_page']);
-        add_submenu_page('edit.php?post_type=contentmoat', 'Revenue', 'Revenue', 'manage_options', 'contentmoat-revenue', [$this, 'render_revenue_page']);
-    }
-
-    public function add_meta_boxes() {
-        add_meta_box('contentmoat_settings', 'ContentMoat Settings', [$this, 'render_meta_box'], 'contentmoat', 'normal');
-    }
-
-    public function render_meta_box($post) {
-        $is_exclusive = get_post_meta($post->ID, '_contentmoat_exclusive', true);
-        $required_tier = get_post_meta($post->ID, '_contentmoat_tier', true);
-        $tiers = get_terms(['taxonomy' => 'subscription_tier', 'hide_empty' => false]);
-        ?>
-        <label><input type="checkbox" name="contentmoat_exclusive" value="1" <?php checked($is_exclusive, 1); ?>> Make this content exclusive</label>
-        <div style="margin-top: 10px;">
-            <label>Required Tier: 
-            <select name="contentmoat_tier">
-                <option value="">-- None --</option>
-                <?php foreach ($tiers as $tier): ?>
-                    <option value="<?php echo $tier->term_id; ?>" <?php selected($required_tier, $tier->term_id); ?>><?php echo $tier->name; ?></option>
-                <?php endforeach; ?>
-            </select>
-            </label>
-        </div>
-        <?php
-    }
-
-    public function save_meta_boxes($post_id) {
-        if (isset($_POST['contentmoat_exclusive'])) {
-            update_post_meta($post_id, '_contentmoat_exclusive', 1);
-        } else {
-            update_post_meta($post_id, '_contentmoat_exclusive', 0);
-        }
-        if (isset($_POST['contentmoat_tier'])) {
-            update_post_meta($post_id, '_contentmoat_tier', $_POST['contentmoat_tier']);
-        }
-    }
-
-    public function filter_exclusive_content($content) {
-        if (get_post_type() !== 'contentmoat') return $content;
-        $is_exclusive = get_post_meta(get_the_ID(), '_contentmoat_exclusive', true);
-        if (!$is_exclusive) return $content;
+        register_activation_hook(__FILE__, [$this, 'activate']);
+        register_deactivation_hook(__FILE__, [$this, 'deactivate']);
         
-        if (is_user_logged_in()) {
-            $required_tier = get_post_meta(get_the_ID(), '_contentmoat_tier', true);
-            $user_tiers = wp_get_post_terms(get_current_user_id(), 'subscription_tier');
-            if (empty($required_tier) || in_array($required_tier, wp_list_pluck($user_tiers, 'term_id'))) {
-                return $content;
-            }
-        }
-        return '<div class="contentmoat-locked"><p>This content is exclusive to members. <a href="#" class="contentmoat-login-btn">Sign in or subscribe</a> to access.</p></div>';
+        add_action('init', [$this, 'registerPostType']);
+        add_action('admin_menu', [$this, 'addAdminMenu']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendScripts']);
+        add_action('add_meta_boxes', [$this, 'addMetaBoxes']);
+        add_action('save_post', [$this, 'savePostMeta']);
+        add_action('wp_ajax_cm_convert_content', [$this, 'ajaxConvertContent']);
+        add_action('wp_ajax_cm_save_monetization', [$this, 'ajaxSaveMonetization']);
+        add_filter('admin_footer_text', [$this, 'adminFooterText']);
     }
 
-    public function render_login_form() {
-        ob_start();
+    public function activate() {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        
+        $sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}contentmoat_conversions (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            post_id mediumint(9) NOT NULL,
+            format VARCHAR(50) NOT NULL,
+            content LONGTEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY post_id (post_id)
+        ) $charset_collate;";
+        
+        $sql2 = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}contentmoat_monetization (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            post_id mediumint(9) NOT NULL,
+            channel VARCHAR(50) NOT NULL,
+            affiliate_links TEXT,
+            sponsored_brands TEXT,
+            donation_enabled BOOLEAN DEFAULT 0,
+            revenue_tracked DECIMAL(10,2) DEFAULT 0,
+            PRIMARY KEY (id),
+            UNIQUE KEY post_channel (post_id, channel)
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+        dbDelta($sql2);
+        
+        add_option('contentmoat_db_version', $this->db_version);
+        add_option('contentmoat_conversions_used', 0);
+    }
+
+    public function deactivate() {
+        wp_clear_scheduled_hook('contentmoat_daily_digest');
+    }
+
+    public function registerPostType() {
+        register_post_type('cm_conversion', [
+            'label' => 'ContentMoat Conversions',
+            'public' => false,
+            'show_ui' => false,
+            'supports' => ['title', 'editor']
+        ]);
+    }
+
+    public function addAdminMenu() {
+        add_menu_page(
+            'ContentMoat',
+            'ContentMoat',
+            'manage_options',
+            'contentmoat',
+            [$this, 'adminDashboard'],
+            'dashicons-layout',
+            25
+        );
+        
+        add_submenu_page(
+            'contentmoat',
+            'Dashboard',
+            'Dashboard',
+            'manage_options',
+            'contentmoat',
+            [$this, 'adminDashboard']
+        );
+        
+        add_submenu_page(
+            'contentmoat',
+            'Settings',
+            'Settings',
+            'manage_options',
+            'contentmoat-settings',
+            [$this, 'adminSettings']
+        );
+    }
+
+    public function adminDashboard() {
+        global $wpdb;
+        $conversions_used = get_option('contentmoat_conversions_used', 0);
+        $plan = get_option('contentmoat_plan', 'free');
+        $monthly_limit = $plan === 'free' ? 5 : ($plan === 'premium' ? 999 : 9999);
+        
+        $total_conversions = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}contentmoat_conversions");
+        $total_revenue = $wpdb->get_var("SELECT SUM(revenue_tracked) FROM {$wpdb->prefix}contentmoat_monetization");
+        
         ?>
-        <form class="contentmoat-login-form" id="cm-login-form">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-            <p><a href="#">Create account</a></p>
-        </form>
-        <script>
-        document.getElementById('cm-login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            jQuery.post(ajaxurl, {action: 'cm_login', email: this.email.value, password: this.password.value}, function(r) {
-                if (r.success) location.reload();
-            });
-        });
-        </script>
-        <?php
-        return ob_get_clean();
-    }
-
-    public function render_member_dashboard() {
-        if (!is_user_logged_in()) return '<p>Please log in.</p>';
-        $user = wp_get_current_user();
-        $tiers = wp_get_post_terms($user->ID, 'subscription_tier');
-        return '<div class="contentmoat-dashboard"><h3>Welcome, ' . $user->display_name . '</h3><p>Active Subscriptions: ' . implode(', ', wp_list_pluck($tiers, 'name')) . '</p></div>';
-    }
-
-    public function render_subscription_plans() {
-        $options = get_option('contentmoat_options', []);
-        $plans = isset($options['plans']) ? $options['plans'] : [];
-        ob_start();
-        ?>
-        <div class="contentmoat-plans">
-            <?php foreach ($plans as $plan): ?>
-                <div class="contentmoat-plan">
-                    <h4><?php echo $plan['name']; ?></h4>
-                    <p class="price"><?php echo $plan['price']; ?>/month</p>
-                    <p><?php echo $plan['description']; ?></p>
-                    <button class="contentmoat-subscribe-btn" data-plan="<?php echo $plan['id']; ?>">Subscribe</button>
+        <div class="wrap">
+            <h1>ContentMoat Dashboard</h1>
+            <div class="contentmoat-dashboard">
+                <div class="stat-box">
+                    <h3>Total Conversions</h3>
+                    <p class="stat-number"><?php echo intval($total_conversions); ?></p>
                 </div>
-            <?php endforeach; ?>
+                <div class="stat-box">
+                    <h3>Monthly Limit</h3>
+                    <p class="stat-number"><?php echo $conversions_used . '/' . $monthly_limit; ?></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Revenue Tracked</h3>
+                    <p class="stat-number">$<?php echo number_format(floatval($total_revenue), 2); ?></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Current Plan</h3>
+                    <p class="stat-number"><?php echo ucfirst($plan); ?></p>
+                </div>
+            </div>
+            <style>
+                .contentmoat-dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 20px 0; }
+                .stat-box { background: #f5f5f5; padding: 20px; border-radius: 5px; text-align: center; }
+                .stat-box h3 { margin: 0 0 10px 0; color: #333; font-size: 14px; }
+                .stat-number { margin: 0; font-size: 28px; font-weight: bold; color: #0073aa; }
+            </style>
         </div>
         <?php
-        return ob_get_clean();
     }
 
-    public function handle_login() {
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $user = wp_authenticate($email, $password);
-        if (is_wp_error($user)) {
-            wp_send_json_error(['message' => 'Invalid credentials']);
-        }
-        wp_set_current_user($user->ID);
-        wp_set_auth_cookie($user->ID);
-        wp_send_json_success();
-    }
-
-    public function handle_cancel_subscription() {
-        if (!is_user_logged_in()) wp_send_json_error();
-        $tier_id = $_POST['tier_id'];
-        wp_remove_object_terms(get_current_user_id(), (int)$tier_id, 'subscription_tier');
-        wp_send_json_success();
-    }
-
-    public function render_settings_page() {
-        if (isset($_POST['contentmoat_save'])) {
-            update_option('contentmoat_options', $_POST['contentmoat_options']);
-        }
-        $options = get_option('contentmoat_options', []);
+    public function adminSettings() {
         ?>
         <div class="wrap">
             <h1>ContentMoat Settings</h1>
-            <form method="post">
+            <form method="post" action="options.php">
+                <?php settings_fields('contentmoat_settings'); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Payment Provider</th>
-                        <td><input type="text" name="contentmoat_options[payment_provider]" value="<?php echo isset($options['payment_provider']) ? $options['payment_provider'] : ''; ?>"></td>
+                        <th scope="row"><label for="cm_api_key">API Key</label></th>
+                        <td><input type="text" name="contentmoat_api_key" id="cm_api_key" value="<?php echo get_option('contentmoat_api_key'); ?>" class="regular-text" /></td>
                     </tr>
                     <tr>
-                        <th>API Key</th>
-                        <td><input type="password" name="contentmoat_options[api_key]" value="<?php echo isset($options['api_key']) ? $options['api_key'] : ''; ?>"></td>
+                        <th scope="row"><label for="cm_openai_key">OpenAI API Key</label></th>
+                        <td><input type="password" name="contentmoat_openai_key" id="cm_openai_key" value="<?php echo get_option('contentmoat_openai_key'); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="cm_plan">Subscription Plan</label></th>
+                        <td>
+                            <select name="contentmoat_plan" id="cm_plan">
+                                <option value="free" <?php selected(get_option('contentmoat_plan'), 'free'); ?>>Free</option>
+                                <option value="premium" <?php selected(get_option('contentmoat_plan'), 'premium'); ?>>Premium</option>
+                                <option value="agency" <?php selected(get_option('contentmoat_plan'), 'agency'); ?>>Agency</option>
+                            </select>
+                        </td>
                     </tr>
                 </table>
-                <button type="submit" name="contentmoat_save" class="button button-primary">Save Settings</button>
+                <?php submit_button(); ?>
             </form>
         </div>
         <?php
     }
 
-    public function render_members_page() {
-        $subscribers = get_users(['role' => 'subscriber']);
-        ?>
-        <div class="wrap">
-            <h1>Members</h1>
-            <table class="widefat">
-                <thead><tr><th>Member</th><th>Email</th><th>Tiers</th><th>Actions</th></tr></thead>
-                <tbody>
-                    <?php foreach ($subscribers as $sub): 
-                        $tiers = wp_get_post_terms($sub->ID, 'subscription_tier');
-                    ?>
-                    <tr>
-                        <td><?php echo $sub->display_name; ?></td>
-                        <td><?php echo $sub->user_email; ?></td>
-                        <td><?php echo implode(', ', wp_list_pluck($tiers, 'name')); ?></td>
-                        <td><a href="#">View</a></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <?php
+    public function addMetaBoxes() {
+        add_meta_box('contentmoat_converter', 'ContentMoat Converter', [$this, 'converterMetaBox'], 'post', 'normal', 'high');
+        add_meta_box('contentmoat_monetization', 'Monetization Settings', [$this, 'monetizationMetaBox'], 'post', 'side', 'default');
     }
 
-    public function render_revenue_page() {
-        ?>
-        <div class="wrap">
-            <h1>Revenue Dashboard</h1>
-            <p>Revenue analytics coming soon.</p>
-        </div>
-        <?php
-    }
-
-    public function enqueue_frontend_assets() {
-        wp_enqueue_style('contentmoat-frontend', CONTENTMOAT_PLUGIN_URL . 'assets/frontend.css');
-        wp_enqueue_script('contentmoat-frontend', CONTENTMOAT_PLUGIN_URL . 'assets/frontend.js', ['jquery']);
-        wp_localize_script('contentmoat-frontend', 'ajaxurl', admin_url('admin-ajax.php'));
-    }
-
-    public function enqueue_admin_assets() {
-        wp_enqueue_style('contentmoat-admin', CONTENTMOAT_PLUGIN_URL . 'assets/admin.css');
-    }
-
-    public function activate_plugin() {
+    public function converterMetaBox($post) {
         global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
-        $table_name = $wpdb->prefix . 'contentmoat_subscriptions';
-        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            user_id bigint(20) unsigned NOT NULL,
-            tier_id bigint(20) unsigned NOT NULL,
-            status varchar(20) DEFAULT 'active',
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        $conversions = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}contentmoat_conversions WHERE post_id = %d",
+            $post->ID
+        ));
+        ?>
+        <div class="contentmoat-meta-box">
+            <p>Convert this post into multiple formats:</p>
+            <div class="format-buttons">
+                <button type="button" class="button cm-convert-btn" data-format="youtube">Convert to YouTube Script</button>
+                <button type="button" class="button cm-convert-btn" data-format="twitter">Convert to Twitter Thread</button>
+                <button type="button" class="button cm-convert-btn" data-format="newsletter">Convert to Newsletter</button>
+                <button type="button" class="button cm-convert-btn" data-format="podcast">Convert to Podcast Script</button>
+            </div>
+            <div id="cm-conversions-list" style="margin-top: 15px;">
+                <?php if ($conversions) : ?>
+                    <h4>Previous Conversions:</h4>
+                    <ul>
+                        <?php foreach ($conversions as $conversion) : ?>
+                            <li><strong><?php echo ucfirst($conversion->format); ?>:</strong> <?php echo date('M d, Y', strtotime($conversion->created_at)); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </div>
+            <input type="hidden" id="cm_post_id" value="<?php echo $post->ID; ?>">
+            <style>
+                .format-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+                .format-buttons button { white-space: nowrap; }
+            </style>
+        </div>
+        <?php
     }
 
-    public function deactivate_plugin() {
-        // Cleanup if needed
+    public function monetizationMetaBox($post) {
+        global $wpdb;
+        $monetization = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}contentmoat_monetization WHERE post_id = %d LIMIT 1",
+            $post->ID
+        ));
+        ?>
+        <div class="contentmoat-monetization-box">
+            <p>
+                <label>
+                    <input type="checkbox" name="cm_enable_donations" <?php checked($monetization->donation_enabled ?? 0); ?> />
+                    Enable Donations
+                </label>
+            </p>
+            <p>
+                <label>Affiliate Links:</label><br />
+                <textarea name="cm_affiliate_links" rows="3" style="width: 100%;"><?php echo esc_textarea($monetization->affiliate_links ?? ''); ?></textarea>
+            </p>
+            <p>
+                <label>Sponsored Brands:</label><br />
+                <textarea name="cm_sponsored_brands" rows="2" style="width: 100%;"><?php echo esc_textarea($monetization->sponsored_brands ?? ''); ?></textarea>
+            </p>
+            <button type="button" class="button button-primary cm-save-monetization" data-post-id="<?php echo $post->ID; ?>">Save Monetization</button>
+        </div>
+        <?php
+    }
+
+    public function savePostMeta($post_id) {
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+        if (!current_user_can('edit_post', $post_id)) return;
+    }
+
+    public function ajaxConvertContent() {
+        check_ajax_referer('contentmoat_nonce', 'nonce');
+        
+        if (!current_user_can('edit_posts')) wp_die('Unauthorized');
+        
+        $post_id = intval($_POST['post_id']);
+        $format = sanitize_text_field($_POST['format']);
+        $post = get_post($post_id);
+        
+        if (!$post) wp_die('Post not found');
+        
+        $content = $post->post_content;
+        $converted = $this->convertContent($content, $format);
+        
+        global $wpdb;
+        $wpdb->insert($wpdb->prefix . 'contentmoat_conversions', [
+            'post_id' => $post_id,
+            'format' => $format,
+            'content' => $converted
+        ]);
+        
+        wp_send_json_success([
+            'message' => 'Content converted successfully',
+            'content' => $converted,
+            'format' => $format
+        ]);
+    }
+
+    public function ajaxSaveMonetization() {
+        check_ajax_referer('contentmoat_nonce', 'nonce');
+        
+        if (!current_user_can('edit_posts')) wp_die('Unauthorized');
+        
+        $post_id = intval($_POST['post_id']);
+        $donation_enabled = isset($_POST['enable_donations']) ? 1 : 0;
+        $affiliate_links = sanitize_textarea_field($_POST['affiliate_links'] ?? '');
+        $sponsored_brands = sanitize_textarea_field($_POST['sponsored_brands'] ?? '');
+        
+        global $wpdb;
+        $wpdb->replace($wpdb->prefix . 'contentmoat_monetization', [
+            'post_id' => $post_id,
+            'channel' => 'all',
+            'affiliate_links' => $affiliate_links,
+            'sponsored_brands' => $sponsored_brands,
+            'donation_enabled' => $donation_enabled
+        ]);
+        
+        wp_send_json_success(['message' => 'Monetization settings saved']);
+    }
+
+    private function convertContent($content, $format) {
+        $content = wp_strip_all_tags($content);
+        $content = substr($content, 0, 500);
+        
+        $templates = [
+            'youtube' => "🎬 YOUTUBE SCRIPT\n\nTitle: [Create an engaging title based on this content]\n\n" . $content . "\n\nCTA: Subscribe for more content!",
+            'twitter' => "🐦 TWITTER THREAD\n\n1/ " . substr($content, 0, 100) . "...\n\n2/ [Continue with more insights]\n\n3/ [Add key takeaway]",
+            'newsletter' => "📧 NEWSLETTER\n\nSubject: [Catchy subject line]\n\nDear Subscribers,\n\n" . $content,
+            'podcast' => "🎙️ PODCAST SCRIPT\n\n[INTRO]\nHey listeners! Today we're discussing...\n\n[MAIN CONTENT]\n" . $content . "\n\n[OUTRO]\nThanks for listening!"
+        ];
+        
+        return $templates[$format] ?? $content;
+    }
+
+    public function enqueueAdminScripts($hook) {
+        if (get_post_type() === 'post') {
+            wp_enqueue_script('contentmoat-admin', CONTENTMOAT_URL . 'js/admin.js', ['jquery'], CONTENTMOAT_VERSION);
+            wp_localize_script('contentmoat-admin', 'contentmoatData', [
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('contentmoat_nonce')
+            ]);
+        }
+    }
+
+    public function enqueueFrontendScripts() {
+        wp_enqueue_style('contentmoat-frontend', CONTENTMOAT_URL . 'css/frontend.css', [], CONTENTMOAT_VERSION);
+    }
+
+    public function adminFooterText($text) {
+        return str_replace('WordPress', 'ContentMoat & WordPress', $text);
     }
 }
 
-new ContentMoat();
+ContentMoat::getInstance();
 ?>
