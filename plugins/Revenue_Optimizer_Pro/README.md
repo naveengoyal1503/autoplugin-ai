@@ -1,127 +1,94 @@
 # Revenue Optimizer Pro
 
-An all-in-one WordPress monetization management and optimization plugin designed to help content creators and website owners track, manage, and maximize revenue from multiple income streams.
+An all-in-one WordPress monetization management plugin that consolidates multiple revenue streams into a single, easy-to-use dashboard.
 
 ## Features
 
-### Core Monetization Management
-- **Multi-Stream Tracking**: Manage all revenue sources in one dashboard (ads, affiliate links, memberships, sponsored content)
-- **Revenue Stream Organization**: Categorize and organize different monetization strategies
-- **Configuration Management**: Store and manage settings for each revenue stream
-
-### Analytics & Insights
-- **Performance Tracking**: Monitor impressions, clicks, conversions, and revenue by date
-- **Revenue Summary**: View total revenue and conversion metrics over custom time periods
-- **Trend Analysis**: Track performance over 7, 30, 60, or 90-day periods
-- **Stream Comparison**: Compare performance across different monetization methods
-
-### Administrative Tools
-- **Intuitive Dashboard**: Clean admin interface for managing all monetization activities
-- **Revenue Goals Post Type**: Create and track revenue objectives
-- **RESTful API**: Programmatic access to revenue data and streams
-- **Shortcodes**: Display revenue goals on your website using `[rop_revenue_goal]`
-
-### Data Management
-- **Database-Driven**: Efficient storage in custom database tables
-- **Historical Data**: Complete audit trail of all revenue and analytics data
-- **Data Integrity**: Unique constraints on stream-date analytics combinations
+- **Unified Dashboard**: Track all revenue sources in one place
+- **Revenue Logging System**: Automatically record and categorize income
+- **Multiple Monetization Methods**: Support for ads, affiliate marketing, memberships, and sponsored content
+- **Monthly Revenue Tracking**: Monitor performance month-over-month
+- **Revenue Analytics**: Visualize income by source type
+- **Customizable Settings**: Configure currency and preferences
+- **Revenue Tracker Widget**: Display total revenue on any page using shortcodes
+- **Freemium Model**: Free core features with premium upgrades available
 
 ## Installation
 
-1. Download the Revenue Optimizer Pro plugin
+1. Download the plugin files
 2. Upload the plugin folder to `/wp-content/plugins/`
-3. Activate the plugin through the WordPress admin panel
-4. Navigate to "Revenue Optimizer" in the left menu
+3. Activate the plugin from the WordPress admin panel
+4. Navigate to **Revenue Optimizer** in the main menu
 
 ## Setup
 
-### Initial Configuration
-1. Go to Revenue Optimizer > Dashboard
-2. Click "Add New Revenue Stream"
-3. Select your monetization type (Display Ads, Affiliate Marketing, Membership, Sponsored Content, etc.)
-4. Enter stream name and description
-5. Configure stream-specific settings
-6. Click "Save Stream"
-
-### Supported Revenue Stream Types
-- Display Advertising (Google AdSense, Mediavine, etc.)
-- Affiliate Marketing (Amazon Associates, CJ Affiliate, etc.)
-- Membership/Subscriptions
-- Sponsored Content
-- Digital Product Sales
-- Services & Consulting
-- Donations
-- Ticketed Events
+1. Go to **Revenue Optimizer > Settings**
+2. Select your preferred currency (USD, EUR, or GBP)
+3. Save your settings
+4. Start configuring your monetization methods under **Monetization Methods**
 
 ## Usage
 
-### Managing Revenue Streams
-1. Navigate to "Revenue Streams" tab
-2. View all active and inactive streams
-3. Edit stream configuration by clicking on any stream
-4. Toggle active status to enable/disable streams
-5. Delete streams you no longer use
+### Dashboard
+The main dashboard displays:
+- Total accumulated revenue
+- Current month revenue
+- Revenue breakdown by source
 
-### Viewing Analytics
-1. Go to "Analytics" tab
-2. Select date range (7, 30, 60, or 90 days)
-3. View total revenue and conversion metrics
-4. See breakdown by individual revenue stream
-5. Export data for further analysis
+### Tracking Revenue
+Revenue entries are logged in the database and displayed in the **Revenue Logs** section with details about type, amount, source, and date.
 
-### Creating Revenue Goals
-1. Go to WordPress Admin > Revenue Goals
-2. Click "Add New"
-3. Create goal post with title and description
-4. Note the goal ID
-5. Use shortcode `[rop_revenue_goal goal_id="123"]` on any page or post to display
+### Display Widget
+Add the revenue tracker to any page or post using:
 
-### API Endpoints
-
-**Get Revenue Streams**
-
-GET /wp-json/rop/v1/revenue-streams
+[revenue_tracker]
 
 
-**Create New Revenue Stream**
+### Monetization Methods
+Configure different revenue streams:
+- Display Ads (AdSense integration)
+- Affiliate Marketing links
+- Membership subscriptions
+- Sponsored content partnerships
 
-POST /wp-json/rop/v1/revenue-streams
-Body: {
-  "type": "affiliate_marketing",
-  "name": "Amazon Associates",
-  "description": "Main affiliate program",
-  "config": {"commission_rate": 4}
-}
+## API for Logging Revenue
+
+Developers can log revenue programmatically:
+
+php
+global $wpdb;
+$wpdb->insert(
+    $wpdb->prefix . 'rop_revenue_logs',
+    array(
+        'revenue_type' => 'affiliate_marketing',
+        'amount' => 45.50,
+        'source' => 'Product X Review',
+        'date_logged' => current_time('mysql')
+    )
+);
 
 
-**Get Analytics Data**
+## Frequently Asked Questions
 
-GET /wp-json/rop/v1/analytics?days=30
+**Q: Does this plugin slow down my site?**
+A: No, Revenue Optimizer Pro is optimized for performance with minimal database overhead.
 
+**Q: Can I export revenue data?**
+A: The premium version includes CSV export functionality.
 
-## Monetization Model
-
-- **Free Version**: Core revenue tracking and management
-- **Premium Tier** ($9.99/month): Advanced analytics, A/B testing, revenue forecasting, competitor analysis, automated optimization recommendations
+**Q: Is this plugin compatible with WooCommerce?**
+A: Yes, it can track revenue from WooCommerce sales as a revenue source.
 
 ## Requirements
-- WordPress 5.0 or higher
-- PHP 7.2 or higher
-- MySQL 5.6 or higher
+
+- WordPress 5.0+
+- PHP 7.4+
+- MySQL 5.6+
 
 ## Support
 
-For issues, feature requests, or support, visit our website or contact support@revenueoptimizer.example
+For support and feature requests, visit our website or contact our support team.
 
 ## License
 
-GNU General Public License v2 or later
-
-## Changelog
-
-### Version 1.0.0
-- Initial release
-- Revenue stream management
-- Basic analytics tracking
-- Admin dashboard
-- RESTful API
+GPL v2 or later
