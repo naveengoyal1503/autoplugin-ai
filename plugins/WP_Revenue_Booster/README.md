@@ -1,35 +1,28 @@
 # WP Revenue Booster
 
-Boost your WordPress site revenue with smart affiliate, coupon, and sponsored content placement.
+Automatically suggests and inserts high-converting affiliate links, coupons, and sponsored content into your posts based on context and performance data.
 
 ## Features
-- Easy-to-use admin interface for managing affiliate links, coupons, and sponsored content
-- Automatic injection of monetization content into your posts
-- JSON-based configuration for flexible content management
-- Responsive design for optimal user experience
+- Auto-insert affiliate links in posts
+- Insert coupon codes and discounts
+- Add sponsored content blocks
+- Easy admin configuration
+- Tracking code for analytics
 
 ## Installation
-1. Upload the plugin folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Revenue Booster to configure your monetization content
+1. Upload the plugin file to your WordPress plugins directory.
+2. Activate the plugin from the WordPress admin panel.
+3. Go to Settings > Revenue Booster to configure your affiliate links, coupons, and sponsored content.
 
 ## Setup
-1. In the admin panel, add your affiliate links, coupons, and sponsored content in JSON format
-2. The plugin will automatically display this content at the end of your posts
+- Enter affiliate links as JSON (keyword => link)
+- Enter coupons as JSON (keyword => coupon code)
+- Enter sponsored content as JSON (keyword => content)
 
 ## Usage
-- Use the admin interface to update your monetization content as needed
-- The plugin will automatically display the latest content on your site
+- Publish or update a post. The plugin will automatically insert your configured links, coupons, and sponsored content.
+- View tracking in browser console.
 
-## Example JSON Format
-
-[
-  {
-    "url": "https://example.com/product",
-    "title": "Example Product"
-  }
-]
-
-
-## Support
-For support, please contact support@example.com
+## Monetization
+- Free version: basic auto-insertion
+- Premium version: advanced analytics, automation, and more features (coming soon)
