@@ -1,142 +1,117 @@
-<?php
 /*
-Plugin Name: WP Revenue Booster
-Description: Maximize your WordPress site's revenue by rotating and optimizing affiliate links, ads, and sponsored content.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
+<?php
+/**
+ * Plugin Name: WP Revenue Booster
+ * Description: Automate coupon distribution, affiliate tracking, and ad optimization.
+ * Version: 1.0
+ * Author: RevenueBoost Team
+ */
+
+define('WP_REVENUE_BOOSTER_VERSION', '1.0');
 
 class WP_Revenue_Booster {
 
     public function __construct() {
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_footer', array($this, 'inject_revenue_elements'));
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('wp-revenue-booster', plugins_url('/js/revenue-booster.js', __FILE__), array('jquery'), '1.0', true);
-        wp_localize_script('wp-revenue-booster', 'wpRevenueBooster', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('revenue_booster_nonce')
-        ));
-    }
-
-    public function inject_revenue_elements() {
-        $options = get_option('wp_revenue_booster_settings');
-        if (!$options) return;
-
-        $elements = array();
-        if (!empty($options['affiliate_links'])) {
-            $elements['affiliate'] = $options['affiliate_links'];
-        }
-        if (!empty($options['ads'])) {
-            $elements['ad'] = $options['ads'];
-        }
-        if (!empty($options['sponsored'])) {
-            $elements['sponsored'] = $options['sponsored'];
-        }
-
-        if (!empty($elements)) {
-            $selected = array_rand($elements);
-            $content = $elements[$selected][array_rand($elements[$selected])];
-            echo '<div class="wp-revenue-element">' . wp_kses_post($content) . '</div>';
-        }
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_shortcode('revenue_booster', array($this, 'shortcode_handler'));
+        add_action('wp_ajax_track_conversion', array($this, 'track_conversion'));
+        add_action('wp_ajax_nopriv_track_conversion', array($this, 'track_conversion'));
     }
 
     public function add_admin_menu() {
-        add_options_page(
+        add_menu_page(
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
             'wp-revenue-booster',
-            array($this, 'options_page')
+            array($this, 'admin_page'),
+            'dashicons-chart-line',
+            6
         );
     }
 
-    public function settings_init() {
-        register_setting('wpRevenueBooster', 'wp_revenue_booster_settings');
-
-        add_settings_section(
-            'wp_revenue_booster_section',
-            'Revenue Elements',
-            null,
-            'wpRevenueBooster'
-        );
-
-        add_settings_field(
-            'affiliate_links',
-            'Affiliate Links',
-            array($this, 'affiliate_links_render'),
-            'wpRevenueBooster',
-            'wp_revenue_booster_section'
-        );
-
-        add_settings_field(
-            'ads',
-            'Display Ads',
-            array($this, 'ads_render'),
-            'wpRevenueBooster',
-            'wp_revenue_booster_section'
-        );
-
-        add_settings_field(
-            'sponsored',
-            'Sponsored Content',
-            array($this, 'sponsored_render'),
-            'wpRevenueBooster',
-            'wp_revenue_booster_section'
-        );
-    }
-
-    public function affiliate_links_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        $links = isset($options['affiliate_links']) ? $options['affiliate_links'] : array();
-        echo '<textarea name="wp_revenue_booster_settings[affiliate_links][]" rows="3" cols="50">' . implode('\n', $links) . '</textarea><br>';
-        echo '<button type="button" onclick="addRow(this)">Add Another</button>';
-    }
-
-    public function ads_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        $ads = isset($options['ads']) ? $options['ads'] : array();
-        echo '<textarea name="wp_revenue_booster_settings[ads][]" rows="3" cols="50">' . implode('\n', $ads) . '</textarea><br>';
-        echo '<button type="button" onclick="addRow(this)">Add Another</button>';
-    }
-
-    public function sponsored_render() {
-        $options = get_option('wp_revenue_booster_settings');
-        $sponsored = isset($options['sponsored']) ? $options['sponsored'] : array();
-        echo '<textarea name="wp_revenue_booster_settings[sponsored][]" rows="3" cols="50">' . implode('\n', $sponsored) . '</textarea><br>';
-        echo '<button type="button" onclick="addRow(this)">Add Another</button>';
-    }
-
-    public function options_page() {
+    public function admin_page() {
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields('wpRevenueBooster');
-                do_settings_sections('wpRevenueBooster');
-                submit_button();
-                ?>
+            <form method="post" action="options.php">
+                <?php settings_fields('wp_revenue_booster'); ?>
+                <?php do_settings_sections('wp_revenue_booster'); ?>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">Affiliate Tracking ID</th>
+                        <td><input type="text" name="affiliate_tracking_id" value="<?php echo esc_attr(get_option('affiliate_tracking_id')); ?>" /></td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Ad Placement Zone</th>
+                        <td><input type="text" name="ad_placement_zone" value="<?php echo esc_attr(get_option('ad_placement_zone')); ?>" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
             </form>
         </div>
-        <script>
-            function addRow(button) {
-                var container = button.parentNode;
-                var textarea = document.createElement('textarea');
-                textarea.name = button.previousElementSibling.name;
-                textarea.rows = 3;
-                textarea.cols = 50;
-                container.insertBefore(textarea, button);
-            }
-        </script>
         <?php
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('jquery');
+        wp_enqueue_script('wp-revenue-booster-js', plugins_url('/js/revenue-booster.js', __FILE__), array('jquery'), WP_REVENUE_BOOSTER_VERSION, true);
+        wp_localize_script('wp-revenue-booster-js', 'revenueBoosterAjax', array(
+            'ajaxurl' => admin_url('admin-ajax.php')
+        ));
+    }
+
+    public function shortcode_handler($atts) {
+        $atts = shortcode_atts(array(
+            'coupon' => '',
+            'affiliate_link' => '',
+            'ad_code' => ''
+        ), $atts, 'revenue_booster');
+
+        $output = '';
+        if (!empty($atts['coupon'])) {
+            $output .= '<div class="revenue-booster-coupon">Coupon: ' . esc_html($atts['coupon']) . '</div>';
+        }
+        if (!empty($atts['affiliate_link'])) {
+            $output .= '<a href="' . esc_url($atts['affiliate_link']) . '?ref=' . esc_attr(get_option('affiliate_tracking_id')) . '" target="_blank">Visit Affiliate</a>';
+        }
+        if (!empty($atts['ad_code'])) {
+            $output .= '<div class="revenue-booster-ad">' . wp_kses_post($atts['ad_code']) . '</div>';
+        }
+        return $output;
+    }
+
+    public function track_conversion() {
+        if (isset($_POST['conversion_type'])) {
+            $conversion_type = sanitize_text_field($_POST['conversion_type']);
+            $data = array(
+                'conversion_type' => $conversion_type,
+                'timestamp' => current_time('mysql')
+            );
+            // In a real plugin, you'd save to the database
+            wp_die('Conversion tracked: ' . $conversion_type);
+        }
     }
 }
 
-new WP_Revenue_Booster();
+function wp_revenue_booster_init() {
+    new WP_Revenue_Booster();
+}
+add_action('plugins_loaded', 'wp_revenue_booster_init');
+
+// Activation hook
+register_activation_hook(__FILE__, function() {
+    add_option('affiliate_tracking_id', 'default');
+    add_option('ad_placement_zone', 'default');
+});
+
+// Deactivation hook
+register_deactivation_hook(__FILE__, function() {
+    delete_option('affiliate_tracking_id');
+    delete_option('ad_placement_zone');
+});
 ?>
