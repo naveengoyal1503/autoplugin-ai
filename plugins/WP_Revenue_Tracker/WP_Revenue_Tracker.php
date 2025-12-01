@@ -1,81 +1,202 @@
-<?php
 /*
-Plugin Name: WP Revenue Tracker
-Description: Track and visualize revenue from ads, affiliate links, and digital product sales.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Tracker.php
 */
+<?php
+/**
+ * Plugin Name: WP Revenue Tracker
+ * Plugin URI: https://example.com/wp-revenue-tracker
+ * Description: Track and optimize your WordPress site's revenue streams with real-time analytics and actionable insights.
+ * Version: 1.0
+ * Author: Your Name
+ * Author URI: https://example.com
+ * License: GPL2
+ */
 
-class WP_Revenue_Tracker {
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-    public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_save_revenue_data', array($this, 'save_revenue_data'));
-        add_action('wp_ajax_get_revenue_data', array($this, 'get_revenue_data'));
+// Add admin menu
+function wp_revenue_tracker_menu() {
+    add_menu_page(
+        'Revenue Tracker',
+        'Revenue Tracker',
+        'manage_options',
+        'wp-revenue-tracker',
+        'wp_revenue_tracker_page',
+        'dashicons-chart-bar',
+        6
+    );
+}
+add_action('admin_menu', 'wp_revenue_tracker_menu');
+
+// Revenue Tracker page
+function wp_revenue_tracker_page() {
+    // Check user capabilities
+    if (!current_user_can('manage_options')) {
+        return;
     }
 
-    public function add_admin_menu() {
-        add_menu_page(
-            'Revenue Tracker',
-            'Revenue Tracker',
-            'manage_options',
-            'wp-revenue-tracker',
-            array($this, 'render_dashboard'),
-            'dashicons-chart-bar',
-            6
+    // Handle form submission
+    if (isset($_POST['wp_revenue_tracker_submit'])) {
+        $revenue_data = array(
+            'date' => sanitize_text_field($_POST['date']),
+            'source' => sanitize_text_field($_POST['source']),
+            'amount' => floatval($_POST['amount']),
+            'notes' => sanitize_textarea_field($_POST['notes'])
+        );
+
+        $revenue_records = get_option('wp_revenue_tracker_records', array());
+        $revenue_records[] = $revenue_data;
+        update_option('wp_revenue_tracker_records', $revenue_records);
+
+        echo '<div class="notice notice-success"><p>Revenue record added successfully!</p></div>';
+    }
+
+    // Display form
+    $revenue_records = get_option('wp_revenue_tracker_records', array());
+    ?>
+    <div class="wrap">
+        <h1>WP Revenue Tracker</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr>
+                    <th><label for="date">Date</label></th>
+                    <td><input type="date" name="date" id="date" required /></td>
+                </tr>
+                <tr>
+                    <th><label for="source">Source</label></th>
+                    <td>
+                        <select name="source" id="source" required>
+                            <option value="ads">Ads</option>
+                            <option value="affiliate">Affiliate</option>
+                            <option value="products">Products</option>
+                            <option value="services">Services</option>
+                            <option value="donations">Donations</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="amount">Amount ($)</label></th>
+                    <td><input type="number" name="amount" id="amount" step="0.01" required /></td>
+                </tr>
+                <tr>
+                    <th><label for="notes">Notes</label></th>
+                    <td><textarea name="notes" id="notes"></textarea></td>
+                </tr>
+            </table>
+            <p class="submit">
+                <input type="submit" name="wp_revenue_tracker_submit" class="button-primary" value="Add Record" />
+            </p>
+        </form>
+
+        <h2>Revenue Records</h2>
+        <table class="widefat fixed">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Source</th>
+                    <th>Amount</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($revenue_records as $record): ?>
+                <tr>
+                    <td><?php echo esc_html($record['date']); ?></td>
+                    <td><?php echo esc_html($record['source']); ?></td>
+                    <td>$<?php echo esc_html(number_format($record['amount'], 2)); ?></td>
+                    <td><?php echo esc_html($record['notes']); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
+
+// Add shortcode to display total revenue
+function wp_revenue_tracker_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'source' => '',
+    ), $atts, 'wp_revenue_tracker');
+
+    $revenue_records = get_option('wp_revenue_tracker_records', array());
+    $total = 0;
+
+    foreach ($revenue_records as $record) {
+        if (empty($atts['source']) || $record['source'] === $atts['source']) {
+            $total += $record['amount'];
+        }
+    }
+
+    return '<p>Total Revenue: $' . number_format($total, 2) . '</p>';
+}
+add_shortcode('wp_revenue_tracker', 'wp_revenue_tracker_shortcode');
+
+// Add widget
+class WP_Revenue_Tracker_Widget extends WP_Widget {
+    public function __construct() {
+        parent::__construct(
+            'wp_revenue_tracker_widget',
+            'Revenue Tracker Widget',
+            array('description' => 'Display total revenue in sidebar')
         );
     }
 
-    public function enqueue_scripts($hook) {
-        if ($hook !== 'toplevel_page_wp-revenue-tracker') return;
-        wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.7.1', true);
-        wp_enqueue_script('wp-revenue-tracker-js', plugin_dir_url(__FILE__) . 'assets/js/script.js', array('jquery'), '1.0', true);
-        wp_localize_script('wp-revenue-tracker-js', 'wpRevenueAjax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wp_revenue_nonce')
-        ));
-        wp_enqueue_style('wp-revenue-tracker-css', plugin_dir_url(__FILE__) . 'assets/css/style.css', array(), '1.0');
+    public function widget($args, $instance) {
+        $title = apply_filters('widget_title', $instance['title']);
+        $source = $instance['source'];
+
+        $revenue_records = get_option('wp_revenue_tracker_records', array());
+        $total = 0;
+
+        foreach ($revenue_records as $record) {
+            if (empty($source) || $record['source'] === $source) {
+                $total += $record['amount'];
+            }
+        }
+
+        echo $args['before_widget'];
+        if (!empty($title)) {
+            echo $args['before_title'] . $title . $args['after_title'];
+        }
+        echo '<p>Total Revenue: $' . number_format($total, 2) . '</p>';
+        echo $args['after_widget'];
     }
 
-    public function render_dashboard() {
+    public function form($instance) {
+        $title = !empty($instance['title']) ? $instance['title'] : 'Revenue';
+        $source = !empty($instance['source']) ? $instance['source'] : '';
         ?>
-        <div class="wrap">
-            <h1>WP Revenue Tracker</h1>
-            <div id="revenue-form">
-                <label>Revenue Type: 
-                    <select id="revenue-type">
-                        <option value="ads">Ads</option>
-                        <option value="affiliate">Affiliate</option>
-                        <option value="digital">Digital Product</option>
-                    </select>
-                </label>
-                <label>Amount: <input type="number" id="revenue-amount" step="0.01" /></label>
-                <label>Date: <input type="date" id="revenue-date" /></label>
-                <button id="save-revenue">Save Revenue</button>
-            </div>
-            <canvas id="revenue-chart" width="400" height="200"></canvas>
-        </div>
+        <p>
+            <label for="<?php echo $this->get_field_id('title'); ?>">Title:</label>
+            <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
+        </p>
+        <p>
+            <label for="<?php echo $this->get_field_id('source'); ?>">Source:</label>
+            <select class="widefat" id="<?php echo $this->get_field_id('source'); ?>" name="<?php echo $this->get_field_name('source'); ?>">
+                <option value="" <?php selected($source, ''); ?>>All</option>
+                <option value="ads" <?php selected($source, 'ads'); ?>>Ads</option>
+                <option value="affiliate" <?php selected($source, 'affiliate'); ?>>Affiliate</option>
+                <option value="products" <?php selected($source, 'products'); ?>>Products</option>
+                <option value="services" <?php selected($source, 'services'); ?>>Services</option>
+                <option value="donations" <?php selected($source, 'donations'); ?>>Donations</option>
+            </select>
+        </p>
         <?php
     }
 
-    public function save_revenue_data() {
-        check_ajax_referer('wp_revenue_nonce', 'nonce');
-        $type = sanitize_text_field($_POST['type']);
-        $amount = floatval($_POST['amount']);
-        $date = sanitize_text_field($_POST['date']);
-        $data = get_option('wp_revenue_data', array());
-        $data[] = array('type' => $type, 'amount' => $amount, 'date' => $date);
-        update_option('wp_revenue_data', $data);
-        wp_die();
-    }
-
-    public function get_revenue_data() {
-        check_ajax_referer('wp_revenue_nonce', 'nonce');
-        $data = get_option('wp_revenue_data', array());
-        wp_send_json($data);
+    public function update($new_instance, $old_instance) {
+        $instance = array();
+        $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+        $instance['source'] = (!empty($new_instance['source'])) ? strip_tags($new_instance['source']) : '';
+        return $instance;
     }
 }
-
-new WP_Revenue_Tracker();
+function wp_revenue_tracker_register_widget() {
+    register_widget('WP_Revenue_Tracker_Widget');
+}
+add_action('widgets_init', 'wp_revenue_tracker_register_widget');
