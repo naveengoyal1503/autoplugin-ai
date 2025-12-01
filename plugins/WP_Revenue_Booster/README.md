@@ -1,27 +1,29 @@
 # WP Revenue Booster
 
-Automatically optimize ad placement, affiliate links, and upsells to maximize your WordPress site's revenue.
+Maximize your WordPress site's revenue by rotating and optimizing affiliate links, ads, and sponsored content.
 
 ## Features
-- Auto-inject ad code in optimal positions
-- Display affiliate links as call-to-action buttons
-- Show customizable upsell messages
-- Easy-to-use admin settings
-- Lightweight and fast
+- Rotates affiliate links, ad codes, and sponsored content automatically
+- Easy-to-use admin interface for managing all revenue sources
+- Lightweight and non-intrusive
+- Supports unlimited affiliate links, ad codes, and sponsored content
 
 ## Installation
-1. Upload the plugin folder to your `/wp-content/plugins/` directory
+1. Upload the `wp-revenue-booster` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to Settings > Revenue Booster to configure your monetization options
+3. Go to Settings > Revenue Booster to configure your revenue sources
 
 ## Setup
-- Enable the plugin
-- Paste your ad code (e.g., Google AdSense)
-- Add affiliate links (comma-separated)
-- Set your upsell message
+- Enable the plugin in the settings
+- Add your affiliate links, ad codes, and sponsored content
+- The plugin will automatically rotate and display content on your site
 
 ## Usage
-Once configured, the plugin will automatically display your monetization elements on your site. Monitor your revenue and adjust settings as needed.
+- The plugin outputs a single revenue element (affiliate link, ad, or sponsored content) in the footer of your site
+- All content is rotated randomly for each page view
+- Manage and update your revenue sources from the admin panel
 
-## Support
-For questions or feature requests, contact support@revenuebooster.com
+## Notes
+- For best results, add multiple revenue sources to maximize conversion opportunities
+- The plugin is compatible with all WordPress themes
+- No additional configuration required for basic use
