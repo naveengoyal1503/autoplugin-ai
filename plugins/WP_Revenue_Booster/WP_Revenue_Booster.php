@@ -1,117 +1,130 @@
+<?php
 /*
+Plugin Name: WP Revenue Booster
+Description: Automatically optimizes and displays high-converting affiliate offers, coupons, and sponsored content based on user behavior and content context.
+Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=WP_Revenue_Booster.php
 */
-<?php
-/**
- * Plugin Name: WP Revenue Booster
- * Description: Automate coupon distribution, affiliate tracking, and ad optimization.
- * Version: 1.0
- * Author: RevenueBoost Team
- */
-
-define('WP_REVENUE_BOOSTER_VERSION', '1.0');
 
 class WP_Revenue_Booster {
 
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('the_content', array($this, 'inject_monetized_content'));
         add_shortcode('revenue_booster', array($this, 'shortcode_handler'));
-        add_action('wp_ajax_track_conversion', array($this, 'track_conversion'));
-        add_action('wp_ajax_nopriv_track_conversion', array($this, 'track_conversion'));
     }
 
     public function add_admin_menu() {
-        add_menu_page(
+        add_options_page(
             'WP Revenue Booster',
             'Revenue Booster',
             'manage_options',
             'wp-revenue-booster',
-            array($this, 'admin_page'),
-            'dashicons-chart-line',
-            6
+            array($this, 'admin_page')
         );
     }
 
     public function admin_page() {
+        if (!current_user_can('manage_options')) {
+            wp_die('You do not have sufficient permissions to access this page.');
+        }
+        if (isset($_POST['submit'])) {
+            update_option('wp_revenue_booster_affiliate_links', $_POST['affiliate_links']);
+            update_option('wp_revenue_booster_coupons', $_POST['coupons']);
+            update_option('wp_revenue_booster_sponsored', $_POST['sponsored']);
+            echo '<div class="notice notice-success"><p>Settings saved.</p></div>';
+        }
+        $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
+        $coupons = get_option('wp_revenue_booster_coupons', '');
+        $sponsored = get_option('wp_revenue_booster_sponsored', '');
         ?>
         <div class="wrap">
             <h1>WP Revenue Booster</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('wp_revenue_booster'); ?>
-                <?php do_settings_sections('wp_revenue_booster'); ?>
+            <form method="post">
                 <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">Affiliate Tracking ID</th>
-                        <td><input type="text" name="affiliate_tracking_id" value="<?php echo esc_attr(get_option('affiliate_tracking_id')); ?>" /></td>
+                    <tr>
+                        <th><label>Affiliate Links (one per line)</label></th>
+                        <td><textarea name="affiliate_links" rows="5" cols="50"><?php echo esc_textarea($affiliate_links); ?></textarea></td>
                     </tr>
-                    <tr valign="top">
-                        <th scope="row">Ad Placement Zone</th>
-                        <td><input type="text" name="ad_placement_zone" value="<?php echo esc_attr(get_option('ad_placement_zone')); ?>" /></td>
+                    <tr>
+                        <th><label>Coupons (one per line: code|description)</label></th>
+                        <td><textarea name="coupons" rows="5" cols="50"><?php echo esc_textarea($coupons); ?></textarea></td>
+                    </tr>
+                    <tr>
+                        <th><label>Sponsored Content (HTML allowed)</label></th>
+                        <td><textarea name="sponsored" rows="5" cols="50"><?php echo esc_textarea($sponsored); ?></textarea></td>
                     </tr>
                 </table>
-                <?php submit_button(); ?>
+                <p class="submit">
+                    <input type="submit" name="submit" class="button-primary" value="Save Changes" />
+                </p>
             </form>
         </div>
         <?php
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('wp-revenue-booster-js', plugins_url('/js/revenue-booster.js', __FILE__), array('jquery'), WP_REVENUE_BOOSTER_VERSION, true);
-        wp_localize_script('wp-revenue-booster-js', 'revenueBoosterAjax', array(
-            'ajaxurl' => admin_url('admin-ajax.php')
-        ));
+        wp_enqueue_style('wp-revenue-booster', plugin_dir_url(__FILE__) . 'style.css');
+    }
+
+    public function inject_monetized_content($content) {
+        if (is_single()) {
+            $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
+            $coupons = get_option('wp_revenue_booster_coupons', '');
+            $sponsored = get_option('wp_revenue_booster_sponsored', '');
+
+            $output = '';
+            if (!empty($affiliate_links)) {
+                $links = explode('\n', $affiliate_links);
+                $random_link = trim($links[array_rand($links)]);
+                $output .= '<div class="wp-revenue-booster-affiliate"><p>Recommended: <a href="' . esc_url($random_link) . '" target="_blank">Check this out</a></p></div>';
+            }
+            if (!empty($coupons)) {
+                $coupon_list = explode('\n', $coupons);
+                $random_coupon = trim($coupon_list[array_rand($coupon_list)]);
+                $parts = explode('|', $random_coupon);
+                $output .= '<div class="wp-revenue-booster-coupon"><p>Use code <strong>' . esc_html($parts) . '</strong> for ' . esc_html($parts[1]) . '</p></div>';
+            }
+            if (!empty($sponsored)) {
+                $output .= '<div class="wp-revenue-booster-sponsored">' . wp_kses_post($sponsored) . '</div>';
+            }
+            $content .= $output;
+        }
+        return $content;
     }
 
     public function shortcode_handler($atts) {
         $atts = shortcode_atts(array(
-            'coupon' => '',
-            'affiliate_link' => '',
-            'ad_code' => ''
+            'type' => 'affiliate'
         ), $atts, 'revenue_booster');
 
         $output = '';
-        if (!empty($atts['coupon'])) {
-            $output .= '<div class="revenue-booster-coupon">Coupon: ' . esc_html($atts['coupon']) . '</div>';
-        }
-        if (!empty($atts['affiliate_link'])) {
-            $output .= '<a href="' . esc_url($atts['affiliate_link']) . '?ref=' . esc_attr(get_option('affiliate_tracking_id')) . '" target="_blank">Visit Affiliate</a>';
-        }
-        if (!empty($atts['ad_code'])) {
-            $output .= '<div class="revenue-booster-ad">' . wp_kses_post($atts['ad_code']) . '</div>';
+        if ($atts['type'] == 'affiliate') {
+            $affiliate_links = get_option('wp_revenue_booster_affiliate_links', '');
+            if (!empty($affiliate_links)) {
+                $links = explode('\n', $affiliate_links);
+                $random_link = trim($links[array_rand($links)]);
+                $output = '<div class="wp-revenue-booster-affiliate"><p>Recommended: <a href="' . esc_url($random_link) . '" target="_blank">Check this out</a></p></div>';
+            }
+        } elseif ($atts['type'] == 'coupon') {
+            $coupons = get_option('wp_revenue_booster_coupons', '');
+            if (!empty($coupons)) {
+                $coupon_list = explode('\n', $coupons);
+                $random_coupon = trim($coupon_list[array_rand($coupon_list)]);
+                $parts = explode('|', $random_coupon);
+                $output = '<div class="wp-revenue-booster-coupon"><p>Use code <strong>' . esc_html($parts) . '</strong> for ' . esc_html($parts[1]) . '</p></div>';
+            }
+        } elseif ($atts['type'] == 'sponsored') {
+            $sponsored = get_option('wp_revenue_booster_sponsored', '');
+            if (!empty($sponsored)) {
+                $output = '<div class="wp-revenue-booster-sponsored">' . wp_kses_post($sponsored) . '</div>';
+            }
         }
         return $output;
     }
-
-    public function track_conversion() {
-        if (isset($_POST['conversion_type'])) {
-            $conversion_type = sanitize_text_field($_POST['conversion_type']);
-            $data = array(
-                'conversion_type' => $conversion_type,
-                'timestamp' => current_time('mysql')
-            );
-            // In a real plugin, you'd save to the database
-            wp_die('Conversion tracked: ' . $conversion_type);
-        }
-    }
 }
 
-function wp_revenue_booster_init() {
-    new WP_Revenue_Booster();
-}
-add_action('plugins_loaded', 'wp_revenue_booster_init');
-
-// Activation hook
-register_activation_hook(__FILE__, function() {
-    add_option('affiliate_tracking_id', 'default');
-    add_option('ad_placement_zone', 'default');
-});
-
-// Deactivation hook
-register_deactivation_hook(__FILE__, function() {
-    delete_option('affiliate_tracking_id');
-    delete_option('ad_placement_zone');
-});
+new WP_Revenue_Booster();
 ?>
