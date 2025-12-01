@@ -1,30 +1,35 @@
 # Affiliate Coupon Booster
 
 ## Description
-Affiliate Coupon Booster helps affiliate marketers and bloggers *automatically aggregate and display affiliate coupons* from multiple networks. It features smart targeting by category, expiration date filtering, and conversion click-tracking to boost affiliate revenue.
+Affiliate Coupon Booster allows WordPress site owners and affiliate marketers to create, manage, and display exclusive coupon deals with automatic expiration and click tracking. Increase affiliate revenue by showcasing limited-time offers and gathering performance data.
 
 ## Features
-- Easily add and manage affiliate coupons via WordPress admin.
-- Display coupons with shortcode `[affiliate_coupons category="categoryname"]`.
-- Filter coupons by category and expiration date automatically.
-- Track affiliate coupon clicks with AJAX for conversion insights.
-- Simple user interface for managing coupons.
-- Freemium-ready design allows integration of premium features.
+- Create unlimited affiliate coupons with title, affiliate URL, optional coupon code, and expiration date.
+- Track click counts per coupon.
+- Display active coupons anywhere on your site using the shortcode `[affiliate_coupons]`.
+- Automatic redirection with click count increment and expiration validation.
+- Simple admin interface to add and view coupons.
 
 ## Installation
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory.
+1. Upload the `affiliate-coupon-booster.php` file to your `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Access the new 'Affiliate Coupons' admin menu to add your coupons.
+3. A new menu item "Affiliate Coupons" will appear in the admin sidebar.
+4. Use the form to add coupons.
 
 ## Setup
-1. In the WordPress admin, go to **Affiliate Coupons**.
-2. Fill in coupon code, description, affiliate URL, network, categories, and optional expiration date.
-3. Save your coupon.
+- Add coupons with relevant affiliate URLs and optional coupon codes.
+- Set expiration dates to automatically disable expired coupons.
 
 ## Usage
-- Insert the shortcode `[affiliate_coupons]` in any post or page to show all active coupons.
-- Use `[affiliate_coupons category="electronics"]` to show coupons for a specific category.
-- Clicking on coupon links tracks clicks and opens the affiliate URL in a new tab.
+- Insert the shortcode `[affiliate_coupons]` into posts, pages, or widgets where you want coupon deals displayed.
+- Users clicking "Get Deal" will be redirected to the affiliate link, and clicks will be tracked.
 
-## Monetization
-Start with the free version; consider upgrading to premium to unlock advanced analytics, automated coupon import, and A/B testing to further increase affiliate earnings.
+## Pro Version (Planned)
+- Advanced analytics dashboard.
+- Automated email alerts on coupon expiration.
+- Import/export coupons.
+- Custom styling options.
+
+---
+
+Developed by Perplexity AI
