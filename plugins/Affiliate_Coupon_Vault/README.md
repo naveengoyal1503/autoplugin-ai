@@ -2,53 +2,32 @@
 
 ## Features
 
-- **Personalized Coupons**: Generates unique promo codes for each visitor (e.g., SAVE20-ABCD) to track conversions accurately.[1][2]
-- **Easy Shortcodes**: Use `[affiliate_coupon id="amazon"]` or `[affiliate_coupon]` for random coupon.
-- **Admin Dashboard**: JSON-based coupon management for affiliates like Amazon, Shopify.
-- **Mobile-Responsive Design**: Eye-catching, conversion-optimized UI with gradients and hover effects.
-- **Affiliate Tracking**: Appends site URL as ref parameter to links.
-- **Freemium Upsell**: Premium unlocks unlimited coupons, analytics, auto-generation, custom branding ($49/year).
-
-**Proven Profit Potential**: Coupon plugins like WP Coupons boost conversions; personalized codes improve partnerships and SEO.[1][2]
+- **Generate Exclusive Coupons**: Create unique, trackable coupon codes for affiliate partnerships.
+- **Click & Revenue Tracking**: Monitor clicks and manually log commissions in a dashboard.
+- **Auto-Expiry**: Coupons deactivate automatically after set date.
+- **Shortcode Integration**: Use `[aff_coupon id="1"]` anywhere to display coupons.
+- **Pro Features**: Unlimited coupons, API, white-label, advanced analytics ($49/year).
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to configure your affiliate coupons in JSON format.
-4. Add shortcode to any post/page: `[affiliate_coupon]`. Done!
+1. Upload the plugin files to `/wp-content/plugins/affiliate-coupon-vault`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Visit **Coupon Vault** in admin menu to manage coupons.
 
 ## Setup
 
-1. In admin: Paste JSON like:
-   
-   {
-     "amazon": {"code": "SAVE20", "link": "https://amazon.com/deal?ref=yourblog", "desc": "20% off"},
-     "shopify": {"code": "BLOG10", "link": "https://shopify.com", "desc": "10% off"}
-   }
-   
-2. Save. Test shortcode on frontend.
-3. **Pro Tip**: Request custom codes from brands for exclusivity.[2]
+1. Go to **Coupon Vault > Add New**.
+2. Enter coupon **Title**, **Code** (e.g., SAVE20), **Affiliate URL**, and optional **Expiry**.
+3. Save and copy the coupon ID.
+4. Add shortcode to posts/pages: `[aff_coupon id="X"]`.
 
 ## Usage
 
-- **Posts/Blogs**: Embed coupons in reviews or deal roundups.
-- **Sidebars/Widgets**: Use shortcode widget.
-- **Random Mode**: `[affiliate_coupon]` rotates coupons for variety.
-- **Tracking**: JS event for Google Analytics (GA4 compatible).
+- **Frontend**: Shortcode renders styled coupon box with click-tracking button.
+- **Dashboard**: View stats, edit/delete coupons.
+- **Tracking**: Clicks auto-increment; edit revenue manually.
+- **Pro Upgrade**: For high-volume users – contact support@example.com.
 
-## Premium Features
+**Demo**: [View Demo](https://example.com/demo)
 
-- Unlimited coupons & brands.
-- Click/conversion analytics dashboard.
-- AI-powered coupon generation.
-- Custom designs & A/B testing.
-
-**Upgrade**: Visit example.com/premium ($49/year, billed annually).
-
-## Support
-
-- FAQ in plugin settings.
-- Contact: support@example.com
-
-**Monetization Ready**: Perfect for affiliate blogs – start earning commissions today![3][4]
+> Built for 2026 affiliate trends: Personalized coupons boost conversions by 30%+.
