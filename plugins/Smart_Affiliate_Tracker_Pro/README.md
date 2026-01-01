@@ -2,38 +2,36 @@
 
 ## Features
 
-- **Automatic Link Cloaking**: Detects and cloaks affiliate links (Amazon, etc.) for tracking without breaking SEO.
-- **Click Tracking & Reports**: Logs clicks, IPs, and timestamps with a dashboard for performance insights.
-- **A/B Testing**: Premium: Test link variations to maximize conversions.
-- **Freemium Upsell**: Built-in prompts to upgrade to Pro ($9/month) for advanced analytics and integrations.
-- **Lightweight & Self-Contained**: Single-file plugin, no database tables needed (uses transients).
-
-**Pro Features (Monetization Upsell)**: Full reports, API exports, custom domains, priority support.
+- **Automatic Link Cloaking**: Detects and cloaks affiliate links in posts for branding and tracking.
+- **Click Analytics**: Tracks clicks, IP, referrers, and devices (premium: integrates with Google Analytics).
+- **A/B Testing**: Split-test link variations to optimize conversions (premium).
+- **Shortcode Support**: Use `[sat_link url="https://aff.link" text="Buy Now" id="prod1"]`.
+- **Admin Dashboard**: View reports, manage settings, and upgrade to pro.
+- **Freemium Model**: Free for up to 10 links; Pro unlocks unlimited features for $49/year.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress Admin: Plugins > Add New > Upload Plugin.
-3. Activate the plugin.
-4. Visit **Affiliate Tracker** in the admin menu to view dashboard and settings.
+1. Upload the `smart-affiliate-tracker-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Visit **Settings > Affiliate Tracker** to configure.
 
 ## Setup
 
-1. No complex setup required—works out-of-the-box on posts/pages.
-2. Add affiliate links normally; they auto-cloak on frontend.
-3. Check dashboard for click logs.
-4. Upgrade to Pro via in-plugin links for more features.
+1. Go to **Settings > Affiliate Tracker**.
+2. Enter your analytics API key (optional for basic tracking).
+3. Enable A/B testing if desired.
+4. Add affiliate links to posts; they auto-cloak. Or use shortcodes.
 
 ## Usage
 
-- **Tracking**: Links redirect via tracker, logging data transparently.
-- **Dashboard**: View recent clicks, enable settings like A/B (Pro).
-- **Optimization**: Use reports to refine affiliate strategies.
-- **Monetization**: Pro subscription handles payments via Stripe (link in dashboard).
+- **Auto-Cloaking**: Works on all `the_content` filtered content.
+- **Manual Links**: `[sat_link url="AFFILIATE_URL" text="Affiliate Link"]`. All clicks tracked.
+- **Reports**: View in admin dashboard (premium: detailed exports).
+- **Upgrade**: Click 'Buy Now' in settings for Pro version with unlimited links and advanced features.
 
 ## Support
 
-- Free version: WordPress.org forums.
-- Pro: Email support@yourdomain.com.
+- Free support via WordPress forums.
+- Pro users get priority email support.
 
-**Upgrade now for 2026-ready affiliate dominance!**
+**Boost your affiliate earnings today!**
