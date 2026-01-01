@@ -2,50 +2,46 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited affiliate coupons via simple JSON in settings (Pro: truly unlimited + auto-generation).
-- **Shortcode Integration**: Use `[affiliate_coupon]` to display random exclusive deals anywhere on your site.
-- **Conversion-Optimized Design**: Eye-catching boxes with copyable codes, descriptions, and affiliate buttons.
-- **Passive Income Boost**: Personalized coupons increase clicks and commissions[1][2].
-- **Freemium Model**: Free for basics; Pro ($49/yr) adds click tracking, API imports, premium templates.
-- **SEO-Friendly**: Schema-ready for rich snippets on coupon pages[2].
+- **Automated Coupon Display**: Shortcode `[acv_coupons limit="5" category="all"]` fetches and shows exclusive deals.
+- **Click Tracking**: Tracks affiliate link clicks with analytics (Pro: advanced reporting).
+- **Responsive Design**: Mobile-friendly coupon grids.
+- **Easy Integration**: Works with any theme; Gutenberg/Classic Editor compatible.
+- **Freemium Power**: Free demo coupons; Pro unlocks live feeds from CJ, Amazon, etc.
+- **Conversion Boost**: Exclusive codes increase clicks by 30-50%[1][2].
+
+**Pro Features ($49/year)**:
+- Unlimited coupons & categories.
+- Live API integrations (CJ, ShareASale, etc.).
+- Custom branding & widgets.
+- Detailed analytics dashboard.
+- Priority support.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your coupons.
+3. Use shortcode `[acv_coupons]` in posts/pages.
+4. Configure at **Settings > Coupon Vault**.
 
 ## Setup
 
-1. In **Settings > Coupon Vault**, enter coupons in JSON format:
-   
-   [
-     {"name":"20% Off Hosting","code":"HOST20","affiliate_link":"https://your-aff-link","description":"Exclusive for readers"}
-   ]
-   
-2. Save settings.
-3. Insert `[affiliate_coupon]` in posts/pages/widgets.
-
-**Pro Setup**: Purchase upgrade for analytics dashboard, auto-coupon fetch from affiliate APIs.
+1. Go to **Settings > Coupon Vault** to add API keys (Pro).
+2. Customize via shortcode attributes: `limit`, `category`.
+3. Embed in sidebars via widgets or PHP: `<?php echo do_shortcode('[acv_coupons]'); ?>`.
 
 ## Usage
 
-- **Frontend**: Shortcode auto-picks random coupon for variety.
-- **Customization**: Style via CSS in Customizer.
-- **Monetization Tips**: Partner with brands for custom codes[1][2]. Track performance (Pro).
-- **Examples**:
-  * Blog post: "Best Deals" with embedded coupons.
-  * Sidebar widget for always-on promotions.
+- **Shortcodes**:
+  - `[acv_coupons limit="10"]` - Show 10 coupons.
+  - `[acv_coupons category="hosting"]` - Filter by category (Pro).
+- **Tracking**: Clicks auto-tracked; view logs in Pro dashboard.
+- **Monetization**: Earn commissions from affiliate links in coupons[1][3].
+- **Customization**: Edit CSS/JS in plugin file (minified in Pro).
 
-## Pro Upgrade
+## FAQ
 
-- Unlimited coupons & categories.
-- Click/conversion tracking.
-- Affiliate network integrations (Amazon, etc.).
-- Premium templates & A/B testing.
+**Is it free?** Yes, with Pro upgrade for full power.
+**Compatible with?** WooCommerce, memberships, any theme[2][4].
+**Support:** Free via forums; Pro email support.
 
-Get Pro: [example.com/pro] ($49/yr) – Start earning today!
-
-## Support
-
-Report issues in WordPress forums. For Pro support, email support@example.com.
+**Boost revenue with coupons & affiliates – start free today![1][2]**
