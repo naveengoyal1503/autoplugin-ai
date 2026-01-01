@@ -1,41 +1,33 @@
 # Affiliate Coupon Vault
 
-## Description
-**Affiliate Coupon Vault** is a powerful WordPress plugin that helps bloggers and affiliate marketers display exclusive coupon codes and deals directly on their sites. Drive more clicks, conversions, and commissions effortlessly with customizable shortcodes.[1][2]
-
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons (code, description, affiliate link) via admin dashboard.
-- **Shortcode Integration**: Use `[affiliate_coupon_vault limit="5"]` anywhere to display coupons.
-- **Conversion-Optimized Design**: Eye-catching, mobile-responsive coupon vault.
-- **Freemium Model**: Free for basics; Pro unlocks analytics, custom branding, auto-expiration.
-- **SEO-Friendly**: Improves site stickiness and affiliate revenue.[1][3]
-
-**Pro Features** (Upgrade for $49/year):
-- Unlimited coupons
-- Click tracking & analytics
-- Premium affiliate integrations (Amazon, etc.)
-- Custom designs & automation
+- **Easy Coupon Management**: Add, edit, and delete unlimited coupons (Pro: truly unlimited) via intuitive admin dashboard.
+- **Shortcode Integration**: Use `[acv_coupons limit="5"]` to display active coupons anywhere on your site.
+- **Affiliate Link Tracking**: Embed your affiliate links directly in coupons for seamless commissions.
+- **Expiry Management**: Set expiration dates to keep deals fresh.
+- **Responsive Design**: Mobile-optimized coupon displays.
+- **Pro Features**: Advanced analytics, auto-generation of unique codes, premium affiliate integrations (Amazon, etc.), custom branding, and priority support.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your coupons (format: `CODE|Description|AffiliateLink`).
-4. Insert `[affiliate_coupon_vault]` in posts/pages/widgets.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to add your first coupons.
+4. Insert `[acv_coupons]` shortcode in posts, pages, or widgets.
 
 ## Setup
-1. In admin, enter coupons one per line: e.g., `SAVE20|20% Off|https://affiliate.link/?ref=you`.
-2. Save settings.
-3. Test shortcode on a page.
-4. **Pro Tip**: Negotiate custom codes with brands for exclusivity.[2]
+1. In the admin panel, navigate to **Settings > Coupon Vault**.
+2. Add coupon details: **Code**, **Description**, **Affiliate Link**, and optional **Expiry Date**.
+3. Save changes. Free version limits to 10 coupons; upgrade for unlimited.
+4. Customize display with shortcode attributes like `limit="3"`.
 
 ## Usage
-- **Shortcode Options**: `[affiliate_coupon_vault limit="3"]` limits display.
-- Embed in sidebars, posts, or dedicated deals pages.
-- Track performance in Pro version.
-- **Monetization Boost**: Perfect for niches like software, travel, e-commerce.[1][3]
+- **Display Coupons**: Add `[acv_coupons]` to any post/page/sidebar.
+- **Example**: `[acv_coupons limit="4"]` shows 4 latest active coupons.
+- **Pro Tips**: Place in sidebars for blogs, product pages for shops. Track performance via your affiliate dashboards.
+- **Monetization Ready**: Perfect for niches like tech, fashion, software—boost conversions with exclusive deals.[1][2]
 
-## Changelog
-- **1.0.0**: Initial release.
+## Pro Upgrade
+Unlock unlimited coupons, analytics, and integrations for $49/year. [Upgrade Now](https://example.com/pro)
 
 ## Support
-Submit issues via GitHub or upgrade to Pro for priority support.
+Contact support@example.com. Free users: community forums. Pro: 24/7 priority.
