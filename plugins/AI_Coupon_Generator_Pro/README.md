@@ -1,31 +1,46 @@
 # AI Coupon Generator Pro
 
 ## Features
-- **AI-Powered Unique Coupons**: Generates personalized, unique coupon codes instantly for visitors.
-- **Affiliate Integration**: Automatically appends coupons to your affiliate links for higher conversions[1][2].
-- **Email Capture**: Collects visitor emails for marketing lists.
-- **Shortcode Ready**: Easy `[ai_coupon_generator affiliate_link="https://example.com" brand="Shopify" discount="20%"]`.
-- **Admin Dashboard**: View generated coupons and analytics.
-- **Freemium**: Free basic version; Pro unlocks unlimited generations, custom branding, exports.
-- **SEO-Friendly**: Boosts engagement and time-on-site for better rankings.
+
+- **AI-Powered Coupon Generation**: Automatically creates unique, trackable coupon codes for affiliate products.
+- **Shortcode Integration**: Easy `[ai_coupon_generator]` shortcode for any page or post.
+- **Customizable Display**: Responsive grid layout with copy-to-clipboard codes and affiliate links.
+- **Admin Dashboard**: Manage settings, license, and preview coupons.
+- **Freemium Model**: Free version limited to 3 coupons; Pro unlocks unlimited AI generation, analytics, and exports.
+- **Conversion Boost**: Personalized deals increase clicks and commissions[1][2].
+
+**Pro Features ($49/year)**: Real AI integration (OpenAI API), detailed click tracking, unlimited categories, custom branding, priority support.
 
 ## Installation
-1. Upload the `ai-coupon-generator` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Use the shortcode in any post/page.
+
+1. Download the plugin ZIP.
+2. In WordPress Admin: Plugins > Add New > Upload Plugin.
+3. Activate the plugin.
+4. Use shortcode `[ai_coupon_generator category="hosting" limit="5"]`.
 
 ## Setup
-1. Go to **Settings > AI Coupons** to activate Pro (demo button).
-2. Add shortcode with your affiliate links from Amazon, etc.[3].
-3. Customize brand/discount per shortcode.
+
+1. Go to **Settings > AI Coupon Pro**.
+2. Enter Pro license key (free version uses demo data).
+3. Customize categories in settings (Pro).
+4. Add affiliate links via shortcode attributes or dashboard (Pro).
 
 ## Usage
-- Embed shortcode: Visitors enter email, get unique code + affiliate redirect.
-- Track in dashboard: See all generated coupons and usage.
-- **Pro Tip**: Place on niche deal pages for max affiliate earnings[1][2].
 
-## Pro Upgrade
-$49/year: Unlimited coupons, analytics dashboard, email exports, white-label. Contact support@example.com.
+- **Basic Shortcode**: `[ai_coupon_generator]` - Shows default coupons.
+- **With Params**: `[ai_coupon_generator category="hosting" limit="3"]`.
+- **Dynamic Generation**: Click "Generate More" button on frontend (Pro only).
+- **Tracking**: All links are nofollow; Pro adds UTM params and analytics.
 
-## Changelog
-- 1.0.0: Initial release.
+## Monetization Tips
+
+- Promote affiliate products like hosting, themes, SEO tools[1][3].
+- Offer exclusive codes to readers for higher conversions[2].
+- Upsell Pro via admin nag and frontend teasers.
+
+## Support
+
+- Free: GitHub issues.
+- Pro: Email support@yourdomain.com.
+
+**Upgrade: [Buy Pro Now](https://example.com/buy-pro)**
