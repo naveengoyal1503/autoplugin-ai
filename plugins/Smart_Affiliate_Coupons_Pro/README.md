@@ -2,38 +2,46 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add, edit, and list coupons via intuitive admin dashboard.
-- **Click Tracking**: Automatically tracks clicks on affiliate links with real-time stats.
-- **Dynamic Shortcode**: Use `[sac_coupon_section limit="5"]` to display top coupons anywhere.
-- **Copy-to-Clipboard**: One-click copy for coupon codes.
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Freemium Ready**: Premium unlocks unlimited coupons, analytics dashboard, auto-generation, and custom branding.
-
-Boost affiliate revenue by offering exclusive deals and tracking performance seamlessly.[1][2]
+- **Personalized Coupon Generation**: Automatically creates unique coupon codes for each visitor to prevent abuse and track conversions.[1][2]
+- **Affiliate Link Integration**: Seamlessly embeds your affiliate links with custom discounts.[3]
+- **Shortcode Support**: Easy `[sac_coupon brand="BrandName"]` usage in posts/pages.
+- **Click Tracking**: Basic analytics (Pro: advanced dashboard with conversion matching).[1]
+- **Admin Dashboard**: Manage affiliates, codes, and settings from WordPress admin.
+- **Freemium Model**: Free core features; Pro unlocks unlimited coupons, auto-rotation, email capture ($49/year).
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Access settings at **Settings > SAC Coupons** to add your first coupon.
-4. Insert shortcode `[sac_coupon_section]` in posts/pages.
+3. Go to **Settings > Smart Affiliate Coupons** to configure.
 
 ## Setup
 
-1. Go to **Settings > SAC Coupons**.
-2. Add coupon details: Title, Code, Affiliate URL, Discount, Brand (e.g., Amazon affiliate link).
-3. Save. Coupons appear in the list with click counts.
-4. Use shortcode with `limit` attribute to control display count.
+1. In admin settings, add affiliates in format: `Brand|Code|AffiliateLink|Discount%` (one per line).
+   - Example:
+     
+     Amazon|SAVE20|https://amzn.to/afflink|20%
+     Shopify|WP10|https://shopify.pxf.io/aff|10%
+     
+2. Enable tracking checkbox.
+3. Save settings.
 
 ## Usage
 
-- **Frontend**: Embed shortcode in sidebar, posts, or dedicated coupon pages for SEO boost.
-- **Tracking**: Clicks increment automatically via URL parameter.
-- **Customization**: Edit inline CSS in plugin file or enqueue custom styles.
-- **Pro Upgrade**: For advanced features like API integrations and reports, visit our site.
+- Insert shortcode: `[sac_coupon brand="Amazon"]` in any post/page.
+- Customize with CSS classes for styling.
+- **Pro Tips**: Use on niche blogs for SEO-friendly discount pages; track performance to optimize affiliates.[1][2]
+
+## Pro Upgrade
+
+Unlock:
+- Unlimited coupons & brands
+- Conversion analytics
+- Custom landing pages
+- Priority support
+
+**Pricing: $49/year** – [Upgrade Now](#)
 
 ## Support
 
-Report issues on WordPress.org forums. Premium support available.
-
-**Monetize your site effortlessly!**
+Report issues via WordPress.org forums. Pro users get email support.
