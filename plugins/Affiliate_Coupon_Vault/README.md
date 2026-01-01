@@ -2,29 +2,35 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Pro: truly unlimited).
-- **Shortcode Integration**: Embed coupons anywhere with `[affiliate_coupon id="0"]`.
-- **Affiliate Tracking**: Built-in rel="nofollow" links for SEO compliance.
-- **Conversion Boost**: Exclusive codes increase clicks and sales[1][2].
-- **Freemium Model**: Free for 5 coupons; Pro ($49/year) adds auto-generation, analytics, custom designs.
+- **Easy Coupon Management**: Add unlimited coupons via simple admin settings (Code|Affiliate Link|Description).
+- **Shortcode Integration**: Use `[affiliate_coupon]` for random or `[affiliate_coupon id="1"]` for specific coupons.
+- **Click Tracking**: Tracks and displays click counts per coupon to optimize performance.
+- **Mobile-Responsive Design**: Beautiful, conversion-optimized coupon displays.
+- **Freemium Model**: Free for basics; Pro adds analytics dashboard, A/B testing, email capture ($49/year).
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add coupons (format: `CODE|AFFILIATE_LINK|Description`).
+1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload Plugin**.
+2. Activate the plugin.
+3. Go to **Settings > Coupon Vault** to add your coupons (format: `SAVE20|https://aff.link|20% off products`).
+4. Insert shortcodes in posts/pages: `[affiliate_coupon]`.
 
 ## Setup
 
-1. In admin, enter coupons one per line: `SAVE10|https://yourafflink.com|10% Off`.
-2. Save and copy shortcode ID (e.g., `[affiliate_coupon id="0"]` for first coupon).
-3. Insert shortcode in posts/pages/widgets.
+1. In **Settings > Coupon Vault**, enter coupons one per line.
+2. Example:
+   
+   SAVE20|https://example.com/aff1|20% off software
+   DISCOUNT10|https://example.com/aff2|10% off hosting
+   
+3. Save settings. Shortcodes will now display live coupons with tracking.
 
 ## Usage
 
-- **Frontend**: Coupons display as styled boxes with code and affiliate button.
-- **Pro Features**: Analytics dashboard, AI coupon suggestions, email capture.
-- **Monetization Tip**: Use for blogs/eCommerce to offer exclusive deals, driving affiliate commissions[1][2][3].
+- **Display Coupons**: Add shortcode to any post/page/widget.
+- **Track Performance**: View click counts on coupon displays (Pro: detailed dashboard).
+- **Monetize**: Earn affiliate commissions from tracked clicks. Promote via blog posts on deals.
+- **Pro Features**: Unlimited coupons, export analytics, integrations with WooCommerce/Affiliate plugins.
 
 ## Support
-Contact support@example.com. Upgrade to Pro for priority help.
+Contact support@example.com or visit our site for Pro upgrades.
