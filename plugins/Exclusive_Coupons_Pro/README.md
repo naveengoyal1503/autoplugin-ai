@@ -2,43 +2,45 @@
 
 ## Description
 
-**Exclusive Coupons Pro** is a powerful WordPress plugin that lets you create and manage exclusive, trackable affiliate coupons directly on your site. Boost conversions with one-time-use codes that expire automatically, perfect for bloggers and affiliate marketers.[1][2]
+**Exclusive Coupons Pro** is a powerful WordPress plugin for bloggers and affiliate marketers to create, manage, and track exclusive coupon codes. Boost conversions with limited-time offers, auto-expiring coupons, and usage tracking. Perfect for monetizing your site through affiliate partnerships.[1][2]
 
 ## Features
 
-- **Generate Unique Coupons**: One-click generation of personalized, one-time-use codes.
-- **Auto-Expiration**: Coupons expire after 7 days (customizable in pro).
-- **Tracking Ready**: Integrates seamlessly with affiliate links.
-- **Shortcode Support**: Easy embedding with `[exclusive_coupon]` or `[exclusive_coupon id="0"]`.
-- **Admin Dashboard**: Manage affiliate links and settings.
-- **Freemium Model**: Free for basics, pro for analytics, unlimited coupons, custom designs ($49/year).[7]
+- **Easy Coupon Creation**: Add unlimited coupons with codes, affiliate links, expiration dates, and usage limits (Pro: unlimited).
+- **Shortcode Integration**: Embed coupons anywhere with `[exclusive_coupon id="0"]`.
+- **Smart Tracking**: Track uses per coupon with AJAX (no page reloads).
+- **Auto-Expiration**: Coupons expire automatically by date or uses.
+- **Admin Dashboard**: Manage all coupons from WordPress settings.
+- **Pro Features**: Advanced analytics, API integrations, custom designs, priority support ($49/year).
 
 ## Installation
 
 1. Upload the plugin files to `/wp-content/plugins/exclusive-coupons-pro`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to configure affiliate links (format: `Name|URL|CodePrefix`).
+3. Go to **Settings > Coupons Pro** to create your first coupon.
+4. Use the shortcode `[exclusive_coupon id="0"]` in posts/pages.
 
 ## Setup
 
-1. In the admin page, add your affiliate links one per line:
-   
-   SiteGround Hosting|https://example.com/aff?ref=|SGPRO
-   Bluehost|https://bluehost.com/aff?ref=|BHPRO
-   
-2. Save settings.
-3. Embed shortcode in posts/pages: `[exclusive_coupon]` for random or `[exclusive_coupon id="0"]` for specific.
+1. In **Settings > Coupons Pro**, add coupon details:
+   - **Code**: e.g., SAVE20
+   - **Link**: Your affiliate URL
+   - **Expires**: Select date
+   - **Uses**: Max redemptions
+2. Copy the shortcode ID for embedding.
+3. (Pro) Enter API key for external tracking.
 
 ## Usage
 
-- Visitors click "Get Coupon" to generate a unique code.
-- Code appears with expiration and direct redeem link.
-- Each code is one-time use only.
+- **Frontend**: Place shortcode in posts. Visitors see coupon with uses counter. Clicks track usage and redirect.
+- **Backend**: Monitor in settings. Expired coupons show "Coupon expired!".
+- **Customization**: Add CSS to `.exclusive-coupon` for styling.
+- **Monetization Tip**: Partner with brands for custom codes to drive affiliate commissions.[1][2]
 
-**Pro Upgrade**: Get click analytics, email integration, custom branding. Visit [example.com/pro](https://example.com/pro).
+## Pro Upgrade
 
-## FAQ
+Unlock unlimited coupons, revenue dashboard, email notifications, and more. [Get Pro Now](https://example.com/pro)
 
-**How does it monetize?** Freemium model with pro upsell for advanced features.[7][8]
+## Support
 
-**Compatible with?** All WordPress themes, works with Gutenberg and Classic Editor.
+Report issues on GitHub or upgrade to Pro for priority help.
