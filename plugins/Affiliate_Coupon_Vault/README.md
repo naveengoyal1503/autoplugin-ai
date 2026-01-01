@@ -2,42 +2,44 @@
 
 ## Features
 
-- **Automated Coupon Generation**: Create unique, trackable promo codes for affiliate links with one click.
-- **Shortcode Integration**: Use `[affiliate_coupon]` anywhere to display random or specific coupons.
-- **Freemium Model**: Free for up to 3 coupons; Pro ($49/year) unlocks unlimited coupons, analytics, custom designs, and premium integrations.
-- **Conversion Boost**: Personalized codes improve affiliate tracking and reader trust.[1][2]
-- **SEO-Friendly**: Coupon blocks are optimized for search engines and AI snippets.[2]
+- **Easy Coupon Management**: Add, edit, and display affiliate coupons via intuitive dashboard and shortcodes.[1][2]
+- **Boost Conversions**: Show exclusive deals, discount codes, and personalized offers to drive affiliate commissions.[1][2]
+- **Shortcode Integration**: Use `[affiliate_coupon_vault id="0"]` anywhere to embed coupons.[5]
+- **Affiliate Link Tracking**: Append referral parameters to track sales automatically.[3]
+- **Pro Upgrade**: Unlimited coupons, analytics dashboard, auto-expiry, custom branding, and premium affiliate integrations ($49/year).[7]
+- **SEO-Friendly**: Optimized for search engines to attract deal-hunters.[2]
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+1. Upload the plugin files to `/wp-content/plugins/affiliate-coupon-vault`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to add your first coupon.
+3. Access settings via **Settings > Coupon Vault** to add your first coupon.
 
 ## Setup
 
-1. In the admin panel, enter coupon details: Brand name, affiliate link, discount percentage.
-2. Click **Add Coupon** to generate a unique code (e.g., SAVE20XYZ).
-3. Use shortcode `[affiliate_coupon]` in posts/pages for display.
-
-**Pro Tip**: Limit free version to 3 coupons to encourage upgrades.[7]
+1. Go to **Settings > Coupon Vault**.
+2. Add a new coupon: Title, Code (e.g., SAVE20), Description, Discount %, and Affiliate URL.
+3. Use shortcode `[affiliate_coupon_vault id="0"]` in posts/pages (ID auto-assigns).
+4. **Pro Tip**: Upgrade for analytics and unlimited storage.[7]
 
 ## Usage
 
-- **Basic Shortcode**: `[affiliate_coupon]` - Shows a random coupon.
-- **Specific Coupon**: `[affiliate_coupon id="0"]` - Targets first coupon (0-indexed).
-- **Frontend Example**:
-  
-  [affiliate_coupon]
-  
-  Displays: Brand deal with code, discount, and affiliate button.
+- **Display Coupons**: Embed with shortcode on blog posts, sidebars, or dedicated deal pages.[1]
+- **Monetize**: Partner with brands for custom codes, earn commissions on clicks/sales.[2][3]
+- **Customization**: Style via CSS in **Appearance > Customize**.
+- **Track Performance**: Pro version includes click/session tracking like wecantrack.[3]
 
-- **Monetization**: Earn commissions via affiliate links; upsell Pro for bloggers scaling to multiple brands.[3][8]
+## Pro Features
 
-## Pro Features (Upgrade for $49/year)
-- Unlimited coupons
-- Click analytics dashboard
-- Custom coupon designs
-- Auto-expiry and A/B testing
+| Feature | Free | Pro ($49/year) |
+|---------|------|----------------|
+| Coupons | 10 | Unlimited[7] |
+| Analytics | No | Yes[3] |
+| Auto-Expiry | No | Yes |
+| Templates | Basic | Premium |
+| Integrations | Manual | Amazon, etc.[3] |
 
-**Support**: Contact support@example.com | **Changelog**: v1.0.0 - Initial release.
+**Changelog**
+- 1.0.0: Initial release with core coupon management and shortcodes.
+
+Support: Contact via plugin page. Upgrade: [Get Pro](https://example.com/pro)
