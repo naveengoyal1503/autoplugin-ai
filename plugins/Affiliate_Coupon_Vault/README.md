@@ -1,39 +1,41 @@
 # Affiliate Coupon Vault
 
 ## Description
-Affiliate Coupon Vault is a powerful WordPress plugin that helps site owners monetize their blogs by automatically generating and displaying exclusive affiliate coupons. Boost conversions with personalized discount codes from networks like Amazon.[1][2]
+**Affiliate Coupon Vault** is a powerful WordPress plugin that helps bloggers and affiliate marketers display exclusive coupon codes and deals directly on their sites. Drive more clicks, conversions, and commissions effortlessly with customizable shortcodes.[1][2]
 
 ## Features
-- **Shortcode Integration**: Use `[affiliate_coupon_vault]` to display coupons anywhere.
-- **Customizable Displays**: Filter by network, category, and limit.
-- **Click Tracking**: Built-in tracking for affiliate performance (Pro).
-- **Admin Dashboard**: Easy settings for API keys and networks.
-- **Freemium Model**: Free version with sample data; Pro unlocks live APIs, analytics, unlimited coupons.
-- **SEO-Friendly**: Generates schema-ready coupon markup for better search visibility.[2]
+- **Easy Coupon Management**: Add unlimited coupons (code, description, affiliate link) via admin dashboard.
+- **Shortcode Integration**: Use `[affiliate_coupon_vault limit="5"]` anywhere to display coupons.
+- **Conversion-Optimized Design**: Eye-catching, mobile-responsive coupon vault.
+- **Freemium Model**: Free for basics; Pro unlocks analytics, custom branding, auto-expiration.
+- **SEO-Friendly**: Improves site stickiness and affiliate revenue.[1][3]
+
+**Pro Features** (Upgrade for $49/year):
+- Unlimited coupons
+- Click tracking & analytics
+- Premium affiliate integrations (Amazon, etc.)
+- Custom designs & automation
 
 ## Installation
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use the shortcode `[affiliate_coupon_vault network="amazon" category="electronics" limit="5"]` in posts/pages.
-4. Configure settings via **Settings > Coupon Vault**.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupon Vault** to add your coupons (format: `CODE|Description|AffiliateLink`).
+4. Insert `[affiliate_coupon_vault]` in posts/pages/widgets.
 
 ## Setup
-1. Go to **Settings > Coupon Vault**.
-2. Enter your affiliate network API keys (Pro feature).
-3. Select default network (e.g., Amazon Associates).
-4. Add shortcode to sidebar widgets, posts, or pages.
+1. In admin, enter coupons one per line: e.g., `SAVE20|20% Off|https://affiliate.link/?ref=you`.
+2. Save settings.
+3. Test shortcode on a page.
+4. **Pro Tip**: Negotiate custom codes with brands for exclusivity.[2]
 
 ## Usage
-- **Basic Shortcode**: `[affiliate_coupon_vault]` - Shows 5 Amazon electronics deals.
-- **Advanced**: `[affiliate_coupon_vault network="amazon" limit="3"]`.
-- **Pro Features**: Real-time coupon fetching, conversion analytics, custom promo code generation.[1][3]
-- Embed in sidebars for passive income from visitor traffic.[4]
-
-## Pro Upgrade
-Unlock live integrations with Amazon, CJ Affiliate, and more. Starting at $49/year. Visit [Pro Page](https://example.com/pro).
-
-## Support
-Report issues on GitHub or contact support@example.com.
+- **Shortcode Options**: `[affiliate_coupon_vault limit="3"]` limits display.
+- Embed in sidebars, posts, or dedicated deals pages.
+- Track performance in Pro version.
+- **Monetization Boost**: Perfect for niches like software, travel, e-commerce.[1][3]
 
 ## Changelog
-**1.0.0** - Initial release with core shortcode and settings.
+- **1.0.0**: Initial release.
+
+## Support
+Submit issues via GitHub or upgrade to Pro for priority support.
