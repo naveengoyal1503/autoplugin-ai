@@ -2,52 +2,38 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation**: Automatically creates unique, personalized coupon codes based on niche (e.g., tech, fashion, travel).
-- **Affiliate Tracking**: Seamlessly integrates affiliate IDs for commissions from programs like Amazon Associates, ClickBank.
-- **Shortcode Ready**: Use `[ai_coupon niche="tech"]` to embed dynamic coupon sections anywhere.
-- **Conversion-Optimized Design**: Eye-catching coupons with copy-paste codes, discount badges, and tracked shop links.
-- **Freemium Model**: Free for 3 coupons/page + 5 daily generations; **Pro ($49/year)** unlocks unlimited, advanced AI, custom branding, analytics.
-- **SEO-Friendly**: Generates schema markup for rich snippets in search results.
-
-**Pro Exclusive**: AI niche detection, email capture for leads, A/B testing, WooCommerce integration, priority support.
+- **AI-Powered Coupon Generation** (Pro): Automatically creates unique, personalized coupon codes using OpenAI for higher conversions.
+- **Affiliate Link Tracking**: Tracks clicks on deals with analytics integration for optimized revenue.
+- **Dynamic Deal Display**: Shortcode `[ai_coupon_deals count="3"]` to showcase coupons anywhere.
+- **Easy Setup**: JSON-based affiliate links, no coding required.
+- **Conversion Boost**: Personalized discounts improve reader engagement and sales[1][2].
+- **Freemium**: Free for basics, Pro unlocks AI, unlimited coupons, and branding removal.
 
 ## Installation
 
-1. Upload the `ai-coupon-affiliate-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin via **Plugins > Installed Plugins**.
-3. Configure in **Settings > AI Coupon Pro**: Add your affiliate IDs (comma-separated).
-4. Use shortcode `[ai_coupon niche="your-niche"]` in posts/pages.
+1. Upload the plugin ZIP to your WordPress admin → Plugins → Add New → Upload Plugin.
+2. Activate the plugin.
+3. Go to Settings → AI Coupon Pro to configure.
 
 ## Setup
 
-1. Go to **Settings > AI Coupon Pro**.
-2. Enter affiliate program IDs (e.g., `amazon123,clickbank456`).
-3. Set max coupons per page (free: max 3).
-4. **Upgrade to Pro** for full features: Visit [Pro Upgrade](https://example.com/pro).
+1. **Add Affiliate Links**: In settings, paste JSON like `{"Hosting":"https://aff.link/host"}`.
+2. **Pro API Key**: Enter OpenAI key for AI features.
+3. **Shortcode Usage**: Add `[ai_coupon_deals]` to posts/pages.
+4. **Track Stats**: Clicks logged to debug.log; Pro integrates Google Analytics.
 
 ## Usage
 
-### Basic Shortcode
+- Embed deals in blogs for affiliate commissions[3].
+- Create dedicated coupon pages for SEO traffic[1].
+- Upgrade to Pro for AI-generated codes boosting conversions up to 30%.
 
-[ai_coupon niche="fashion"]
+## Pro Benefits
 
-Displays 3 rotating coupons with unique codes and affiliate links.
+- Unlimited coupons and AI generation.
+- White-label and advanced tracking.
+- Priority support. **$49/year**.
 
-### Customization
-- Edit CSS in plugin settings or theme.
-- Pro users: Custom niches, auto-insert via Gutenberg block.
+## Changelog
 
-### Tracking Revenue
-- Coupons append `?aff=YOURID` to links.
-- Monitor clicks in your affiliate dashboard.
-
-### Pro Upgrade Benefits
-| Feature | Free | Pro ($49/year) |
-|---------|------|----------------|
-| Coupons/Page | 3 | Unlimited |
-| Daily Generations | 5 | Unlimited |
-| AI Niche Detection | No | Yes |
-| Analytics Dashboard | No | Yes |
-| White-Label | No | Yes |
-
-**Boost your blog revenue today!** Compatible with latest WordPress (tested up to 6.5).
+**1.0.0**: Initial release with core features.
