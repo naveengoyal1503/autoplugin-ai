@@ -2,39 +2,41 @@
 
 ## Features
 
-- **Easy Coupon Creation**: Add custom promo codes with affiliate links via simple JSON in admin.
-- **Trackable Usage**: Each coupon tracks clicks and uses automatically.
-- **Shortcode Integration**: Use `[sacm_coupon id="0"]` to embed coupons anywhere.
-- **Conversion Booster**: Personalized discounts improve affiliate earnings and reader engagement.[1][2]
-- **Freemium Ready**: Pro version adds analytics, unlimited coupons, email capture, and custom designs.
+- **Generate Exclusive Coupons**: Create unique promo codes with affiliate tracking links.
+- **Auto-Expiry**: Set expiration timestamps for limited-time offers.
+- **Click Tracking**: Monitor coupon usage and conversions.
+- **Easy Shortcodes**: Insert coupons anywhere with `[sacm_coupon id="unique-id"]`.
+- **One-Click Deployment**: Frontend button redirects to affiliate link after tracking.
+- **Freemium Model**: Free for basics; **Pro ($49/year)** adds unlimited coupons, analytics dashboard, custom designs, email integrations.
+
+**Pro Only**: Advanced reporting, A/B testing, API for external tools, white-label branding.
 
 ## Installation
 
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New.
-2. Activate the plugin.
-3. Go to **Affiliate Coupons** in the admin menu to configure.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Access settings at **Smart Coupons** in admin menu.
 
 ## Setup
 
-1. In **Affiliate Coupons** page, enter coupons in JSON format:
-   
-   [
-     {"code": "SAVE10", "afflink": "https://youraffiliatelink.com", "desc": "10% Off", "uses": 0}
-   ]
-   
-2. Save changes.
-3. Use shortcode `[sacm_coupon id="0"]` (replace 0 with coupon index) in posts/pages.
+1. Go to **Smart Coupons** dashboard.
+2. Add a new coupon: Enter code (e.g., SAVE20), affiliate link, description, optional expiry (Unix timestamp).
+3. Copy the generated shortcode (e.g., `[sacm_coupon id="abc123"]`).
+4. Paste shortcode in posts/pages.
+
+**Pro Tip**: Use Unix timestamp converter for expiry (e.g., epochconverter.com).
 
 ## Usage
 
-- Embed coupons in blog posts for affiliate promotions.
-- Track uses to measure performance.
-- **Pro Tip**: Pair with SEO plugins for better visibility of discount pages.[1][3]
+- **Frontend**: Visitors see styled coupon box with "Use Coupon" button. Tracks clicks and redirects.
+- **Admin**: View all coupons, usage stats, delete as needed.
+- **Monetization Ready**: Perfect for blogs promoting software, travel, e-commerce deals.
 
-## Pro Upgrade
+**Upgrade to Pro**: Visit [example.com/pro] for unlimited features and priority support.
 
-Unlock **unlimited coupons**, **click analytics**, **custom branding**, and **integrations** for $49/year. Ideal for scaling affiliate income.[7]
+## FAQ
 
-## Support
+- **Self-contained?** Yes, single PHP file with embedded assets.
+- **Compatible?** WordPress 5.0+, no conflicts with major themes/plugins.
 
-Contact support@example.com for help.
+Support: example@domain.com
