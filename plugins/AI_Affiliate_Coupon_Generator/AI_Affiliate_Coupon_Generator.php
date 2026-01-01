@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Affiliate Coupon Generator
  * Plugin URI: https://example.com/ai-affiliate-coupon
- * Description: Automatically generates and displays personalized affiliate coupons using AI to boost conversions.
+ * Description: Automatically generates personalized affiliate coupons and discount codes for blog posts using AI, boosting conversions and commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -17,141 +17,165 @@ if (!defined('ABSPATH')) {
 }
 
 class AIAffiliateCouponGenerator {
+    private $api_key;
+    private $is_pro = false;
+
     public function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_shortcode('ai_coupon_generator', array($this, 'coupon_shortcode'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_generate_coupon', array($this, 'ajax_generate_coupon'));
+        add_action('plugins_loaded', array($this, 'init'));
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        if (get_option('ai_coupon_pro') !== 'yes') {
-            add_action('admin_notices', array($this, 'pro_notice'));
-        }
-    }
+        $this->api_key = get_option('aiacg_api_key', '');
+        $this->is_pro = get_option('aiacg_pro', false);
 
-    public function enqueue_scripts() {
-        wp_enqueue_script('ai-coupon-js', plugin_dir_url(__FILE__) . 'ai-coupon.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('ai-coupon-js', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
-    }
-
-    public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'niche' => 'general',
-            'affiliate' => 'amazon'
-        ), $atts);
-
-        ob_start();
-        ?>
-        <div id="ai-coupon-container" data-niche="<?php echo esc_attr($atts['niche']); ?>" data-affiliate="<?php echo esc_attr($atts['affiliate']); ?>">
-            <button id="generate-coupon" class="button">Generate Coupon</button>
-            <div id="coupon-output"></div>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
-
-    public function ajax_generate_coupon() {
-        if (!wp_verify_nonce($_POST['nonce'], 'ai_coupon_nonce')) {
-            wp_die('Security check failed');
+        if (is_admin()) {
+            add_action('admin_menu', array($this, 'admin_menu'));
+            add_action('admin_init', array($this, 'admin_init'));
         }
 
-        $niche = sanitize_text_field($_POST['niche']);
-        $affiliate = sanitize_text_field($_POST['affiliate']);
-
-        // Simulate AI generation (Pro version would integrate real AI API)
-        $coupons = array(
-            'amazon' => array(
-                'general' => 'SAVE20% on Electronics - Affiliate Link: https://amazon.com/deal',
-                'fashion' => '30% OFF Fashion - Code: FASHION30',
-                'tech' => '15% Tech Discount - Link: https://amazon.com/techdeal'
-            ),
-            'other' => '10% OFF Any Purchase - Custom Affiliate Link'
-        );
-
-        $coupon = isset($coupons[$affiliate][$niche]) ? $coupons[$affiliate][$niche] : 'Default 20% OFF - Trackable Affiliate Link';
-
-        // Free limit check
-        $usage = get_option('ai_coupon_usage', 0);
-        if ($usage >= 5 && get_option('ai_coupon_pro') !== 'yes') {
-            echo json_encode(array('error' => 'Upgrade to Pro for unlimited coupons.'));
-            wp_die();
-        }
-        update_option('ai_coupon_usage', $usage + 1);
-
-        echo json_encode(array('coupon' => $coupon));
-        wp_die();
-    }
-
-    public function admin_menu() {
-        add_options_page('AI Coupon Settings', 'AI Coupons', 'manage_options', 'ai-coupon', array($this, 'settings_page'));
-    }
-
-    public function settings_page() {
-        if (isset($_POST['submit'])) {
-            update_option('ai_coupon_pro', sanitize_text_field($_POST['pro_key']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
-        }
-        ?>
-        <div class="wrap">
-            <h1>AI Affiliate Coupon Settings</h1>
-            <form method="post">
-                <p>Pro License Key: <input type="text" name="pro_key" value="<?php echo get_option('ai_coupon_pro'); ?>" /></p>
-                <?php wp_nonce_field('ai_coupon_settings'); ?>
-                <p><input type="submit" name="submit" class="button-primary" value="Save" /></p>
-            </form>
-            <p><strong>Pro Features:</strong> Unlimited generations, analytics, custom affiliates. <a href="https://example.com/pro">Upgrade Now ($49/year)</a></p>
-        </div>
-        <?php
-    }
-
-    public function pro_notice() {
-        echo '<div class="notice notice-info"><p>Unlock unlimited AI coupons with <a href="' . admin_url('options-general.php?page=ai-coupon') . '">Pro version</a>!</p></div>';
+        add_action('add_meta_boxes', array($this, 'add_meta_box'));
+        add_action('save_post', array($this, 'save_meta_box'));
+        add_shortcode('ai_coupon', array($this, 'coupon_shortcode'));
+        add_filter('the_content', array($this, 'auto_insert_coupon'));
     }
 
     public function activate() {
-        update_option('ai_coupon_usage', 0);
+        add_option('aiacg_limit', 5);
+    }
+
+    public function deactivate() {}
+
+    public function admin_menu() {
+        add_options_page('AI Coupon Settings', 'AI Coupons', 'manage_options', 'aiacg', array($this, 'settings_page'));
+    }
+
+    public function admin_init() {
+        register_setting('aiacg_options', 'aiacg_api_key');
+        register_setting('aiacg_options', 'aiacg_pro');
+        register_setting('aiacg_options', 'aiacg_affiliate_ids');
+        register_setting('aiacg_options', 'aiacg_auto_insert');
+    }
+
+    public function settings_page() {
+        ?>
+        <div class="wrap">
+            <h1>AI Affiliate Coupon Generator Settings</h1>
+            <form method="post" action="options.php">
+                <?php settings_fields('aiacg_options'); ?>
+                <?php do_settings_sections('aiacg_options'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th>AI API Key (OpenAI)</th>
+                        <td><input type="password" name="aiacg_api_key" value="<?php echo esc_attr(get_option('aiacg_api_key')); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Affiliate Networks</th>
+                        <td><textarea name="aiacg_affiliate_ids" rows="5" cols="50"><?php echo esc_textarea(get_option('aiacg_affiliate_ids', 'Amazon: your-id\nClickBank: your-id')); ?></textarea><br><small>Format: Network: ID per line</small></td>
+                    </tr>
+                    <tr>
+                        <th>Auto-insert in posts</th>
+                        <td><input type="checkbox" name="aiacg_auto_insert" value="1" <?php checked(get_option('aiacg_auto_insert')); ?> /></td>
+                    </tr>
+                    <tr>
+                        <th>Pro Version</th>
+                        <td><label><input type="checkbox" name="aiacg_pro" value="1" <?php checked(get_option('aiacg_pro')); ?> /> Enable Pro (Enter license key)</label></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+            <p><strong>Pro Upgrade:</strong> Unlimited coupons, analytics. <a href="https://example.com/pro">Buy Now $49/year</a></p>
+        </div>
+        <?php
+    }
+
+    public function add_meta_box() {
+        add_meta_box('aiacg_coupon', 'AI Coupon', array($this, 'meta_box_callback'), 'post', 'normal');
+    }
+
+    public function meta_box_callback($post) {
+        wp_nonce_field('aiacg_meta_nonce', 'aiacg_nonce');
+        $keywords = get_post_meta($post->ID, '_aiacg_keywords', true);
+        $coupon = get_post_meta($post->ID, '_aiacg_coupon', true);
+        echo '<label>Keywords for coupon:</label><br><input type="text" name="aiacg_keywords" value="' . esc_attr($keywords) . '" style="width:100%" />';
+        echo '<p><button type="button" id="aiacg_generate" class="button">Generate Coupon</button></p>';
+        echo '<textarea name="aiacg_coupon" style="width:100%;height:100px;">' . esc_textarea($coupon) . '</textarea>';
+        echo '<script>jQuery(document).ready(function($){ $("#aiacg_generate").click(function(){ /* AJAX call to generate */ alert("Pro feature: Generate AI coupon"); }); });</script>';
+    }
+
+    public function save_meta_box($post_id) {
+        if (!isset($_POST['aiacg_nonce']) || !wp_verify_nonce($_POST['aiacg_nonce'], 'aiacg_meta_nonce')) return;
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+        if (!current_user_can('edit_post', $post_id)) return;
+
+        update_post_meta($post_id, '_aiacg_keywords', sanitize_text_field($_POST['aiacg_keywords']));
+        update_post_meta($post_id, '_aiacg_coupon', wp_kses_post($_POST['aiacg_coupon']));
+    }
+
+    public function generate_coupon($keywords) {
+        if (!$this->api_key || !$this->check_limit()) {
+            return 'Upgrade to Pro for unlimited AI coupons!';
+        }
+
+        $prompt = "Generate a personalized discount coupon for: $keywords. Include affiliate link placeholder [AFFILIATE_LINK], code, expiry. Make it compelling.";
+        $response = wp_remote_post('https://api.openai.com/v1/chat/completions', array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $this->api_key,
+                'Content-Type' => 'application/json',
+            ),
+            'body' => json_encode(array(
+                'model' => 'gpt-3.5-turbo',
+                'messages' => array(array('role' => 'user', 'content' => $prompt)),
+                'max_tokens' => 150,
+            )),
+        ));
+
+        if (is_wp_error($response)) {
+            return 'Error generating coupon. Check API key.';
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        $coupon_text = $body['choices']['message']['content'] ?? 'Failed to generate.';
+        $this->update_limit();
+        return $coupon_text;
+    }
+
+    private function check_limit() {
+        if ($this->is_pro) return true;
+        $used = get_option('aiacg_used', 0);
+        return $used < get_option('aiacg_limit', 5);
+    }
+
+    private function update_limit() {
+        if (!$this->is_pro) {
+            $used = get_option('aiacg_used', 0) + 1;
+            update_option('aiacg_used', $used);
+        }
+    }
+
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array('keywords' => ''), $atts);
+        return $this->generate_coupon($atts['keywords']);
+    }
+
+    public function auto_insert_coupon($content) {
+        if (!is_single() || !get_option('aiacg_auto_insert')) return $content;
+        $keywords = get_post_meta(get_the_ID(), '_aiacg_keywords', true);
+        if ($keywords) {
+            $coupon = $this->generate_coupon($keywords);
+            $content .= '<div class="ai-coupon-box" style="background:#f9f9f9;padding:20px;margin:20px 0;border-left:5px solid #0073aa;">' . $coupon . '</div>';
+        }
+        return $content;
     }
 }
 
 new AIAffiliateCouponGenerator();
 
-// Frontend JS (embedded for single file)
-function ai_coupon_add_inline_script() {
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('#generate-coupon').click(function() {
-            var container = $('#ai-coupon-container');
-            var niche = container.data('niche');
-            var affiliate = container.data('affiliate');
-
-            $.post(ajax_object.ajax_url, {
-                action: 'generate_coupon',
-                nonce: '<?php echo wp_create_nonce('ai_coupon_nonce'); ?>',
-                niche: niche,
-                affiliate: affiliate
-            }, function(response) {
-                if (response.error) {
-                    $('#coupon-output').html('<p style="color:red;">' + response.error + '</p>');
-                } else {
-                    $('#coupon-output').html('<div class="coupon-box" style="border:1px solid #ccc; padding:20px; margin:10px 0;"><strong>' + response.coupon + '</strong><br><small>Track conversions automatically!</small></div>');
-                }
-            });
-        });
-    });
-    </script>
-    <?php
+// Pro upsell notice
+function aiacg_admin_notice() {
+    if (!get_option('aiacg_pro')) {
+        echo '<div class="notice notice-info"><p>Unlock <strong>AI Affiliate Coupon Generator Pro</strong> for unlimited generations and more! <a href="options-general.php?page=aiacg">Upgrade Now</a></p></div>';
+    }
 }
-add_action('wp_footer', 'ai_coupon_add_inline_script');
-
-// CSS
-function ai_coupon_styles() {
-    echo '<style>
-    .coupon-box { background: #f9f9f9; border-radius: 5px; }
-    #generate-coupon { background: #0073aa; color: white; padding: 10px 20px; border: none; cursor: pointer; }
-    </style>';
-}
-add_action('wp_head', 'ai_coupon_styles');
+add_action('admin_notices', 'aiacg_admin_notice');
