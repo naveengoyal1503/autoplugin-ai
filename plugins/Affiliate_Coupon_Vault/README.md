@@ -2,35 +2,47 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin settings (Code|Affiliate Link|Description).
-- **Shortcode Integration**: Use `[affiliate_coupon]` for random or `[affiliate_coupon id="1"]` for specific coupons.
-- **Click Tracking**: Tracks and displays click counts per coupon to optimize performance.
-- **Mobile-Responsive Design**: Beautiful, conversion-optimized coupon displays.
-- **Freemium Model**: Free for basics; Pro adds analytics dashboard, A/B testing, email capture ($49/year).
+- **Easy Coupon Management**: Add unlimited affiliate coupons via simple JSON in admin settings (Pro: Visual editor).
+- **Click Tracking**: Tracks affiliate link clicks with logging (Pro: Detailed analytics dashboard).
+- **Shortcode Display**: Use `[affiliate_coupons]` to embed beautiful, responsive coupon vaults anywhere.
+- **Conversion Boost**: Personalized deals increase clicks and commissions.[1][2]
+- **Freemium Model**: Free for basics, Pro unlocks advanced features like A/B testing and email integration.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload Plugin**.
-2. Activate the plugin.
-3. Go to **Settings > Coupon Vault** to add your coupons (format: `SAVE20|https://aff.link|20% off products`).
-4. Insert shortcodes in posts/pages: `[affiliate_coupon]`.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupon Vault** to add your first coupons.
+4. Use shortcode `[affiliate_coupons]` in posts/pages.
 
 ## Setup
 
-1. In **Settings > Coupon Vault**, enter coupons one per line.
-2. Example:
+1. In admin: Enter coupons as JSON array, e.g.:
    
-   SAVE20|https://example.com/aff1|20% off software
-   DISCOUNT10|https://example.com/aff2|10% off hosting
+   [
+     {"code":"SAVE20","afflink":"https://yourafflink.com","desc":"20% Off Hosting"},
+     {"code":"DEAL10","afflink":"https://afflink2.com","desc":"$10 Off VPN"}
+   ]
    
-3. Save settings. Shortcodes will now display live coupons with tracking.
+2. Save and embed shortcode.
+3. **Pro Tip**: Get exclusive codes from brands for higher conversions.[2]
 
 ## Usage
 
-- **Display Coupons**: Add shortcode to any post/page/widget.
-- **Track Performance**: View click counts on coupon displays (Pro: detailed dashboard).
-- **Monetize**: Earn affiliate commissions from tracked clicks. Promote via blog posts on deals.
-- **Pro Features**: Unlimited coupons, export analytics, integrations with WooCommerce/Affiliate plugins.
+- **Frontend**: Coupons display as styled cards with one-click affiliate redirects.
+- **Tracking**: Clicks logged to `error_log` (Pro: Real-time dashboard).
+- **Customization**: Style via CSS targeting `#acv-coupons`.
+- **Monetization**: Earn commissions; upsell Pro for power users.[1][3]
+
+## Pro Version
+
+Upgrade for:
+- Unlimited coupons & visual builder.
+- Analytics: Views, clicks, conversion rates.
+- Auto-expiring deals & email capture.
+
+**Pricing: $49/year** – [Buy Pro](https://example.com/pro)
 
 ## Support
-Contact support@example.com or visit our site for Pro upgrades.
+
+Report issues in WordPress forums or contact support@example.com.
