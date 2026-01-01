@@ -2,31 +2,54 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add, edit, and display exclusive promo codes via a simple admin dashboard.
-- **Affiliate Tracking**: Unique referral IDs on each coupon link for performance tracking.
-- **Shortcode Integration**: Embed coupons anywhere with `[exclusive_coupon id="name"]`.
-- **Responsive Design**: Mobile-friendly coupon displays that boost conversions.
-- **Freemium Model**: Free core features; Pro unlocks unlimited coupons, analytics, auto-expiry, and API integrations.
+- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (format: Code|Brand|Discount|Affiliate Link).
+- **Shortcode Support**: Use `[exclusive_coupon]` for random or `[exclusive_coupon id="1"]` for specific coupons.
+- **Click Tracking**: Basic analytics for coupon clicks (premium: advanced dashboard).
+- **Widget Ready**: Drag-and-drop widget for sidebars.
+- **Conversion Boost**: Personalized deals increase affiliate earnings and reader loyalty.[1][2]
+- **Freemium Model**: Free core features; premium unlocks unlimited coupons, exports, and integrations ($49/year).
 
 ## Installation
 
 1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Coupons** in the admin menu to add your first coupon.
+3. Go to **Coupons Pro** in the admin menu to add your first coupons.
+4. Use shortcodes or widgets on posts/pages.
 
 ## Setup
 
-1. Go to **Exclusive Coupons** in your WordPress dashboard.
-2. Enter coupons in JSON format: `{"name":"My Deal","code":"SAVE20","afflink":"https://your-affiliate-link.com","desc":"20% Discount"}`.
-3. Save and use the shortcode `[exclusive_coupon id="name"]` in posts/pages.
+1. Navigate to **Coupons Pro** dashboard.
+2. Enter coupons in format: `CODE|Brand|Discount|Affiliate Link` (one per line).
+3. Example:
+   
+   SAVE20|Shopify|20% Off|https://affiliate.shopify.com
+   WELCOME50|BrandX|50% Off|https://yourlink.com
+   
+4. Save. Premium users get import/export.
 
 ## Usage
 
-- **Display Coupons**: Add shortcodes to blog posts, sidebars, or dedicated pages.
-- **Monetize**: Partner with brands for custom codes, track clicks via `?ref=ID` in affiliate dashboards.
-- **Pro Upgrade**: For advanced features like usage stats and premium support, purchase at [example.com/pro](https://example.com/pro).
+- **Shortcodes**:
+  - `[exclusive_coupon]` - Random coupon.
+  - `[exclusive_coupon id="2"]` - Specific coupon (1-indexed).
 
-## Changelog
+- **Widget**: Add "Exclusive Coupon" widget to any sidebar.
 
-**1.0.0**
-- Initial release with core coupon management.
+- **Templates**: Insert shortcode in themes for headers/footers.
+
+- **Tracking**: View basic stats in dashboard (premium: detailed reports).
+
+## Premium Features
+
+- Unlimited coupons & brands.
+- Analytics dashboard with click/conversion tracking.
+- Custom designs and email capture.
+- WooCommerce integration.
+- Priority support.
+
+**Upgrade: [Get Premium](https://example.com/premium) - $49/year**
+
+## Support
+
+- Free version: WordPress.org forums.
+- Premium: Dedicated support ticket system.
