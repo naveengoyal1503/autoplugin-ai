@@ -5,145 +5,137 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: WP Exclusive Coupons Pro
- * Plugin URI: https://example.com/wp-exclusive-coupons
- * Description: Automatically generates and manages exclusive affiliate coupons to boost conversions.
+ * Plugin URI: https://example.com/wp-exclusive-coupons-pro
+ * Description: Automatically generates, manages, and displays exclusive affiliate coupons with personalized promo codes to boost conversions and commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: wp-exclusive-coupons
+ * Text Domain: wp-exclusive-coupons-pro
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class WP_Exclusive_Coupons {
-    private static $instance = null;
+class WP_Exclusive_Coupons_Pro {
 
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
+    public function __construct() {
         add_action('init', array($this, 'init'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_shortcode('wp_exclusive_coupons', array($this, 'coupons_shortcode'));
+        add_shortcode('wpec_coupon', array($this, 'coupon_shortcode'));
+        add_action('wp_ajax_wpec_generate_coupon', array($this, 'ajax_generate_coupon'));
+        add_action('wp_ajax_nopriv_wpec_generate_coupon', array($this, 'ajax_generate_coupon'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        load_plugin_textdomain('wp-exclusive-coupons', false, dirname(plugin_basename(__FILE__)) . '/languages');
-        if (is_admin()) {
-            add_action('admin_init', array($this, 'admin_init'));
-        }
+        load_plugin_textdomain('wp-exclusive-coupons-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function activate() {
-        add_option('wp_coupon_pro_version', '1.0.0');
-        add_option('wp_coupon_coupons', array());
+        add_option('wpec_pro_active', false);
+        add_option('wpec_coupons', array());
     }
 
     public function admin_menu() {
         add_options_page(
-            'Exclusive Coupons',
+            'WP Exclusive Coupons Pro',
             'Coupons Pro',
             'manage_options',
-            'wp-exclusive-coupons',
+            'wpec-pro',
             array($this, 'admin_page')
         );
     }
 
-    public function admin_init() {
-        register_setting('wp_coupon_options', 'wp_coupon_coupons');
-        if (isset($_POST['submit'])) {
-            update_option('wp_coupon_coupons', sanitize_text_field($_POST['coupons']));
-        }
-    }
-
     public function admin_page() {
+        if (isset($_POST['wpec_save'])) {
+            update_option('wpec_pro_active', !empty($_POST['wpec_pro_key']));
+            update_option('wpec_coupons', sanitize_text_field($_POST['wpec_coupons'] ?? ''));
+            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
+        }
+        $pro_active = get_option('wpec_pro_active', false);
+        $coupons = get_option('wpec_coupons', '');
         ?>
         <div class="wrap">
-            <h1><?php _e('WP Exclusive Coupons Pro', 'wp-exclusive-coupons'); ?></h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('wp_coupon_options'); ?>
-                <table class="form-table">
-                    <tr>
-                        <th><?php _e('Coupons JSON', 'wp-exclusive-coupons'); ?></th>
-                        <td>
-                            <textarea name="coupons" rows="10" cols="50" class="large-text"><?php echo esc_textarea(get_option('wp_coupon_coupons', '[]')); ?></textarea>
-                            <p class="description"><?php _e('Enter coupons as JSON array: [{"brand":"Amazon","code":"SAVE20","link":"https://aff.link","desc":"20% off"}]', 'wp-exclusive-coupons'); ?></p>
-                            <?php if (get_option('wp_coupon_pro_key') !== 'pro') { ?>
-                            <p><strong>Upgrade to Pro for unlimited coupons & analytics! <a href="#">Get Pro</a></strong></p>
-                            <?php } ?>
-                        </td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
+            <h1>WP Exclusive Coupons Pro</h1>
+            <form method="post">
+                <?php if (!$pro_active): ?>
+                <p><label>Pro Key: <input type="text" name="wpec_pro_key" placeholder="Enter pro key for unlimited features"></label></p>
+                <?php endif; ?>
+                <p><label>Coupons JSON ("code":"discount":"link"): <textarea name="wpec_coupons" rows="10" cols="50"><?php echo esc_textarea($coupons); ?></textarea></label></p>
+                <p><?php _e('Use shortcode [wpec_coupon id="1"] to display.', 'wp-exclusive-coupons-pro'); ?></p>
+                <p class="description"><?php _e('Pro: Unlimited coupons, analytics. Free: 3 max.', 'wp-exclusive-coupons-pro'); ?></p>
+                <input type="submit" name="wpec_save" class="button-primary" value="Save">
+                <?php if (!$pro_active): ?>
+                <p><a href="https://example.com/pro-upgrade" target="_blank" class="button">Upgrade to Pro ($49/yr)</a></p>
+                <?php endif; ?>
             </form>
         </div>
         <?php
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_style('wp-coupons-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+        wp_enqueue_script('wpec-script', plugin_dir_url(__FILE__) . 'wpec.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('wpec-script', 'wpec_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
     }
 
-    public function coupons_shortcode($atts) {
-        $atts = shortcode_atts(array('limit' => 5), $atts);
-        $coupons_json = get_option('wp_coupon_coupons', '[]');
-        $coupons = json_decode($coupons_json, true);
-        if (!is_array($coupons) || empty($coupons)) {
-            return '<p>No coupons available. <a href="' . admin_url('options-general.php?page=wp-exclusive-coupons') . '">Add some in settings</a>.</p>';
-        }
-        $limit = min((int)$atts['limit'], count($coupons));
-        $output = '<div class="wp-coupons-container">';
-        for ($i = 0; $i < $limit; $i++) {
-            if (isset($coupons[$i])) {
-                $coupon = $coupons[$i];
-                $output .= '<div class="coupon-card">';
-                $output .= '<h3>' . esc_html($coupon['brand'] ?? 'Brand') . '</h3>';
-                $output .= '<p><strong>Code:</strong> ' . esc_html($coupon['code'] ?? '') . '</p>';
-                $output .= '<p>' . esc_html($coupon['desc'] ?? '') . '</p>';
-                $output .= '<a href="' . esc_url($coupon['link'] ?? '') . '" class="coupon-btn" target="_blank">Get Deal</a>';
-                $output .= '</div>';
-            }
-        }
-        $output .= '</div>';
-        if (get_option('wp_coupon_pro_key') !== 'pro') {
-            $output .= '<p class="pro-upsell"><strong>Pro: Unlimited coupons + tracking!</strong></p>';
-        }
-        return $output;
-    }
-}
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array('id' => '1'), $atts);
+        $coupons_json = get_option('wpec_coupons', '');
+        $coupons = json_decode($coupons_json, true) ?: array();
+        $is_pro = get_option('wpec_pro_active', false);
+        $max_free = $is_pro ? 999 : 3;
 
-WP_Exclusive_Coupons::get_instance();
+        if (!isset($coupons[$atts['id']])) {
+            return '<p>No coupon found.</p>';
+        }
 
-// Pro check
-function is_wp_coupon_pro() {
-    return get_option('wp_coupon_pro_key') === 'pro';
-}
+        $coupon = $coupons[$atts['id']];
+        $personal_code = $this->generate_personal_code();
 
-/*
- * Frontend CSS (inline for single file)
- */
-function wp_coupon_add_inline_style() {
-    if (!is_wp_coupon_pro()) {
+        ob_start();
         ?>
+        <div class="wpec-coupon" data-id="<?php echo esc_attr($atts['id']); ?>">
+            <h3>Exclusive Deal: <?php echo esc_html($coupon['code']); ?></h3>
+            <p>Save <?php echo esc_html($coupon['discount']); ?>! Your personal code: <strong id="wpec-code"><?php echo esc_html($personal_code); ?></strong></p>
+            <a href="<?php echo esc_url($coupon['link'] . '?coupon=' . $personal_code); ?>" class="button" target="_blank">Shop Now & Save</a>
+            <button class="button-secondary" onclick="wpecRegenerate(this)">New Code</button>
+        </div>
         <style>
-        .wp-coupons-container { display: flex; flex-wrap: wrap; gap: 20px; }
-        .coupon-card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; flex: 1 1 300px; background: #f9f9f9; }
-        .coupon-card h3 { color: #333; margin-top: 0; }
-        .coupon-btn { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block; }
-        .coupon-btn:hover { background: #005a87; }
-        .pro-upsell { text-align: center; background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 20px; }
+        .wpec-coupon { border: 2px dashed #0073aa; padding: 20px; margin: 20px 0; background: #f9f9f9; text-align: center; }
+        .wpec-coupon .button { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
         </style>
+        <script>
+        function wpecRegenerate(btn) {
+            jQuery.post(wpec_ajax.ajax_url, {action: 'wpec_generate_coupon', id: jQuery(btn).closest('.wpec-coupon').data('id')}, function(code) {
+                jQuery('#wpec-code').text(code);
+            });
+        }
+        </script>
         <?php
+        return ob_get_clean();
+    }
+
+    public function generate_personal_code() {
+        return substr(md5(uniqid()), 0, 8);
+    }
+
+    public function ajax_generate_coupon() {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'wpec_nonce')) {
+            wp_die();
+        }
+        echo $this->generate_personal_code();
+        wp_die();
     }
 }
-add_action('wp_head', 'wp_coupon_add_inline_style');
 
-?>
+new WP_Exclusive_Coupons_Pro();
+
+// Freemium upsell notice
+function wpec_admin_notice() {
+    if (!get_option('wpec_pro_active')) {
+        echo '<div class="notice notice-info"><p><strong>WP Exclusive Coupons Pro:</strong> Unlock unlimited coupons & analytics. <a href="options-general.php?page=wpec-pro">Upgrade now ($49/yr)</a></p></div>';
+    }
+}
+add_action('admin_notices', 'wpec_admin_notice');
