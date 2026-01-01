@@ -2,45 +2,44 @@
 
 ## Features
 
-- **Personalized Coupon Generation**: Creates unique coupon codes for each visitor based on IP and user agent, making deals feel exclusive.
-- **Easy Shortcode Integration**: Use `[exclusive_coupon]` anywhere to display a random coupon.
-- **Affiliate Link Support**: Automatically appends codes to affiliate links for higher conversions.
-- **Admin Dashboard**: Manage coupons in a simple settings page (Options > Coupons Pro).
-- **Copy-to-Clipboard**: One-click copy for user convenience.
-- **Freemium Model**: Free for basics; pro unlocks unlimited coupons, analytics, custom designs, and more ($49/year).
-
-**Pro Features (Upgrade Now)**:
-- Unlimited coupons
-- Conversion tracking
-- Custom branding
-- Email capture integration
+- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (Pro: truly unlimited with analytics).
+- **Shortcode Integration**: Display coupons anywhere with `[exclusive_coupon]` or `[exclusive_coupon id="1"]`.
+- **Boost Conversions**: Personalized codes improve affiliate earnings and reader loyalty [1][2].
+- **Mobile-Responsive Design**: Beautiful, conversion-optimized coupon displays.
+- **Freemium Model**: Free for basics; Pro adds expiration dates, usage tracking, and brand API integrations.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your WordPress site via Plugins > Add New > Upload Plugin.
-2. Activate the plugin.
-3. Go to **Settings > Exclusive Coupons Pro** to add your coupons (format: `Brand|Code|Description|Affiliate Link`, one per line).
-4. Add `[exclusive_coupon]` shortcode to any post, page, or widget.
+1. Upload the plugin files to `/wp-content/plugins/exclusive-coupons-pro`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Coupons** in your admin menu to add your first coupons.
 
 ## Setup
 
-1. In the settings page, enter coupons like:
+1. Navigate to **Exclusive Coupons** in the WordPress admin.
+2. Enter coupons in the format:
    
-   Amazon|SAVE20|20% Off Electronics|https://your-affiliate-link.com
-   Shopify|DISCOUNT10|10% Off First Month|https://shopify-aff-link.com
+   Code: SAVE20
+   Link: https://your-affiliate-link.com
+   Description: 20% off first purchase
+
+   Code: WELCOME10
+   Link: https://aff-link2.com
+   Description: 10% sitewide
    
-2. Save settings.
-3. Embed the shortcode: `[exclusive_coupon]`.
+3. Save changes.
 
 ## Usage
 
-- **On Posts/Pages**: Paste the shortcode where you want coupons to appear.
-- **Sidebar/Widgets**: Use the shortcode in Text or Custom HTML widgets.
-- **Customization**: Edit styles in the plugin's inline CSS or upgrade to pro for advanced options.
-- **Tracking**: Monitor clicks via your affiliate dashboard; pro version adds on-site analytics.
+- Insert shortcode `[exclusive_coupon]` in any post/page for a random coupon.
+- Use `[exclusive_coupon id="1"]` for specific coupons (ID starts at 1).
+- Customize styling via CSS targeting `.exclusive-coupon`.
+- **Pro Features**: Analytics dashboard, auto-expire codes, import/export, and affiliate link cloaking.
 
-## Why Profitable?
+## Monetization Potential
 
-Inspired by top monetization strategies, this plugin turns traffic into commissions by offering unique value—exclusive deals boost engagement and sales[1][2]. Perfect for niches like software, travel, and eCommerce.
+Perfect for bloggers monetizing via affiliates and custom deals. Earn commissions on every redemption [1][2][3]. Upgrade to Pro for advanced tracking.
 
-**Support**: Contact support@example.com | **Upgrade**: Visit pro.example.com
+## Support
+
+Contact support@example.com or visit our documentation.
