@@ -2,35 +2,41 @@
 
 ## Features
 
-- **Generate Unique Coupons**: Automatically creates personalized discount codes for each visitor (e.g., SAVE20-abc123).
-- **Easy Shortcode Integration**: Use `[exclusive_coupon id="0"]` to display coupons anywhere.
-- **Admin Dashboard**: Manage coupons via simple JSON format in Settings > Coupons Pro.
-- **Affiliate-Ready**: Append unique codes to affiliate links for tracking conversions.
-- **Copy-to-Clipboard**: One-click code copying with JS.
-- **Premium Upsell**: Unlock analytics, auto-expiration, unlimited coupons, and more ($49/year).
+- **Generate Unique Promo Codes**: Automatically creates personalized, trackable discount codes for each visitor to boost affiliate conversions[1][2].
+- **Easy Shortcode Integration**: Use `[exclusive_coupon]` anywhere to display dynamic coupon boxes[1].
+- **Admin Dashboard**: Manage affiliate links, brands, and descriptions with a simple interface.
+- **"Get New Code" Button**: Visitors can generate fresh codes on-demand for higher engagement.
+- **Freemium Model**: Free for basics; pro unlocks unlimited coupons, analytics, custom designs ($49/year).
+- **SEO-Friendly**: Positions your site as a discount hub, improving traffic and partnerships[2].
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via Plugins > Installed Plugins.
-3. Go to Settings > Coupons Pro to add your coupons.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupons Pro** to configure.
 
 ## Setup
 
-1. In admin, enter coupons as JSON array:
-   
-   [
-     {"name":"Amazon","code":"AMZ20","url":"https://your-affiliate-link.com/?ref=site","desc":"20% Off"},
-     {"name":"BrandX","code":"BX50","url":"https://aff-link.com","desc":"$50 Off"}
-   ]
-   
-2. Save. Use shortcode with `id` matching array index (0,1,...).
+1. In settings, add affiliates (one per line): `Brand|Promo Code|Affiliate Link|Description`.
+   Example:
+   `
+   Amazon|SAVE20|https://amazon.com/aff?id=yourid|20% off electronics!
+   Shopify|WP10|https://shopify.com/?aff=123|10% off first month
+   `
+2. Enter license key for pro features (or upgrade).
+3. Save settings.
 
 ## Usage
 
-- **Posts/Pages**: Add `[exclusive_coupon id="0"]` for first coupon.
-- **Widgets/Sidebar**: Use shortcode widget.
-- **Customization**: Style via CSS targeting `.ecp-coupon` classes.
-- **Tracking**: Unique codes enable precise affiliate attribution.
+- Add `[exclusive_coupon]` to any post/page for instant coupon display.
+- Customize with `[exclusive_coupon id="1"]` (pro feature).
+- Embed in sidebars, dedicated coupon pages, or popups.
+- Track conversions via unique codes in affiliate dashboards.
 
-Boost conversions with exclusive deals! Upgrade to Pro for advanced features.
+## Monetization Potential
+
+Drive affiliate sales with exclusive deals; average 20-30% conversion lift[1][2]. Pro version generates recurring revenue.
+
+## Support
+
+Contact support@example.com. Check [documentation](https://example.com/docs).
