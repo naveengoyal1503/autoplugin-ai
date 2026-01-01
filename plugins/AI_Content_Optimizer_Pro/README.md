@@ -1,117 +1,41 @@
 # AI Content Optimizer Pro
 
-## Description
-
-AI Content Optimizer Pro is a powerful WordPress plugin that analyzes your content for SEO, readability, and engagement. It provides actionable insights to help you optimize posts for better search rankings and reader engagement.
-
 ## Features
 
-### Free Version
-- **Content Analysis**: Automatically analyze word count, readability, heading structure, links, and images
-- **Readability Scoring**: Flesch-Kincaid readability grade calculation
-- **Keyword Analysis**: Identify top keywords in your content
-- **Dashboard**: View analytics and historical data
-- **Post Integration**: Display optimization scores on published posts
-
-### Pro Features (Coming Soon)
-- Batch content analysis
-- Advanced AI-powered suggestions
-- Priority email support
-- Custom API integrations
-- $9.99/month subscription
+- **AI-Powered SEO Analysis**: Scans posts for readability, keyword density, and engagement score.
+- **Real-Time Suggestions**: Provides actionable improvements directly in the post editor.
+- **Free Tier**: 5 free scans to get started.
+- **Premium Features** (Subscription required):
+  - Unlimited scans and AI rewrites.
+  - Auto-apply optimizations.
+  - Schema markup for better search rankings.
+  - Priority support.
+- **Easy Integration**: Works with Gutenberg and Classic Editor.
 
 ## Installation
 
-1. Upload the plugin folder to `/wp-content/plugins/`
-2. Activate the plugin through WordPress admin panel
-3. Navigate to "Content Optimizer" in the admin menu
-4. Start analyzing your content
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. The optimizer meta box appears automatically on post edit screens.
 
 ## Setup
 
-### Initial Configuration
-
-1. Go to **Content Optimizer > Settings**
-2. Configure analysis preferences
-3. Set notification options for optimization alerts
-
-### Creating an Analysis
-
-Analyses are automatically created when you:
-- Publish or update a post
-- Run manual analysis from the dashboard
-- Use the AJAX endpoint for custom integrations
+1. Go to **Settings > AI Optimizer Pro**.
+2. Enter your premium key to unlock unlimited features (free trial available).
+3. Optionally configure scan preferences.
 
 ## Usage
 
-### Dashboard
+1. Edit any post or page.
+2. Click **Analyze Content** in the sidebar meta box.
+3. Review your **SEO Score** and **Suggestions**.
+4. Apply changes manually or use premium auto-fix.
+5. Publish for optimized, traffic-boosting content!
 
-Access the main dashboard at **Content Optimizer > Dashboard** to:
-- View your average content score
-- See total posts analyzed
-- Check optimization potential across your site
-- Access historical analysis data
+## Monetization for Developers
 
-### Analyzing Content
-
-**Manual Analysis:**
-1. Open any post editor
-2. Click the "Analyze" button
-3. Review the generated report with suggestions
-
-**Automatic Analysis:**
-- Runs when posts are published or updated
-- Scores are saved to the database
-- View scores on the frontend
-
-### AJAX Endpoint
-
-For custom integrations:
-
-
-POST /wp-admin/admin-ajax.php?action=analyze_content
-Parameters:
-- post_id: ID of the post
-- content: (optional) content to analyze
-- nonce: WordPress security nonce
-
-
-## Scoring System
-
-Scores are calculated based on:
-- Word count (300-2000 words optimal)
-- Heading structure (3+ headings)
-- Internal links (2+ recommended)
-- Images (1+ recommended)
-- Readability score (50+ target)
-
-**Maximum Score: 100**
-
-## Monetization Model
-
-- **Free**: Core analysis features, WordPress.org distribution
-- **Pro ($9.99/month)**: Batch processing, advanced AI features, priority support
-- **Enterprise**: Custom licensing and white-label options
-
-## Requirements
-
-- WordPress 5.0+
-- PHP 7.4+
-- jQuery
-- Chart.js library (loaded via CDN)
+This plugin uses a freemium model. Upsell premium via the settings page. Track usage and promote subscriptions.
 
 ## Support
 
-For support and feature requests, visit the plugin repository or contact the development team.
-
-## License
-
-GPL v2 or later
-
-## Changelog
-
-### Version 1.0.0
-- Initial release
-- Content analysis functionality
-- Dashboard and reporting
-- AJAX analysis endpoint
+Contact support@example.com for help.
