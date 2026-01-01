@@ -6,11 +6,10 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Affiliate Coupon Vault
  * Plugin URI: https://example.com/affiliate-coupon-vault
- * Description: Automatically fetches and displays exclusive affiliate coupons from major networks, with smart tracking and conversion optimization for bloggers.
+ * Description: Automatically generates and displays exclusive affiliate coupons from popular networks to boost your commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: affiliate-coupon-vault
  */
 
 if (!defined('ABSPATH')) {
@@ -27,7 +26,6 @@ class AffiliateCouponVault {
     }
 
     public function init() {
-        load_plugin_textdomain('affiliate-coupon-vault', false, dirname(plugin_basename(__FILE__)) . '/languages');
         if (is_admin()) {
             add_action('admin_init', array($this, 'admin_init'));
         }
@@ -41,52 +39,66 @@ class AffiliateCouponVault {
     public function coupon_shortcode($atts) {
         $atts = shortcode_atts(array(
             'network' => 'amazon',
-            'category' => 'all',
-            'limit' => 5,
+            'category' => 'electronics',
+            'limit' => 5
         ), $atts);
 
-        $coupons = $this->get_sample_coupons($atts['network'], $atts['limit']);
+        $coupons = $this->generate_coupons($atts['network'], $atts['category'], intval($atts['limit']));
         ob_start();
         ?>
         <div class="affiliate-coupon-vault">
+            <h3>Exclusive Deals for You!</h3>
             <?php foreach ($coupons as $coupon): ?>
                 <div class="coupon-item">
                     <h4><?php echo esc_html($coupon['title']); ?></h4>
-                    <p class="discount">Save <strong><?php echo esc_html($coupon['discount']); ?></strong></p>
-                    <p class="expires">Expires: <?php echo esc_html($coupon['expires']); ?></p>
-                    <a href="<?php echo esc_url($coupon['link']); ?}" class="coupon-btn" target="_blank" rel="nofollow">Get Deal <span class="aff-track"><?php echo esc_attr($coupon['id']); ?></span></a>
+                    <p>Code: <strong><?php echo esc_html($coupon['code']); ?></strong></p>
+                    <p>Discount: <?php echo esc_html($coupon['discount']); ?></p>
+                    <a href="<?php echo esc_url($coupon['link']); ?}" target="_blank" class="coupon-btn" rel="nofollow">Shop Now & Save</a>
                 </div>
             <?php endforeach; ?>
-            <p class="pro-upsell">Upgrade to Pro for real-time API feeds from 20+ networks!</p>
         </div>
         <?php
         return ob_get_clean();
     }
 
-    private function get_sample_coupons($network, $limit) {
-        // Sample data - Pro version would fetch from APIs like CJ Affiliate, ShareASale, etc.
-        $samples = array(
-            array('id' => 'c1', 'title' => '50% Off Hosting', 'discount' => '50%', 'expires' => '2026-01-31', 'link' => '#'),
-            array('id' => 'c2', 'title' => 'Free Domain', 'discount' => 'FREE', 'expires' => '2026-02-15', 'link' => '#'),
-            array('id' => 'c3', 'title' => '20% Off Themes', 'discount' => '20%', 'expires' => '2026-01-20', 'link' => '#'),
+    private function generate_coupons($network, $category, $limit) {
+        // Demo coupons - Premium version integrates real APIs
+        $demo_coupons = array(
+            array(
+                'title' => '50% Off Wireless Headphones',
+                'code' => 'SAVE50',
+                'discount' => '50%',
+                'link' => 'https://example.com/affiliate-amazon-headphones?ref=yourid'
+            ),
+            array(
+                'title' => '20% Off Laptops',
+                'code' => 'LAPTOP20',
+                'discount' => '20%',
+                'link' => 'https://example.com/affiliate-amazon-laptop?ref=yourid'
+            ),
+            array(
+                'title' => 'Free Shipping on Electronics',
+                'code' => 'FREESHIP',
+                'discount' => 'Free Shipping',
+                'link' => 'https://example.com/affiliate-amazon-electronics?ref=yourid'
+            )
         );
-        return array_slice($samples, 0, $limit);
+        return array_slice($demo_coupons, 0, $limit);
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate Coupon Vault', 'Coupon Vault', 'manage_options', 'affiliate-coupon-vault', array($this, 'settings_page'));
+        add_options_page(
+            'Affiliate Coupon Vault',
+            'Coupon Vault',
+            'manage_options',
+            'affiliate-coupon-vault',
+            array($this, 'settings_page')
+        );
     }
 
     public function admin_init() {
-        register_setting('affiliate_coupon_vault_options', 'acv_api_keys');
-        add_settings_section('acv_main_section', 'API Settings', null, 'affiliate-coupon-vault');
-        add_settings_field('acv_amazon_key', 'Amazon Affiliate Key (Pro)', array($this, 'amazon_key_field'), 'affiliate-coupon-vault', 'acv_main_section');
-    }
-
-    public function amazon_key_field() {
-        $options = get_option('acv_api_keys', array());
-        echo '<input type="text" name="acv_api_keys[amazon]" value="' . esc_attr($options['amazon'] ?? '') . '" class="regular-text" />';
-        echo '<p class="description">Enter your affiliate keys. <strong>Pro feature:</strong> Real API integration.</p>';
+        register_setting('affiliate_coupon_vault', 'acv_api_keys');
+        register_setting('affiliate_coupon_vault', 'acv_affiliate_ids');
     }
 
     public function settings_page() {
@@ -95,42 +107,47 @@ class AffiliateCouponVault {
             <h1>Affiliate Coupon Vault Settings</h1>
             <form method="post" action="options.php">
                 <?php
-                settings_fields('affiliate_coupon_vault_options');
-                do_settings_sections('affiliate-coupon-vault');
-                submit_button();
+                settings_fields('affiliate_coupon_vault');
+                do_settings_sections('affiliate_coupon_vault');
                 ?>
+                <table class="form-table">
+                    <tr>
+                        <th>Amazon Affiliate ID</th>
+                        <td><input type="text" name="acv_affiliate_ids[amazon]" value="<?php echo esc_attr(get_option('acv_affiliate_ids')['amazon'] ?? ''); ?>" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
             </form>
-            <h2>Usage</h2>
-            <p>Use shortcode: <code>[affiliate_coupons network="amazon" limit="5"]</code></p>
-            <h2>Pro Upgrade</h2>
-            <p>Get real-time coupons, analytics, and more: <a href="#pro">Upgrade Now</a></p>
+            <p><strong>Upgrade to Premium</strong> for real-time API integration, analytics, and more networks!</p>
         </div>
         <?php
     }
 
     public function activate() {
-        flush_rewrite_rules();
-        update_option('acv_version', '1.0.0');
+        add_option('acv_affiliate_ids', array());
     }
 }
 
 new AffiliateCouponVault();
 
-// Pro upsell notice
-function acv_pro_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p><strong>Affiliate Coupon Vault Pro:</strong> Unlock 20+ networks, click tracking & analytics! <a href="https://example.com/pro">Upgrade</a></p></div>';
-}
-add_action('admin_notices', 'acv_pro_notice');
+// Inline CSS
+add_action('wp_head', function() { ?>
+<style>
+.affiliate-coupon-vault { max-width: 600px; margin: 20px 0; }
+.coupon-item { background: #f9f9f9; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #0073aa; }
+.coupon-btn { background: #ff6600; color: white; padding: 10px 20px; text-decoration: none; border-radius: 3px; display: inline-block; }
+.coupon-btn:hover { background: #e65c00; }
+</style>
+<?php });
 
-// Tracking
-function acv_track_click() {
-    if (isset($_POST['aff_track'])) {
-        $track_id = sanitize_text_field($_POST['aff_track']);
-        error_log('Coupon clicked: ' . $track_id);
-        wp_die('Tracked');
-    }
-}
-add_action('wp_ajax_acv_track', 'acv_track_click');
-add_action('wp_ajax_nopriv_acv_track', 'acv_track_click');
-?>
+// Inline JS
+add_action('wp_footer', function() { ?>
+<script>
+jQuery(document).ready(function($) {
+    $('.coupon-btn').on('click', function() {
+        // Track clicks for premium analytics
+        console.log('Coupon clicked!');
+    });
+});
+</script>
+<?php });
