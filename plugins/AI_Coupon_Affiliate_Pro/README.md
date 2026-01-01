@@ -1,42 +1,36 @@
 # AI Coupon Affiliate Pro
 
-## Description
-**AI Coupon Affiliate Pro** is a powerful WordPress plugin that helps site owners generate and manage exclusive coupons with built-in affiliate tracking. Create custom promo codes, embed them anywhere with shortcodes, and earn commissions automatically. Perfect for bloggers monetizing through affiliate marketing.[1][2]
-
 ## Features
-- **Easy Coupon Creation**: Add titles, codes, descriptions, and affiliate links via intuitive admin dashboard.
-- **Shortcode Integration**: Use `[ai_coupon id="0"]` to display coupons anywhere (posts, pages, widgets).
-- **Click Tracking**: Monitors clicks and redirects to affiliate URLs for seamless commissions.[3]
-- **Pro Features** (Upgrade for $49/year):
-  - AI-powered coupon generation using OpenAI API.
-  - Advanced analytics dashboard with conversion insights.
-  - Unlimited coupons and white-label branding.
-  - Personalized discount code creator for brands.[1][2]
-- **Freemium Model**: Start free, upgrade for power features.
+
+- **AI-Powered Coupon Generation**: Automatically creates unique, personalized coupon codes for any store using simple AI logic (pro feature unlocks advanced AI).
+- **Affiliate Link Tracking**: Embeds trackable affiliate links in every coupon for commissions.
+- **Shortcode Integration**: Easy `[ai_coupon_box store="Amazon"]` shortcode for any page or post.
+- **Customizable Display**: Responsive boxes with generate button and instant coupon output.
+- **Analytics Dashboard** (Pro): Track clicks, conversions, and earnings.
+- **SEO Optimized**: Schema-ready for rich snippets in search results.
+- **Freemium Model**: Free core features; pro unlocks unlimited coupons, API integrations, and premium templates.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress Admin: Plugins > Add New > Upload Plugin.
-3. Activate **AI Coupon Affiliate Pro**.
-4. Navigate to **AI Coupons** menu to add your first coupon.[4]
+
+1. Upload the `ai-coupon-affiliate-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Use the shortcode `[ai_coupon_box]` on any page/post.
 
 ## Setup
-1. Go to **AI Coupons** in admin menu.
-2. Fill in **Title**, **Code**, **Affiliate URL**, and optional **Description**.
-3. Click **Add Coupon**.
-4. Copy shortcode like `[ai_coupon id="0"]` (ID from list).
-5. Paste shortcode in posts/pages for instant coupon display.
+
+1. Go to **Settings > AI Coupon Pro** (new menu added).
+2. Enter your affiliate network IDs (Amazon, etc.) for auto-links.
+3. Upgrade to Pro for AI generation and analytics ($49/year).
+4. Add shortcodes to sidebar, posts, or create a dedicated coupons page.
 
 ## Usage
-- **Embed Coupon**: Use `[ai_coupon id="X"]` where X is coupon ID.
-- **Track Performance**: View click counts in admin.
-- **Monetize**: Partner with brands for exclusive codes, link to affiliate programs (Amazon, etc.). Boost conversions with reader-first deals.[1][2][5]
-- **Pro Upgrade**: Visit admin notice link for unlimited features and AI tools.
 
-## FAQ
-**Is it free?** Yes, core features free. Pro unlocks advanced monetization tools.
-**Compatible with?** All WordPress themes/plugins. No conflicts.
-**Support**: Pro users get priority email support.
+- **Basic**: Place `[ai_coupon_box store="Walmart"]` to generate coupons on-the-fly.
+- **Advanced (Pro)**: Use dashboard to bulk-create coupons, track performance, and export data.
+- **Monetization Tips**: Partner with brands for custom codes, embed in niche blogs (e.g., tech, fashion), and promote via SEO.
+
+**Pro Upgrade**: Visit example.com/pricing for unlimited features and support.
 
 ## Changelog
-**1.0.0** - Initial release with core coupon management and tracking.
+
+- 1.0.0: Initial release with core coupon generator and affiliate tracking.
