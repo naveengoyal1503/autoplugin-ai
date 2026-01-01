@@ -2,46 +2,41 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation**: Automatically creates unique, trackable coupon codes for affiliate networks.
-- **Shortcode Integration**: Easy `[ai_coupon network="Amazon"]` placement in posts/pages.
-- **Customizable Networks**: Add your affiliate programs via admin settings.
-- **Conversion Boost**: Personalized deals increase clicks and sales[1][2].
-- **Freemium Model**: Free for basics; Pro unlocks unlimited coupons, AI personalization, analytics ($49/year).
-
-**Pro Features**: Premium affiliate integrations (Amazon, Hostinger), click tracking, A/B testing, email capture.
+- **AI-Powered Coupon Generation**: Creates unique, personalized coupons on-demand to drive affiliate sales.[1][2]
+- **Shortcode Integration**: Easy `[ai_coupon_generator niche="tech" affiliate_link="https://aff.link"]` usage.
+- **Conversion Boost**: Displays exclusive deals, improving click-through rates for blogs and shops.[1]
+- **Freemium Model**: Free for basics; Pro adds unlimited generations, analytics, and API integrations ($49/year).
+- **Mobile-Responsive**: Clean design works on all devices.
 
 ## Installation
 
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New.
 2. Activate the plugin.
-3. Go to **Settings > AI Coupons** to configure affiliate networks.
+3. Use the shortcode in any post/page.
 
 ## Setup
 
-1. In **Settings > AI Coupons**, enter networks like:
-   
-   Amazon:15% off
-   Hostinger:50% discount
-   Bluehost:Free domain
-   
-2. Replace example affiliate links in code with your tracking URLs.
-3. Dismiss pro notice or upgrade for advanced features.
+1. Go to **Settings > AI Coupon Generator** (Pro feature).
+2. Enter your affiliate links and preferred niches (e.g., tech, fashion, software).[3]
+3. Optionally upgrade to Pro for advanced settings.
 
 ## Usage
 
-- Add shortcode to any post/page: `[ai_coupon network="Amazon"]`.
-- Widget support coming in Pro.
-- Track conversions via your affiliate dashboard.
+- Insert shortcode: `[ai_coupon_generator]` for default or customize with `niche` and `affiliate_link`.
+- Visitors click **Generate Exclusive Coupon** to reveal a unique code and deal.
+- Track conversions via affiliate dashboards; Pro includes built-in analytics.
 
-**Example Output**:
-> **Amazon Exclusive Deal - 15% off**  
-> Code: ABC123XY  
-> [Grab 15% off](#)
+## Pro Upgrade
 
-## Support
-Contact support@example.com. Upgrade to Pro for priority help.
+Unlock:
+- Unlimited coupons per day.
+- Real AI integration (OpenAI compatible).
+- Custom branding and exportable reports.
+- Priority support.
+
+**Get Pro: [Upgrade Now](https://example.com/pro)**
 
 ## Changelog
 
 **1.0.0**
-- Initial release with core coupon generation.
+- Initial release with core coupon generator.
