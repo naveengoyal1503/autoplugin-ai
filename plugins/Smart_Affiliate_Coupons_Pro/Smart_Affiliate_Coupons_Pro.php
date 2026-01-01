@@ -6,129 +6,146 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Coupons Pro
  * Plugin URI: https://example.com/smart-affiliate-coupons
- * Description: Generate exclusive affiliate coupons with tracking and SEO optimization.
+ * Description: Automatically generates and manages personalized affiliate coupon codes, tracks clicks and conversions, and displays dynamic coupon sections to boost affiliate earnings.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: smart-affiliate-coupons
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class SmartAffiliateCoupons {
-    public function __construct() {
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_save_coupon', array($this, 'save_coupon'));
-        add_action('wp_ajax_delete_coupon', array($this, 'delete_coupon'));
-        add_shortcode('sac_coupon', array($this, 'coupon_shortcode'));
+        add_shortcode('sac_coupon_section', array($this, 'coupon_section_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        $this->coupons = get_option('sac_coupons', array());
+        // Create table on init if not exists
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sac_coupons';
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            title varchar(255) NOT NULL,
+            code varchar(100) NOT NULL,
+            affiliate_url text NOT NULL,
+            discount varchar(50) DEFAULT '',
+            brand varchar(100) DEFAULT '',
+            clicks int DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    public function activate() {
+        $this->init();
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sac-js', plugin_dir_url(__FILE__) . 'sac.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('sac-css', plugin_dir_url(__FILE__) . 'sac.css', array(), '1.0.0');
-        wp_localize_script('sac-js', 'sac_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
+        wp_enqueue_style('sac-styles', plugin_dir_url(__FILE__) . 'sac-styles.css', array(), '1.0.0');
+        wp_enqueue_script('sac-script', plugin_dir_url(__FILE__) . 'sac-script.js', array('jquery'), '1.0.0', true);
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate Coupons', 'Coupons', 'manage_options', 'sac-coupons', array($this, 'admin_page'));
+        add_options_page('Smart Affiliate Coupons', 'SAC Coupons', 'manage_options', 'sac-coupons', array($this, 'admin_page'));
     }
 
     public function admin_page() {
         if (isset($_POST['sac_submit'])) {
-            check_admin_referer('sac_save');
-            $this->save_coupon();
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'sac_coupons';
+            $wpdb->insert($table_name, array(
+                'title' => sanitize_text_field($_POST['title']),
+                'code' => sanitize_text_field($_POST['code']),
+                'affiliate_url' => esc_url_raw($_POST['affiliate_url']),
+                'discount' => sanitize_text_field($_POST['discount']),
+                'brand' => sanitize_text_field($_POST['brand']),
+            ));
+            echo '<div class="notice notice-success"><p>Coupon added!</p></div>';
         }
-        include plugin_dir_path(__FILE__) . 'admin-page.php';
+        echo '<div class="wrap"><h1>Manage Coupons</h1><form method="post">';
+        echo '<table class="form-table">';
+        echo '<tr><th>Title</th><td><input type="text" name="title" required /></td></tr>';
+        echo '<tr><th>Code</th><td><input type="text" name="code" required /></td></tr>';
+        echo '<tr><th>Affiliate URL</th><td><input type="url" name="affiliate_url" style="width:100%;" required /></td></tr>';
+        echo '<tr><th>Discount</th><td><input type="text" name="discount" placeholder="e.g. 20% OFF" /></td></tr>';
+        echo '<tr><th>Brand</th><td><input type="text" name="brand" /></td></tr>';
+        echo '</table><p><input type="submit" name="sac_submit" class="button-primary" value="Add Coupon" /></p></form>';
+
+        // List coupons
+        global $wpdb;
+        $coupons = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . 'sac_coupons' . " ORDER BY created_at DESC");
+        if ($coupons) {
+            echo '<h2>Existing Coupons</h2><table class="wp-list-table widefat fixed striped">';
+            echo '<thead><tr><th>ID</th><th>Title</th><th>Code</th><th>Brand</th><th>Discount</th><th>Clicks</th></tr></thead><tbody>';
+            foreach ($coupons as $coupon) {
+                echo '<tr><td>' . $coupon->id . '</td><td>' . esc_html($coupon->title) . '</td><td>' . esc_html($coupon->code) . '</td><td>' . esc_html($coupon->brand) . '</td><td>' . esc_html($coupon->discount) . '</td><td>' . $coupon->clicks . '</td></tr>';
+            }
+            echo '</tbody></table>';
+        }
+        echo '</div>';
     }
 
-    public function save_coupon() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
-        $id = sanitize_text_field($_POST['id'] ?? '');
-        $coupon = array(
-            'id' => $id ?: uniqid(),
-            'title' => sanitize_text_field($_POST['title']),
-            'code' => sanitize_text_field($_POST['code']),
-            'affiliate_link' => esc_url_raw($_POST['affiliate_link']),
-            'description' => sanitize_textarea_field($_POST['description']),
-            'expires' => sanitize_text_field($_POST['expires']),
-            'uses' => intval($_POST['uses']),
-        );
-        $this->coupons[$coupon['id']] = $coupon;
-        update_option('sac_coupons', $this->coupons);
-        wp_send_json_success('Coupon saved');
-    }
-
-    public function delete_coupon() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
-        $id = sanitize_text_field($_POST['id']);
-        unset($this->coupons[$id]);
-        update_option('sac_coupons', $this->coupons);
-        wp_send_json_success('Coupon deleted');
-    }
-
-    public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => ''), $atts);
-        if (!$atts['id'] || !isset($this->coupons[$atts['id']])) {
-            return '';
-        }
-        $coupon = $this->coupons[$atts['id']];
-        if ($coupon['expires'] && strtotime($coupon['expires']) < current_time('timestamp')) {
-            return '<div class="sac-expired">Coupon expired</div>';
-        }
-        $track_link = add_query_arg('sac', $coupon['id'], $coupon['affiliate_link']);
+    public function coupon_section_shortcode($atts) {
+        $atts = shortcode_atts(array('limit' => 5), $atts);
+        global $wpdb;
+        $coupons = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $wpdb->prefix . 'sac_coupons' . " ORDER BY clicks DESC LIMIT %d", $atts['limit']));
         ob_start();
-        ?>
-        <div class="sac-coupon" data-id="<?php echo esc_attr($coupon['id']); ?>">
-            <h3><?php echo esc_html($coupon['title']); ?></h3>
-            <p><strong>Code:</strong> <span class="sac-code"><?php echo esc_html($coupon['code']); ?></span></p>
-            <p><?php echo esc_html($coupon['description']); ?></p>
-            <a href="<?php echo esc_url($track_link); ?}" class="sac-button" target="_blank">Get Deal (Affiliate)</a>
-            <?php if ($coupon['expires']): ?>
-            <p>Expires: <?php echo esc_html($coupon['expires']); ?></p>
-            <?php endif; ?>
-        </div>
-        <?php
+        echo '<div class="sac-coupon-section">';
+        foreach ($coupons as $coupon) {
+            $track_url = add_query_arg(array('sac_id' => $coupon->id), $coupon->affiliate_url);
+            echo '<div class="sac-coupon">';
+            echo '<h3>' . esc_html($coupon->title) . '</h3>';
+            echo '<p><strong>Code:</strong> <span class="sac-code">' . esc_html($coupon->code) . '</span></p>';
+            if ($coupon->brand) echo '<p><strong>Brand:</strong> ' . esc_html($coupon->brand) . '</p>';
+            if ($coupon->discount) echo '<p><strong>Discount:</strong> ' . esc_html($coupon->discount) . '</p>';
+            echo '<a href="' . esc_url($track_url) . '" class="sac-button" target="_blank">Get Deal (Clicks: ' . $coupon->clicks . ')</a>';
+            echo '</div>';
+        }
+        echo '</div>';
         return ob_get_clean();
     }
-
-    public function activate() {
-        if (!get_option('sac_coupons')) {
-            update_option('sac_coupons', array());
-        }
-    }
 }
 
-new SmartAffiliateCoupons();
-
-// Pro notice
-function sac_pro_notice() {
-    if (!get_option('sac_pro_activated')) {
-        echo '<div class="notice notice-info"><p>Upgrade to <strong>Smart Affiliate Coupons Pro</strong> for unlimited coupons and analytics! <a href="https://example.com/pro" target="_blank">Get Pro</a></p></div>';
+// Track clicks
+add_action('init', function() {
+    if (isset($_GET['sac_id'])) {
+        global $wpdb;
+        $wpdb->query($wpdb->prepare("UPDATE " . $wpdb->prefix . "sac_coupons SET clicks = clicks + 1 WHERE id = %d", intval($_GET['sac_id'])));
     }
-}
-add_action('admin_notices', 'sac_pro_notice');
+});
 
-// Minimal CSS
-$css = '.sac-coupon { border: 2px dashed #0073aa; padding: 20px; margin: 20px 0; background: #f9f9f9; }.sac-code { font-size: 1.2em; color: #d63638; font-weight: bold; }.sac-button { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }.sac-expired { color: red; font-weight: bold; }';
-file_put_contents(plugin_dir_path(__FILE__) . 'sac.css', $css);
+SmartAffiliateCoupons::get_instance();
 
-// Minimal JS
-$js = "jQuery(document).ready(function($) { $('.sac-copy').click(function() { var code = $(this).prev('.sac-code').text(); navigator.clipboard.writeText(code); $(this).text('Copied!'); }); });";
-file_put_contents(plugin_dir_path(__FILE__) . 'sac.js', "<script>" . $js . "</script>");
+// Inline CSS
+add_action('wp_head', function() { ?>
+<style>
+.sac-coupon-section { max-width: 800px; margin: 20px 0; }
+.sac-coupon { background: #f9f9f9; border: 1px solid #ddd; padding: 20px; margin: 10px 0; border-radius: 8px; }
+.sac-code { font-family: monospace; background: #fff; padding: 5px 10px; border-radius: 4px; }
+.sac-button { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block; }
+.sac-button:hover { background: #005a87; }
+</style>
+<?php });
 
-// Admin page template
-$admin_page = '<div class="wrap"><h1>Affiliate Coupons</h1><form method="post"><h2>Add/Edit Coupon</h2><input type="hidden" name="id" id="coupon-id"><table class="form-table"><tr><th>Title</th><td><input type="text" name="title" id="title" class="regular-text"></td></tr><tr><th>Code</th><td><input type="text" name="code" id="code"></td></tr><tr><th>Affiliate Link</th><td><input type="url" name="affiliate_link" id="affiliate_link" class="regular-text"></td></tr><tr><th>Description</th><td><textarea name="description" id="description" rows="3" class="large-text"></textarea></td></tr><tr><th>Expires (YYYY-MM-DD)</th><td><input type="date" name="expires" id="expires"></td></tr><tr><th>Max Uses</th><td><input type="number" name="uses" id="uses"></td></tr></table><?php wp_nonce_field("sac_save"); ?><p><input type="submit" name="sac_submit" value="Save Coupon" class="button-primary"></p></form><h2>Coupons List</h2><div id="coupons-list">' . json_encode(get_option('sac_coupons', array())) . '</div><script>/* Load coupons list here */</script></div>';
-file_put_contents(plugin_dir_path(__FILE__) . 'admin-page.php', "<?php echo '$admin_page'; ?>");
+// Inline JS
+add_action('wp_footer', function() { ?>
+<script>jQuery(document).ready(function($) { $('.sac-code').click(function() { var code = $(this).text(); navigator.clipboard.writeText(code); $(this).after('<span style="color:green;"> Copied!</span>'); }); });</script>
+<?php });
