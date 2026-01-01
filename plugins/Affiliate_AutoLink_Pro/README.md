@@ -1,49 +1,46 @@
 # Affiliate AutoLink Pro
 
-**Automatically turns keywords in your content into profitable affiliate links.**
+**Automatically monetize your WordPress site by converting keywords into affiliate links.**
 
 ## Features
 
-- **Auto-link keywords** to Amazon, ClickBank, or any affiliate URL
-- **Free version**: Up to 5 keywords
-- **Pro version** ($49/year): Unlimited keywords, click analytics, A/B testing, more networks
-- No shortcodes needed – works on all posts/pages
-- Customizable link attributes (nofollow, target blank)
-- Lightweight & SEO-friendly
+- **Smart Auto-Linking**: Detects keywords in posts/pages and replaces them with your affiliate links.
+- **Configurable Limits**: Set max links per post to avoid over-optimization.
+- **SEO-Friendly**: Adds nofollow and opens links in new tabs by default.
+- **Easy Admin Panel**: Add/edit keywords and URLs via simple settings page.
+- **Freemium Ready**: Free version limited to 5 keywords; Pro unlocks unlimited + analytics.
 
 ## Installation
 
-1. Upload the `affiliate-autolink-pro` folder to `/wp-content/plugins/`
-2. Activate the plugin through the 'Plugins' screen in WordPress admin
-3. Go to **Settings > AutoLink Pro** to add keywords (format: `keyword=affiliate_url`)
+1. Upload the `affiliate-autolink-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' screen in WordPress admin.
+3. Go to **Settings > AutoLink Pro** to configure keywords and affiliate URLs.
+4. Start publishing content – links auto-generate!
 
 ## Setup
 
-1. In settings, add lines like:
-   
-   amazon=https://your-amazon-affiliate-link.com
-   shoes=https://affiliate-shoeshop.com
-   
-2. Save changes
-3. Words like "amazon" or "shoes" in posts will auto-link
+1. In the settings page, add keyword-affiliate pairs (e.g., "WordPress" → `https://your-affiliate-link.com/ref`).
+2. Adjust max links (default: 3 per post), nofollow, and target blank options.
+3. Save changes. Test on a post to verify.
 
-**Free limit: 5 keywords. Upgrade for unlimited!**
+**Pro Tip**: Use high-converting affiliate programs like Amazon Associates, ShareASale, or CJ Affiliate[1][3].
 
 ## Usage
 
-- Write normally – plugin scans content automatically
-- Links open in new tab with nofollow
-- Test on staging site first
-- Pro users get dashboard analytics
+- Write normally; plugin scans and links keywords automatically.
+- Works on posts/pages (singular views only).
+- Avoids linking inside existing `<a>` tags.
+- **Upgrade to Pro** for click tracking, A/B testing, custom CSS, and priority support ($49/year).
 
-## Pro Upgrade
+## FAQ
 
-- Unlimited keywords
-- Performance tracking
-- Priority support
+**Does it work with Gutenberg?** Yes, filters `the_content` universally.
 
-[Buy Pro Now](https://example.com/pro)
+**Performance impact?** Minimal – runs on frontend only, efficient regex.
 
-## Support
+**Pro Benefits**: Unlimited keywords, performance reports, link rotation[1][2][3].
 
-Report issues via WordPress.org forums (free) or email support@example.com (Pro).
+## Changelog
+
+**1.0.0**
+- Initial release.
