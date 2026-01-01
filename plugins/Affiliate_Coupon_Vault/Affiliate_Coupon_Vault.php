@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Affiliate Coupon Vault
  * Plugin URI: https://example.com/affiliate-coupon-vault
- * Description: Create and manage affiliate coupon vaults to drive conversions and commissions.
+ * Description: Create dynamic coupon sections with affiliate tracking to monetize your site.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -21,128 +21,147 @@ class AffiliateCouponVault {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('coupon_vault', array($this, 'coupon_vault_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_shortcode('affiliate_coupon_vault', array($this, 'coupon_shortcode'));
+        add_action('wp_ajax_save_coupon', array($this, 'save_coupon'));
+        add_action('wp_ajax_nopriv_save_coupon', array($this, 'save_coupon'));
     }
 
     public function init() {
-        $this->create_cpt();
+        $this->create_table();
     }
 
-    private function create_cpt() {
-        $args = array(
-            'public' => true,
-            'label'  => 'Coupons',
-            'supports' => array('title', 'editor', 'thumbnail'),
-            'menu_icon' => 'dashicons-cart',
-            'rewrite' => array('slug' => 'coupon'),
-            'show_in_rest' => true,
-        );
-        register_post_type('coupon', $args);
+    private function create_table() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'affiliate_coupons';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            title varchar(255) NOT NULL,
+            code varchar(100) NOT NULL,
+            affiliate_url text NOT NULL,
+            description text,
+            expiry_date datetime DEFAULT NULL,
+            active tinyint(1) DEFAULT 1,
+            usage_count int DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_style('coupon-vault-css', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+        wp_enqueue_script('jquery');
+        wp_enqueue_style('affiliate-coupon-vault', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+        wp_enqueue_script('affiliate-coupon-vault', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('affiliate-coupon-vault', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
     }
 
     public function admin_menu() {
-        add_submenu_page('edit.php?post_type=coupon', 'Coupon Settings', 'Settings', 'manage_options', 'coupon-settings', array($this, 'settings_page'));
+        add_options_page('Affiliate Coupon Vault', 'Coupon Vault', 'manage_options', 'affiliate-coupon-vault', array($this, 'admin_page'));
     }
 
-    public function settings_page() {
-        if (isset($_POST['save'])) {
-            update_option('acv_affiliate_id', sanitize_text_field($_POST['affiliate_id']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+    public function admin_page() {
+        if (isset($_POST['save_coupon'])) {
+            $this->save_coupon_ajax();
         }
-        $affiliate_id = get_option('acv_affiliate_id', '');
-        ?>
-        <div class="wrap">
-            <h1>Coupon Vault Settings</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Affiliate Tracking ID</th>
-                        <td><input type="text" name="affiliate_id" value="<?php echo esc_attr($affiliate_id); ?>" /></td>
-                    </tr>
-                </table>
-                <p class="submit"><input type="submit" name="save" class="button-primary" value="Save Settings" /></p>
-            </form>
-        </div>
-        <?php
+        $coupons = $this->get_coupons();
+        include 'admin-page.php';
     }
 
-    public function coupon_vault_shortcode($atts) {
-        $atts = shortcode_atts(array('count' => 10), $atts);
-        $coupons = get_posts(array(
-            'post_type' => 'coupon',
-            'posts_per_page' => intval($atts['count']),
-            'post_status' => 'publish',
-        ));
+    private function get_coupons() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'affiliate_coupons';
+        return $wpdb->get_results("SELECT * FROM $table_name WHERE active = 1 ORDER BY created_at DESC");
+    }
 
-        $output = '<div class="coupon-vault">';
-        $affiliate_id = get_option('acv_affiliate_id', '');
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'id' => 0,
+            'limit' => 5
+        ), $atts);
+
+        $coupons = $this->get_coupons();
+        if ($atts['id']) {
+            $coupons = array_filter($coupons, function($c) use ($atts) { return $c->id == $atts['id']; });
+        } else {
+            $coupons = array_slice($coupons, 0, $atts['limit']);
+        }
+
+        ob_start();
+        echo '<div class="affiliate-coupon-vault">';
         foreach ($coupons as $coupon) {
-            $code = get_post_meta($coupon->ID, 'coupon_code', true);
-            $link = get_post_meta($coupon->ID, 'affiliate_link', true);
-            $expiry = get_post_meta($coupon->ID, 'expiry_date', true);
-            $tracked_link = $link . (strpos($link, '?') ? '&' : '?') . 'ref=' . $affiliate_id;
-            $output .= '<div class="coupon-item">';
-            $output .= '<h3>' . esc_html($coupon->post_title) . '</h3>';
-            $output .= '<p>' . apply_filters('the_content', $coupon->post_content) . '</p>';
-            $output .= '<div class="coupon-code">Code: <strong>' . esc_html($code) . '</strong></div>';
-            if ($expiry && strtotime($expiry) < current_time('timestamp')) {
-                $output .= '<span class="expired">Expired</span>';
-            } else {
-                $output .= '<a href="' . esc_url($tracked_link) . '" class="coupon-btn" target="_blank">Get Deal</a>';
-            }
-            $output .= '</div>';
+            $expiry = $coupon->expiry_date ? 'Expires: ' . date('M j, Y', strtotime($coupon->expiry_date)) : 'No expiry';
+            echo '<div class="coupon-item">';
+            echo '<h3>' . esc_html($coupon->title) . '</h3>';
+            echo '<p><strong>Code:</strong> ' . esc_html($coupon->code) . '</p>';
+            echo '<p>' . esc_html($coupon->description) . '</p>';
+            echo '<p>' . esc_html($expiry) . ' | Used: ' . $coupon->usage_count . ' times</p>';
+            echo '<a href="' . esc_url($coupon->affiliate_url) . '" target="_blank" class="coupon-btn" data-coupon-id="' . $coupon->id . '">Get Deal <span class="code">' . esc_html($coupon->code) . '</span></a>';
+            echo '</div>';
         }
-        $output .= '</div>';
-        return $output;
+        echo '</div>';
+        return ob_get_clean();
     }
 
-    public function activate() {
-        $this->create_cpt();
-        flush_rewrite_rules();
+    public function save_coupon() {
+        if (!current_user_can('manage_options')) {
+            wp_die();
+        }
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'affiliate_coupons';
+        $data = array(
+            'title' => sanitize_text_field($_POST['title']),
+            'code' => sanitize_text_field($_POST['code']),
+            'affiliate_url' => esc_url_raw($_POST['affiliate_url']),
+            'description' => sanitize_textarea_field($_POST['description']),
+            'expiry_date' => !empty($_POST['expiry_date']) ? $_POST['expiry_date'] : null
+        );
+        $wpdb->insert($table_name, $data);
+        wp_send_json_success('Coupon saved!');
+    }
+
+    public function save_coupon_ajax() {
+        // Fallback for non-AJAX
+        $_POST = $_REQUEST;
+        $this->save_coupon();
     }
 }
 
 new AffiliateCouponVault();
 
-// Add meta boxes
-function acv_add_meta_boxes() {
-    add_meta_box('coupon_details', 'Coupon Details', 'acv_coupon_meta_box', 'coupon');
+// Pro upsell notice
+function acv_pro_upsell() {
+    if (!get_option('acv_pro_activated')) {
+        echo '<div class="notice notice-info"><p><strong>Affiliate Coupon Vault Pro:</strong> Unlock unlimited coupons, analytics & more! <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
+    }
 }
-add_action('add_meta_boxes', 'acv_add_meta_boxes');
+add_action('admin_notices', 'acv_pro_upsell');
 
-function acv_coupon_meta_box($post) {
-    wp_nonce_field('acv_meta_box', 'acv_meta_nonce');
-    $code = get_post_meta($post->ID, 'coupon_code', true);
-    $link = get_post_meta($post->ID, 'affiliate_link', true);
-    $expiry = get_post_meta($post->ID, 'expiry_date', true);
-    echo '<p><label>Coupon Code: <input type="text" name="coupon_code" value="' . esc_attr($code) . '" style="width:100%;"></label></p>';
-    echo '<p><label>Affiliate Link: <input type="url" name="affiliate_link" value="' . esc_attr($link) . '" style="width:100%;"></label></p>';
-    echo '<p><label>Expiry Date: <input type="date" name="expiry_date" value="' . esc_attr($expiry) . '"></label></p>';
-}
-
-function acv_save_meta($post_id) {
-    if (!isset($_POST['acv_meta_nonce']) || !wp_verify_nonce($_POST['acv_meta_nonce'], 'acv_meta_box')) return;
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-    if (!current_user_can('edit_post', $post_id)) return;
-
-    update_post_meta($post_id, 'coupon_code', sanitize_text_field($_POST['coupon_code']));
-    update_post_meta($post_id, 'affiliate_link', esc_url_raw($_POST['affiliate_link']));
-    update_post_meta($post_id, 'expiry_date', sanitize_text_field($_POST['expiry_date']));
-}
-add_action('save_post', 'acv_save_meta');
-
-// Basic CSS
-/* Add to style.css or inline */
+// Minimal CSS
 /*
-.coupon-vault { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-.coupon-item { border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
-.coupon-code { background: #f0f0f0; padding: 10px; margin: 10px 0; }
-.coupon-btn { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; }
-.coupon-btn:hover { background: #005a87; }
-.expired { color: red; font-weight: bold; }
+.affiliate-coupon-vault-style {
+    .affiliate-coupon-vault { max-width: 800px; margin: 20px auto; }
+    .coupon-item { background: #f9f9f9; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .coupon-btn { display: inline-block; background: #ff6b35; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+    .coupon-btn:hover { background: #e55a2b; }
+    .code { background: #333; color: #fff; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+}
 */
+// Save as style.css in plugin folder
+
+// Minimal JS
+/*
+$(document).ready(function() {
+    $('.coupon-btn').click(function() {
+        var id = $(this).data('coupon-id');
+        $.post(ajax_object.ajax_url, {action: 'track_coupon_click', id: id}, function() {});
+    });
+});
+*/
+// Save as script.js in plugin folder
+
+// Create admin-page.php manually or add inline form here for single file
+?>
