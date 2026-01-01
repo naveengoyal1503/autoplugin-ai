@@ -2,42 +2,46 @@
 
 ## Features
 
-- **Generate Exclusive Coupons**: Create unique, personalized discount codes for each visitor to boost affiliate conversions[1][2].
-- **Easy Shortcodes**: Use `[affiliate_coupon id="example"]` to display coupons anywhere[1].
-- **Admin Dashboard**: Manage coupons via simple JSON interface (free) or pro analytics.
-- **Conversion-Optimized Design**: Eye-catching coupon boxes with unique codes and affiliate links[2][3].
-- **Freemium Model**: Free for 5 coupons; Pro ($49/year) unlocks unlimited, tracking, auto-generation, custom branding[7].
+- **Generate Exclusive Coupons**: Create unique, trackable coupon codes for affiliate products with one click.
+- **Affiliate Link Tracking**: Automatically appends your affiliate ID to all links for commissions.
+- **Shortcode Integration**: Easy `[acv_coupon_display product="Product Name"]` for any page or post.
+- **Frontend Widget**: Beautiful, responsive coupon display with claim button.
+- **Admin Dashboard**: Simple settings for API key and affiliate ID.
+- **Freemium Model**: Free version limited to 5 coupons/month; **Pro** unlocks unlimited + analytics ($49/year).
+
+**Pro Features (Upgrade Today)**: Advanced analytics, custom templates, email capture, A/B testing, WooCommerce integration.
 
 ## Installation
 
 1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to configure your first coupon.
+3. Go to **Settings > Coupon Vault** to enter your Affiliate API Key and ID.
+4. Use the shortcode `[acv_coupon_display product="Your Product Name"]` in posts/pages.
 
 ## Setup
 
-1. In the admin page, enter JSON like:
-   
-   {
-     "example": {
-       "affiliate": "Amazon",
-       "code": "SAVE20",
-       "desc": "20% off gadgets",
-       "link": "https://amazon.com/deal"
-     }
-   }
-   
-2. Save and use shortcode `[affiliate_coupon id="example"]` in posts/pages.
+1. **Configure Settings**:
+   - Navigate to **Settings > Coupon Vault**.
+   - Enter your affiliate network API key (e.g., from Amazon Associates, CJ Affiliate).
+   - Add your unique Affiliate ID.
+
+2. **Embed on Site**:
+   - Add shortcode to any post/page/sidebar.
+   - Example: `[acv_coupon_display product="iPhone 15"]`.
 
 ## Usage
 
-- Embed shortcodes in blog posts for niche affiliate content[1][3].
-- Unique codes per visitor improve tracking and perceived exclusivity[2].
-- **Pro Features**: Click tracking, A/B testing, API for dynamic coupons, SEO-friendly schema.
-- Ideal for monetizing blogs via personalized discounts and affiliate marketing[1][2][3].
+- **Generate Coupon**: Visitors click "Get Coupon" to receive a unique code + affiliate link.
+- **Track Conversions**: All links include your ID for commission tracking.
+- **Customization**: Style via CSS in the shortcode output.
+- **Pro Upgrade**: Visit admin notice link for full features.
 
-## Pro Upgrade
+## Support
 
-Unlock full potential: Unlimited coupons, analytics dashboard, email capture. Visit admin page for upgrade link.
+- Free support via WordPress forums.
+- Pro support: support@example.com.
 
-**Why Profitable?** Fills gap in personalized coupon tools; targets high-conversion affiliate niches[1][2].
+## Changelog
+
+**1.0.0**
+- Initial release with core coupon generation and shortcode.
