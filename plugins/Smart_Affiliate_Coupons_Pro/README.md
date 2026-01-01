@@ -1,34 +1,34 @@
 # Smart Affiliate Coupons Pro
 
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons via admin dashboard with brand, code, discount, affiliate link, and description.
-- **Shortcode Integration**: Use `[affiliate_coupon]` to display coupons anywhere on your site.
-- **Copy-to-Clipboard**: One-click copy for coupon codes.
-- **Click Tracking**: Pro feature tracks clicks and referrals for analytics.
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Freemium Upsell**: Unlock pro features like advanced tracking and unlimited coupons.
+- **Easy Coupon Management**: Add unlimited coupons via simple JSON in settings (Pro: unlimited).
+- **Personalized Promo Codes**: Generates unique codes per view to track conversions.
+- **Affiliate Link Integration**: Embed your affiliate links directly in coupons.
+- **Shortcode Support**: Use `[sac_coupon id="0"]` to display coupons anywhere.
+- **Copy-to-Clipboard**: One-click code copying for users.
+- **Analytics Ready**: Tracks clicks (Pro: detailed stats dashboard).
+- **Mobile Responsive**: Clean, professional design works on all devices.
+- **Pro Features**: Auto-expiry, custom branding, email capture, premium integrations ($49/year).
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Access settings via **Affiliate Coupons** menu.
+1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload Plugin**.
+2. Activate the plugin.
+3. Go to **Settings > Affiliate Coupons** to configure.
 
 ## Setup
-1. Go to **Affiliate Coupons** in admin.
-2. Enter coupons in format: `Brand|Code|Discount|AffiliateLink|Description` (one per line).
-3. Check **Pro Tracking** for advanced features (upgrade required).
-4. Save settings.
-5. Add `[affiliate_coupon]` shortcode to any post/page.
+1. In **Settings > Affiliate Coupons**, edit the JSON coupons array:
+   
+   [
+     {"name":"20% Off Tools","code":"SAVE20","afflink":"https://your-aff-link.com","desc":"Exclusive deal!"}
+   ]
+   
+2. Save settings.
+3. Add shortcode `[sac_coupon id="0"]` to any post/page/widget.
 
 ## Usage
-- **Display Coupons**: Paste shortcode in Gutenberg blocks, Classic Editor, or widgets.
-- **Customization**: Style via CSS classes like `.sac-coupon`, `.sac-button`.
-- **Tracking**: Pro version logs clicks; integrate with analytics tools.
-- **Monetization Tip**: Partner with brands for exclusive codes to boost commissions[1][2].
+- **Display Coupons**: Use shortcodes in posts, pages, or sidebars.
+- **Track Performance**: Monitor clicks via Google Analytics (gtag events fired).
+- **Monetize**: Earn commissions from affiliate links boosted by exclusive codes.
+- **Pro Upgrade**: Visit example.com/pro for advanced features like analytics dashboard and unlimited coupons.
 
-## Pro Upgrade
-Unlock unlimited coupons, detailed analytics, and API integrations for $49/year. [Upgrade Now](#).
-
-## Support
-Contact support@example.com. Check [documentation](https://example.com/docs).
+**Boost your affiliate earnings today!**
