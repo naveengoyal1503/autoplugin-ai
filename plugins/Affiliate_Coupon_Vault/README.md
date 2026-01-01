@@ -1,57 +1,32 @@
 # Affiliate Coupon Vault
 
-**Boost affiliate commissions with exclusive, personalized coupons!** Automatically displays rotating coupons with unique promo codes for each visitor.
-
 ## Features
-
-- **Free Version:**
-  - Add unlimited coupons via simple admin panel (brand|code|affiliate link format)
-  - Random rotating display with `[affiliate_coupon]` shortcode
-  - Personalized codes (e.g., 50%OFF-ab12) for tracking
-  - Mobile-responsive, attractive design
-  - Easy setup in minutes
-
-- **PRO Version ($49/year):**
-  - Unlimited coupons & categories
-  - Click analytics dashboard
-  - Auto-expiration & scheduling
-  - Gutenberg block & widgets
-  - Custom branding & designs
-  - Premium integrations (Amazon, etc.)
-  - Priority support
-
-## Why It's Profitable
-Exclusive coupons increase conversions by 20-50%[1][2]. Personalized codes track performance. **Freemium model** drives upgrades from bloggers & marketers.
+- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Brand|Code|Affiliate Link format)[1][2].
+- **Smart Shortcodes**: Use `[affiliate_coupon]` for random or `[affiliate_coupon category="Brand"]` for filtered display.
+- **Beautiful Design**: Responsive, eye-catching coupon cards with gradients and hover effects.
+- **Conversion Boost**: Personalized promo codes increase clicks and affiliate commissions[1][2].
+- **Pro Teaser**: Upsell to premium with analytics, auto-rotation, and custom branding.
 
 ## Installation
-
-1. Upload `affiliate-coupon-vault.php` to `/wp-content/plugins/`
-2. Activate in **Plugins > Installed Plugins**
-3. Go to **Settings > Coupon Vault** to add coupons
-4. Use shortcode `[affiliate_coupon]` in posts/pages
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+2. Activate the plugin.
+3. Go to Settings > Coupon Vault to add your coupons.
+4. Insert shortcode `[affiliate_coupon]` in posts/pages/widgets.
 
 ## Setup
-
-1. In admin: Enter coupons like:
+1. In admin settings, enter coupons one per line: `Brand Name|Promo Code|Your Affiliate Link`.
+2. Example:
    
-   Amazon|DEAL20|https://your-affiliate-link.com
-   Shopify|50OFF|https://shopify-aff-link.com
+   Amazon|10% OFF|https://your-amazon-affiliate-link
+   Shopify|Free Trial|https://your-shopify-link
    
-2. Save & embed shortcode
-3. **PRO:** Unlock blocks/widgets
+3. Save and test shortcode on frontend.
 
 ## Usage
+- **Posts/Blogs**: Add shortcode to recommend deals and earn commissions[1][2][3].
+- **Sidebar/Widgets**: Display random coupons for passive income.
+- **Niche Sites**: Filter by category for targeted promotions (e.g., travel, software)[2].
+- **Pro Upgrade**: $49/year for click tracking, unlimited storage, A/B testing, and API integrations.
 
-- Embed in sidebars, posts, or dedicated pages
-- Rotate multiple offers for higher engagement
-- Track via UTM params or PRO analytics
-- **Tip:** Use on niche blogs for travel, software, eCommerce[1][2]
-
-## Screenshots
-*(Imagine: Sleek coupon box with golden theme, CTA button)*
-
-## Changelog
-- 1.0.0: Initial release
-
-## Support
-Visit [example.com/support](https://example.com/support) or upgrade to PRO.
+## Why Profitable?
+Affiliate coupons drive high conversions via exclusive deals, positioning your site as a savings hub[1][2]. Freemium model converts free users to paid.
