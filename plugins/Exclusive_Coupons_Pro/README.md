@@ -1,47 +1,40 @@
 # Exclusive Coupons Pro
 
-## Description
-**Exclusive Coupons Pro** is a powerful WordPress plugin that lets you create and display personalized, trackable coupon codes to boost affiliate marketing conversions and site revenue. Inspired by successful monetization strategies, it positions your site as a go-to resource for exclusive deals.[1][2]
-
 ## Features
-- **Easy Shortcode Integration**: Use `[exclusive_coupon brand="Amazon"]` to display custom coupons anywhere.
-- **Personalized Codes**: Generates unique codes per visitor (e.g., SAVE10-abc123).
-- **Admin Dashboard**: Manage coupons via simple JSON format.
-- **Copy-to-Clipboard**: One-click copy functionality.
-- **Freemium Model**: Free for basics, Pro unlocks unlimited coupons, analytics, custom branding, and API integrations.
-- **SEO-Friendly**: Optimized for search engines and AI crawlers.[2]
 
-## Pro Features (Upgrade for $49/year)
-- Unlimited coupon campaigns.
-- Usage analytics and tracking.
-- Custom designs and branding.
-- Affiliate link integrations.
-- Export reports and API access.
+- **Personalized Coupon Generation**: Creates unique, one-time-use coupon codes based on visitor IP for exclusivity.
+- **Shortcode Integration**: Use `[exclusive_coupons affiliate_url="https://youraffiliate.link" brands="Amazon,Shopify" discount="10-20%"]` anywhere.
+- **Affiliate Boost**: Append codes to affiliate links for tracking and higher conversions.
+- **Reader Loyalty**: Positions your site as a go-to for exclusive deals, increasing engagement and retention.
+- **Premium Ready**: Freemium model supports analytics, unlimited brands, and custom branding in pro version.
+- **Lightweight & Self-Contained**: Single PHP file, no database needed, works on any WordPress site.
 
 ## Installation
-1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to configure your coupons.
-4. Use the shortcode `[exclusive_coupon]` in posts/pages.
+
+1. Download the plugin ZIP or copy the PHP code into a file named `exclusive-coupons-pro.php`.
+2. Upload to `/wp-content/plugins/exclusive-coupons-pro/` via FTP or WordPress dashboard.
+3. Activate the plugin in **Plugins > Installed Plugins**.
+4. Go to **Settings > Exclusive Coupons Pro** to configure (optional).
 
 ## Setup
-1. In **Settings > Coupons Pro**, enter coupons as JSON: `{"Amazon":"10%OFF","Shopify":"SAVE20"}`.
-2. Save settings.
-3. Add shortcode to your content: `[exclusive_coupon brand="Amazon"]` for specific brands or `[exclusive_coupon]` for random.
+
+1. **Add Shortcode**: Place `[exclusive_coupons]` on any page/post/sidebar.
+2. **Customize**: Add `affiliate_url`, `brands` (comma-separated), and `discount` attributes.
+   - Example: `[exclusive_coupons affiliate_url="https://amazon.com/myafflink" brands="Amazon,Nike,Target" discount="15% OFF"]`. 
+3. **Partner with Brands**: Contact companies for custom promo codes to replace generated ones.
+4. **Track Performance**: Monitor via affiliate dashboards; pro version adds built-in analytics.
 
 ## Usage
-- **On Blogs/Affiliate Sites**: Embed in posts to offer exclusive deals, increasing clicks and commissions.[1][3]
-- **eCommerce**: Promote partner discounts to drive sales.
-- **Shortcode Examples**:
-  - `[exclusive_coupon]` - Random coupon.
-  - `[exclusive_coupon brand="Amazon"]` - Specific brand.
-- **Customization**: Add CSS to `.exclusive-coupon-pro` for styling.
 
-## Why Profitable?
-Affiliate marketers earn higher conversions with exclusive coupons. Freemium model drives upgrades, as seen in popular plugins like ARMember and wecantrack.[2][3][4]
+- **Frontend**: Visitors click "Get Coupon" to generate a unique code, then "Use Now" links to your affiliate URL with the code.
+- **Admin**: Access settings at **Settings > Exclusive Coupons Pro** for global configs (future updates).
+- **Monetization Tips**: 
+  - Use on niche blogs (e.g., tech, fashion) for high conversion.
+  - Promote via email/social for traffic.
+  - Upgrade to Pro for A/B testing, email capture, and API integrations.
 
 ## Support
-Contact support@example.com. Rate 5⭐ on WordPress.org!
 
-## Changelog
-**1.0.0** - Initial release.
+Submit issues via WordPress.org forums or contact support@example.com. Premium support available.
+
+**Pro Upgrade**: Unlock unlimited coupons, custom designs, and analytics for $49/year.
