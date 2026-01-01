@@ -2,45 +2,38 @@
 
 ## Features
 
-- **Generate Exclusive Coupons**: Create custom promo codes with affiliate links and descriptions.
-- **Auto-Expiry Tracking**: Coupons expire automatically based on date.
-- **One-Click Shortcodes**: Embed coupons anywhere with `[wpec_coupon id="0"]`.
-- **Click Tracking (Pro)**: Track usage and conversions.
-- **Beautiful Design**: Responsive, mobile-friendly coupon displays.
-- **Freemium Model**: Free for basics; Pro unlocks unlimited coupons, analytics dashboard, and API.
-
-**Pro Features ($49/year)**: Unlimited coupons, advanced analytics, export reports, custom branding, priority support.
+- **Generate Exclusive Coupons**: Create custom, trackable coupon codes for brands and affiliates.
+- **Shortcode Integration**: Use `[wpec_coupon]` for random coupons or `[wpec_coupon id="1"]` for specific ones.
+- **Admin Dashboard**: Easy management of coupons and display limits.
+- **Pro Version**: Unlimited coupons, usage analytics, auto-expiration, email capture, and affiliate link tracking ($49/year).
+- **Boost Conversions**: Increases affiliate earnings with personalized discounts.[1][2]
 
 ## Installation
 
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload.
-2. Activate the plugin.
-3. Go to **Coupons Pro** in the admin menu to add your first coupon.
+1. Upload the plugin files to `/wp-content/plugins/wp-exclusive-coupons`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupons** to configure your coupons (format: `Brand:CODE`).
 
 ## Setup
 
-1. In **Coupons Pro** menu, edit the JSON coupons array:
-   
-   [
-     {"code":"SAVE20","afflink":"https://youraffiliate.com/?coupon=SAVE20","desc":"20% Off","expiry":"2026-12-31"}
-   ]
-   
-2. Save. Use shortcode `[wpec_coupon id="0"]` for the first coupon.
+1. In the admin page, enter coupons one per line: `Nike:NIKE20\nAdidas:SAVE15`.
+2. Set max coupons per page (default: 3).
+3. Customize affiliate links in the code (search for `aff_link`).
+4. Upgrade to Pro for advanced features.
 
 ## Usage
 
-- **Shortcode**: `[wpec_coupon id="1"]` – Replace `id` with coupon index (0-based).
-- **Posts/Pages**: Insert shortcode via Gutenberg or Classic Editor.
-- **Widgets**: Add to sidebars or footers.
-- **Free Limit**: 3 coupons max. Upgrade for unlimited.
+- Add `[wpec_coupon]` to any post/page for random coupons.
+- Use `[wpec_coupon id="1"]` for the first coupon in your list.
+- Style via CSS classes: `.wpec-coupons`, `.wpec-coupon`.
 
-## Pro Upgrade
+## Pro Features
 
-Get advanced tracking, SEO-optimized coupon pages, and more. Visit [Upgrade](#) in admin.
+| Feature | Free | Pro |
+|---------|------|-----|
+| Coupon Limit | 10 | Unlimited |
+| Analytics | No | Yes |
+| Auto-Expire | No | Yes |
+| Affiliate Tracking | Basic | Advanced |
 
-## Support
-
-- Free: Forums.
-- Pro: Priority email support.
-
-**Boost your affiliate earnings with exclusive deals!**
+Monetize your blog with exclusive deals that drive sales![1][2][3]
