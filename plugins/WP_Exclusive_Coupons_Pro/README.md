@@ -2,36 +2,77 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (code|brand|discount|affiliate link|description).
-- **Frontend Shortcode**: Use `[wpec_coupon_list]` to display beautiful, responsive coupon boxes.
-- **Affiliate Ready**: Track clicks and commissions with your affiliate links.
-- **Pro Version**: Unlimited coupons, auto-expiry, click analytics, custom branding, email capture ($49/year).
-- **SEO Optimized**: Unique value for readers improves engagement and rankings.[1][2]
+- **Generate Unique Coupons**: Automatically creates personalized coupon codes for each visitor (e.g., SAVE10-uuid)
+- **Affiliate-Optimized**: Perfect for bloggers and affiliate marketers to boost conversions[1][2]
+- **Shortcode Ready**: Use `[exclusive_coupon id="1"]` or `[exclusive_coupons]` anywhere
+- **Customizable**: Add coupon codes, affiliate links, and descriptions via admin panel
+- **Conversion Boost**: Exclusive codes increase perceived value and urgency[2]
+- **Freemium Model**: Free core features + premium upgrades for analytics and more
+
+## Premium Features (Coming Soon)
+- Advanced analytics dashboard
+- Auto-expiring coupons
+- Email capture integration
+- Unlimited coupon sets
+- API for dynamic affiliate links
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/wp-exclusive-coupons-pro`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Coupons Pro** in admin menu to add your first coupon.
-4. Add `[wpec_coupon_list]` shortcode to any page or post.
+1. Download the plugin ZIP
+2. In WordPress admin: **Plugins > Add New > Upload Plugin**
+3. Activate the plugin
+4. Go to **Settings > Coupons** to configure your coupons
 
 ## Setup
 
-1. Navigate to **Coupons Pro** dashboard.
-2. Enter coupons in format: `SAVE20|Brand|20% Off|https://aff.link?code=SAVE20|Exclusive reader deal` (one per line).
-3. Save and embed shortcode.
-
-**Example Output**:
-- Eye-catching coupon cards with code, brand, discount, description, and 'Get Deal' button.
+1. Navigate to **Settings > Coupons** in your WordPress admin
+2. Enter coupons in this format (one per block):
+   
+   Coupon Code: SAVE20
+   Affiliate Link: https://your-affiliate-link.com
+   Description: 20% off your first purchase!
+   
+   Coupon Code: WELCOME10
+   Affiliate Link: https://another-link.com
+   Description: $10 off premium membership
+   
+3. Save changes
 
 ## Usage
 
-- **Shortcode**: `[wpec_coupon_list]` - Displays all active coupons.
-- **Customization**: Edit CSS in plugin or theme.
-- **Pro Tips**: Request custom codes from brands for higher conversions.[2] Integrate with memberships for exclusive access.[4]
+### Shortcodes
+- `[exclusive_coupons]` - Display all coupons
+- `[exclusive_coupon id="1"]` - Display specific coupon (ID starts at 1)
 
-## Monetization Potential
+### Widget Areas
+Add shortcodes to any widget, page builder, or theme template
 
-Boost affiliate earnings with personalized coupons. Freemium model ready for your premium sales.[1][7]
+### Example Output
 
-**Support**: Contact support@example.com
+🎉 Exclusive Deal!
+Your Code: SAVE20-abc123xyz
+20% off your first purchase!
+[ Redeem Now & Save! ]
+Limited time offer - Generated for you exclusively!
+
+
+## Why This Converts
+
+- **Personalization**: Unique codes make users feel special[2]
+- **Scarcity**: "Exclusive" and "Limited time" messaging
+- **Tracking**: Easy to track conversions via unique codes
+- **SEO Friendly**: Clean, shareable coupon pages
+
+## Support
+
+- WordPress.org forums (free version)
+- Premium support: support@example.com
+
+## Upgrade to Pro
+
+**[Get Pro Version](https://example.com/pro)** - $49/year
+
+**Pro includes:** Analytics, unlimited coupons, auto-expiration, email integration
+
+---
+*Built for affiliate marketers who want higher conversions without complex setup.*
