@@ -6,18 +6,28 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Generate, manage, and track exclusive affiliate coupons to increase conversions and monetize your site.
+ * Description: Automatically generates and displays exclusive, personalized coupon codes for your WordPress site visitors, boosting affiliate conversions and site revenue.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: exclusive-coupons-pro
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class ExclusiveCouponsPro {
-    public function __construct() {
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
@@ -26,181 +36,102 @@ class ExclusiveCouponsPro {
     }
 
     public function init() {
+        load_plugin_textdomain('exclusive-coupons-pro', false, dirname(plugin_basename(__FILE__)) . '/languages/');
         if (is_admin()) {
-            add_action('admin_post_save_coupon', array($this, 'save_coupon'));
+            add_action('admin_init', array($this, 'admin_init'));
         }
-        $this->create_table();
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('ecp-script', plugin_dir_url(__FILE__) . 'ecp.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('ecp-style', plugin_dir_url(__FILE__) . 'ecp.css', array(), '1.0.0');
+        wp_enqueue_script('exclusive-coupons-pro', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('exclusive-coupons-pro', plugin_dir_url(__FILE__) . 'assets/style.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_menu_page('Exclusive Coupons', 'Coupons Pro', 'manage_options', 'exclusive-coupons', array($this, 'admin_page'));
-    }
-
-    public function admin_page() {
-        if (isset($_POST['save_coupon'])) {
-            $this->save_coupon();
-        }
-        $coupons = $this->get_coupons();
-        include plugin_dir_path(__FILE__) . 'admin-page.php';
-    }
-
-    public function create_table() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'exclusive_coupons';
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            name tinytext NOT NULL,
-            code varchar(50) NOT NULL,
-            affiliate_url text NOT NULL,
-            uses int DEFAULT 0,
-            max_uses int DEFAULT 0,
-            expiry date NULL,
-            created timestamp DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
-
-    public function get_coupons() {
-        global $wpdb;
-        return $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "exclusive_coupons");
-    }
-
-    public function save_coupon() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
-        global $wpdb;
-        $table = $wpdb->prefix . 'exclusive_coupons';
-        $data = array(
-            'name' => sanitize_text_field($_POST['name']),
-            'code' => strtoupper(sanitize_text_field($_POST['code'])),
-            'affiliate_url' => esc_url_raw($_POST['affiliate_url']),
-            'max_uses' => intval($_POST['max_uses']),
-            'expiry' => !empty($_POST['expiry']) ? $_POST['expiry'] : null
+        add_options_page(
+            'Exclusive Coupons Pro',
+            'Coupons Pro',
+            'manage_options',
+            'exclusive-coupons-pro',
+            array($this, 'settings_page')
         );
-        $wpdb->insert($table, $data);
-        wp_redirect(admin_url('admin.php?page=exclusive-coupons'));
-        exit;
+    }
+
+    public function admin_init() {
+        register_setting('exclusive_coupons_group', 'exclusive_coupons_options');
+        add_settings_section('exclusive_coupons_section', 'Coupon Settings', null, 'exclusive_coupons');
+        add_settings_field('coupons_list', 'Coupons List (JSON format: {"brand":"discount"})', array($this, 'coupons_field'), 'exclusive_coupons', 'exclusive_coupons_section');
+        add_settings_field('pro_nag', 'Upgrade to Pro', array($this, 'pro_nag'), 'exclusive_coupons', 'exclusive_coupons_section');
+    }
+
+    public function coupons_field() {
+        $options = get_option('exclusive_coupons_options');
+        $coupons = isset($options['coupons']) ? $options['coupons'] : '{}';
+        echo '<textarea name="exclusive_coupons_options[coupons]" rows="10" cols="50">' . esc_textarea($coupons) . '</textarea>';
+        echo '<p class="description">Enter coupons as JSON, e.g. {"Amazon":"10%OFF","Shopify":"SAVE20"}</p>';
+    }
+
+    public function pro_nag() {
+        echo '<p><strong>Pro Features:</strong> Unlimited coupons, analytics, custom designs, API integrations. <a href="https://example.com/pro" target="_blank">Upgrade Now ($49/year)</a></p>';
+    }
+
+    public function settings_page() {
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Exclusive Coupons Pro Settings', 'exclusive-coupons-pro'); ?></h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('exclusive_coupons_group');
+                do_settings_sections('exclusive_coupons');
+                submit_button();
+                ?>
+            </form>
+        </div>
+        <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => 0), $atts);
-        global $wpdb;
-        $coupon = $wpdb->get_row($wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "exclusive_coupons WHERE id = %d", $atts['id']));
-        if (!$coupon) return '';
-
-        $used = $coupon->uses;
-        $max = $coupon->max_uses;
-        $expired = $coupon->expiry && strtotime($coupon->expiry) < current_time('timestamp');
-
+        $atts = shortcode_atts(array('brand' => ''), $atts);
+        $options = get_option('exclusive_coupons_options');
+        $coupons = json_decode($options['coupons'] ?? '{}', true);
+        $code = '';
+        if (!empty($atts['brand']) && isset($coupons[$atts['brand']])) {
+            $code = $coupons[$atts['brand']];
+        } else {
+            $codes = array_values($coupons);
+            $code = $codes[array_rand($codes)] ?? 'SAVE10';
+        }
+        $unique_code = $code . '-' . wp_generate_uuid4() . substr(md5(auth()->user_id ?? ''), 0, 4);
         ob_start();
         ?>
-        <div class="ecp-coupon" data-id="<?php echo $coupon->id; ?>">
-            <h3><?php echo esc_html($coupon->name); ?></h3>
-            <div class="ecp-code"><?php echo esc_html($coupon->code); ?></div>
-            <?php if ($max > 0 && $used >= $max) : ?>
-                <p class="ecp-exhausted">Coupon uses exhausted!</p>
-            <?php elseif ($expired) : ?>
-                <p class="ecp-expired">Coupon expired!</p>
-            <?php else : ?>
-                <p>Uses left: <?php echo $max > 0 ? $max - $used : 'Unlimited'; ?></p>
-                <a href="<?php echo esc_url(add_query_arg('coupon', $coupon->code, $coupon->affiliate_url)); ?>" class="ecp-button" target="_blank">Redeem Now</a>
-            <?php endif; ?>
+        <div id="exclusive-coupon" class="exclusive-coupon-pro" data-code="<?php echo esc_attr($unique_code); ?>">
+            <h3>Your Exclusive Coupon: <span class="coupon-code"><?php echo esc_html($unique_code); ?></span></h3>
+            <p>Copy and use at checkout! Limited time offer.</p>
+            <button class="copy-btn">Copy Code</button>
+            <div class="pro-upsell">Pro: Track usage & analytics</div>
         </div>
+        <script>
+        jQuery('.copy-btn').click(function() {
+            navigator.clipboard.writeText(jQuery(this).siblings('.coupon-code').text());
+            jQuery(this).text('Copied!');
+        });
+        </script>
         <?php
         return ob_get_clean();
     }
 
     public function activate() {
-        $this->create_table();
+        add_option('exclusive_coupons_options', array('coupons' => '{"Amazon":"10%OFF","Shopify":"SAVE20"}'));
     }
 }
 
-new ExclusiveCouponsPro();
+ExclusiveCouponsPro::get_instance();
 
-// Inline JS and CSS for self-contained plugin
-add_action('wp_head', 'ecp_inline_scripts');
-function ecp_inline_scripts() {
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('.ecp-coupon .ecp-button').on('click', function() {
-            var id = $(this).closest('.ecp-coupon').data('id');
-            $.post(ajaxurl, {action: 'track_coupon_use', id: id});
-        });
-    });
-    </script>
-    <style>
-    .ecp-coupon { border: 2px solid #0073aa; padding: 20px; margin: 20px 0; border-radius: 8px; background: #f9f9f9; }
-    .ecp-code { font-size: 24px; font-weight: bold; color: #0073aa; margin: 10px 0; }
-    .ecp-button { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; }
-    .ecp-button:hover { background: #005a87; }
-    .ecp-exhausted, .ecp-expired { color: red; font-weight: bold; }
-    </style>
-    <?php
-}
+// Pro upsell hook
+add_action('admin_notices', function() {
+    if (!current_user_can('manage_options')) return;
+    echo '<div class="notice notice-info"><p><strong>Exclusive Coupons Pro:</strong> Unlock pro features for <a href="https://example.com/pro">$49/year</a> - Unlimited coupons, analytics & more!</p></div>';
+});
 
-add_action('wp_ajax_track_coupon_use', 'track_coupon_use');
-function track_coupon_use() {
-    global $wpdb;
-    $id = intval($_POST['id']);
-    $wpdb->query($wpdb->prepare("UPDATE " . $wpdb->prefix . "exclusive_coupons SET uses = uses + 1 WHERE id = %d", $id));
-    wp_die();
-}
-
-// Admin page template
-add_action('admin_footer', 'ecp_admin_template');
-function ecp_admin_template() {
-    if (isset($_GET['page']) && $_GET['page'] === 'exclusive-coupons') {
-        ?>
-        <div id="ecp-admin-template" style="display:none;">
-            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-                <input type="hidden" name="action" value="save_coupon">
-                <?php wp_nonce_field('save_coupon'); ?>
-                <table class="form-table">
-                    <tr><th>Name</th><td><input type="text" name="name" required></td></tr>
-                    <tr><th>Code</th><td><input type="text" name="code" required></td></tr>
-                    <tr><th>Affiliate URL</th><td><input type="url" name="affiliate_url" style="width:100%;" required></td></tr>
-                    <tr><th>Max Uses</th><td><input type="number" name="max_uses" value="0"></td></tr>
-                    <tr><th>Expiry</th><td><input type="date" name="expiry"></td></tr>
-                </table>
-                <p><input type="submit" value="Add Coupon" class="button-primary"></p>
-            </form>
-        </div>
-        <script>
-        jQuery(document).ready(function($) {
-            $('#ecp-admin-template form').on('submit', function(e) {
-                // Auto-generate code if empty
-                if (!$('input[name="code"]').val()) {
-                    $('input[name="code"]').val(Math.random().toString(36).substr(2,8).toUpperCase());
-                }
-            });
-        });
-        </script>
-        <?php
-    }
-}
-
-// Display coupons in admin
-add_action('admin_notices', 'ecp_admin_page_content');
-function ecp_admin_page_content() {
-    if (isset($_GET['page']) && $_GET['page'] === 'exclusive-coupons') {
-        $plugin = new ExclusiveCouponsPro();
-        $coupons = $plugin->get_coupons();
-        echo '<div class="wrap"><h1>Exclusive Coupons Pro</h1>';
-        echo '<div id="ecp-admin-template"></div>'; // Trigger template
-        echo '<table class="wp-list-table widefat fixed striped"><thead><tr><th>ID</th><th>Name</th><th>Code</th><th>Uses</th><th>Max Uses</th><th>Expiry</th></tr></thead><tbody>';
-        foreach ($coupons as $c) {
-            echo '<tr><td>' . $c->id . '</td><td>' . esc_html($c->name) . '</td><td>' . esc_html($c->code) . '</td><td>' . $c->uses . '</td><td>' . $c->max_uses . '</td><td>' . ($c->expiry ?: 'No') . '</td></tr>';
-        }
-        echo '</tbody></table></div>';
-    }
-}
+// Assets placeholder - create assets/script.js and assets/style.css in plugin folder
+?>
