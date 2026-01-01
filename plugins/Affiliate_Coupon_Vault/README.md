@@ -1,38 +1,32 @@
 # Affiliate Coupon Vault
 
-## Features
+A powerful WordPress plugin to create and display exclusive affiliate coupons, driving higher conversions and commissions.[1][2]
 
-- **Easy Shortcode Integration**: Use `[affiliate_coupon affiliate="Amazon" code="SAVE10" discount="10%" link="https://amazon.com/deal" expires="2026-01-31"]` to embed stunning coupons.
-- **Click-to-Copy**: One-click copies promo codes to clipboard.
-- **Conversion-Optimized Design**: Eye-catching UI boosts click-through rates.
-- **Free Tier**: Up to 5 coupons per post.
-- **Pro Features** (Upgrade for $49/year):
-  - Unlimited coupons.
-  - Click analytics dashboard.
-  - Auto-generate unique codes.
-  - Custom branding & templates.
-  - Premium affiliate integrations (Amazon, etc.).
+## Features
+- **Easy Coupon Management**: Add unlimited coupons via simple admin panel (format: Brand|Code|Discount|Affiliate Link).
+- **Shortcode & Gutenberg Block**: Embed coupons anywhere with `[affiliate_coupon]` or dedicated block.
+- **Responsive Design**: Mobile-friendly coupon displays with eye-catching buttons.
+- **Pro Upsell Ready**: Built-in prompts for premium features like unique code generation, analytics, and automation.
+- **Lightweight & Self-Contained**: Single-file plugin, no dependencies.
 
 ## Installation
-
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use the shortcode in any post or page.
+1. Download the plugin ZIP or copy the PHP code into a new file named `affiliate-coupon-vault.php`.
+2. Upload via WordPress Admin > Plugins > Add New > Upload Plugin.
+3. Activate the plugin.
+4. Go to **Settings > Coupon Vault** to add your affiliate coupons.
 
 ## Setup
-
-1. Go to **Settings > Coupon Vault**.
-2. Enter Pro license key (if purchased) for unlimited features.
-3. Customize via shortcode attributes.
+1. In the settings page, enter coupons one per line: `Nike|NIKE20|20|your-affiliate-link.com`.
+2. Save settings.
+3. Use shortcode `[affiliate_coupon]` in posts/pages or add the Gutenberg block.
 
 ## Usage
+- **Shortcode Options**: `[affiliate_coupon limit="3"]` to show limited coupons.
+- **Customization**: Style via CSS or upgrade to Pro for advanced theming.
+- **Monetization Tip**: Pair with affiliate programs like Amazon Associates for commissions on clicks/sales.[3][4]
 
-Embed in posts:
-
-`[affiliate_coupon affiliate="YourBrand" code="WP2026" discount="20% OFF" link="https://youraffiliatelink.com" expires="2026-02-01"]`
-
-**Pro Tip**: Place coupons at post end or in sidebars for max conversions. Track earnings via your affiliate dashboard.
+## Pro Version
+Coming soon: Auto-generate unique promo codes, click tracking, A/B testing, and integrations ($29/year).
 
 ## Support
-
-Contact support@example.com or visit example.com/support.
+Report issues on GitHub or contact support@example.com.
