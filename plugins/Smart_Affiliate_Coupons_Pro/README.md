@@ -1,32 +1,32 @@
 # Smart Affiliate Coupons Pro
 
 ## Features
-
-- **Easy Coupon Management**: Create unlimited personalized coupon codes with affiliate tracking directly from WordPress admin.
-- **Click Tracking**: Automatically tracks clicks on affiliate links and displays stats.
-- **Shortcode Integration**: Use `[affiliate_coupon code="YOURCODE"]` to display beautiful, responsive coupon boxes anywhere.
-- **Dynamic Deals**: Show discount percentages, brands, and custom codes to boost conversions.
-- **Freemium Ready**: Premium version unlocks unlimited coupons, analytics dashboard, and API integrations.
-- **SEO-Friendly**: Generates reader-first content for better search rankings and affiliate earnings.
+- **Easy Coupon Management**: Add unlimited coupons with affiliate links via simple JSON in admin settings.
+- **Click Tracking**: Automatically tracks clicks on affiliate links for performance analytics.
+- **Shortcode Integration**: Use `[sac_coupon id="yourkey"]` anywhere to display beautiful, mobile-responsive coupons.
+- **Conversion Booster**: Personalized codes increase trust and clicks, boosting affiliate revenue[1][2].
+- **Freemium Pro**: Free core features; Pro ($49/year) adds AI coupon generation, analytics dashboard, unlimited campaigns.
 
 ## Installation
-
-1. Upload the `smart-affiliate-coupons` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Coupons** to create your first coupon.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via WordPress Admin > Plugins.
+3. Go to Settings > Smart Affiliate Coupons to add coupons.
 
 ## Setup
-
-1. In the admin panel, enter **Coupon Code**, **Affiliate Link**, **Discount %**, and **Brand**.
-2. Click **Save Coupon**.
-3. Copy the shortcode: `[affiliate_coupon code="yourcode"]`. 
-4. Paste it into any post, page, or widget.
+1. In Settings > SAC Pro, enter coupons as JSON:
+   
+   {
+     "deal1": {"code": "SAVE20", "afflink": "https://affiliate.com", "desc": "20% Off"},
+     "deal2": {"code": "AFF10", "afflink": "https://example.com", "desc": "10% Discount"}
+   }
+   
+2. Save. Use shortcode `[sac_coupon id="deal1"]` in posts/pages.
 
 ## Usage
+- Embed coupons in blog posts for affiliate promotions.
+- Track clicks in database (view via phpMySQL or Pro dashboard).
+- **Pro Tip**: Brands love custom codes for partnerships – negotiate exclusives![2]
+- Upgrade to Pro for AI: Generates niche-specific coupons automatically.
 
-- **Display a Coupon**: `[affiliate_coupon code="SAVE20"]` renders a styled box with code, discount, and tracked link.
-- **View Stats**: Clicks are tracked live; see counts in the coupon display and admin list.
-- **Monetization Tips**: Partner with brands for exclusive codes, embed in niche posts for affiliate commissions[1][2].
-- **Pro Upgrade**: For memberships, advanced reporting, and more—contact support.
-
-**Proven Strategy**: Personalized coupons increase conversions and position your site as a deals hub[1][2].
+## Support
+Contact support@example.com. Freemium model inspired by top monetization strategies[1][3][7].
