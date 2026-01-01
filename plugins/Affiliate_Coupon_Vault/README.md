@@ -2,40 +2,34 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons (brand, code, discount %, affiliate URL) via simple settings page[1][2].
-- **Shortcode & Widget Support**: Use `[acv_coupon id="0"]` or drag widget to sidebar for instant displays[3].
-- **Click Tracking**: Tracks affiliate clicks with unique IDs for performance analytics (Pro feature)[1][3].
-- **Personalized Promos**: Generate exclusive codes to boost conversions and reader loyalty[1][2].
-- **Freemium Model**: Free for basics, Pro ($49/year) unlocks unlimited coupons, custom branding, and detailed reports[7].
-- **SEO-Friendly**: Coupon blocks improve site stickiness and affiliate revenue[1][2].
+- **Easy Coupon Management**: Add brands, codes, affiliate links, discounts, and expiry dates via simple admin dashboard.
+- **Click Tracking**: Monitors clicks on each coupon to optimize performance (Pro: detailed analytics).
+- **Frontend Display**: Use `[affiliate_coupons]` shortcode or widget to showcase deals anywhere on your site.
+- **Free Limit**: 10 coupons (Pro: unlimited).
+- **Conversion Booster**: Personalized deals increase affiliate commissions and reader trust.
+- **Pro Features**: Auto-coupon generation, advanced stats, email notifications, custom branding ($49/year).
 
 ## Installation
 
 1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your coupons.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
+4. Add `[affiliate_coupons]` shortcode to any post/page or use the widget.
 
 ## Setup
 
-1. In **Settings > Coupon Vault**, enter coupons in format: `Brand|CODE|50|https://your-affiliate-link.com` (one per line).
-2. Example:
-   
-   Amazon|PRIME20|20|https://amzn.to/example
-   Shopify|SAVE10|10|https://shopify.pxf.io/example
-   
-3. Use shortcode `[acv_coupon id="0"]` (replace 0 with coupon index) or add widget.
-4. **Pro Upgrade**: Enable for advanced tracking via settings[7].
+1. **Admin Dashboard**: Navigate to **Settings > Coupon Vault**.
+2. **Add Coupon**: Fill in brand, code, affiliate link (your tracked URL), discount, and expiry.
+3. **Display**: Embed shortcode `[affiliate_coupons limit="5"]` (free limit: 10 total coupons).
+4. **Track**: Clicks redirect to affiliate links with stats logged.
 
 ## Usage
 
-- **Posts/Pages**: Embed `[acv_coupon id="1"]` for specific deals.
-- **Sidebar**: Add widget for always-on coupon display.
-- **Monetization**: Earn commissions on tracked clicks; personalize codes for brands[1][2][3].
-- **Track Performance**: View logs in debug.log or upgrade to Pro dashboard.
+- **Shortcode**: `[affiliate_coupons]` or `[affiliate_coupons limit="3"]`.
+- **Widget**: Drag 'Affiliate Coupon Vault' to sidebar/footer.
+- **Customization**: Style via CSS classes like `.acv-vault`, `.acv-coupon`.
+- **Pro Upgrade**: Unlock full potential at example.com/pro.
 
-**Pro Tip**: Target niches like software, travel, e-commerce for high conversions[2].
+Boost your affiliate earnings with exclusive coupons your audience loves!
 
-## Changelog
-
-**1.0.0**
-- Initial release with core features.
+**Support**: Contact support@example.com
