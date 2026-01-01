@@ -2,45 +2,48 @@
 
 ## Features
 
-- **Auto-Generate Exclusive Coupons**: Creates unique, personalized coupon codes for your audience from any affiliate program.
-- **Shortcode Integration**: Use `[wpec_coupon_display count="5"]` to display coupon grids anywhere.
-- **Copy-to-Clipboard**: One-click copy for user-friendly experience.
-- **Dynamic Code Generation**: AJAX-powered new exclusive codes per visitor.
-- **Freemium Model**: Free version limited to 5 coupons; Pro unlocks unlimited, analytics, email capture, and premium integrations.
-- **SEO Optimized**: Coupon pages boost traffic and conversions.[1][2]
-- **Mobile Responsive**: Grid layout adapts to all devices.
+- **Generate Exclusive Coupons**: Create unique, trackable coupon codes for affiliate partnerships.
+- **Auto-Expiration & Usage Limits**: Coupons expire automatically and have max use limits.
+- **One-Click Integration**: Use shortcode `[wpec_coupon id="0"]` to display coupons anywhere.
+- **Click Tracking**: Pro version tracks clicks and conversions (basic free version included).
+- **Admin Dashboard**: Easy management of coupons, links, and stats.
+- **Freemium Model**: Free for up to 5 coupons; Pro unlocks unlimited + analytics.
 
 ## Installation
 
-1. Upload the `wp-exclusive-coupons-pro` folder to `/wp-content/plugins/`.
+1. Upload the `wp-exclusive-coupons` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to configure affiliate programs.
+3. Navigate to **Coupons** in the admin menu to create your first coupon.
+4. Add shortcode `[wpec_coupon id="0"]` to any post/page (ID matches your coupon list order).
 
 ## Setup
 
-1. In **Settings > Coupons Pro**, enter your affiliates in format `Name:Discount|Name2:Discount2` (e.g., `Amazon:10% off|Shopify:20% off`).
-2. Save settings.
-3. Add `[wpec_coupon_display]` shortcode to any post, page, or widget.
-4. **Pro Tip**: Create a dedicated '/coupons' page for SEO benefits.[2]
+1. Go to **Coupons** > Add coupon details: code, affiliate link, description, expiry date, max uses.
+2. Save and copy the shortcode with the coupon's ID (e.g., first coupon is ID 0).
+3. For Pro: Enter your API key (purchased from example.com/pro) for unlimited features.
 
 ## Usage
 
-- **Display Coupons**: `[wpec_coupon_display count="3"]` shows 3 coupons.
-- **Copy Codes**: Users click 'Copy Code' to copy instantly.
-- **Generate New**: 'New Exclusive Code' fetches fresh codes via AJAX.
-- **Monetize**: Share affiliate links with codes; track conversions manually or upgrade to Pro for analytics.[1][3]
-- **Customization**: Style via CSS in the shortcode output.
+- **Display Coupon**: `[wpec_coupon id="1"]` renders a styled coupon box.
+- **Track Performance**: Free tracks uses; Pro adds click analytics and export.
+- **Customization**: Style via CSS classes like `.wpec-coupon`, `.wpec-btn`.
+- **Shortcode Examples**:
+  - Basic: `[wpec_coupon id="0"]`
+  - Multiple: Place multiple shortcodes on deal pages.
 
 ## Pro Upgrade ($49/year)
 
-- Unlimited coupons & affiliates
-- Conversion analytics dashboard
-- Email capture for coupon subscribers
-- Auto-post to social media
-- Premium integrations (Amazon, Shopify APIs)
+- Unlimited coupons
+- Advanced analytics dashboard
+- Custom branding
+- Priority support
+- API for integrations
 
-**Upgrade: [Get Pro](https://example.com/pro)**
+Visit example.com/pro to upgrade.
 
 ## Support
 
-Report issues via WordPress.org forums. Pro users get priority email support.
+- FAQ and docs: example.com/docs
+- Contact: support@example.com
+
+**Boost your affiliate earnings with exclusive deals your audience loves!**
