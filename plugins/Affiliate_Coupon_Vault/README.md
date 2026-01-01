@@ -1,48 +1,34 @@
 # Affiliate Coupon Vault
 
-A powerful WordPress plugin that generates unique, personalized coupon codes and affiliate deals to skyrocket your conversions and commissions.[1][2]
-
 ## Features
 
-- **Auto-generate unique coupon codes** with one-click copy functionality.
-- **Shortcode integration**: `[affiliate_coupon_vault affiliate="amazon" discount="20%"]` for easy embedding.[1]
-- **Affiliate tracking**: Append site-specific referral parameters to links.
-- **Freemium model**: Free for 1 coupon, Pro ($49/year) unlocks unlimited, analytics, custom branding, and premium integrations.[7]
-- **Mobile-responsive design** with eye-catching UI to boost clicks.
-- **Admin dashboard** for settings and Pro upgrade.
+- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (format: Brand:Code|Brand:Code).
+- **Shortcode Integration**: Use `[affiliate_coupon brand="Amazon"]` to display branded coupons anywhere.
+- **Affiliate Tracking**: Built-in click tracking (Pro: advanced analytics).
+- **Auto-Generate Codes**: Fallback random codes for missing brands.
+- **Responsive Design**: Mobile-friendly coupon displays.
+- **Freemium Model**: Free core features; Pro unlocks unlimited coupons, detailed stats, API integrations.
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Use the shortcode in posts/pages or access settings under **Settings > Coupon Vault**.[5]
+3. Go to **Settings > Coupon Vault** to add your coupons.
 
 ## Setup
 
-1. Go to **Settings > Coupon Vault**.
-2. Set your default affiliate link (e.g., Amazon Associates).
-3. (Pro) Enter license for full features.
-4. Embed shortcode: `[affiliate_coupon_vault link="https://affiliate-link.com" discount="15%"]`.
+1. In admin, enter coupons like: `Amazon:WP10OFF|Shopify:FREEDEL|Brand3:50PERCENT`.
+2. Save settings.
+3. Add shortcode to posts/pages: `[affiliate_coupon brand="Amazon"]`.
+4. Customize affiliate links in code (edit `$aff_link`).
 
 ## Usage
 
-- **Basic**: Add shortcode to any post/page for instant coupon display.
-- **Advanced (Pro)**: Multiple coupons per page, A/B testing, click analytics, auto-rotate deals.
-- **Monetization tips**: Target niches like software, travel, eCommerce. Pair with SEO plugins for traffic.[1][2][3]
-- **Example**:
-  
-  [affiliate_coupon_vault affiliate="shopify" discount="50% Off" code="AFF50" link="https://shopify.com/?ref=yourid"]
-  
+- **Display Coupon**: `[affiliate_coupon brand="YourBrand"]` generates HTML with code, button, and tracking.
+- **Track Clicks**: JS sends AJAX on button click (Pro: full conversion tracking).
+- **Pro Upgrade**: For analytics dashboard, email capture, WooCommerce integration ($49/year).
 
-## Pro Upgrade
-
-- Unlimited coupons & pages.
-- Detailed analytics dashboard.
-- Premium affiliate network presets (Amazon, etc.).
-- Custom CSS/branding.
-
-**Upgrade now for $49/year** – scales with your traffic![7][8]
+**Pro Tip**: Pair with affiliate programs like Amazon Associates for max revenue[1][2][3].
 
 ## Support
-
-Report issues via WordPress.org forums. Pro users get priority email support.
+Contact support@example.com | Changelog in plugin files.
