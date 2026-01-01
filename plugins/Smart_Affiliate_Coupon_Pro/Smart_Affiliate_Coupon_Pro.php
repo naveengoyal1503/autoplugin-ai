@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Coupon Pro
  * Plugin URI: https://example.com/smart-affiliate-coupon-pro
- * Description: Automatically generates and displays targeted affiliate coupons, deal trackers, and promotional banners to boost conversions and commissions.
+ * Description: Automatically generates and displays personalized affiliate coupons with dynamic discounts to boost conversions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -18,175 +18,135 @@ if (!defined('ABSPATH')) {
 }
 
 class SmartAffiliateCouponPro {
-    private static $instance = null;
-
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
+    public function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('sac_coupon', array($this, 'coupon_shortcode'));
-        add_shortcode('sac_deals', array($this, 'deals_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_action('wp_ajax_sac_generate_coupon', array($this, 'ajax_generate_coupon'));
+        add_action('wp_ajax_nopriv_sac_generate_coupon', array($this, 'ajax_generate_coupon'));
     }
 
     public function init() {
+        if (get_option('sac_pro_version')) {
+            // Pro features
+        }
         load_plugin_textdomain('smart-affiliate-coupon-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_style('sac-style', plugins_url('style.css', __FILE__), array(), '1.0.0');
-        wp_enqueue_script('sac-script', plugins_url('script.js', __FILE__), array('jquery'), '1.0.0', true);
+        wp_enqueue_script('sac-script', plugin_dir_url(__FILE__) . 'sac-script.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sac-script', 'sac_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sac_nonce')));
+        wp_enqueue_style('sac-style', plugin_dir_url(__FILE__) . 'sac-style.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_options_page(
-            'Smart Affiliate Coupon Pro Settings',
-            'SAC Pro',
-            'manage_options',
-            'sac-pro',
-            array($this, 'settings_page')
-        );
+        add_options_page('Smart Affiliate Coupon Pro', 'SAC Pro', 'manage_options', 'sac-pro', array($this, 'admin_page'));
     }
 
-    public function settings_page() {
-        if (isset($_POST['sac_submit'])) {
-            update_option('sac_api_key', sanitize_text_field($_POST['sac_api_key']));
-            update_option('sac_affiliate_ids', sanitize_textarea_field($_POST['sac_affiliate_ids']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+    public function admin_page() {
+        if (isset($_POST['sac_save'])) {
+            update_option('sac_coupons', sanitize_textarea_field($_POST['coupons']));
+            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
         }
-        $api_key = get_option('sac_api_key', '');
-        $affiliate_ids = get_option('sac_affiliate_ids', '');
+        $coupons = get_option('sac_coupons', 'Amazon:10%,ExampleStore:15%');
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate Coupon Pro</h1>
+            <h1>Smart Affiliate Coupon Pro Settings</h1>
             <form method="post">
                 <table class="form-table">
                     <tr>
-                        <th>Affiliate API Key</th>
-                        <td><input type="text" name="sac_api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th>Affiliate Network IDs (one per line)</th>
-                        <td><textarea name="sac_affiliate_ids" rows="5" class="large-text"><?php echo esc_textarea($affiliate_ids); ?></textarea></td>
+                        <th>Coupons (Format: Store:Discount% | AffiliateLink)</th>
+                        <td><textarea name="coupons" rows="10" cols="50"><?php echo esc_textarea($coupons); ?></textarea></td>
                     </tr>
                 </table>
-                <?php submit_button(); ?>
+                <?php submit_button('Save Coupons', 'primary', 'sac_save'); ?>
             </form>
-            <p><strong>Pro Upgrade:</strong> Unlock unlimited coupons, analytics, auto-rotation, and premium integrations for $49/year.</p>
+            <p><strong>Upgrade to Pro:</strong> Unlimited coupons, analytics, auto-rotation. <a href="#">Buy Now ($49/year)</a></p>
         </div>
         <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'id' => 'default',
-            'type' => 'coupon'
-        ), $atts);
-
-        $coupons = $this->get_sample_coupons();
-        $coupon = $coupons[array_rand($coupons)];
-
+        $atts = shortcode_atts(array('store' => ''), $atts);
         ob_start();
         ?>
-        <div class="sac-coupon sac-<?php echo esc_attr($atts['type']); ?>" data-id="<?php echo esc_attr($atts['id']); ?>">
-            <div class="sac-header">
-                <span class="sac-discount"><?php echo esc_html($coupon['discount']); ?></span>
-                <span class="sac-code"><?php echo esc_html($coupon['code']); ?></span>
-            </div>
-            <div class="sac-description"><?php echo esc_html($coupon['description']); ?></div>
-            <a href="<?php echo esc_url($coupon['link']); ?}" class="sac-button" target="_blank">Get Deal <?php echo $this->is_pro() ? '' : '(Pro Feature)'; ?></a>
-            <?php if (!$this->is_pro()) { ?>
-            <div class="sac-upgrade">Upgrade to Pro for live tracking!</div>
-            <?php } ?>
+        <div id="sac-coupon" class="sac-coupon-container" data-store="<?php echo esc_attr($atts['store']); ?>">
+            <div class="sac-coupon-code">GENERATING COUPON...</div>
+            <div class="sac-discount">Discount: <span class="sac-discount-percent"></span></div>
+            <a href="#" class="sac-copy-btn">Copy Code</a>
+            <a href="#" class="sac-affiliate-link" target="_blank">Shop Now</a>
         </div>
         <?php
         return ob_get_clean();
     }
 
-    public function deals_shortcode($atts) {
-        $atts = shortcode_atts(array('limit' => 3), $atts);
-        $deals = $this->get_sample_coupons();
-        shuffle($deals);
-        $deals = array_slice($deals, 0, intval($atts['limit']));
-
-        ob_start();
-        echo '<div class="sac-deals-grid">';
-        foreach ($deals as $deal) {
-            echo '<div class="sac-deal">';
-            echo '<h4>' . esc_html($deal['title']) . '</h4>';
-            echo '<p>' . esc_html($deal['description']) . '</p>';
-            echo '<a href="' . esc_url($deal['link']) . '" class="sac-deal-link" target="_blank">Shop Now</a>';
-            echo '</div>';
+    public function ajax_generate_coupon() {
+        check_ajax_referer('sac_nonce', 'nonce');
+        $store = sanitize_text_field($_POST['store']);
+        $coupons = explode('|', get_option('sac_coupons', ''));
+        $selected = '';
+        foreach ($coupons as $coupon) {
+            $parts = explode(':', $coupon);
+            if (count($parts) >= 2 && trim($parts) === $store) {
+                $selected = $coupon;
+                break;
+            }
         }
-        echo '</div>';
-        return ob_get_clean();
-    }
-
-    private function get_sample_coupons() {
-        return array(
-            array(
-                'title' => 'Bluehost Hosting',
-                'discount' => '70% OFF',
-                'code' => 'BLUE70',
-                'description' => 'First year hosting for just $2.95/mo with free domain.',
-                'link' => 'https://example.com/aff/bluehost'
-            ),
-            array(
-                'title' => 'Elementor Pro',
-                'discount' => '50% OFF',
-                'code' => 'ELEM50',
-                'description' => 'Premium WordPress page builder discount.',
-                'link' => 'https://example.com/aff/elementor'
-            ),
-            array(
-                'title' => 'WP Rocket',
-                'discount' => '40% OFF',
-                'code' => 'ROCKET40',
-                'description' => 'Top caching plugin for speed optimization.',
-                'link' => 'https://example.com/aff/wprocket'
-            )
-        );
-    }
-
-    private function is_pro() {
-        return false; // Check license in pro version
-    }
-
-    public function activate() {
-        flush_rewrite_rules();
+        if (!$selected) {
+            $selected = $coupons[array_rand($coupons)] ?? 'Amazon:10%||https://amazon.com/?tag=yourtag';
+        }
+        $parts = explode('|', $selected);
+        $store_data = explode(':', $parts);
+        $discount = $store_data[1] ?? '10%';
+        $link = $parts[1] ?? 'https://example.com';
+        $code = substr(md5($store . time()), 0, 8);
+        wp_send_json_success(array('code' => $code, 'discount' => $discount, 'link' => $link));
     }
 }
 
-SmartAffiliateCouponPro::get_instance();
+new SmartAffiliateCouponPro();
 
-// Inline styles and scripts for single file
+// Inline CSS
+add_action('wp_head', function() { ?>
+<style>
+.sac-coupon-container { border: 2px dashed #007cba; padding: 20px; margin: 20px 0; text-align: center; background: #f9f9f9; border-radius: 10px; }
+.sac-coupon-code { font-size: 24px; font-weight: bold; color: #007cba; margin-bottom: 10px; }
+.sac-discount { font-size: 18px; margin-bottom: 15px; }
+.sac-copy-btn, .sac-affiliate-link { display: inline-block; padding: 10px 20px; margin: 5px; text-decoration: none; border-radius: 5px; }
+.sac-copy-btn { background: #28a745; color: white; }
+.sac-affiliate-link { background: #007cba; color: white; }
+.sac-copy-btn:hover, .sac-affiliate-link:hover { opacity: 0.8; }
+</style>
+<?php });
 
-function sac_inline_styles() {
-    ?>
-    <style>
-    .sac-coupon { border: 2px solid #28a745; border-radius: 10px; padding: 20px; margin: 20px 0; background: #f8f9fa; text-align: center; max-width: 400px; }
-    .sac-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .sac-discount { font-size: 24px; font-weight: bold; color: #28a745; }
-    .sac-code { background: #ffc107; padding: 5px 10px; border-radius: 5px; font-family: monospace; }
-    .sac-button { display: inline-block; background: #007cba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; }
-    .sac-button:hover { background: #005a87; }
-    .sac-upgrade { font-size: 12px; color: #dc3545; margin-top: 10px; }
-    .sac-deals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-    .sac-deal { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-    .sac-deal-link { color: #28a745; text-decoration: none; font-weight: bold; }
-    </style>
-    <?php
-}
-add_action('wp_head', 'sac_inline_styles');
+// JS
+add_action('wp_footer', function() { ?>
+<script>
+jQuery(document).ready(function($) {
+    $('.sac-coupon-container').each(function() {
+        var $container = $(this);
+        var store = $container.data('store');
+        $.post(sac_ajax.ajaxurl, {
+            action: 'sac_generate_coupon',
+            nonce: sac_ajax.nonce,
+            store: store
+        }, function(response) {
+            if (response.success) {
+                $container.find('.sac-coupon-code').text(response.data.code);
+                $container.find('.sac-discount-percent').text(response.data.discount);
+                $container.find('.sac-affiliate-link').attr('href', response.data.link);
+            }
+        });
+    });
 
-/*
-End of plugin
-*/
-?>
+    $(document).on('click', '.sac-copy-btn', function(e) {
+        e.preventDefault();
+        var code = $(this).closest('.sac-coupon-container').find('.sac-coupon-code').text();
+        navigator.clipboard.writeText(code).then(function() {
+            alert('Coupon code copied!');
+        });
+    });
+});
+</script>
+<?php });
