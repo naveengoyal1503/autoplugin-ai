@@ -1,29 +1,30 @@
 # Affiliate Coupon Vault
 
+A freemium WordPress plugin for creating automated coupon vaults that track affiliate commissions and boost site revenue through personalized deals.[1][2]
+
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons in admin with name, code, discount, and affiliate link.
-- **Shortcode Integration**: Use `[affiliate_coupon id="1"]` to display coupons anywhere.
-- **Personalized Display**: Eye-catching, mobile-responsive coupon boxes with trackable affiliate links.
-- **Pro Upgrade**: Click analytics, unlimited coupons, custom designs, A/B testing ($49/year).
+- **Custom Post Type for Coupons**: Easily add titles, descriptions, codes, affiliate links, and expiry dates via intuitive admin interface.[8]
+- **Shortcode Support**: Use `[coupon_vault count="10"]` to display vaults anywhere on your site.
+- **Affiliate Tracking**: Automatically appends your tracking ID to links for commissions.[3]
+- **Expiry Management**: Coupons auto-mark as expired based on date.
+- **Responsive Design**: Grid layout works on all devices.
+- **Pro Features** (Upgrade for $49/year): Auto-import deals, analytics dashboard, custom promo code generator, premium templates.[7]
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your coupons (format: `Name|AffCode|Discount|AffLink`).
+1. Download and upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+2. Activate the plugin.
+3. Go to Coupons > Add New to create your first coupon.
+4. Add the shortcode `[coupon_vault]` to any page or post.
 
 ## Setup
-1. In admin, enter coupons one per line: e.g., `SiteGround|SG50|50% off|https://siteground.com/?ref=yourid`.
-2. Save settings.
-3. Add shortcode to posts/pages: `[affiliate_coupon id="1"]` (id starts at 1).
+1. **Create Coupons**: In admin, Coupons > Add New. Fill title, content, code, affiliate link (e.g., Amazon Associates), and expiry.
+2. **Configure Settings**: Coupons > Settings. Enter your affiliate tracking ID (e.g., 'your-ref123').
+3. **Display**: Embed shortcode on a dedicated "Deals" page for SEO traffic.[2]
 
 ## Usage
-- Embed in blog posts for affiliate promotions.
-- Track clicks via unique IDs (Pro: full analytics).
-- Ideal for niches like software, travel, e-commerce.
+- **Frontend**: Visitors see coupon grids with codes and tracked "Get Deal" buttons. Expired deals are marked.
+- **Monetization Tips**: Partner with brands for custom codes, optimize for SEO with keyword-rich pages, integrate with WooCommerce for eCommerce sites.[1][4]
+- **Pro Upgrade**: Unlock advanced tracking and automation at [example.com/pro](https://example.com/pro).
 
-## Pro Features
-- Advanced tracking dashboard.
-- Custom CSS/styling.
-- Auto-generate promo codes.
-
-Support: example@example.com
+## Support
+Contact support@example.com. Free version updates included.
