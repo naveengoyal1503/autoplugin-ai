@@ -1,39 +1,38 @@
 # Affiliate Coupon Vault
 
-A powerful WordPress plugin for affiliate marketers to create, manage, and display exclusive coupons and discount codes, driving higher conversions and commissions.[1][2]
-
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons via simple JSON in admin settings (Pro: truly unlimited with UI builder).
-- **Shortcode Display**: Use `[affiliate_coupon_vault]` to embed responsive coupon vaults anywhere.
-- **Auto-Expiry**: Coupons expire automatically based on date.
-- **Affiliate Link Tracking**: Each coupon links to your affiliate URLs.
-- **Pro Features**: Analytics dashboard, custom branding, API integrations, personalized codes, and A/B testing ($49/year).[7]
+
+- **Automated Coupon Display**: Fetch and showcase affiliate coupons via shortcode `[affiliate_coupons category="tech"]`.
+- **Click Tracking**: Tracks coupon copies and clicks for performance insights (Pro: Full analytics dashboard).
+- **Affiliate Link Integration**: Customize links for Amazon, Shopify, etc., in admin settings.
+- **Copy-to-Clipboard**: One-click coupon copying with tracking.
+- **Freemium Upsell**: Free core features; Pro unlocks unlimited sources, API integrations, and exports ($49/year).
+- **SEO-Friendly**: Generates schema markup for rich snippets on coupon pages[1][2].
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add coupons.
+
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Configure API key and affiliate links in **Settings > Coupon Vault**.
+4. Use shortcode `[affiliate_coupons]` on any page/post.
 
 ## Setup
-1. In **Settings > Coupon Vault**, enter coupons in JSON format:
-   
-   [
-     {"name":"10% Off Hosting","code":"SAVE10","afflink":"https://affiliate.com/?ref=123","expiry":"2026-12-31"}
-   ]
-   
-2. Save settings.
-3. Add `[affiliate_coupon_vault]` to any post, page, or widget.
+
+1. **Admin Settings**: Enter demo API key `demo123` and JSON affiliate links (e.g., `{"amazon":"https://amzn.to/YOURAFF"}`).
+2. **Shortcode Options**: `category="tech"` or `category="all"`.
+3. **Pro Upgrade**: Access advanced tracking via the settings page.
 
 ## Usage
-- **Frontend**: Coupons display in a clean grid with copyable codes and affiliate buttons.
-- **Customization**: Style via CSS or Pro themes.
-- **Monetization Boost**: Personalized deals increase clicks and sales.[1][2][3]
-- **Pro Upgrade**: Unlock analytics to track impressions/clicks and optimize performance.
 
-## FAQ
-**Free vs Pro?** Free limits to 10 coupons; Pro is unlimited with advanced tools.
+- Embed on posts: `[affiliate_coupons category="ecom"]` displays relevant deals.
+- Track performance: Clicks logged to debug log (Pro: Dashboard reports).
+- Monetize: Earn commissions from tracked affiliate links; ideal for blogs with traffic[1][3][4].
 
-**Compatible?** Works with Gutenberg, Classic Editor, any theme.
+## Pro Features
 
-## Support
-Report issues on GitHub or upgrade to Pro for priority support.
+- Real-time analytics dashboard.
+- Custom coupon APIs (e.g., CouponAPI, affiliate networks).
+- White-label branding.
+- Priority support.
+
+**Upgrade for $49/year** to scale your affiliate earnings!
