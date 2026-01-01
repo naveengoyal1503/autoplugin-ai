@@ -1,36 +1,49 @@
 # Custom Coupon Affiliate Pro
 
-## Description
-A powerful WordPress plugin to create, manage, and display exclusive custom coupons for affiliate marketing. Track clicks and boost conversions with personalized deals.[1][2]
-
 ## Features
-- **Easy Coupon Creation**: Add coupon codes, affiliate links, descriptions, expiry dates.
-- **Click Tracking**: Monitor usage with built-in analytics (Pro: advanced reports).
-- **Shortcode Display**: Use `[coupon_display id="unique-id"]` anywhere.
-- **Admin Dashboard**: Manage all coupons from a dedicated page.
-- **Responsive Design**: Mobile-friendly coupon boxes.
-- **Freemium**: Free core features; Pro adds unlimited coupons, exports, integrations.
+
+- **Generate Exclusive Coupons**: Create unique, branded coupon codes like "SAVE20-YourSite" for higher conversions.[1][2]
+- **Affiliate Link Integration**: Append coupons to affiliate URLs automatically.
+- **Click Tracking**: Monitor usage with built-in counters (Pro: advanced analytics).
+- **Shortcode Ready**: Embed anywhere with `[ccap_coupon]`.
+- **SEO-Friendly**: Custom coupons improve reader value and search rankings.[2]
+- **Freemium Model**: Free for basics; Pro unlocks unlimited coupons, expiry dates, email exports, and API support.
+
+**Pro Features (Upgrade for $49/year)**:
+- Unlimited coupons and campaigns.
+- Auto-expiry and one-time use.
+- Detailed analytics dashboard.
+- Custom branding and templates.
+- Integration with email tools and WooCommerce.
 
 ## Installation
-1. Upload the plugin files to `/wp-content/plugins/custom-coupon-affiliate-pro`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Visit **Coupons** in the admin menu to create your first coupon.
+
+1. Download the plugin ZIP.
+2. In WordPress Admin: Plugins > Add New > Upload Plugin.
+3. Activate the plugin.
+4. Navigate to **Coupons Pro** in the admin menu to configure.
 
 ## Setup
-1. Go to **Coupons** > Fill form: Code (e.g., SAVE20), Affiliate Link, Description, Expiry.
-2. Save to get unique ID.
-3. Add shortcode to any post/page: `[coupon_display id="your-id-here"]`.
+
+1. Go to **Coupons Pro** menu.
+2. Enter your coupon code (e.g., "SAVE20-YourBlog").
+3. Add your affiliate link.
+4. Save. Use `[ccap_coupon]` in posts/pages.
 
 ## Usage
-- **Frontend**: Coupons display as styled boxes with trackable buttons.
-- **Tracking**: Clicks auto-logged via AJAX.
-- **Pro Upgrade**: For bulk import, API tracking, email notifications ($49/year).
 
-## Screenshots
-*(Imagine admin form and frontend coupon box)*
+- **Basic Shortcode**: `[ccap_coupon]` displays the coupon box.
+- **Customization**: Style via CSS targeting the output div.
+- **Monetization Tip**: Partner with brands for custom codes to boost affiliate earnings.[1][2]
+- **Pro Upgrade**: Visit the admin page for purchase link (demo in plugin).
 
-## Changelog
-**1.0.0** - Initial release.
+## FAQ
 
-## Support
-Contact support@example.com. Pro users get priority.
+**Is this secure?** Yes, uses WordPress sanitization and nonces.
+
+**How to track real conversions?** Pro version integrates with tools like wecantrack.[3]
+
+**Support**: Free support via WordPress.org forums; Pro gets priority email.
+
+**Changelog**
+- 1.0.0: Initial release with core features.
