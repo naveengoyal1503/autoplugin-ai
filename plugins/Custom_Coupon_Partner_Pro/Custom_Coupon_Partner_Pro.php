@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Custom Coupon Partner Pro
  * Plugin URI: https://example.com/coupon-partner-pro
- * Description: Create, manage, and display exclusive custom coupons for affiliate partnerships to boost conversions.
+ * Description: Generate and manage exclusive custom coupons from affiliate partners to boost conversions and monetize your WordPress blog.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -19,91 +19,75 @@ class CustomCouponPartnerPro {
         add_action('init', array($this, 'init'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('cpp_coupon', array($this, 'coupon_shortcode'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
         if (is_admin()) {
-            add_action('admin_enqueue_scripts', array($this, 'enqueue_admin'));
+            wp_register_style('cpp-admin', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.0');
+            wp_enqueue_style('cpp-admin');
         }
-    }
-
-    public function enqueue_admin($hook) {
-        if ($hook !== 'toplevel_page_cpp-admin') return;
-        wp_enqueue_script('jquery');
-        wp_enqueue_style('cpp-admin', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.0');
     }
 
     public function admin_menu() {
-        add_menu_page('Coupon Partner Pro', 'Coupons', 'manage_options', 'cpp-admin', array($this, 'admin_page'));
+        add_menu_page('Coupon Partner Pro', 'Coupons', 'manage_options', 'cpp-coupons', array($this, 'admin_page'));
     }
 
     public function admin_page() {
-        if (isset($_POST['save_coupon'])) {
-            update_option('cpp_coupons', $_POST['coupons']);
-            echo '<div class="notice notice-success"><p>Coupon saved!</p></div>';
+        if (isset($_POST['save'])) {
+            update_option('cpp_coupons', sanitize_textarea_field($_POST['coupons']));
+            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
         }
-        $coupons = get_option('cpp_coupons', array());
+        $coupons = get_option('cpp_coupons', '[]');
         ?>
         <div class="wrap">
             <h1>Custom Coupon Partner Pro</h1>
             <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Coupon Code</th>
-                        <td><input type="text" name="coupons[code]" value="<?php echo esc_attr($coupons['code'] ?? ''); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th>Discount</th>
-                        <td><input type="text" name="coupons[discount]" value="<?php echo esc_attr($coupons['discount'] ?? ''); ?>" /> % off</td>
-                    </tr>
-                    <tr>
-                        <th>Affiliate Link</th>
-                        <td><input type="url" name="coupons[link]" style="width:100%;" value="<?php echo esc_attr($coupons['link'] ?? ''); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th>Brand</th>
-                        <td><input type="text" name="coupons[brand]" value="<?php echo esc_attr($coupons['brand'] ?? ''); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th>Expiry Date</th>
-                        <td><input type="date" name="coupons[expiry]" value="<?php echo esc_attr($coupons['expiry'] ?? ''); ?>" /></td>
-                    </tr>
-                </table>
-                <p class="submit"><input type="submit" name="save_coupon" class="button-primary" value="Save Coupon" /></p>
+                <textarea name="coupons" rows="20" cols="80" placeholder='[{"code":"SAVE20","desc":"20% off at Partner","link":"https://partner.com/?ref=yourid","affiliate":"Amazon"},{"code":"WELCOME10","desc":"$10 off first purchase","link":"https://partner2.com/?ref=yourid"}]'><?php echo esc_textarea($coupons); ?></textarea>
+                <p class="description">JSON format: [{&quot;code&quot;:&quot;CODE&quot;,&quot;desc&quot;:&quot;Description&quot;,&quot;link&quot;:&quot;Affiliate Link&quot;,&quot;affiliate&quot;:&quot;Network&quot;}]</p>
+                <p><input type="submit" name="save" class="button-primary" value="Save Coupons"></p>
             </form>
             <h2>Usage</h2>
-            <p>Use shortcode: <code>[cpp_coupon]</code></p>
+            <p>Use shortcode: <code>[cpp_coupon id=&quot;0&quot;]</code> (id is array index)</p>
+            <?php if (get_option('cpp_premium') !== 'activated') { ?>
+            <div class="notice notice-info"><p><strong>Go Premium:</strong> Unlimited coupons, analytics, auto-expiry. <a href="#">Upgrade Now</a></p></div>
+            <?php } ?>
         </div>
         <?php
     }
 
     public function coupon_shortcode($atts) {
-        $coupons = get_option('cpp_coupons', array());
-        if (empty($coupons['code']) || (isset($coupons['expiry']) && strtotime($coupons['expiry']) < current_time('timestamp'))) {
-            return '<p class="cpp-expired">Coupon expired or not set.</p>';
-        }
-        $style = 'background:#fff; border:2px dashed #0073aa; padding:20px; text-align:center; margin:20px 0; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1);';
-        return '<div style="' . $style . '">
-                    <h3>Exclusive Deal: <strong>' . esc_html($coupons['brand'] ?? 'Partner') . '</strong></h3>
-                    <div style="font-size:48px; color:#0073aa; font-weight:bold;">' . esc_html($coupons['code'] ?? '') . '</div>
-                    <p><strong>' . esc_html($coupons['discount'] ?? '') . '% OFF</strong></p>
-                    <a href="' . esc_url($coupons['link'] ?? '') . '" target="_blank" class="button button-large" style="background:#0073aa; color:#fff; padding:10px 20px; text-decoration:none; border-radius:5px;">Shop Now & Save</a>
-                    <p style="font-size:12px; margin-top:10px;">Limited time offer. Expires ' . esc_html($coupons['expiry'] ?? '') . '</p>
-                </div>';
+        $atts = shortcode_atts(array('id' => 0), $atts);
+        $coupons = json_decode(get_option('cpp_coupons', '[]'), true);
+        if (!isset($coupons[$atts['id']])) return 'Coupon not found.';
+        $coupon = $coupons[$atts['id']];
+        return '<div class="cpp-coupon"><h3>Exclusive: ' . esc_html($coupon['code']) . '</h3><p>' . esc_html($coupon['desc']) . '</p><a href="' . esc_url($coupon['link']) . '" class="button cpp-btn" target="_blank">Get Deal</a><small>via ' . esc_html($coupon['affiliate']) . '</small></div>';
+    }
+
+    public function enqueue_scripts() {
+        wp_register_style('cpp-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0');
+        wp_enqueue_style('cpp-style');
     }
 
     public function activate() {
-        if (!get_option('cpp_coupons')) {
-            update_option('cpp_coupons', array());
-        }
+        if (!get_option('cpp_coupons')) update_option('cpp_coupons', '[]');
     }
 }
 
 new CustomCouponPartnerPro();
 
-// Premium upsell notice (free version)
-add_action('admin_notices', function() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p><strong>Custom Coupon Partner Pro:</strong> Upgrade to Pro for unlimited coupons, analytics, and auto-expiry! <a href="https://example.com/pro" target="_blank">Get Pro</a></p></div>';
+// Premium teaser
+function cpp_premium_notice() {
+    if (!get_option('cpp_premium') && current_user_can('manage_options')) {
+        echo '<div class="notice notice-upgrade"><p>Unlock <strong>Custom Coupon Partner Pro Premium</strong>: Unlimited coupons, click tracking, expiry dates. <a href="https://example.com/premium">Get it now for $49/year!</a></p></div>';
+    }
+}
+add_action('admin_notices', 'cpp_premium_notice');
+
+// Inline styles
+add_action('wp_head', function() {
+    echo '<style>.cpp-coupon { border: 2px dashed #007cba; padding: 20px; margin: 20px 0; text-align: center; background: #f9f9f9; border-radius: 8px; }.cpp-btn { background: #007cba; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold; }.cpp-btn:hover { background: #005a87; }</style>';
 });
+
+?>
