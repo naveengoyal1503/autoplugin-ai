@@ -2,38 +2,38 @@
 
 ## Features
 
-- **Automatic Link Tracking**: Detects and tracks affiliate links (containing `aff=`, `tag=`, or `?ref`) with one-click JavaScript integration.
-- **Real-time Dashboard**: View total clicks, estimated conversions, and basic analytics in WordPress admin.
-- **Easy Setup**: No configuration needed for basic tracking; works out-of-the-box.
-- **Pro Upgrade**: Unlock advanced reports, A/B testing, conversion matching, and API integrations for $49/year.
-- **Privacy Compliant**: Anonymized tracking, no personal data stored.
-- **Lightweight**: Single-file plugin, no database bloat beyond stats.
+- **Automatic Link Cloaking**: Detects and cloaks affiliate links (Amazon, etc.) for tracking without breaking SEO.
+- **Click Tracking & Reports**: Logs clicks, IPs, and timestamps with a dashboard for performance insights.
+- **A/B Testing**: Premium: Test link variations to maximize conversions.
+- **Freemium Upsell**: Built-in prompts to upgrade to Pro ($9/month) for advanced analytics and integrations.
+- **Lightweight & Self-Contained**: Single-file plugin, no database tables needed (uses transients).
+
+**Pro Features (Monetization Upsell)**: Full reports, API exports, custom domains, priority support.
 
 ## Installation
 
 1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Visit **Affiliate Tracker** in the admin menu to view stats.
+2. In WordPress Admin: Plugins > Add New > Upload Plugin.
+3. Activate the plugin.
+4. Visit **Affiliate Tracker** in the admin menu to view dashboard and settings.
 
 ## Setup
 
-- No setup required for basic click tracking.
-- Enter API key in settings for premium features (Pro only).
-- Add affiliate links to your posts/pages; tracking starts automatically.
+1. No complex setup required—works out-of-the-box on posts/pages.
+2. Add affiliate links normally; they auto-cloak on frontend.
+3. Check dashboard for click logs.
+4. Upgrade to Pro via in-plugin links for more features.
 
 ## Usage
 
-1. **Insert Links**: Add affiliate links anywhere on your site.
-2. **Track Performance**: Check the dashboard for click counts.
-3. **Optimize**: Use insights to improve link placement and content.
-4. **Upgrade for More**: Get detailed reports and automation with Pro.
+- **Tracking**: Links redirect via tracker, logging data transparently.
+- **Dashboard**: View recent clicks, enable settings like A/B (Pro).
+- **Optimization**: Use reports to refine affiliate strategies.
+- **Monetization**: Pro subscription handles payments via Stripe (link in dashboard).
 
 ## Support
 
-Report issues via WordPress.org forums or contact support@example.com.
+- Free version: WordPress.org forums.
+- Pro: Email support@yourdomain.com.
 
-## Changelog
-
-**1.0.0**
-- Initial release with core tracking features.
+**Upgrade now for 2026-ready affiliate dominance!**
