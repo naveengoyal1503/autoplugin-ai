@@ -2,44 +2,36 @@
 
 ## Features
 
-- **Personalized Coupon Generation**: Automatically creates unique coupon codes for any merchant.
-- **Affiliate Link Integration**: Seamlessly appends codes to your affiliate URLs for tracking.
-- **Shortcode Support**: Easy embed with `[sac_coupon merchant="Amazon" discount="20%"]`.
-- **Click Tracking**: AJAX-powered dynamic code refresh on button click (Pro: full analytics).
-- **Admin Dashboard**: Manage links, code length, and settings.
-- **Pro Features**: Unlimited coupons, conversion tracking, custom designs, email capture, WooCommerce integration ($49/year).
-
-Boost affiliate commissions by 20-50% with exclusive deals your audience loves.[1][2]
+- **Easy Coupon Management**: Add unlimited affiliate coupons via simple JSON in admin settings (Pro: Visual editor).
+- **Personalized Tracking**: One-click claim with cookie tracking to prevent duplicates and boost conversions[1][2].
+- **Shortcode Integration**: Use `[sac_coupon id="coupon1"]` anywhere on your site.
+- **Affiliate-Friendly**: Auto-tracks clicks and pairs with your affiliate links for commissions[3][5].
+- **Pro Version**: Advanced analytics, custom designs, A/B testing, email capture ($49/year).
 
 ## Installation
 
 1. Upload the `smart-affiliate-coupons` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Smart Affiliate Coupons** to configure affiliate links (format: `Merchant: URL`).
-4. Add shortcode to any post/page: `[sac_coupon merchant="Amazon" discount="10% OFF"]`.
+3. Go to **Settings > SAC Coupons** to configure your coupons.
 
 ## Setup
 
-1. In admin settings, add your affiliate links:
+1. In the admin page, edit the JSON structure:
    
-   Amazon: https://amazon.com/?tag=yourtag
-   Shopify: https://shopify.com/?aff=youraff
+   {
+     "coupon1": {
+       "code": "SAVE10",
+       "afflink": "https://your-affiliate-link.com",
+       "desc": "10% off everything!"
+     }
+   }
    
-2. Set coupon code length (default: 8 characters).
-3. Upgrade to Pro for advanced tracking and unlimited usage.
+2. Save and use shortcode `[sac_coupon id="coupon1"]` in posts/pages.
 
 ## Usage
 
-- **Basic Shortcode**: `[sac_coupon merchant="Amazon"]` – Shows coupon box with shop button.
-- **Custom Discount**: `[sac_coupon merchant="Amazon" discount="50% OFF!"]`.
-- **Frontend**: Visitors see unique code + clickable affiliate link.
-- **Tracking**: Each click generates fresh code; Pro logs conversions.
+- Embed coupons in blog posts for personalized deals[1][2].
+- Track claims to measure engagement.
+- Upgrade to Pro for monetization analytics and premium support.
 
-## Pro Upgrade
-
-- Advanced analytics dashboard.
-- Custom CSS/branding.
-- Integration with email tools (Mailchimp, etc.).
-- Priority support.
-
-**Monetize your site effortlessly!** Questions? Contact support@example.com.
+**Monetization Tip**: Position your site as a coupon hub to drive affiliate sales[1][3].
