@@ -2,38 +2,30 @@
 
 ## Features
 
-- **One-Click Coupon Generation**: Create unique, trackable coupon codes with shortcodes.
-- **Affiliate Link Integration**: Append tracking parameters to boost commissions.[1][2]
-- **Copy-to-Clipboard**: Users can easily copy exclusive codes.
-- **Analytics Ready**: Track clicks with Google Analytics events.
-- **Custom Post Type**: Manage coupons in WordPress admin.
-- **Freemium Model**: Upgrade to Pro for unlimited coupons, custom designs, and API integrations.
+- **Generate Exclusive Coupons**: Create custom affiliate coupons with discount codes and trackable links.[1][2]
+- **Shortcode Integration**: Use `[affiliate_coupon id="1"]` to display coupons anywhere on your site.
+- **Click Tracking**: Built-in analytics for coupon performance (Pro: Advanced reports).
+- **Freemium Model**: Free for up to 2 coupons; Pro unlocks unlimited + integrations ($49/year).[7]
+- **Boost Conversions**: Personalized deals increase affiliate earnings and reader loyalty.[1][2]
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use the shortcode `[affiliate_coupon affiliate_link="YOUR_LINK" discount="20%"]`.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupon Vault** to add coupons in JSON format: `{"code":"SAVE20","discount":"20","afflink":"https://affiliate-link.com"}`.
 
 ## Setup
 
-1. Go to **Coupons** in your WordPress admin menu.
-2. Add your affiliate links to shortcodes.
-3. Embed shortcodes in posts/pages for automatic unique coupons.[1]
+1. **Free Version**: Add up to 2 coupons.
+2. **Pro Upgrade**: Enable for unlimited coupons, API tracking, and premium support.
+3. **Usage**: Insert shortcode in posts/pages. Customize CSS for `.acv-coupon` and `.acv-btn`.
 
 ## Usage
 
-**Basic Shortcode:**
+- **Display Coupon**: `[affiliate_coupon id="your_coupon_id"]` shows code, discount, and tracked link.
+- **Admin Dashboard**: Manage coupons, view basic clicks (Pro: Export data).
+- **Monetization Tip**: Partner with brands for custom codes to drive affiliate revenue.[2]
 
-[affiliate_coupon affiliate_link="https://example.com/product" discount="15%" expires="+60 days"]
+**Pro Benefits**: Unlimited coupons, email capture, A/B testing. Upgrade in plugin settings.
 
-
-- Generates exclusive code like `ACVabc123XYZ`.
-- Tracks clicks for performance.
-- Displays styled coupon box with copy button.
-
-**Pro Upgrade ($49/year):** Unlimited coupons, email capture, A/B testing, WooCommerce integration.
-
-## Why Profitable?
-
-Affiliate coupons increase conversions by 20-50% with exclusivity. Target bloggers monetizing via affiliates.[1][2][3]
+*Supports WordPress 6.0+. Tested for profitability in affiliate niches.*
