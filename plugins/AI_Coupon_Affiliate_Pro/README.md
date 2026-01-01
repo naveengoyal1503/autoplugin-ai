@@ -2,30 +2,38 @@
 
 ## Features
 
-- **Easy Shortcode Integration**: Use `[ai_coupon id="unique1" afflink="https://affiliate-link.com" discount="20%"]` to embed trackable coupons anywhere.
-- **Auto-Generated Coupon Codes**: Unique, shareable codes like `SAVEABC123` for each instance.
-- **Click Tracking**: Built-in analytics for affiliate performance (Pro: Advanced dashboard).
-- **Pro AI Descriptions**: Smart, personalized deal text (requires Pro upgrade).
-- **Customizable Design**: Responsive styling out-of-the-box.
-- **Freemium Model**: Free core features; Pro unlocks AI, unlimited coupons, exports ($49/year).
+- **AI-Powered Coupon Generation**: Automatically creates unique, personalized coupons using OpenAI (Pro feature).
+- **Affiliate Link Tracking**: Embeds your affiliate IDs in all coupon links for seamless commissions.
+- **Shortcode Support**: Use `[ai_coupon_generator category="electronics" count="5"]` anywhere.
+- **Custom Dashboard**: Easy settings for API keys and affiliates.
+- **Responsive Design**: Mobile-friendly coupon displays.
+- **Freemium Model**: Free basics; Pro unlocks unlimited use, analytics, and templates.
+
+**Pro Features ($49/year)**: Real AI integration, click tracking, export reports, premium templates.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Use shortcode in posts/pages: `[ai_coupon id="mydeal1" afflink="https://your-affiliate-link.com"]`.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate **AI Coupon Affiliate Pro**.
+4. Configure in **Settings > AI Coupon Pro**.
 
 ## Setup
 
-1. Go to **Settings > AI Coupon Pro** to configure.
-2. Enter affiliate links and IDs in shortcodes.
-3. **Pro Upgrade**: Purchase at example.com/pro, enter license key in settings for AI features.
+1. Get OpenAI API key from [openai.com](https://openai.com).
+2. Add your affiliate ID (e.g., Amazon Associates).
+3. Save settings.
+4. Upgrade to Pro for full AI features.
 
 ## Usage
 
-- **Basic**: Add shortcode to blog posts for instant coupon boxes with affiliate tracking.
-- **Advanced (Pro)**: AI auto-generates compelling descriptions; click 'New Coupon' for fresh codes.
-- **Monetization Tips**: Promote deals from Amazon Associates, CJ Affiliate; track conversions to optimize earnings.
-- **Support**: Free version supported via forums; Pro includes priority email.
+- Insert shortcode: `[ai_coupon_generator]` in posts/pages.
+- Customize: `category="fashion" count="3"`.
+- Track earnings via your affiliate dashboard.
+- **Monetization Tip**: Promote high-conversion niches like software, travel, e-commerce.[1][2]
 
-**Start earning passive income today!**
+## Support
+
+Contact support@example.com or visit example.com/support.
+
+**Start earning commissions today!**
