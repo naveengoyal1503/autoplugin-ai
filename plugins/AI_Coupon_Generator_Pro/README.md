@@ -1,49 +1,39 @@
 # AI Coupon Generator Pro
 
+## Description
+**AI Coupon Generator Pro** is a powerful WordPress plugin that automatically generates unique, trackable coupon codes and integrates them with your affiliate links. Perfect for bloggers and site owners monetizing through coupons, deals, and affiliate marketing. Boost conversions with personalized discounts powered by AI simulation (Pro integrates real AI APIs).[1][2]
+
 ## Features
-
-- **AI-Powered Coupon Creation**: Generates unique, personalized coupon codes instantly using simulated AI logic (premium: integrate OpenAI).
-- **Affiliate Link Integration**: Automatically pairs coupons with your affiliate links from popular networks like Amazon, Hostinger.
-- **Shortcode Ready**: Use `[ai_coupon_generator]` anywhere to embed a coupon generator widget.
-- **Email Capture**: Collect visitor emails for marketing lists while delivering coupons.
-- **Customizable**: Admin settings for brands, links, and discounts.
-- **Conversion Booster**: Increases clicks and sales with exclusive "personalized" deals.[1][2]
-- **Analytics Ready**: Logs generations for tracking (premium dashboard).
-
-**Pro Features (Upgrade for $49/year)**: Unlimited coupons, real AI API, custom branding, email export, A/B testing.
+- **One-Click Coupon Generation**: Shortcode-based widget generates custom coupons on any page/post.
+- **Affiliate Link Integration**: Append trackable coupons to your affiliate URLs for commissions.
+- **Freemium Model**: Free for 5 coupons; Pro unlocks unlimited, AI personalization, analytics, and white-label.
+- **SEO-Friendly**: Coupons are unique and shareable, driving traffic and partnerships.[1][2]
+- **Pro Only**: Real-time AI generation (OpenAI compatible), usage analytics, export reports, custom branding.
 
 ## Installation
-
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > AI Coupons** to add your affiliate links (format: `Brand: URL`).
-4. Add `[ai_coupon_generator]` to any post/page.
+3. Use shortcode `[ai_coupon_generator brand="Amazon" discount="20" affiliate="https://affiliate-link.com"]`.
 
 ## Setup
-
-1. **Configure Affiliate Links**:
-   - Navigate to **Settings > AI Coupons**.
-   - Enter links one per line: `Amazon: https://amazon.com/deal123\nHostinger: https://hostinger.com/promo`.
-2. **Embed Widget**: Paste shortcode in Gutenberg, Classic Editor, or widgets.
-3. **Customize (Optional)**: Edit CSS in `Appearance > Customize` for styling.
+1. Go to **Settings > AI Coupon Pro** to enter Pro license key (optional for basic).
+2. Add shortcode to posts/pages or use in templates.
+3. For Pro: Configure AI API key in settings for advanced generation.
 
 ## Usage
+- **Basic Shortcode**: `[ai_coupon_generator]` - Generates generic 10% off coupon.
+- **Custom**: `[ai_coupon_generator brand="YourBrand" discount="15" affiliate="https://youraffiliate.link/?ref=yourid"]`.
+- **Frontend**: Click "Generate My Coupon" to create unique code + link. Tracks clicks for Pro users.
+- **Monetization Tips**: Place on deal pages, sidebars. Partner with brands for custom codes.[1][2][3]
 
-- **Frontend**: Visitors enter email, click **Generate Coupon**, get instant unique code + affiliate link.
-- **Examples**:
-  - Blogs: Add to deal pages for affiliate commissions.[1]
-  - Shops: Boost cart conversions with discounts.
-  - Sites: Create dedicated `/coupons/` pages.
-- **Tracking**: Check server logs or upgrade for dashboard.
+## Pro Upgrade
+Unlock full potential for $49/year:
+- Unlimited coupons
+- AI-powered personalization
+- Click/conversion analytics
+- White-label & priority support
 
-## Monetization Potential
-
-- **Passive Income**: Earn via affiliates on every generated coupon.[3]
-- **Viral Sharing**: Unique codes encourage social shares.
-- **Upsell Pro**: Convert free users to paid.
+**Get Pro**: [Upgrade Now](https://example.com/upgrade)
 
 ## Support
-
-Report issues at support@example.com. Premium users get priority.
-
-**Upgrade Today**: Unlock unlimited power! [Buy Pro](https://example.com/buy-pro)
+Report issues via WordPress.org forums. Pro users get email support.
