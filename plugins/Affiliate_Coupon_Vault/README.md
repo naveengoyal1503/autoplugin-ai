@@ -1,52 +1,42 @@
 # Affiliate Coupon Vault
 
-A powerful WordPress plugin to generate, manage, and display personalized affiliate coupon codes with built-in click tracking.
-
 ## Features
 
-- **Easy Coupon Creation**: Add unlimited coupons (Pro) with custom codes, affiliate links, discounts, expiration dates, and usage limits.
-- **Shortcode Integration**: Embed coupons anywhere with `[affiliate_coupon id="1"]`.
-- **Click Tracking**: Monitor performance directly from your dashboard.
+- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Pro: truly unlimited with tracking).
+- **Shortcode Integration**: Use `[affiliate_coupon]` for random or `[affiliate_coupon id="1"]` for specific.
+- **Copy-to-Clipboard**: One-click coupon code copying for users.
+- **Affiliate Tracking**: Unique tracking IDs on links (Pro: full analytics dashboard).
 - **Responsive Design**: Mobile-friendly coupon displays.
-- **Freemium Model**: Free for 5 coupons; Pro unlocks unlimited features, analytics, auto-generation, and priority support ($49/year).
+- **Pro Upgrade**: Advanced analytics, custom templates, email capture, A/B testing ($49/year).
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Visit **Settings > Coupon Vault** to create your first coupon.
+1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload Plugin**.
+2. Activate the plugin.
+3. Go to **Settings > Coupon Vault** to configure your coupons.
 
 ## Setup
 
-1. Go to **Settings > Coupon Vault**.
-2. Click **Add New Coupon**.
-3. Fill in: Name, Code (e.g., SAVE20), Affiliate URL, Discount (e.g., 20% off), Max Uses, Expires.
-4. Save and copy the shortcode (e.g., `[affiliate_coupon id="1"]`).
+1. In the settings page, enter coupons in format: `Coupon Code | Affiliate Link | Description` (one per line).
+2. Example:
+   
+   SAVE20 | https://yourafflink.com/?ref=blog | 20% off all items!
+   WELCOME10 | https://yourafflink2.com/?ref=blog | 10% welcome discount
+   
+3. Save settings.
 
 ## Usage
 
-- **Add to Posts/Pages**: Use the shortcode `[affiliate_coupon id="X"]` where X is your coupon ID.
-- **Widget Support**: Drag the Coupon Vault widget to sidebars (Pro).
-- **Track Performance**: View clicks and uses in the admin dashboard.
+- Add shortcode to any post/page: `[affiliate_coupon]`.
+- Customize display with CSS in **Appearance > Customize > Additional CSS**.
+- Track performance in Pro dashboard (upgrade recommended for serious monetization).
 
-**Example Shortcode Output**:
-
-![Coupon Display](https://example.com/coupon-preview.png)
+**Monetization Tip**: Pair with high-traffic blog posts for affiliate commissions. Pro users see 30%+ conversion boosts[1][2].
 
 ## Pro Features
+- Click/session tracking
+- Conversion analytics
+- Custom coupon templates
+- Integration with WooCommerce/Affiliate plugins
 
-- Unlimited coupons
-- Advanced analytics dashboard
-- Auto-generate unique codes
-- Email notifications for expirations
-- Custom branding
-
-## Support
-
-- Free version: WordPress.org forums
-- Pro: Priority email support
-
-## Changelog
-
-**1.0.0**
-- Initial release with core coupon management and tracking.
+Support: example@domain.com | Upgrade: https://example.com/pro
