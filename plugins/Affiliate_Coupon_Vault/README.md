@@ -2,37 +2,37 @@
 
 ## Features
 
-- **Easy Shortcode Integration**: Use `[acv_coupon affiliate_url="https://example.com" code="SAVE20" description="20% off!" expiry="2026-12-31" brand="Example Brand"]` to embed trackable coupons anywhere.
-- **Click Tracking**: Monitors coupon redemptions with unique stats per coupon (free version limited to 5 clicks per coupon).
-- **Customizable Design**: Responsive, branded coupon boxes with expiry dates and descriptions.
-- **Pro Upgrade**: Unlimited coupons, detailed analytics dashboard, affiliate network integrations, exportable reports ($49/year).
-- **SEO-Friendly**: Generates schema markup for rich snippets in search results.
+- **Easy Coupon Display**: Use shortcode `[affiliate_coupon id="0"]` to show exclusive deals.
+- **Admin Dashboard**: Manage unlimited coupons (Pro) with name, code, affiliate link, and ID.
+- **Conversion-Optimized Design**: Eye-catching coupons boost clicks and commissions.[1][2]
+- **Freemium Model**: Free for up to 3 coupons; Pro unlocks unlimited, analytics, auto-rotation ($49/year).
+- **SEO-Friendly**: Positions your site as a deal hub for affiliate revenue.[1]
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use the shortcode in any post, page, or widget.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+2. Activate the plugin.
+3. Go to **Settings > Coupon Vault** to add your affiliate coupons in JSON format.
+4. Use shortcode `[affiliate_coupon id="0"]` in posts/pages (id starts at 0).
 
 ## Setup
 
-1. **Basic Usage**: Insert the shortcode with your affiliate link and coupon details.
-2. **Pro Activation**: Purchase Pro, upload license key in Settings > Affiliate Coupon Vault.
-3. **Customization**: Style via CSS or Pro theme options.
+1. In admin settings, edit the JSON coupons array:
+   
+   [
+     {"name":"20% Off Hosting","code":"HOST20","url":"https://affiliate-link.com/?ref=yourid","affiliate_id":"yourid"}
+   ]
+   
+2. Save settings.
+3. Embed shortcodes on deal pages or sidebars.
 
 ## Usage
 
-### Example Shortcode
+- **Shortcode Examples**:
+  - `[affiliate_coupon id="0"]` - Shows first coupon.
+  - Place in Gutenberg blocks, widgets, or PHP templates.
+- **Monetization Tips**: Partner with brands for custom codes, track clicks via affiliate dashboards.[2][3]
+- **Pro Features**: Unlimited coupons, click tracking, A/B testing, email capture.
 
-[acv_coupon affiliate_url="https://your-affiliate-link.com" code="WELCOME10" description="10% off first purchase!" expiry="2026-06-30" brand="Your Partner Brand"]
-
-
-### Viewing Stats
-Coupon stats appear below each box after clicks (Pro users get full dashboard at `/wp-admin/admin.php?page=acv-pro-dashboard`).
-
-### Pro Features
-- Advanced tracking with UTM parameters.
-- Bulk coupon importer.
-- Integration with Amazon Associates, etc.
-
-**Upgrade now for higher conversions and revenue!**
+## Support
+Contact support@example.com. Upgrade to Pro for priority help.
