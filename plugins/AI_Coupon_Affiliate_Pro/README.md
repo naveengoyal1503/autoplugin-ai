@@ -1,44 +1,53 @@
 # AI Coupon Affiliate Pro
 
-## Description
-**AI Coupon Affiliate Pro** is an innovative WordPress plugin that uses AI to generate unique, personalized coupons for your audience, seamlessly integrating affiliate tracking to maximize commissions. Perfect for bloggers and site owners monetizing through affiliate marketing.[1][2]
-
 ## Features
-- **AI-Powered Coupon Generation**: Automatically creates custom coupons tailored to niches like eCommerce, travel, SaaS.[2][1]
-- **Affiliate Link Integration**: Embed trackable affiliate links with personalized promo codes.[3][5]
-- **Click Tracking & Analytics**: Monitor coupon usage and conversions (Pro).[3]
-- **Shortcode Ready**: Easy `[ai_coupon_generator niche="fashion"]` placement.[1]
-- **Freemium Model**: Free basic AI simulation; Pro unlocks OpenAI integration, unlimited generations, white-label.[7]
-- **SEO Optimized**: Generates reader-first discount pages for better rankings.[2]
 
-## Pro Features ($49/year)
-- Real OpenAI integration for hyper-personalized coupons.
-- Advanced analytics dashboard.
-- Custom branding and unlimited niches.
-- Priority support.
+- **Dynamic Coupon Sections**: Create unlimited coupon display sections using simple shortcodes `[ai_coupon_section]`.
+- **Affiliate Link Tracking**: Automatically appends your referral ID to affiliate URLs for commissions.
+- **Easy Coupon Management**: Add custom coupons with codes, descriptions, and affiliate links via frontend or admin.
+- **Conversion-Optimized Design**: Mobile-responsive, SEO-friendly coupon blocks that boost click-through rates.
+- **Freemium Ready**: Free core features; premium unlocks AI coupon generation using OpenAI API.
+- **Analytics Ready**: Track clicks and impressions (premium feature integrates with Google Analytics).
+
+**Proven Revenue**: Inspired by top monetization strategies like WP Coupons and affiliate plugins[1][2][3].
 
 ## Installation
-1. Upload the `ai-coupon-affiliate-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use shortcode `[ai_coupon_generator]` on any page/post.
-4. Configure in **Settings > AI Coupon Pro**.[1][4]
+
+1. Download and upload the plugin ZIP to your WordPress admin → Plugins → Add New → Upload Plugin.
+2. Activate the plugin.
+3. Use the shortcode `[ai_coupon_section]` on any page/post to display coupons.
 
 ## Setup
-1. Go to **Settings > AI Coupon Pro**.
-2. Add your affiliate links in JSON format (e.g., `{"amazon":"https://amzn.to/xxx"}`).
-3. (Pro) Enter OpenAI API key.
-4. Save and embed shortcode.
+
+1. Go to **Settings → AI Coupon Pro** to configure.
+2. Add your OpenAI API key (premium) for AI-generated coupons.
+3. Pre-populate coupons in the admin panel or let users add via frontend.
+4. Customize affiliate ref ID in the shortcode or settings.
 
 ## Usage
-- Place `[ai_coupon_generator niche="your-niche"]` in posts/pages.
-- Visitors click **Generate Personalized Coupon** for instant, trackable offers.
-- Earn commissions via embedded affiliate links.[1][2][3]
-- **Pro Tip**: Create dedicated coupon pages for SEO and repeat traffic.[2]
 
-## Monetization Potential
-Aligns with top strategies: affiliate marketing, personalized discounts, micro-products. Users report higher conversions with custom codes.[1][2]
+### Basic Shortcode
+
+[ai_coupon_section title="Today's Deals" count="3"]
+
+
+### Frontend Coupon Addition
+Users can input affiliate URLs and generate tracked links instantly.
+
+### Admin Management
+- Access via **Settings → AI Coupon Pro**.
+- Premium: AI generates personalized coupons based on niche (e.g., "tech deals").
+
+### Monetization Tips
+- Embed in blog posts for affiliate commissions[1][3].
+- Offer custom coupons to brands for exclusive deals[2].
+- Upsell premium to users for AI features and remove branding.
+
+## Premium Features ($49/year)
+- AI coupon generation.
+- Advanced click analytics.
+- Custom branding removal.
+- Priority support.
 
 ## Support
-Submit tickets via plugin dashboard. Pro users get priority.
-
-**Upgrade to Pro today for unlimited earning potential!**
+Contact support@example.com. Check [documentation](https://example.com/docs).
