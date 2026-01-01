@@ -2,48 +2,48 @@
 
 ## Features
 
-- **Generate Exclusive Coupons**: Create unique, trackable coupon codes for affiliate partnerships.
-- **Auto-Expiration & Usage Limits**: Coupons expire automatically and have max use limits.
-- **One-Click Integration**: Use shortcode `[wpec_coupon id="0"]` to display coupons anywhere.
-- **Click Tracking**: Pro version tracks clicks and conversions (basic free version included).
-- **Admin Dashboard**: Easy management of coupons, links, and stats.
-- **Freemium Model**: Free for up to 5 coupons; Pro unlocks unlimited + analytics.
+- **Generate Exclusive Coupons**: Create custom coupon codes with descriptions, affiliate links, and expiration dates.
+- **Click Tracking**: Track coupon redemptions via unique affiliate parameters.
+- **Auto-Expiration**: Coupons automatically hide after expiry date.
+- **One-Click Copy**: Users can copy coupon codes instantly.
+- **Shortcode Integration**: Easy embed with `[wpec_coupon id="0"]`.
+- **Freemium Model**: Free for basics; Pro unlocks unlimited coupons, analytics, custom branding ($49/year).
+
+**Pro Only**: Advanced analytics, bulk import, email notifications, custom designs.
 
 ## Installation
 
-1. Upload the `wp-exclusive-coupons` folder to `/wp-content/plugins/`.
+1. Upload the plugin files to `/wp-content/plugins/wp-exclusive-coupons-pro`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Coupons** in the admin menu to create your first coupon.
-4. Add shortcode `[wpec_coupon id="0"]` to any post/page (ID matches your coupon list order).
+3. Navigate to **Coupons Pro** in the admin menu to add your first coupon.
 
 ## Setup
 
-1. Go to **Coupons** > Add coupon details: code, affiliate link, description, expiry date, max uses.
-2. Save and copy the shortcode with the coupon's ID (e.g., first coupon is ID 0).
-3. For Pro: Enter your API key (purchased from example.com/pro) for unlimited features.
+1. Go to **Coupons Pro** dashboard.
+2. Enter coupons as JSON array, e.g.:
+   
+   [
+     {"code":"SAVE20","afflink":"https://youraffiliate.com/?ref=wpec","desc":"20% Off","expires":"2026-12-31"}
+   ]
+   
+3. Save. Note the ID (starts at 0).
+4. Embed in posts/pages: `[wpec_coupon id="0"]`.
 
 ## Usage
 
-- **Display Coupon**: `[wpec_coupon id="1"]` renders a styled coupon box.
-- **Track Performance**: Free tracks uses; Pro adds click analytics and export.
-- **Customization**: Style via CSS classes like `.wpec-coupon`, `.wpec-btn`.
-- **Shortcode Examples**:
-  - Basic: `[wpec_coupon id="0"]`
-  - Multiple: Place multiple shortcodes on deal pages.
+- **Frontend**: Displays styled coupon box with copy button and affiliate link.
+- **Backend**: Edit coupons anytime; tracks clicks via unique params.
+- **Monetization Tips**: Partner with brands for exclusive codes to boost commissions [1][2].
+- **Shortcode Options**: `id` (required, coupon index).
 
-## Pro Upgrade ($49/year)
+## FAQ
 
-- Unlimited coupons
-- Advanced analytics dashboard
-- Custom branding
-- Priority support
-- API for integrations
+**How do I track performance?** Pro version provides click analytics dashboard.
 
-Visit example.com/pro to upgrade.
+**Can I style it?** Yes, target `.wpec-coupon` classes or Pro custom CSS.
 
-## Support
+## Upgrade to Pro
 
-- FAQ and docs: example.com/docs
-- Contact: support@example.com
+Unlock full potential: [Upgrade Now](https://example.com/upgrade) for $49/year.
 
-**Boost your affiliate earnings with exclusive deals your audience loves!**
+**Support**: Contact support@example.com
