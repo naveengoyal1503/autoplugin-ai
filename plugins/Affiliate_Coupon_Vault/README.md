@@ -1,57 +1,44 @@
 # Affiliate Coupon Vault
 
-**Boost affiliate commissions with exclusive, personalized coupons!**
+## Description
+**Affiliate Coupon Vault** is a lightweight WordPress plugin that lets you easily create and display exclusive affiliate coupons on your site. Boost conversions with custom promo codes, affiliate links, and eye-catching designs. Perfect for bloggers and marketers.[1][2]
 
 ## Features
-
-- **Personalized Promo Codes**: Generates unique codes per visitor (e.g., SAVE10_abcd)
-- **Shortcode Integration**: Easy `[affiliate_coupon]` shortcodes
-- **Admin Dashboard**: Manage unlimited coupons (Pro)
-- **Conversion-Optimized Design**: Eye-catching coupon boxes
-- **Pro Features**: Click analytics, API integrations, custom branding ($49/yr)
+- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Pro: truly unlimited).
+- **Shortcode Integration**: Use `[affiliate_coupon]` anywhere to display coupons.
+- **Customizable Designs**: Professional coupon boxes with click-to-copy codes (Pro: advanced styling).
+- **Affiliate-Optimized**: Trackable links for higher commissions.[3][5]
+- **Pro Features**: Analytics, auto-expiration, A/B testing, import/export.
 
 ## Installation
-
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`
-2. Activate via **Plugins > Installed Plugins**
-3. Go to **Settings > Coupon Vault** to add your affiliate coupons
-4. Use shortcode: `[affiliate_coupon affiliate="amazon" code="SAVE10" link="https://amazon.com/?coupon=SAVE10" discount="10%"]`
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
+4. Insert `[affiliate_coupon]` in posts/pages.
 
 ## Setup
-
-1. **Add Coupons** (Settings > Coupon Vault):
-
-[
-  {"name":"Amazon","code":"SAVE10","link":"https://amazon.com","discount":"10%"},
-  {"name":"Shopify","code":"WP20","link":"https://shopify.com","discount":"20%"}
-]
-
-2. **Embed Anywhere**: Posts, pages, widgets, Gutenberg blocks
-3. **Track Performance**: Pro version includes analytics
+1. In admin: Enter coupons in format:
+   
+   Code: SAVE20
+   Affiliate Link: https://aff.link/?ref=you
+   Description: 20% off sitewide!
+   ---
+   
+2. Save and embed shortcode.
+3. **Pro Tip**: Personalize codes with brands for exclusive deals.[2]
 
 ## Usage
+- **Shortcode**: `[affiliate_coupon]` or `[affiliate_coupon id="1"]` (Pro).
+- **Templates**: Auto-styles for Gutenberg/Classic Editor.
+- **Monetization**: Earn commissions from clicks/sales. Upgrade to Pro ($49/yr) for full power.
 
-**Basic Shortcode:**
-`[affiliate_coupon]` - Uses default settings
+## Pro Version
+- Unlimited coupons & analytics.
+- Auto-expire codes.
+- Integration with WooCommerce/Affiliate plugins.
+- Priority support.
 
-**Advanced:**
-`[affiliate_coupon affiliate="brand" code="PROMO10" link="https://partner.com" discount="15%" expires="2026-12-31"]`
+**Get Pro: [Upgrade Now](https://example.com/pro)**
 
-**Examples:**
-- Blog posts: "Use code **SAVE10_abcd** for 10% off!"
-- Sidebar widgets
-- Product review pages
-
-## Pro Version ($49/year)
-
-- Unlimited coupons & affiliates
-- Click/conversion tracking
-- Custom designs & animations
-- API sync with affiliate networks
-- Priority support
-
-**[Upgrade to Pro](https://example.com/pro)**
-
-## Why It Converts
-
-Personalized codes increase trust ("exclusive for you"), urgency (expires soon), and trackability. Perfect for 2026 affiliate trends![1][2]
+## Changelog
+**1.0.0**: Initial release with core features.
