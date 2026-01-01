@@ -6,29 +6,38 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Affiliate Coupon Vault
  * Plugin URI: https://example.com/affiliate-coupon-vault
- * Description: Automatically generates and displays personalized affiliate coupons, exclusive deals, and discount codes to boost conversions and commissions.
+ * Description: Automatically generates and displays personalized affiliate coupon codes and deals to boost conversions and commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: affiliate-coupon-vault
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class AffiliateCouponVault {
-    public function __construct() {
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('affiliate_coupon_vault', array($this, 'coupon_shortcode'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_init', array($this, 'admin_init'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        if (is_admin()) {
-            add_action('admin_init', array($this, 'admin_init'));
-        }
+        load_plugin_textdomain('affiliate-coupon-vault', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function enqueue_scripts() {
@@ -36,100 +45,123 @@ class AffiliateCouponVault {
         wp_enqueue_script('affiliate-coupon-vault', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0.0', true);
     }
 
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'affiliate_id' => 'default',
+            'discount' => '10%',
+            'product' => 'Featured Product',
+            'link' => '#',
+        ), $atts);
+
+        $coupon_code = $this->generate_coupon_code($atts['affiliate_id']);
+
+        ob_start();
+        ?>
+        <div class="affiliate-coupon-vault" data-affiliate="<?php echo esc_attr($atts['affiliate_id']); ?>">
+            <div class="coupon-header">
+                <h3>Exclusive Deal: <?php echo esc_html($atts['product']); ?></h3>
+                <span class="discount-badge"><?php echo esc_html($atts['discount']); ?> OFF</span>
+            </div>
+            <div class="coupon-code-container">
+                <code class="coupon-code" id="coupon-<?php echo esc_attr($atts['affiliate_id']); ?>"><?php echo esc_html($coupon_code); ?></code>
+                <button class="copy-coupon" data-clipboard-text="<?php echo esc_html($coupon_code); ?>">Copy Code</button>
+            </div>
+            <a href="<?php echo esc_url($atts['link']); ?}" class="affiliate-btn" target="_blank">Shop Now & Save</a>
+            <p class="coupon-expires">Limited time offer! Expires in 7 days.</p>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    private function generate_coupon_code($affiliate_id) {
+        $prefix = get_option('acv_prefix_' . $affiliate_id, 'SAVE') . '-';
+        $random = wp_rand(1000, 9999);
+        $timestamp = date('mdy');
+        return strtoupper($prefix . $random . $timestamp);
+    }
+
     public function admin_menu() {
-        add_options_page('Affiliate Coupon Vault', 'Coupon Vault', 'manage_options', 'affiliate-coupon-vault', array($this, 'settings_page'));
+        add_options_page(
+            'Affiliate Coupon Vault',
+            'Coupon Vault',
+            'manage_options',
+            'affiliate-coupon-vault',
+            array($this, 'admin_page')
+        );
     }
 
     public function admin_init() {
-        register_setting('affiliate_coupon_vault_options', 'affiliate_coupon_vault_settings');
-        add_settings_section('main_section', 'Coupon Settings', null, 'affiliate_coupon_vault');
-        add_settings_field('coupons', 'Coupons', array($this, 'coupons_field'), 'affiliate_coupon_vault', 'main_section');
-    }
-
-    public function coupons_field() {
-        $settings = get_option('affiliate_coupon_vault_settings', array('coupons' => array(
-            array('code' => 'SAVE10', 'description' => '10% off on all products', 'afflink' => '#', 'image' => ''),
-        )));
-        $coupons = $settings['coupons'];
-        echo '<table id="coupons-table" class="wp-list-table widefat fixed striped">';
-        echo '<thead><tr><th>Code</th><th>Description</th><th>Affiliate Link</th><th>Image URL</th><th>Action</th></tr></thead><tbody>';
-        foreach ($coupons as $index => $coupon) {
-            echo '<tr>';
-            echo '<td><input type="text" name="settings[coupons][' . $index . '][code]" value="' . esc_attr($coupon['code']) . '" /></td>';
-            echo '<td><input type="text" name="settings[coupons][' . $index . '][description]" value="' . esc_attr($coupon['description']) . '" /></td>';
-            echo '<td><input type="url" name="settings[coupons][' . $index . '][afflink]" value="' . esc_attr($coupon['afflink']) . '" /></td>';
-            echo '<td><input type="url" name="settings[coupons][' . $index . '][image]" value="' . esc_attr($coupon['image']) . '" /></td>';
-            echo '<td><button type="button" class="button remove-coupon">Remove</button></td>';
-            echo '</tr>';
+        register_setting('acv_settings', 'acv_prefix_default');
+        foreach (array('amazon', 'clickbank', 'other') as $id) {
+            register_setting('acv_settings', 'acv_prefix_' . $id);
         }
-        echo '</tbody></table>';
-        echo '<p><button type="button" id="add-coupon" class="button">Add Coupon</button></p>';
-        echo '<script>jQuery(document).ready(function($){let index=' . count($coupons) . '; $("#add-coupon").click(function(){let row="<tr><td><input type=\"text\" name=\"settings[coupons]["+index+"][code]\" /></td><td><input type=\"text\" name=\"settings[coupons]["+index+"][description]\" /></td><td><input type=\"url\" name=\"settings[coupons]["+index+"][afflink]\" /></td><td><input type=\"url\" name=\"settings[coupons]["+index+"][image]\" /></td><td><button type=\"button\" class=\"button remove-coupon\">Remove</button></td></tr>"; $("#coupons-table tbody").append(row); index++;}); $(".remove-coupon").click(function(){$(this).closest("tr").remove();});});</script>';
     }
 
-    public function settings_page() {
+    public function admin_page() {
+        if (isset($_POST['submit'])) {
+            check_admin_referer('acv_save');
+        }
         ?>
         <div class="wrap">
             <h1>Affiliate Coupon Vault Settings</h1>
             <form method="post" action="options.php">
-                <?php
-                settings_fields('affiliate_coupon_vault_options');
-                do_settings_sections('affiliate_coupon_vault');
-                submit_button();
-                ?>
+                <?php settings_fields('acv_settings'); ?>
+                <?php do_settings_sections('acv_settings'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th>Default Coupon Prefix</th>
+                        <td><input type="text" name="acv_prefix_default" value="<?php echo esc_attr(get_option('acv_prefix_default', 'SAVE')); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Amazon Prefix</th>
+                        <td><input type="text" name="acv_prefix_amazon" value="<?php echo esc_attr(get_option('acv_prefix_amazon', 'AMZ')); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>ClickBank Prefix</th>
+                        <td><input type="text" name="acv_prefix_clickbank" value="<?php echo esc_attr(get_option('acv_prefix_clickbank', 'CB')); ?>" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
             </form>
+            <h2>Usage</h2>
+            <p>Use shortcode: <code>[affiliate_coupon_vault affiliate_id="amazon" discount="20%" product="Laptop" link="https://amazon.com/product"]</code></p>
+            <p><strong>Pro Features (Upgrade for $49/year):</strong> Analytics, unlimited affiliates, auto-expiry, email capture.</p>
         </div>
+        <style>
+        .affiliate-coupon-vault { border: 2px dashed #007cba; padding: 20px; margin: 20px 0; background: #f9f9f9; border-radius: 8px; text-align: center; }
+        .coupon-header h3 { margin: 0 0 10px; color: #007cba; }
+        .discount-badge { background: #ff6b35; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+        .coupon-code-container { margin: 20px 0; }
+        .coupon-code { background: #333; color: #fff; padding: 10px 20px; font-family: monospace; font-size: 24px; border-radius: 5px; letter-spacing: 3px; }
+        .copy-coupon { background: #007cba; color: white; border: none; padding: 10px 20px; margin-left: 10px; cursor: pointer; border-radius: 5px; }
+        .affiliate-btn { display: inline-block; background: #ff6b35; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 10px; }
+        .coupon-expires { font-size: 14px; color: #666; margin-top: 10px; }
+        </style>
+        <script>
+        jQuery(document).ready(function($) {
+            $('.copy-coupon').click(function() {
+                var code = $(this).data('clipboard-text');
+                navigator.clipboard.writeText(code).then(function() {
+                    $(this).text('Copied!');
+                }.bind(this));
+            });
+        });
+        </script>
         <?php
     }
 
-    public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('limit' => 5), $atts);
-        $settings = get_option('affiliate_coupon_vault_settings', array('coupons' => array()));
-        $coupons = $settings['coupons'];
-        $limit = min((int)$atts['limit'], count($coupons));
-        if (empty($coupons) || $limit < 1) return '';
-
-        $output = '<div class="affiliate-coupon-vault">';
-        for ($i = 0; $i < $limit; $i++) {
-            if (!isset($coupons[$i])) break;
-            $coupon = $coupons[$i];
-            $image = !empty($coupon['image']) ? '<img src="' . esc_url($coupon['image']) . '" alt="' . esc_attr($coupon['description']) . '" />' : '';
-            $output .= '<div class="coupon-item">'
-                     . $image
-                     . '<h3>' . esc_html($coupon['code']) . '</h3>'
-                     . '<p>' . esc_html($coupon['description']) . '</p>'
-                     . '<a href="' . esc_url($coupon['afflink']) . '" target="_blank" class="coupon-button" rel="nofollow">Get Deal</a>'
-                     . '</div>';
-        }
-        $output .= '</div>';
-        return $output;
-    }
-
     public function activate() {
-        add_option('affiliate_coupon_vault_settings', array('coupons' => array(
-            array('code' => 'WELCOME20', 'description' => '20% off first purchase', 'afflink' => 'https://example.com/aff', 'image' => ''),
-        )));
+        add_option('acv_prefix_default', 'SAVE');
+        add_option('acv_prefix_amazon', 'AMZ');
+        add_option('acv_prefix_clickbank', 'CB');
     }
 }
 
-new AffiliateCouponVault();
+AffiliateCouponVault::get_instance();
 
-/* Pro Notice */
-function affiliate_coupon_vault_pro_notice() {
+// Pro upsell notice
+function acv_admin_notice() {
     if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>Upgrade to <strong>Affiliate Coupon Vault Pro</strong> for unlimited coupons, analytics, and premium integrations! <a href="https://example.com/pro" target="_blank">Get Pro</a></p></div>';
+    echo '<div class="notice notice-info"><p><strong>Affiliate Coupon Vault:</strong> Unlock Pro features like analytics & unlimited coupons for $49/year! <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
 }
-add_action('admin_notices', 'affiliate_coupon_vault_pro_notice');
-
-/* Styles */
-function affiliate_coupon_vault_styles() {
-    echo '<style>.affiliate-coupon-vault{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin:20px 0;}.coupon-item{background:#fff;border:2px solid #0073aa;border-radius:10px;padding:20px;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,0.1);}.coupon-item h3{font-size:2em;color:#0073aa;margin:0 0 10px;font-weight:bold;text-transform:uppercase;}.coupon-item p{margin:10px 0;}.coupon-button{display:inline-block;background:#0073aa;color:#fff;padding:12px 24px;text-decoration:none;border-radius:5px;font-weight:bold;transition:background 0.3s;}.coupon-button:hover{background:#005a87;}</style>';
-}
-add_action('wp_head', 'affiliate_coupon_vault_styles');
-add_action('admin_head', 'affiliate_coupon_vault_styles');
-
-/* JS for interactions */
-function affiliate_coupon_vault_js() {
-    echo '<script>jQuery(document).ready(function($){.coupon-button.click(function(){$(this).html("Copied!");setTimeout(()=>{$(this).html("Get Deal");},2000);});});</script>';
-}
-add_action('wp_footer', 'affiliate_coupon_vault_js');
+add_action('admin_notices', 'acv_admin_notice');
