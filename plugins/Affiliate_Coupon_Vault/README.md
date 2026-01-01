@@ -2,39 +2,40 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited affiliate coupons via simple JSON in admin settings.
-- **Shortcode Display**: Use `[acv_coupon id="0"]` to embed beautiful, responsive coupons anywhere.
-- **Click Tracking**: Pro version tracks clicks, IPs, and analytics for optimization.
-- **Conversion Boost**: Personalized coupons increase affiliate sales with custom codes and descriptions.
-- **SEO-Friendly**: Coupons are schema-ready for better search visibility.
-- **Freemium Model**: Free for basics, Pro ($49/year) unlocks unlimited coupons, advanced tracking, and priority support.
+- **Easy Shortcode Integration**: Drop `[affiliate_coupon]` anywhere to display eye-catching coupons.
+- **Click Tracking**: Real-time click counters (Pro: Full analytics dashboard).
+- **Personalized Coupons**: Generate unique codes for your audience to boost affiliate conversions[1][2].
+- **Mobile-Responsive Design**: Beautiful, conversion-optimized layouts.
+- **Freemium Model**: Free for basics, Pro ($49/year) unlocks unlimited coupons, API tracking, and premium templates.
+
+**Pro Features**:
+- Advanced analytics & export.
+- Custom coupon generators.
+- Affiliate network integrations.
+- Priority support.
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to add your coupons.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Use the shortcode in posts/pages.
 
 ## Setup
 
-1. In **Settings > Coupon Vault**, enter JSON like:
-   
-   [
-     {"name":"10% Off","code":"SAVE10","affiliate_url":"https://affiliate.com/?coupon=SAVE10","description":"Save on all products"}
-   ]
-   
-2. Save and use shortcode `[acv_coupon id="0"]` (ID matches array index).
+1. Go to **Settings > Coupon Vault** to enter Pro key (optional).
+2. Add shortcode: `[affiliate_coupon code="SAVE20" affiliate="yourid" discount="20%" expires="2026-12-31" product="Product" link="https://your-aff-link.com"]`.
 
 ## Usage
 
-- Embed coupons in posts, pages, or widgets.
-- Customize appearance with CSS in the shortcode output.
-- **Pro Upgrade**: For full tracking and unlimited features, purchase at example.com/pro.
+Embed in blog posts for affiliate deals. Track clicks to optimize performance. Perfect for niches like software, travel, wellness[2].
 
-## Pro Features
-- Unlimited coupons
-- Detailed click analytics dashboard
-- Export reports
-- Custom branding
+**Example**:
 
-Support: example.com/support
+[affiliate_coupon code="BLOG10" affiliate="12345" discount="10% Off" expires="2026-01-31" product="WordPress Pro Tools" link="https://affiliate.com/?ref=12345"]
+
+
+## Upgrade to Pro
+Visit [example.com/pro](https://example.com/pro) for unlimited features and boost your affiliate earnings.
+
+## Support
+Contact support@example.com or check documentation.
