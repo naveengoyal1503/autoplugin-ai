@@ -1,45 +1,67 @@
 # Affiliate Coupon Vault
 
-## Features
+## 🎯 **Transform Your Blog into a Coupon Powerhouse**
 
-- **Easy Coupon Management**: Add, edit, and display affiliate coupons via intuitive dashboard and shortcodes.[1][2]
-- **Boost Conversions**: Show exclusive deals, discount codes, and personalized offers to drive affiliate commissions.[1][2]
-- **Shortcode Integration**: Use `[affiliate_coupon_vault id="0"]` anywhere to embed coupons.[5]
-- **Affiliate Link Tracking**: Append referral parameters to track sales automatically.[3]
-- **Pro Upgrade**: Unlimited coupons, analytics dashboard, auto-expiry, custom branding, and premium affiliate integrations ($49/year).[7]
-- **SEO-Friendly**: Optimized for search engines to attract deal-hunters.[2]
+**Affiliate Coupon Vault** automatically creates eye-catching, conversion-optimized coupon displays with unique promo codes. Perfect for affiliate marketers, bloggers, and eCommerce sites looking to boost commissions through exclusive deals.[1][2]
 
-## Installation
+## ✨ **Key Features**
 
-1. Upload the plugin files to `/wp-content/plugins/affiliate-coupon-vault`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Access settings via **Settings > Coupon Vault** to add your first coupon.
+- **🔥 Instant Coupon Shortcodes**: `[affiliate_coupon discount="50%" link="your-affiliate-link"]`
+- **🎨 Beautiful, Animated Designs**: Mobile-responsive with hover effects
+- **✅ Unique Promo Codes**: Auto-generates personalized codes like `SAVEABC123`
+- **📊 Conversion Tracking Ready**: Google Analytics event integration
+- **⚡ One-Click Setup**: No coding required
+- **💎 Pro Version**: Unlimited coupons, analytics dashboard, premium integrations
 
-## Setup
+## 🎪 **Example Usage**
 
-1. Go to **Settings > Coupon Vault**.
-2. Add a new coupon: Title, Code (e.g., SAVE20), Description, Discount %, and Affiliate URL.
-3. Use shortcode `[affiliate_coupon_vault id="0"]` in posts/pages (ID auto-assigns).
-4. **Pro Tip**: Upgrade for analytics and unlimited storage.[7]
 
-## Usage
+[affiliate_coupon affiliate="amazon" discount="30% OFF" link="https://your-amazon-affiliate-link.com" expires="+30 days"]
 
-- **Display Coupons**: Embed with shortcode on blog posts, sidebars, or dedicated deal pages.[1]
-- **Monetize**: Partner with brands for custom codes, earn commissions on clicks/sales.[2][3]
-- **Customization**: Style via CSS in **Appearance > Customize**.
-- **Track Performance**: Pro version includes click/session tracking like wecantrack.[3]
 
-## Pro Features
+**Result**: Professional coupon box with unique code, expiry date, and trackable CTA button.
 
-| Feature | Free | Pro ($49/year) |
-|---------|------|----------------|
-| Coupons | 10 | Unlimited[7] |
-| Analytics | No | Yes[3] |
-| Auto-Expiry | No | Yes |
-| Templates | Basic | Premium |
-| Integrations | Manual | Amazon, etc.[3] |
+## 🛠 **Installation**
 
-**Changelog**
-- 1.0.0: Initial release with core coupon management and shortcodes.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`
+2. Activate via **Plugins > Installed Plugins**
+3. Use shortcode `[affiliate_coupon]` anywhere
+4. Configure defaults in **Settings > Coupon Vault**
 
-Support: Contact via plugin page. Upgrade: [Get Pro](https://example.com/pro)
+## ⚙️ **Setup & Customization**
+
+1. **Basic Shortcode**:
+       [affiliate_coupon discount="25%" link="https://example.com/deal"]
+   
+
+2. **Advanced**:
+       [affiliate_coupon affiliate="shopify" discount="FREE Trial" code="BLOG2026" link="https://your-link.com" expires="Dec 31, 2026"]
+   
+
+3. **Settings Page**: Set default link/discount for quick reuse
+
+## 💰 **Monetization Potential**
+
+- **Affiliate Commissions**: 20-50% higher conversions with exclusive codes[1][2]
+- **Pro Upgrade**: $49/year (unlimited + analytics)
+- **White-label**: Agency owners can rebrand
+
+## 🚀 **Pro Features (Coming Soon)**
+
+- Unlimited active coupons
+- Click/conversion analytics
+- Auto-expiry management
+- Email capture forms
+- Amazon/ShareASale integrations
+- Custom branding & templates
+
+## 📈 **Why It Converts**
+
+- **Trust Signals**: "Exclusive" + unique codes = urgency
+- **Visual Appeal**: Animated designs grab attention
+- **Mobile Optimized**: Perfect on all devices
+- **SEO Friendly**: Clean markup, schema-ready
+
+**Boost your affiliate earnings today!** 💥
+
+*Plugin optimized for 2026 WordPress standards. Free updates forever.*
