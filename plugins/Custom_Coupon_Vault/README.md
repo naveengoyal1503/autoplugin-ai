@@ -1,41 +1,38 @@
 # Custom Coupon Vault
 
 ## Features
-
-- **Easy Coupon Management**: Add brands, codes, discounts, affiliate links, and expiry dates via intuitive admin dashboard.[1][2]
-- **Shortcode Display**: Embed coupons anywhere with `[coupon_vault id="unique-id"]`. Supports expiry checks.
-- **Reader Loyalty Boost**: Offer exclusive deals to increase conversions and position your site as a savings hub.[1]
-- **Affiliate Ready**: Trackable links for commissions from personalized promo codes.[2][3]
-- **Freemium Model**: Free for basics; Pro unlocks unlimited coupons, analytics, auto-generation ($49/year).
-
-**Pro Features (Upsell)**: Usage stats, A/B testing, email export, WooCommerce integration.
+- **Generate Unique Coupons**: Create custom coupon codes with affiliate links, discounts, expiry dates, and usage limits.[1][2]
+- **Shortcode Display**: Use `[coupon_vault id="1"]` to embed coupons on any page or post.
+- **Admin Dashboard**: Easy management of coupons with add/delete functionality.
+- **Track Usage**: Monitor used counts and limits (Pro: Advanced analytics).
+- **Boost Conversions**: Personalized coupons improve affiliate marketing and reader engagement.[1][2]
+- **Freemium**: Free core features; Pro unlocks unlimited coupons, auto-expiry, and integrations ($49/year).
 
 ## Installation
-
-1. Upload the `custom-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Access dashboard at **Coupon Vault** in admin menu.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+2. Activate the plugin.
+3. Navigate to **Coupon Vault** in the admin menu to create your first coupon.
+4. Use the shortcode `[coupon_vault id="X"]` (replace X with coupon ID) on posts/pages.
 
 ## Setup
-
-1. Go to **Coupon Vault** admin page.
-2. Fill form: Brand, Code, Discount (e.g., "50% OFF"), Affiliate Link, Expiry.
+1. Go to **Coupon Vault** dashboard.
+2. Fill in: Title, Code (auto-uppercases), Affiliate URL, Discount (e.g., "20% OFF"), Expiry, Usage Limit.
 3. Click **Add Coupon**.
-4. Copy shortcode (e.g., `[coupon_vault id="abc123"]`).
+4. Copy the coupon ID and use in shortcode.
 
 ## Usage
+- **Frontend**: Embed shortcodes to display professional coupon boxes with redemption buttons.
+- **Backend**: Manage all coupons in one table. Coupons auto-hide if expired or limit reached.
+- **Pro Upgrade**: For unlimited coupons, click tracking, email notifications, and WooCommerce integration.
 
-- Paste shortcode in posts, pages, or widgets.
-- Customize styles via CSS targeting `.ccv-coupon`.
-- Example:
-  
-  [coupon_vault id="abc123"]
-  
-- Expired coupons auto-hide offer, show warning.
+## Pro Features
+- Unlimited coupons
+- Usage analytics dashboard
+- Auto-generate codes
+- Affiliate link cloaking
+- Export reports
 
-## Why Profitable?
-
-Blogs earn via exclusive coupons (higher conversions than generic links).[1][2] Freemium drives upgrades; target affiliate niches like software, travel.[3]
+**Upgrade at [example.com/pro](https://example.com/pro)**
 
 ## Support
-Contact support@example.com. Rate 5⭐ on WordPress.org!
+Contact support@example.com. Feature requests welcome!
