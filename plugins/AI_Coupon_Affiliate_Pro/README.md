@@ -1,51 +1,36 @@
 # AI Coupon Affiliate Pro
 
+## Description
+**AI Coupon Affiliate Pro** is a powerful WordPress plugin that helps bloggers and site owners monetize their sites by creating dynamic coupon sections with affiliate tracking. Generate exclusive deals, track clicks, and earn commissions effortlessly.[1][2]
+
 ## Features
-
-- **Easy Coupon Management**: Add, edit, and delete coupons via intuitive admin dashboard.
-- **Affiliate Tracking**: Built-in affiliate URL support with nofollow for SEO.
-- **Shortcode Integration**: Use `[ai_coupon_deal id="1"]` to display coupons anywhere.
-- **Copy-to-Clipboard**: One-click coupon code copying for users.
-- **Expiry Tracking**: Set expiration dates for time-sensitive deals.
-- **Pro Upgrade**: AI-generated coupons, analytics dashboard, unlimited coupons, email capture, and premium affiliate network integrations ($49/year).
-
-**Why Profitable?** Coupons drive conversions and affiliate commissions. Inspired by WP Coupons success[1][2]. Target bloggers monetizing via affiliates.
+- **Dynamic Coupon Display**: Use shortcode `[ai_coupon_section]` to show popular coupons with click tracking.
+- **Admin Dashboard**: Add, manage, and view analytics for coupons and affiliate links.
+- **AI-Powered Generation** (Premium): Automatically create personalized coupons using AI.
+- **Affiliate Tracking**: Built-in click tracking to monitor performance.
+- **Responsive Design**: Mobile-friendly coupon cards.
+- **Freemium Model**: Free core features; premium unlocks unlimited coupons and AI.
 
 ## Installation
-
-1. Upload the plugin ZIP to `/wp-content/plugins/` or install via WordPress dashboard.
-2. Activate the plugin.
-3. Go to **Settings > AI Coupons** to add your first coupon.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > AI Coupon Pro** to configure API key (premium).
+4. Add `[ai_coupon_section num="5"]` to any post/page.
 
 ## Setup
-
-1. **Add Coupons**:
-   - Navigate to **Settings > AI Coupons**.
-   - Fill in title, code, affiliate URL, discount details, and expiry.
-   - Click **Add Coupon**.
-
-2. **Display on Site**:
-   - Use shortcode: `[ai_coupon_deal id="X"]` (replace X with coupon ID).
-   - Add to posts, pages, sidebars, or widgets.
+1. **Admin Settings**: Enter your OpenAI API key for AI features (premium only).
+2. **Add Coupons**: Manually add via dashboard or let AI generate.
+3. **Embed Shortcode**: Place in posts, sidebars, or widgets.
+4. **Track Performance**: View clicks in the database/admin.
 
 ## Usage
+- **Shortcode**: `[ai_coupon_section num="3"]` displays top 3 coupons by clicks.
+- **Customization**: Style via CSS class `.ai-coupon-section`.
+- **Monetization**: Replace affiliate URLs with your Amazon Associates, etc. links. Earn on clicks/sales.[3][4]
+- **Premium Upgrade**: Unlock AI generation for custom deals, export analytics, sponsored integrations ($49/year).
 
-- **Basic**: Create manual coupons for affiliate deals (e.g., Amazon, software tools).
-- **Advanced (Pro)**: AI auto-generates personalized deals based on site content.
-- **Monetization Tips**:
-  - Partner with brands for custom codes[2].
-  - Embed in niche blogs for high conversions[1][3].
-  - Track clicks and optimize for revenue.
+## Changelog
+- **1.0.0**: Initial release with core features and tracking.
 
-## Pro Features
-
-| Feature | Free | Pro ($49/year) |
-|---------|------|----------------|
-| Coupons | 10 | Unlimited |
-| AI Generation | No | Yes |
-| Analytics | Basic | Advanced |
-| Integrations | Manual | Auto (Amazon, etc.) |
-
-**Support**: Contact support@example.com. Freemium model ensures profitability for developers[7].
-
-**Upgrade**: [Get Pro Now](https://example.com/pro)
+## Support
+Contact support@example.com. Premium users get priority.
