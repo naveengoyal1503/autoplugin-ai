@@ -1,48 +1,48 @@
 # Affiliate Coupon Vault
 
-**Boost affiliate earnings with exclusive, trackable coupon displays!**
+**Boost your affiliate earnings with exclusive, auto-generated coupons!**
 
 ## Features
 
-- **Easy Shortcode**: `[acv_coupon]` or `[acv_coupon id="unique1"]` to embed beautiful coupon boxes.
-- **Click Tracking**: Logs clicks, IP, user (free: 100 logs; **Pro**: unlimited dashboard).
-- **Personalized Coupons**: Add your affiliate links + codes in settings.
-- **Conversion Optimized**: Eye-catching design with one-click tracking & redirect.
-- **Freemium**: Free core; **Pro** adds analytics, unlimited coupons, auto-rotation, WooCommerce integration ($49/year).
+- **Shortcode Integration**: Use `[affiliate_coupons count="5"]` to display coupons anywhere.
+- **Affiliate Tracking**: Built-in click tracking (Pro: Advanced analytics).
+- **Customizable Networks**: Amazon, Generic (Pro: Shopify, Walmart, more).
+- **Responsive Design**: Mobile-optimized coupon displays.
+- **Easy Setup**: Settings page for networks and pro upsell.
+- **Conversion Boost**: Exclusive codes improve click-through rates.
+
+**Pro Features ($49/year)**:
+- Unlimited coupons
+- Premium affiliate networks
+- Click analytics dashboard
+- Custom branding
+- Priority support
 
 ## Installation
 
-1. Upload the plugin ZIP to **Plugins > Add New > Upload**.
-2. Activate the plugin.
-3. Go to **Settings > Coupon Vault** to add your coupons (format: `Brand:CODE|https://your-affiliate-link`).
-4. Use shortcode `[acv_coupon]` in posts/pages.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to configure networks.
+4. Add `[affiliate_coupons]` shortcode to any post/page.
 
 ## Setup
 
-1. **Configure Coupons**:
-   - Settings > Coupon Vault
-   - Example:
-     
-     Amazon:PRIME20|https://amazon.com/affiliate-link
-     Shopify:WP50|https://shopify.com/your-link
-     
-2. **Embed**: Add `[acv_coupon]` anywhere. Customize with `id` for tracking.
-3. **Pro Upgrade**: Unlock analytics at [Get Pro](https://example.com/pro).
+1. In admin, select affiliate networks (e.g., Amazon, Generic).
+2. Replace sample affiliate links in code with your own (Pro: Auto-tracking).
+3. Customize via CSS in `assets/style.css`.
 
 ## Usage
 
-- **Basic**: `[acv_coupon]` - Random coupon display.
-- **Tracked**: `[acv_coupon id="post-123"]` - Track per post/page.
-- **View Logs**: Pro users get dashboard; free sees basic via code.
+- **Basic**: `[affiliate_coupons count="3" category="amazon"]`
+- **Widget**: Add to sidebar via shortcode widget.
+- **Pro Tips**: Place near product reviews for max conversions.
 
-**Pro Tips**:
-- Use in sidebars, posts, or popups.
-- Pair with SEO plugins for "coupon" keywords.
-- Contact brands for custom codes to boost uniqueness.
+## FAQ
 
-## Support
+**How do I track clicks?** Free version logs basic clicks; Pro has full analytics.
 
-- Free support via WordPress forums.
-- Pro: Priority email + updates.
+**Monetization Ready?** Yes! Earn commissions from coupon redemptions.
 
-**Start earning more from affiliates today! 🚀**
+**Support**: Free users - forums; Pro - email support.
+
+**Upgrade**: [Get Pro Now](https://example.com/pro)
