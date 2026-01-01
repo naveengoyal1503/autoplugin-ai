@@ -2,49 +2,41 @@
 
 ## Features
 
-- **Personalized Coupon Display**: Automatically shows random exclusive coupons with eye-catching animations.
-- **Easy Shortcode Integration**: Use `[exclusive_coupon]` anywhere to display deals.
-- **Affiliate Link Tracking**: Built-in click tracking for Google Analytics (gtag).
-- **Admin Dashboard**: JSON-based coupon management (name, code, affiliate link, description).
-- **Fully Responsive Design**: Modern gradient UI with pulse animation.
-- **Freemium Model**: Free for basics, Pro ($49/yr) adds unlimited coupons, expiry dates, A/B testing, premium integrations (Amazon, etc.).
+- **Easy Coupon Management**: Add, edit, and display exclusive affiliate coupons via simple admin interface.
+- **Shortcode Support**: Use `[exclusive_coupons limit="3"]` to display coupons anywhere on your site.
+- **Expiration Handling**: Automatically hides expired coupons.
+- **Affiliate-Ready**: Track conversions with your affiliate links embedded in coupons.
+- **Pro Upsell**: Built-in promotion for premium version with analytics, auto-generation, and unlimited coupons.
+- **Mobile-Responsive**: Clean, modern design works on all devices.
 
-**Pro Features (Upgrade Required)**:
-- Unlimited coupons
-- Auto-expiry & scheduling
-- Custom branding & CSS
-- Advanced analytics dashboard
-- Premium affiliate network integrations
+**Pro Features (Coming Soon)**: Click tracking, API integrations for brands, unlimited coupons, custom branding ($49/year).
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Exclusive Coupons** to add your coupons in JSON format.
-4. Use the shortcode `[exclusive_coupon]` in posts, pages, or widgets.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Configure coupons in **Settings > Coupons Pro**.
 
 ## Setup
 
-1. **Configure Coupons**:
-   
-   [
-     {"name":"Sample Deal","code":"SAVE20","afflink":"https://your-aff-link.com","desc":"20% off premium tools"}
-   ]
-   
-2. **Embed Shortcode**: Add `[exclusive_coupon]` to any post/page.
-3. **Track Clicks**: Ensure Google Analytics (gtag) is installed for event tracking.
-4. **Customize**: Pro users can override CSS via admin panel.
+1. Go to **Settings > Coupons Pro**.
+2. Enter coupons in JSON format: `[{ "code": "SAVE20", "afflink": "https://affiliate-link.com", "desc": "20% off sitewide", "expiry": "2026-12-31" }]`.
+3. Save changes.
+4. Add `[exclusive_coupons]` shortcode to any post, page, or widget.
 
 ## Usage
 
-- Place shortcodes in content for automatic deal rotation.
-- Ideal for blogs, affiliate sites, or eCommerce.
-- Boosts conversions with exclusive, personalized offers.
-- **Monetization Tip**: Partner with brands for custom codes to increase commissions.[1][2]
+- **Display Coupons**: Use the shortcode with optional `limit` attribute, e.g., `[exclusive_coupons limit="5"]`.
+- **Customization**: Style via CSS targeting `.wpecp-coupons` classes.
+- **Monetization Tip**: Partner with brands for custom codes to boost your affiliate commissions.[1][2]
 
-## Support
+## FAQ
 
-- [Documentation](https://example.com/docs)
-- [Pro Upgrade](https://example.com/pro) - $49/year
+**How do I make money?** Display exclusive coupons with affiliate links to earn commissions on sales.[3]
 
-**Boost your affiliate earnings today!**
+**Is it free?** Yes, basic version is free. Upgrade to Pro for advanced features.
+
+**Support**: For Pro support, purchase at example.com/pro.
+
+*Boost your site revenue today!*
