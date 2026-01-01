@@ -5,11 +5,12 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: AI Coupon Affiliate Pro
- * Plugin URI: https://example.com/aicoupon-pro
- * Description: AI-powered coupon generator with affiliate tracking for WordPress.
+ * Plugin URI: https://example.com/aicouponpro
+ * Description: AI-powered coupon and affiliate plugin for WordPress monetization. Generates dynamic coupon sections with affiliate tracking.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: ai-coupon-affiliate-pro
  */
 
 if (!defined('ABSPATH')) {
@@ -21,123 +22,139 @@ class AICouponAffiliatePro {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('ai_coupon_deal', array($this, 'coupon_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_shortcode('ai_coupon_section', array($this, 'coupon_shortcode'));
+        add_action('wp_ajax_save_coupon', array($this, 'save_coupon'));
+        add_action('wp_ajax_nopriv_save_coupon', array($this, 'save_coupon'));
     }
 
     public function init() {
-        // Create table on activation if needed
+        load_plugin_textdomain('ai-coupon-affiliate-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        $this->create_table();
+    }
+
+    private function create_table() {
         global $wpdb;
-        $table = $wpdb->prefix . 'ai_coupons';
-        $charset = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table (
+        $table_name = $wpdb->prefix . 'ai_coupons';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             title varchar(255) NOT NULL,
-            code varchar(100) DEFAULT '',
-            affiliate_url varchar(500) DEFAULT '',
-            discount text,
-            expiry date DEFAULT NULL,
-            used int DEFAULT 0,
+            code varchar(100) NOT NULL,
+            affiliate_url text NOT NULL,
+            discount varchar(50) DEFAULT '',
+            brand varchar(255) DEFAULT '',
+            expires date DEFAULT NULL,
+            clicks int DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id)
-        ) $charset;";
+        ) $charset_collate;";
+
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
 
-    public function activate() {
-        $this->init();
-        flush_rewrite_rules();
-    }
-
     public function enqueue_scripts() {
-        wp_enqueue_script('ai-coupon-js', plugin_dir_url(__FILE__) . 'ai-coupon.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('ai-coupon-css', plugin_dir_url(__FILE__) . 'ai-coupon.css', array(), '1.0.0');
+        wp_enqueue_script('ai-coupon-js', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('ai-coupon-css', plugin_dir_url(__FILE__) . 'assets/style.css', array(), '1.0.0');
+        wp_localize_script('ai-coupon-js', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
     }
 
     public function admin_menu() {
-        add_options_page('AI Coupon Pro', 'AI Coupons', 'manage_options', 'ai-coupon-pro', array($this, 'admin_page'));
+        add_options_page('AI Coupon Pro Settings', 'AI Coupon Pro', 'manage_options', 'ai-coupon-pro', array($this, 'settings_page'));
     }
 
-    public function admin_page() {
-        if (isset($_POST['add_coupon'])) {
-            global $wpdb;
-            $table = $wpdb->prefix . 'ai_coupons';
-            $wpdb->insert($table, array(
-                'title' => sanitize_text_field($_POST['title']),
-                'code' => sanitize_text_field($_POST['code']),
-                'affiliate_url' => esc_url_raw($_POST['affiliate_url']),
-                'discount' => sanitize_textarea_field($_POST['discount']),
-                'expiry' => sanitize_text_field($_POST['expiry'])
-            ));
-            echo '<div class="notice notice-success"><p>Coupon added!</p></div>';
+    public function settings_page() {
+        if (isset($_POST['submit'])) {
+            update_option('ai_coupon_api_key', sanitize_text_field($_POST['api_key']));
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        echo '<div class="wrap"><h1>Manage Coupons</h1><form method="post">';
-        echo '<table class="form-table">';
-        echo '<tr><th>Title</th><td><input type="text" name="title" required /></td></tr>';
-        echo '<tr><th>Coupon Code</th><td><input type="text" name="code" /></td></tr>';
-        echo '<tr><th>Affiliate URL</th><td><input type="url" name="affiliate_url" required /></td></tr>';
-        echo '<tr><th>Discount</th><td><textarea name="discount"></textarea></td></tr>';
-        echo '<tr><th>Expiry</th><td><input type="date" name="expiry" /></td></tr>';
-        echo '</table><p><input type="submit" name="add_coupon" class="button-primary" value="Add Coupon" /></p></form>';
-
-        // List coupons
-        global $wpdb;
-        $coupons = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}ai_coupons ORDER BY id DESC");
-        echo '<h2>Existing Coupons</h2><table class="wp-list-table widefat fixed striped">';
-        echo '<thead><tr><th>ID</th><th>Title</th><th>Code</th><th>Affiliate URL</th><th>Actions</th></tr></thead><tbody>';
-        foreach ($coupons as $coupon) {
-            echo '<tr><td>' . $coupon->id . '</td><td>' . esc_html($coupon->title) . '</td><td>' . esc_html($coupon->code) . '</td><td>' . esc_html($coupon->affiliate_url) . '</td>';
-            echo '<td><a href="' . add_query_arg('delete_coupon', $coupon->id) . '" onclick="return confirm(\'Delete?\')">Delete</a></td></tr>';
-        }
-        echo '</tbody></table></div>';
-
-        if (isset($_GET['delete_coupon'])) {
-            $wpdb->delete($wpdb->prefix . 'ai_coupons', array('id' => intval($_GET['delete_coupon'])));
-            wp_redirect(admin_url('options-general.php?page=ai-coupon-pro'));
-            exit;
-        }
+        $api_key = get_option('ai_coupon_api_key', '');
+        echo '<div class="wrap"><h1>AI Coupon Affiliate Pro Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr><th>AI API Key (OpenAI)</th><td><input type="text" name="api_key" value="' . esc_attr($api_key) . '" class="regular-text"></td></tr>
+            </table>
+            <p>Use shortcode <code>[ai_coupon_section]</code> to display coupons.</p>
+            ' . submit_button() . '
+        </form></div>';
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => 0), $atts);
-        global $wpdb;
-        $coupon = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}ai_coupons WHERE id = %d", $atts['id']));
-        if (!$coupon) return '';
-
+        $atts = shortcode_atts(array('num' => 5), $atts);
         ob_start();
-        echo '<div class="ai-coupon-deal" data-id="' . $coupon->id . '">';
-        echo '<h3>' . esc_html($coupon->title) . '</h3>';
-        if ($coupon->code) echo '<p><strong>Code:</strong> <span class="coupon-code">' . esc_html($coupon->code) . '</span> <button class="copy-code">Copy</button></p>';
-        echo '<p>' . esc_html($coupon->discount) . '</p>';
-        echo '<a href="' . esc_url($coupon->affiliate_url) . '" target="_blank" class="coupon-btn" rel="nofollow">Get Deal (Affiliate)</a>';
-        if ($coupon->expiry) echo '<p class="expiry">Expires: ' . date('M j, Y', strtotime($coupon->expiry)) . '</p>';
-        echo '</div>';
+        echo '<div class="ai-coupon-section"><h3>Exclusive Deals & Coupons</h3>';
+        $coupons = $this->get_coupons($atts['num']);
+        if (empty($coupons)) {
+            echo $this->generate_ai_coupon();
+        } else {
+            foreach ($coupons as $coupon) {
+                echo $this->render_coupon($coupon);
+            }
+        }
+        echo '<p><a href="#" id="add-coupon">Generate New Coupon</a></p></div>';
         return ob_get_clean();
+    }
+
+    private function get_coupons($limit = 5) {
+        global $wpdb;
+        return $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}ai_coupons ORDER BY clicks DESC LIMIT %d", $limit));
+    }
+
+    private function render_coupon($coupon) {
+        $track_url = add_query_arg('coupon_id', $coupon->id, $coupon->affiliate_url);
+        return '<div class="coupon-item">
+            <h4>' . esc_html($coupon->title) . '</h4>
+            <p><strong>Code:</strong> ' . esc_html($coupon->code) . ' | <strong>Save:</strong> ' . esc_html($coupon->discount) . '</p>
+            <p><strong>Brand:</strong> ' . esc_html($coupon->brand) . '</p>
+            <a href="' . esc_url($track_url) . '" class="coupon-btn" target="_blank">Shop Now (' . $coupon->clicks . ' used)</a>
+        </div>';
+    }
+
+    private function generate_ai_coupon() {
+        // Simulate AI generation (premium feature would call real API)
+        $fake_coupons = array(
+            array('title' => '20% Off Hosting', 'code' => 'HOST20', 'affiliate_url' => 'https://example-affiliate.com/hosting', 'discount' => '20%', 'brand' => 'Bluehost'),
+            array('title' => 'Free Trial VPN', 'code' => 'VPNFREE', 'affiliate_url' => 'https://example-affiliate.com/vpn', 'discount' => 'Free Month', 'brand' => 'ExpressVPN')
+        );
+        $html = '';
+        foreach ($fake_coupons as $c) {
+            $html .= $this->render_coupon((object)$c);
+        }
+        return $html;
+    }
+
+    public function save_coupon() {
+        if (!current_user_can('manage_options')) wp_die();
+        global $wpdb;
+        $data = array(
+            'title' => sanitize_text_field($_POST['title']),
+            'code' => sanitize_text_field($_POST['code']),
+            'affiliate_url' => esc_url_raw($_POST['url']),
+            'discount' => sanitize_text_field($_POST['discount']),
+            'brand' => sanitize_text_field($_POST['brand'])
+        );
+        $wpdb->insert($wpdb->prefix . 'ai_coupons', $data);
+        wp_send_json_success('Coupon saved!');
     }
 }
 
 new AICouponAffiliatePro();
 
-// Pro upsell notice
+// Track clicks
+function track_coupon_click() {
+    if (isset($_GET['coupon_id'])) {
+        global $wpdb;
+        $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}ai_coupons SET clicks = clicks + 1 WHERE id = %d", intval($_GET['coupon_id'])));
+    }
+}
+add_action('init', 'track_coupon_click');
+
+// Premium notice
 function ai_coupon_pro_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>Upgrade to <strong>AI Coupon Affiliate Pro</strong> for AI-generated coupons, analytics, and premium integrations! <a href="https://example.com/pro" target="_blank">Get Pro ($49/year)</a></p></div>';
+    if (!get_option('ai_coupon_pro_activated')) {
+        echo '<div class="notice notice-info"><p>Upgrade to <strong>AI Coupon Affiliate Pro Premium</strong> for AI generation, analytics, and unlimited coupons! <a href="https://example.com/premium">Get it now</a></p></div>';
+    }
 }
 add_action('admin_notices', 'ai_coupon_pro_notice');
-
-// Dummy JS/CSS - in real plugin, enqueue actual files
-/*
-Add these as separate files:
-
-ai-coupon.css:
-.ai-coupon-deal { border: 2px solid #007cba; padding: 20px; margin: 20px 0; border-radius: 10px; background: #f9f9f9; }
-.coupon-code { font-size: 1.5em; color: #e74c3c; }
-.copy-code { background: #27ae60; color: white; border: none; padding: 5px 10px; cursor: pointer; }
-.coupon-btn { background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
-
-ai-coupon.js:
-jQuery('.copy-code').click(function() {
-    navigator.clipboard.writeText(jQuery(this).prev('.coupon-code').text());
-    jQuery(this).text('Copied!');
-});
-*/
+?>
