@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoLinker
  * Plugin URI: https://example.com/smart-affiliate-autolinker
- * Description: Automatically detects keywords in posts and converts them to affiliate links for easy monetization.
+ * Description: Automatically detects keywords in your posts and converts them to profitable affiliate links from Amazon.
  * Version: 1.0.0
  * Author: Your Name
  * Author URI: https://example.com
@@ -15,44 +15,59 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class SmartAffiliateAutoLinker {
-    private $keywords = [];
-    private $affiliate_links = [];
+    private $options;
 
     public function __construct() {
-        add_action('init', [$this, 'init']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
-        add_filter('the_content', [$this, 'auto_link_keywords']);
-        add_action('admin_menu', [$this, 'admin_menu']);
-        add_action('admin_init', [$this, 'admin_init']);
-        register_activation_hook(__FILE__, [$this, 'activate']);
-        register_deactivation_hook(__FILE__, [$this, 'deactivate']);
+        add_action('init', array($this, 'init'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        load_plugin_textdomain('smart-affiliate-autolinker', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-        $this->keywords = get_option('sal_keywords', []);
-        $this->affiliate_links = get_option('sal_links', []);
+        $this->options = get_option('smart_affiliate_settings', array(
+            'amazon_tag' => '',
+            'keywords' => array(
+                array('keyword' => 'WordPress', 'link' => 'https://amazon.com/wordpress-book'),
+            ),
+            'enabled' => true,
+            'pro' => false
+        ));
+
+        if ($this->options['enabled']) {
+            add_filter('the_content', array($this, 'auto_link_keywords'), 20);
+            add_action('admin_menu', array($this, 'admin_menu'));
+            add_action('admin_init', array($this, 'admin_init'));
+            add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
+        }
     }
 
-    public function enqueue_scripts() {
-        wp_enqueue_script('sal-frontend', plugin_dir_url(__FILE__) . 'sal-frontend.js', ['jquery'], '1.0.0', true);
+    public function activate() {
+        add_option('smart_affiliate_settings');
+    }
+
+    public function deactivate() {
+        // Do nothing
     }
 
     public function auto_link_keywords($content) {
-        if (is_admin() || empty($this->keywords)) {
+        if (is_admin() || !$this->options['enabled']) {
             return $content;
         }
+
         global $post;
-        if (in_array($post->post_type, ['post', 'page'])) {
-            foreach ($this->keywords as $keyword => $link_id) {
-                if (isset($this->affiliate_links[$link_id])) {
-                    $link = $this->affiliate_links[$link_id];
-                    $regex = '/\b' . preg_quote($keyword, '/') . '\b/i';
-                    $content = preg_replace($regex, '<a href="' . esc_url($link['url']) . '" target="_blank" rel="nofollow sponsored">$0</a>', $content, 1);
+        if (in_array($post->post_type, array('page', 'post'))) {
+            foreach ($this->options['keywords'] as $kw) {
+                if (isset($kw['keyword']) && !empty($kw['keyword'])) {
+                    $pattern = '/\b' . preg_quote($kw['keyword'], '/') . '\b/i';
+                    $link = isset($kw['link']) ? $kw['link'] : '#';
+                    if (strpos($link, 'amazon.com') !== false && !empty($this->options['amazon_tag'])) {
+                        $link = add_query_arg('tag', $this->options['amazon_tag'], $link);
+                    }
+                    $content = preg_replace($pattern, '<a href="$link" target="_blank" rel="nofollow sponsored">$0</a>', $content, 1);
                 }
             }
         }
@@ -65,65 +80,97 @@ class SmartAffiliateAutoLinker {
             'Affiliate AutoLinker',
             'manage_options',
             'smart-affiliate-autolinker',
-            [$this, 'admin_page']
+            array($this, 'admin_page')
         );
     }
 
     public function admin_init() {
-        register_setting('sal_options', 'sal_keywords');
-        register_setting('sal_options', 'sal_links');
+        register_setting('smart_affiliate_group', 'smart_affiliate_settings');
+    }
+
+    public function admin_scripts($hook) {
+        if ($hook !== 'settings_page_smart-affiliate-autolinker') {
+            return;
+        }
+        wp_enqueue_script('jquery');
     }
 
     public function admin_page() {
         if (isset($_POST['submit'])) {
-            update_option('sal_keywords', sanitize_text_field($_POST['sal_keywords']));
-            update_option('sal_links', $_POST['sal_links']);
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+            update_option('smart_affiliate_settings', $_POST['settings']);
+            $this->options = $_POST['settings'];
         }
-        $keywords = get_option('sal_keywords', 'WordPress,plugin,theme');
-        $links = get_option('sal_links', []);
         ?>
         <div class="wrap">
             <h1>Smart Affiliate AutoLinker Settings</h1>
             <form method="post" action="">
+                <?php settings_fields('smart_affiliate_group'); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Keywords (comma-separated)</th>
-                        <td><input type="text" name="sal_keywords" value="<?php echo esc_attr($keywords); ?>" class="regular-text" placeholder="WordPress, plugin, theme" /></td>
+                        <th>Enable Auto-Linking</th>
+                        <td>
+                            <input type="checkbox" name="settings[enabled]" value="1" <?php checked($this->options['enabled']); ?>>
+                        </td>
                     </tr>
                     <tr>
-                        <th>Affiliate Links (JSON)</th>
+                        <th>Amazon Affiliate Tag</th>
                         <td>
-                            <textarea name="sal_links" class="large-text" rows="10" placeholder='{"0":{"url":"https://amazon.com/affiliate-link1","text":"Amazon Link"},"1":{"url":"https://amazon.com/affiliate-link2","text":"Another Link"}}'><?php echo esc_textarea(json_encode($links)); ?></textarea>
-                            <p class="description">Enter JSON object with link IDs matching keywords index.</p>
+                            <input type="text" name="settings[amazon_tag]" value="<?php echo esc_attr($this->options['amazon_tag']); ?>" class="regular-text">
+                            <p class="description">Your Amazon Associates tag (e.g., yourtag-20)</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Keywords</th>
+                        <td id="keywords-container">
+                            <?php foreach ($this->options['keywords'] as $i => $kw): ?>
+                            <div class="keyword-row">
+                                <input type="text" name="settings[keywords][<?php echo $i; ?>][keyword]" value="<?php echo esc_attr($kw['keyword']); ?>" placeholder="Keyword">
+                                <input type="url" name="settings[keywords][<?php echo $i; ?>][link]" value="<?php echo esc_attr($kw['link']); ?>" placeholder="Amazon product URL">
+                                <button type="button" class="button remove-kw">Remove</button>
+                            </div>
+                            <?php endforeach; ?>
                         </td>
                     </tr>
                 </table>
-                <?php submit_button(); ?>
+                <p class="submit">
+                    <input type="submit" name="submit" class="button-primary" value="Save Changes">
+                </p>
+                <script>
+                jQuery(document).ready(function($) {
+                    $('#keywords-container').on('click', '.remove-kw', function() {
+                        $(this).closest('.keyword-row').remove();
+                    });
+                    $('#keywords-container').append('<button type="button" class="button" id="add-kw">Add Keyword</button>');
+                    $('#add-kw').on('click', function() {
+                        var i = $('.keyword-row').length;
+                        $('#keywords-container').append(
+                            '<div class="keyword-row">' +
+                            '<input type="text" name="settings[keywords][" + i + "][keyword]" placeholder="Keyword">' +
+                            '<input type="url" name="settings[keywords][" + i + "][link]" placeholder="Amazon product URL">' +
+                            '<button type="button" class="button remove-kw">Remove</button>' +
+                            '</div>'
+                        );
+                    });
+                });
+                </script>
             </form>
-            <h2>Pro Features</h2>
-            <p>Upgrade to Pro for unlimited keywords, analytics, and more networks. <a href="https://example.com/pro" target="_blank">Get Pro</a></p>
+            <div class="notice notice-info">
+                <p><strong>Pro Version ($49/year):</strong> Unlimited keywords, multiple networks, click analytics, A/B testing. <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p>
+            </div>
         </div>
         <?php
-    }
-
-    public function activate() {
-        if (!get_option('sal_keywords')) {
-            update_option('sal_keywords', 'WordPress,plugin,theme');
-        }
-    }
-
-    public function deactivate() {
-        // Cleanup optional
     }
 }
 
 new SmartAffiliateAutoLinker();
 
-// Pro upsell notice
-function sal_admin_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>Unlock unlimited features with <strong>Smart Affiliate AutoLinker Pro</strong>! <a href="https://example.com/pro">Upgrade now</a></p></div>';
+// Freemium upsell notice
+function smart_affiliate_admin_notice() {
+    $screen = get_current_screen();
+    if ($screen->id === 'settings_page_smart-affiliate-autolinker') {
+        echo '<div class="notice notice-success is-dismissible"><p>Unlock Pro features: Unlimited keywords & analytics! <a href="https://example.com/pro">Get Pro</a></p></div>';
+    }
 }
-add_action('admin_notices', 'sal_admin_notice');
+add_action('admin_notices', 'smart_affiliate_admin_notice');
+
 ?>
