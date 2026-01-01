@@ -1,52 +1,46 @@
 # Affiliate Coupon Vault
 
+**Boost your WordPress blog revenue with exclusive, trackable affiliate coupons!**
+
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Pro: truly unlimited).
-- **Shortcode Display**: Use `[acv_coupons]` or `[acv_coupons limit="3"]` to showcase randomized, eye-catching coupons.
-- **Affiliate-Ready**: Each coupon includes custom affiliate links for direct commissions.
-- **Responsive Design**: Mobile-friendly cards with hover effects and CTA buttons.
-- **Pro Upsell Integration**: Built-in prompts drive premium upgrades.
-- **Personalized Deals**: Perfect for bloggers creating exclusive discounts from brands.
-
-**Free vs Pro**:
-| Feature | Free | Pro |
-|---------|------|-----|
-| Coupons | 10 max | Unlimited |
-| Analytics | No | Yes |
-| Auto-Expiration | No | Yes |
-| API Integrations | No | Yes |
-| White-Label | No | Yes |
+- **Easy Shortcode Integration**: Use `[acv_coupon id="0"]` to display coupons anywhere.
+- **Click Tracking**: Logs affiliate clicks (Pro: full analytics dashboard).
+- **Personalized Promo Codes**: Add exclusive codes from brands for higher conversions.
+- **Freemium Model**: Free for up to 5 coupons; Pro unlocks unlimited + advanced features.
+- **SEO-Friendly**: Customizable designs for blog posts and deal pages.
+- **One-Click Setup**: Self-contained plugin, no dependencies.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your first coupons (format: `Name|Discount|Brand|Affiliate Link`).
-4. Add `[acv_coupons]` shortcode to any post, page, or widget.
+1. Download and upload the `.php` file to `/wp-content/plugins/affiliate-coupon-vault/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupon Vault** to add your coupons in JSON format.
 
 ## Setup
 
-1. In the admin panel, enter coupons one per line:
+1. In **Settings > Coupon Vault**, enter coupons as JSON:
    
-   HOTDEAL|30% OFF|Amazon|https://your-amazon-affiliate-link.com
-   FREETRIAL|14 Days Free|SoftwareX|https://affiliate-link.com
+   [
+     {"name":"10% Off Hosting","code":"AFF10","url":"https://affiliate-link.com/?coupon=AFF10","affiliate":"hostinger"},
+     {"name":"50% Off VPN","code":"BLOG50","url":"https://vpn-affiliate.com/?ref=yourid","affiliate":"vpn"}
+   ]
    
-2. Save and insert shortcode.
-3. Customize via CSS if needed (classes: `.acv-vault`, `.acv-coupon`, `.acv-button`).
+2. Save settings.
+3. Use shortcode `[acv_coupon id="0"]` for first coupon, `id="1"` for second, etc.
 
 ## Usage
 
-- **On Posts/Pages**: `[acv_coupons limit="5"]` displays 5 random coupons.
-- **Sidebar Widget**: Use Shortcode widget.
-- **Boost Revenue**: Pair with affiliate programs like Amazon Associates, ShareASale.
-- **Pro Tips**: Request custom codes from brands, track clicks (Pro feature), optimize for SEO with coupon pages.
+- Embed in posts/pages: `[acv_coupon id="0"]`.
+- Track clicks in error logs (Pro: dashboard).
+- **Pro Features**: Auto-coupon generation, A/B testing, email capture, WooCommerce integration ($49/year).
 
-## Support
+## FAQ
 
-- Free support via WordPress.org forums.
-- Pro support: [example.com/support](https://example.com/support)
+**How do I get more coupons?** Contact brands for exclusive codes – boosts conversions![1][2]
 
-## Upgrade to Pro
+**Monetization Tips**: Pair with affiliate programs like Amazon Associates or hosting deals.[3]
 
-Supercharge your affiliate earnings! [Get Pro Now](https://example.com/pro) - Starting at $29/year.
+**Support**: Free version supported via docs; Pro includes priority email.
+
+**Upgrade to Pro**: Visit [pro link] for unlimited earnings potential.
