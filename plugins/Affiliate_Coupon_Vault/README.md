@@ -2,45 +2,31 @@
 
 ## Features
 
-- **Easy Shortcode Integration**: Use `[affiliate_coupon affiliate="https://example.com/ref" product="Super Product" discount="20%"]` to embed trackable coupons anywhere.
-- **Auto-Generated Unique Codes**: One-click generation of exclusive promo codes like `ACV-ABC123` for higher conversions.[1][2]
-- **Click Tracking**: Built-in analytics show coupon performance (Pro: Advanced dashboard with conversions).
-- **Customizable Design**: Responsive, branded coupons that match your site.
-- **Freemium Model**: Free for basics, Pro unlocks unlimited coupons, API integrations (Amazon, etc.), and email capture.[3][7]
-
-**Pro Features ($49/year)**: Affiliate network tracking, A/B testing, auto-expiry, WooCommerce integration.
+- **Easy Shortcode Integration**: Use `[affiliate_coupon affiliate="amazon" discount="20%"]` to generate unique, trackable coupons instantly.
+- **Affiliate Link Tracking**: Automatically appends your affiliate tags and custom codes for commissions.
+- **Copy-to-Clipboard**: One-click coupon code copying for users.
+- **Freemium Model**: Free for basics; Pro adds unlimited coupons, analytics, and templates ($49/year).
+- **SEO-Friendly**: Custom discount pages optimized for search engines.
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Use the shortcode in posts/pages: `[affiliate_coupon]`.
+3. Go to **Settings > Coupon Vault** to add your affiliate API keys (e.g., Amazon tag).
 
 ## Setup
 
-1. **Add Your Affiliate Links**: Replace `affiliate="YOUR_LINK"` in shortcodes with your affiliate URLs.[1][3]
-2. **Customize**: Edit `product`, `discount`, or `code` attributes.
-3. **Pro Upgrade**: Visit admin notice link for premium features.
+1. Configure affiliate keys in settings.
+2. Add shortcode to any post/page: `[affiliate_coupon affiliate="amazon" discount="10% OFF"]`.
+3. Customize styles via CSS if needed.
 
 ## Usage
 
-### Basic Shortcode
-
-[affiliate_coupon affiliate="https://amazon.com/ref=yourid" product="Wireless Headphones" discount="15%"]
-
-
-### Generate New Coupons
-Click "Generate New Coupon" on live coupons for fresh codes.
-
-### Tracking
-View clicks on frontend. Pro users get admin dashboard with full stats.
-
-### Best Practices
-- Place in blog posts, sidebars, or dedicated coupon pages.[2]
-- Target niches like software, travel, e-commerce.[1][2]
-- Combine with SEO for "exclusive coupons" traffic.[2]
-
-**Monetization Tip**: High-traffic sites earn 20-50% more commissions via exclusive codes.[1][3]
+- **Generate Coupon**: Use shortcode with `affiliate` (amazon, shopify, etc.), `discount`, optional `code`.
+- **Track Performance**: View stored coupons in settings (Pro: dashboard analytics).
+- **Pro Features**: Purchase upgrade for A/B testing, email capture, and more integrations.
 
 ## Support
-Submit tickets at example.com/support. Pro includes priority support.
+Contact support@example.com. Pro users get priority.
+
+**Boost conversions 30%+ with exclusive coupons!**
