@@ -1,42 +1,54 @@
 # Exclusive Coupons Pro
 
+## Description
+
+**Exclusive Coupons Pro** is a powerful WordPress plugin that lets you create and display personalized, exclusive coupon codes for your audience. Perfect for bloggers and affiliate marketers to boost conversions with unique discounts from brands. Display via shortcodes anywhere on your site.
+
 ## Features
 
-- **Generate Unique Promo Codes**: Automatically creates personalized, trackable discount codes for each visitor to boost affiliate conversions[1][2].
-- **Easy Shortcode Integration**: Use `[exclusive_coupon]` anywhere to display dynamic coupon boxes[1].
-- **Admin Dashboard**: Manage affiliate links, brands, and descriptions with a simple interface.
-- **"Get New Code" Button**: Visitors can generate fresh codes on-demand for higher engagement.
-- **Freemium Model**: Free for basics; pro unlocks unlimited coupons, analytics, custom designs ($49/year).
-- **SEO-Friendly**: Positions your site as a discount hub, improving traffic and partnerships[2].
+- **Easy Coupon Management**: Add unlimited coupons in admin settings (Brand: CODE format).
+- **Shortcode Support**: `[exclusive_coupon]` for random, `[exclusive_coupon brand="Amazon"]` for specific.
+- **Beautiful Responsive Design**: Eye-catching coupon boxes with CTA buttons.
+- **Affiliate-Ready**: Customizable links for tracking commissions.
+- **Freemium Model**: Free core features; premium unlocks analytics, bulk import, expiration dates, and more.
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupons Pro** to configure.
+3. Go to **Settings > Coupons Pro** to configure your coupons.
+4. Use shortcodes in posts, pages, or widgets.
 
 ## Setup
 
-1. In settings, add affiliates (one per line): `Brand|Promo Code|Affiliate Link|Description`.
-   Example:
-   `
-   Amazon|SAVE20|https://amazon.com/aff?id=yourid|20% off electronics!
-   Shopify|WP10|https://shopify.com/?aff=123|10% off first month
-   `
-2. Enter license key for pro features (or upgrade).
-3. Save settings.
+1. In **Settings > Coupons Pro**, enter coupons like:
+   
+   Amazon: SAVE20
+   Shopify: DISCOUNT15
+   Nike: READER10
+   
+2. Save changes.
+3. Edit affiliate URLs in code (premium: dynamic via settings).
 
 ## Usage
 
-- Add `[exclusive_coupon]` to any post/page for instant coupon display.
-- Customize with `[exclusive_coupon id="1"]` (pro feature).
-- Embed in sidebars, dedicated coupon pages, or popups.
-- Track conversions via unique codes in affiliate dashboards.
+- **Random Coupon**: `[exclusive_coupon]`
+- **Specific Brand**: `[exclusive_coupon brand="Amazon"]`
 
-## Monetization Potential
+Embed in sidebars, posts, or dedicated coupon pages for maximum engagement.
 
-Drive affiliate sales with exclusive deals; average 20-30% conversion lift[1][2]. Pro version generates recurring revenue.
+## Premium Features (Coming Soon)
+
+- Usage analytics & click tracking.
+- Coupon expiration & usage limits.
+- API for brand partnerships.
+- White-label & custom designs.
 
 ## Support
 
-Contact support@example.com. Check [documentation](https://example.com/docs).
+Report issues on GitHub or contact support@yourdomain.com.
+
+## Changelog
+
+**1.0.0**
+- Initial release with core shortcode and admin.
