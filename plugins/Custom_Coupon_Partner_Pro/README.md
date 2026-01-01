@@ -1,54 +1,37 @@
 # Custom Coupon Partner Pro
 
-## Description
-
-**Custom Coupon Partner Pro** is a powerful WordPress plugin for bloggers and site owners to create, manage, and display personalized affiliate coupons. Generate unique promo codes from partners, track clicks, and boost conversions effortlessly. Perfect for monetizing through affiliate marketing.[1][2]
-
 ## Features
-
-- **Easy Coupon Management**: Add coupons via simple format (Code|Brand|Link|Description) in admin dashboard.
-- **Shortcode Display**: Use `[cpp_coupons]` to embed beautiful coupon grids on any page/post.
-- **Click Tracking**: Pro version tracks all affiliate link clicks with analytics dashboard.
-- **Freemium Model**: Free for basics; Pro ($49/year) unlocks unlimited coupons, exports, and branding.
-- **Responsive Design**: Mobile-friendly coupon cards with one-click shop links.
-- **SEO Optimized**: Clean markup for better search visibility on discount pages.[2]
+- **Create exclusive custom coupons** for affiliate partnerships with brand, code, discount, link, and expiry.[1][2]
+- **Shortcode display**: Eye-catching, responsive coupon boxes `[cpp_coupon]` for posts/pages.[1]
+- **Admin dashboard**: Simple form to manage one coupon (Pro: unlimited).[2][7]
+- **Auto-expiry check**: Coupons hide after expiry date.[1]
+- **Conversion booster**: Personalized discounts improve rates and reader value.[1][2]
+- **Freemium**: Free basic; Pro adds analytics, bulk import, email capture ($49/year).[7]
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Coupons** in admin menu to configure.
-4. Add `[cpp_coupons]` shortcode to any post/page.
+1. Upload the plugin ZIP to WordPress admin > Plugins > Add New > Upload.
+2. Activate the plugin.
+3. Go to **Coupons** menu to create your first coupon.[1]
 
 ## Setup
-
-1. Navigate to **Coupons** dashboard.
-2. Enter coupons one per line: `SAVE20|Example Store|https://affiliate.link/ref=yourid|20% off sitewide`.
-3. Save changes.
-4. Embed shortcode and customize with CSS if needed.
-
-**Pro Activation**: Purchase at example.com/pro, enter license key in settings.
+1. Navigate to **Coupons** in admin menu.
+2. Fill in: **Coupon Code** (e.g., SAVE20), **Discount** (e.g., 20), **Affiliate Link**, **Brand** (e.g., ExampleBrand), **Expiry Date**.
+3. Click **Save Coupon**.[2]
+4. Note: Free version limits to 1 active coupon.
 
 ## Usage
+- Insert shortcode `[cpp_coupon]` in any post, page, or widget.
+- Displays styled coupon box with code, discount, shop link, and expiry.
+- **Pro Tips**:
+  - Place on dedicated deals page for SEO.[1][2]
+  - Partner with brands for custom codes to build unique value.[2]
+  - Track clicks via affiliate dashboard; upgrade for built-in analytics.[3][7]
 
-- **Frontend**: `[cpp_coupons]` renders a grid of clickable coupons.
-- **Customization**: Edit `assets/style.css` for styling.
-- **Tracking**: Pro users see click stats in dashboard.
-- **Partners**: Request custom codes from brands for exclusive deals.[2]
-
-## Pro Features
-
-| Feature | Free | Pro |
-|---------|-----|-----|
-| Coupons | 10 max | Unlimited |
-| Click Tracking | No | Yes |
-| Analytics Dashboard | No | Yes |
-| Custom Branding | No | Yes |
-| Priority Support | No | Yes |
-
-Upgrade to Pro for scalable affiliate monetization![1][3]
+## Screenshots
+*(Imagine: Sleek coupon display with dashed border, large code, prominent CTA button.)*
 
 ## Changelog
+**1.0.0** - Initial release.
 
-**1.0.0**
-- Initial release with core features.
+## Support
+Contact support@example.com. Upgrade to Pro for priority help.
