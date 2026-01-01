@@ -2,40 +2,37 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (basic: 10 max, pro: unlimited).
-- **Shortcode Display**: Use `[exclusive_coupons]` or `[exclusive_coupons num="3"]` to showcase coupons anywhere.
-- **Conversion Boost**: Personalized codes increase affiliate clicks and sales.[1][2]
-- **Responsive Design**: Mobile-friendly coupon blocks.
-- **Pro Upgrade**: Analytics dashboard, auto-expiry, email capture, brand API sync ($49/year).
+- **Personalized Coupon Generation**: Automatically creates unique, trackable coupon codes for each visitor based on predefined brands.
+- **Shortcode Integration**: Use `[exclusive_coupon brand="Brand1"]` to display coupons anywhere on your site.
+- **Admin Dashboard**: Easy settings page to manage coupon lists (Brand: CODE format).
+- **Affiliate Tracking**: Appends unique IDs to codes for conversion tracking (Pro: advanced analytics).
+- **Freemium Model**: Free for up to 5 coupons; **Pro ($49/year)** unlocks unlimited coupons, API integrations, exportable stats, and custom branding.
+- **Boost Conversions**: Inspired by top monetization strategies like custom discounts and affiliate links.[1][2]
 
 ## Installation
 
 1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to add your coupons (format: `Brand: CODE`).
-4. Add `[exclusive_coupons]` shortcode to any post/page.
+3. Go to **Settings > Coupons Pro** to add your coupons (e.g., `Amazon: SAVE20\nShopify: DISCOUNT10`).
+4. Use the shortcode `[exclusive_coupon brand="Amazon"]` in posts/pages.
 
 ## Setup
 
-1. In admin: **Settings > Coupons Pro**.
-2. Enter coupons one per line, e.g.:
-   
-   Amazon: WPDEAL20
-   Shopify: BLOG15
-   
-3. Save. Coupons ready to display!
+1. In the admin panel, enter coupons in `Brand: CODE` format, one per line.
+2. Free version limits to 5 coupons; upgrade to Pro for more.
+3. Optional: Add `[exclusive_coupon]` widgets or embed in templates.
 
 ## Usage
 
-- **Frontend**: Paste shortcode in Gutenberg, Classic Editor, or widgets.
-- **Customization**: Style via CSS targeting `.ecp-coupons`.
-- **Affiliate Integration**: Link codes to your affiliate URLs manually or via pro auto-links.
-- **Pro Tips**: Place on sidebar, dedicated deals page, or post footers for max conversions.[1][2]
+- **On Posts/Blogs**: Insert shortcode to show exclusive deals, increasing affiliate clicks and reader loyalty.[1][2]
+- **Tracking**: Codes include user-specific suffixes (e.g., `SAVE20-abc12345`).
+- **Pro Features**: Real-time analytics, email export, partner API hooks.
+- **Monetization Tip**: Pair with affiliate plugins for commissions on redemptions.[3]
 
-## Freemium
+## Upgrade to Pro
 
-Free for basics. Unlock pro for analytics, unlimited storage, and integrations. Visit [Upgrade](#) in plugin settings.
+Unlock full potential: [Get Pro Now](https://example.com/pro) ($49/year). Support development and get priority updates.
 
 ## Support
 
-Report issues via WordPress.org forums.
+Report issues via WordPress.org forums or email support@example.com.
