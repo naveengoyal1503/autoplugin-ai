@@ -2,45 +2,46 @@
 
 ## Features
 
-- **Easy Coupon Creation**: Add unlimited coupons via admin panel with affiliate tracking links.
-- **Shortcode Integration**: Use `[sac_coupon id="0"]` to display coupons anywhere.
-- **Click Tracking**: Logs clicks with IP and user agent (Pro: Advanced analytics dashboard).
-- **Conversion Booster**: "Reveal & Use" buttons drive clicks to affiliate offers.
-- **Freemium Model**: Free for basics, Pro unlocks unlimited coupons, templates, and stats.
-- **SEO-Friendly**: Customizable, mobile-responsive designs.
+- **Easy Coupon Creation**: Add unlimited exclusive coupons via simple JSON in admin dashboard (free: up to 5; pro: unlimited).
+- **Auto-Expiring Coupons**: Coupons expire automatically based on date.
+- **Unique Tracking Links**: Append unique IDs to affiliate links for performance tracking.
+- **Shortcode Integration**: Use `[sac_coupon]` or `[sac_coupon id="0"]` anywhere.
+- **Responsive Design**: Mobile-friendly coupon displays.
+- **Pro Features**: Analytics dashboard, email capture, A/B testing, WooCommerce integration, custom branding ($49/year).
 
 ## Installation
 
-1. Upload the `smart-affiliate-coupons-pro` folder to `/wp-content/plugins/`.
+1. Upload the `smart-affiliate-coupons` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > SAC Coupons** to add your coupons.
+3. Go to **Affiliate Coupons** in the admin menu to add your coupons.
 
 ## Setup
 
-1. In **Settings > SAC Coupons**, enter coupons in format:
+1. In the plugin dashboard, edit the JSON textarea with your coupons:
    
-   Coupon Code: SAVE20
-   Affiliate Link: https://affiliate.com/?ref=yourid
-   Description: 20% off all items
+   [
+     {
+       "code": "SAVE20",
+       "afflink": "https://your-affiliate-link.com/?ref=blog",
+       "desc": "20% Off Sitewide",
+       "expires": "2026-12-31"
+     }
+   ]
    
-   Coupon Code: WELCOME10
-   Affiliate Link: https://affiliate.com/product?ref=yourid
-   Description: Welcome discount
-   
-2. Save changes.
-3. Add shortcode `[sac_coupon id="0"]` to any post/page (id matches coupon order).
+2. Click **Save Coupons**.
+3. Add shortcode to any post/page: `[sac_coupon]`.
 
 ## Usage
 
-- Embed coupons in posts, sidebars, or widgets.
-- Track clicks in server logs (Pro: View dashboard reports).
-- Upgrade to Pro for A/B testing, custom designs, and exportable analytics.
-- **Monetize**: Earn from affiliate commissions boosted by exclusive coupons.[1][2]
+- **Display Random Coupon**: `[sac_coupon]`
+- **Specific Coupon**: `[sac_coupon id="0"]` (index from array).
+- **Track Performance**: Check error logs or upgrade to Pro for dashboard analytics.
+- **Monetize**: Partner with brands for custom codes, embed in niche posts for higher conversions.
 
-## Pro Version
+## Pro Upgrade
 
-- Unlimited coupons and analytics.
-- Premium templates and integrations.
-- Priority support.
+Unlock analytics, integrations, and support. Visit [pro link] (placeholder).
 
-Purchase at: https://example.com/pro ($49/year)
+## Support
+
+Report issues via WordPress.org forums.
