@@ -6,22 +6,21 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Tracker Pro
  * Plugin URI: https://example.com/smart-affiliate-tracker
- * Description: Automatically tracks and optimizes affiliate links on your WordPress site, generating performance reports and boosting commissions.
+ * Description: Automatically tracks, cloaks, and optimizes affiliate links with analytics and A/B testing.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: smart-affiliate-tracker
  */
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-class SmartAffiliateTracker {
+class SmartAffiliateTrackerPro {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null == self::$instance) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -32,114 +31,136 @@ class SmartAffiliateTracker {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_action('wp_ajax_sat_track_click', array($this, 'track_click'));
-        add_filter('the_content', array($this, 'cloak_affiliate_links'));
+        add_shortcode('sat_link', array($this, 'shortcode_link'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        load_plugin_textdomain('smart-affiliate-tracker', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-        if (get_option('sat_pro_active') !== 'yes') {
-            add_action('admin_notices', array($this, 'pro_nag'));
-        }
+        // Load text domain
+        load_plugin_textdomain('smart-affiliate-tracker', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sat-tracker', plugin_dir_url(__FILE__) . 'tracker.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sat-tracker', 'sat_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sat_nonce')));
-    }
-
-    public function cloak_affiliate_links($content) {
-        if (is_single() || is_page()) {
-            // Simple regex to detect affiliate links (customize patterns for Amazon, etc.)
-            $content = preg_replace_callback('/<a[^>]+href=["\']([^\"\']*aff=|[^\"\']*ref=|[^\"\']*tag=)[^>]*>(.*?)</a>/i', array($this, 'cloak_link'), $content);
-        }
-        return $content;
-    }
-
-    private function cloak_link($matches) {
-        $original_url = $matches[1];
-        $track_id = uniqid('sat_');
-        $cloaked_url = add_query_arg(array('sat_track' => $track_id), admin_url('admin-ajax.php?action=sat_track_click'));
-        return str_replace($original_url, $cloaked_url, $matches);
-    }
-
-    public function track_click() {
-        if (!wp_verify_nonce($_POST['nonce'], 'sat_nonce')) {
-            wp_die('Security check failed');
-        }
-        $original_url = sanitize_url($_POST['url']);
-        $track_id = sanitize_text_field($_POST['track_id']);
-        // Log click (use transients or custom table for persistence)
-        set_transient('sat_click_' . $track_id, array(
-            'url' => $original_url,
-            'ip' => $_SERVER['REMOTE_ADDR'],
-            'time' => current_time('mysql'),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
-        ), HOUR_IN_SECONDS);
-        wp_redirect($original_url, 302);
-        exit;
+        wp_enqueue_script('sat-frontend', plugin_dir_url(__FILE__) . 'assets/frontend.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sat-frontend', 'sat_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sat_nonce')));
     }
 
     public function admin_menu() {
-        add_menu_page(
-            'Affiliate Tracker',
-            'Affiliate Tracker',
-            'manage_options',
-            'smart-affiliate-tracker',
-            array($this, 'admin_page'),
-            'dashicons-chart-line',
-            30
-        );
+        add_options_page('Smart Affiliate Tracker', 'Affiliate Tracker', 'manage_options', 'sat-pro', array($this, 'admin_page'));
     }
 
     public function admin_page() {
-        if (isset($_POST['sat_save_settings'])) {
-            update_option('sat_settings', $_POST['sat_settings']);
+        if (isset($_POST['sat_save'])) {
+            update_option('sat_api_key', sanitize_text_field($_POST['api_key']));
+            update_option('sat_ab_testing', isset($_POST['ab_testing']) ? '1' : '0');
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        $settings = get_option('sat_settings', array());
-        include plugin_dir_path(__FILE__) . 'admin-page.php';
+        $api_key = get_option('sat_api_key', '');
+        $ab_testing = get_option('sat_ab_testing', '0');
+        ?>
+        <div class="wrap">
+            <h1>Smart Affiliate Tracker Pro</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Analytics API Key</th>
+                        <td><input type="text" name="api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th>A/B Testing</th>
+                        <td><input type="checkbox" name="ab_testing" <?php checked($ab_testing, '1'); ?> /></td>
+                    </tr>
+                </table>
+                <p><input type="submit" name="sat_save" class="button-primary" value="Save Settings" /></p>
+            </form>
+            <h2>Upgrade to Pro</h2>
+            <p>Unlock unlimited links, advanced reports, and priority support for $49/year. <a href="https://example.com/pro" target="_blank">Buy Now</a></p>
+        </div>
+        <?php
     }
 
-    public function pro_nag() {
-        echo '<div class="notice notice-info"><p><strong>Smart Affiliate Tracker Pro:</strong> Unlock A/B testing and advanced reports for <a href="https://example.com/pro">$9/month</a>! Manage upsells here.</p></div>';
+    public function shortcode_link($atts) {
+        $atts = shortcode_atts(array(
+            'url' => '',
+            'text' => 'Click Here',
+            'id' => 'default'
+        ), $atts);
+
+        $cloaked_url = add_query_arg(array('sat' => $atts['id'], 'ref' => 'shortcode'), $atts['url']);
+        return '<a href="' . esc_url($cloaked_url) . '" class="sat-link" data-id="' . esc_attr($atts['id']) . '">' . esc_html($atts['text']) . '</a>';
+    }
+
+    public function track_click() {
+        check_ajax_referer('sat_nonce', 'nonce');
+        $link_id = sanitize_text_field($_POST['link_id']);
+        $ref = sanitize_text_field($_POST['ref']);
+        $user_ip = $_SERVER['REMOTE_ADDR'];
+        $user_agent = $_SERVER['HTTP_USER_AGENT'];
+
+        // Simulate tracking (in pro: send to GA or custom API)
+        error_log("SAT Click: ID=$link_id, Ref=$ref, IP=$user_ip");
+
+        if (get_option('sat_ab_testing') === '1') {
+            // Simple A/B: 50/50 redirect to variant A or B
+            $variant = rand(0,1) ? 'a' : 'b';
+            $redirect = add_query_arg('variant', $variant, remove_query_arg(array('sat', 'ref'), wp_get_referer()));
+            wp_send_json(array('redirect' => $redirect));
+        }
+
+        wp_send_json(array('redirect' => remove_query_arg(array('sat', 'ref'), wp_get_referer())));
     }
 
     public function activate() {
-        flush_rewrite_rules();
+        // Create default options
+        add_option('sat_api_key', '');
+        add_option('sat_ab_testing', '0');
     }
 }
 
-SmartAffiliateTracker::get_instance();
+// Auto cloak affiliate links (filter content)
+function sat_cloak_links($content) {
+    if (is_admin()) return $content;
 
-// Freemium upsell logic
-function sat_pro_upsell() {
-    if (!get_option('sat_pro_active')) {
-        // Simulate pro check
-        if (isset($_GET['activate_pro'])) {
-            update_option('sat_pro_active', 'yes');
-        }
+    // Regex to find affiliate links (customize patterns)
+    preg_match_all('/<a[^>]+href=["\']([^"\']*aff=|[^"\']*ref=|[^"\']*tag=)/i', $content, $matches);
+
+    foreach ($matches[1] as $url) {
+        $cloaked = add_query_arg('sat', wp_generate_uuid4(), $url);
+        $content = str_replace($url, $cloaked, $content);
     }
-}
-add_action('init', 'sat_pro_upsell');
 
-// Embed simple admin page
-$admin_page = '<div class="wrap"><h1>Affiliate Tracker Dashboard</h1><form method="post"><table class="form-table">';
-$admin_page .= '<tr><th>A/B Testing</th><td><label><input type="checkbox" name="sat_settings[ab_test]" ' . (isset($settings['ab_test']) ? 'checked' : '') . '> Enable (Pro Feature)</label></td></tr>'; // Pro tease
-$admin_page .= '<tr><th>Reports</th><td>Basic clicks logged. <a href="https://example.com/pro">Upgrade for full analytics</a>.</td></tr>'; // Upsell
-$admin_page .= '</table><p><input type="submit" name="sat_save_settings" class="button-primary" value="Save Settings"></p></form><h2>Recent Clicks</h2><ul>'; // Placeholder
-// Fetch transients for display (simplified)
-for ($i = 0; $i < 5; $i++) {
-    $key = 'sat_click_sat_' . rand(1000,9999);
-    if ($data = get_transient($key)) {
-        $admin_page .= '<li>' . esc_html($data['url']) . ' - ' . esc_html($data['time']) . '</li>';
-    }
+    return $content;
 }
-$admin_page .= '</ul></div>';
-file_put_contents(plugin_dir_path(__FILE__) . 'admin-page.php', $admin_page); // Self-generate admin page
+add_filter('the_content', 'sat_cloak_links');
 
-// JS for tracking (inline for single file)
+// Frontend JS (inline for single file)
 function sat_inline_js() {
-    if (is_admin()) return;
-    ?><script type="text/javascript">jQuery(document).ready(function($){ $('a[href*="sat_track"]').on('click', function(e){ var url = $(this).data('original-url'); $.post(sat_ajax.ajaxurl, {action:'sat_track_click', url:url, track_id:'<?php echo uniqid('sat_'); ?>', nonce:sat_ajax.nonce}, function(){}); }); });</script><?php
+    ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.sat-link').on('click', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            $.post(sat_ajax.ajax_url, {
+                action: 'sat_track_click',
+                nonce: sat_ajax.nonce,
+                link_id: $this.data('id'),
+                ref: 'link'
+            }, function(response) {
+                window.location = response.redirect;
+            });
+        });
+    });
+    </script>
+    <?php
 }
-add_action('wp_footer', 'sat_inline_js', 100);
+add_action('wp_footer', 'sat_inline_js');
+
+SmartAffiliateTrackerPro::get_instance();
+
+// Free limit: 10 links
+if (wp_count_posts('sat_link')->publish > 10) {
+    add_action('admin_notices', function() {
+        echo '<div class="notice notice-warning"><p>Upgrade to Pro for unlimited affiliate links!</p></div>';
+    });
+}
