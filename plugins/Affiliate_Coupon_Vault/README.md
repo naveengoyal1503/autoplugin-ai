@@ -2,13 +2,12 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited exclusive promo codes via simple JSON admin panel (Pro unlocks unlimited).
-- **Shortcode Integration**: Use `[affiliate_coupon id="coupon1"]` to display coupons anywhere.
-- **Affiliate Tracking**: Embeds nofollow links with affiliate branding for compliance.
-- **Conversion Boost**: Eye-catching designs encourage clicks and sales.
-- **Free Version**: Up to 3 coupons; Pro: Unlimited, analytics, custom CSS, auto-expiry.
-
-**Pro Features**: Advanced analytics, email capture, A/B testing, premium integrations (Amazon, etc.). $49/year.
+- **Easy Coupon Management**: Add, edit, and track exclusive affiliate coupons via intuitive admin dashboard.
+- **Click Tracking**: Monitors clicks, IPs, and user agents with conversion insights (Premium: Advanced analytics).
+- **Shortcode Integration**: Use `[affiliate_coupon id="1"]` to display coupons anywhere on your site.
+- **SEO-Friendly**: Generates unique, reader-first discount pages optimized for search engines.
+- **Freemium Model**: Free core features; premium unlocks unlimited coupons, auto-code generation, white-label, and email integrations.
+- **Monetization Boost**: Personalized deals increase conversions and affiliate commissions.[1][2]
 
 ## Installation
 
@@ -18,30 +17,25 @@
 
 ## Setup
 
-1. In admin, enter JSON like:
-   
-   {
-     "coupon1": {
-       "code": "SAVE20",
-       "desc": "20% off all items",
-       "link": "https://your-affiliate-link.com",
-       "affiliate": "Amazon"
-     }
-   }
-   
-2. Save. Free version limits to 3 coupons.
-3. Add shortcode to posts/pages: `[affiliate_coupon id="coupon1"]`.
+1. **Add Coupons**: In the admin panel, enter code, affiliate URL, description, discount, and expiry.
+2. **Embed on Site**: Use shortcode `[affiliate_coupon id="X"]` (replace X with coupon ID) in posts/pages.
+3. **Track Performance**: View clicks and stats in the dashboard (Premium for detailed reports).
 
 ## Usage
 
-- **Display Coupons**: Use shortcode in Gutenberg blocks, widgets, or templates.
-- **Customize**: Edit CSS in Pro or via child theme.
-- **Monetize**: Earn commissions from clicks; track via affiliate dashboard.
-- **Upgrade**: Visit [Pro Page](https://example.com/pro) for full features.
+- **Frontend Display**: Coupons show code, discount, expiry, click count, and 'Redeem Now' button.
+- **Tracking**: Clicks are logged and redirect to affiliate links automatically.
+- **Customization**: Style via CSS classes like `.acv-coupon`, `.acv-redeem`.
+- **Shortcode Example**:
+  
+  [affiliate_coupon id="1"]
+  
+- **Pro Tip**: Create a dedicated 'Deals' page with multiple shortcodes for maximum SEO and conversions.[2][3]
 
-## FAQ
+## Premium Upgrade
 
-**How do I add more coupons?** Upgrade to Pro.
-**Is it GDPR compliant?** Yes, no tracking cookies in free version.
+- Unlimited coupons and auto-generation.
+- Conversion tracking with affiliate network integration.
+- Custom branding and priority support.
 
-Support: example@domain.com
+Visit [premium link] for $49/year.
