@@ -6,14 +6,14 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Generate and manage exclusive affiliate coupons to boost conversions and revenue.
+ * Description: Generate, manage, and display exclusive affiliate coupons to boost conversions and earnings.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class ExclusiveCouponsPro {
@@ -23,111 +23,135 @@ class ExclusiveCouponsPro {
         add_shortcode('exclusive_coupon', array($this, 'coupon_shortcode'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
         $this->create_table();
     }
 
-    public function create_table() {
+    private function create_table() {
         global $wpdb;
         $table_name = $wpdb->prefix . 'exclusive_coupons';
         $charset_collate = $wpdb->get_charset_collate();
+
         $sql = "CREATE TABLE $table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            code varchar(50) NOT NULL,
-            description text NOT NULL,
-            affiliate_link varchar(500) NOT NULL,
-            discount varchar(20) NOT NULL,
-            brand varchar(100) NOT NULL,
-            uses int DEFAULT 0,
-            max_uses int DEFAULT 0,
+            title varchar(255) NOT NULL,
+            code varchar(100) NOT NULL,
+            affiliate_link text NOT NULL,
+            discount varchar(50) DEFAULT '',
             expiry date DEFAULT NULL,
-            is_active tinyint(1) DEFAULT 1,
+            usage_limit int DEFAULT 0,
+            uses int DEFAULT 0,
+            active tinyint(1) DEFAULT 1,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id)
         ) $charset_collate;";
+
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
 
-    public function activate() {
-        $this->create_table();
-    }
-
     public function admin_menu() {
-        add_menu_page('Exclusive Coupons', 'Coupons', 'manage_options', 'exclusive-coupons', array($this, 'admin_page'));
-    }
-
-    public function admin_page() {
-        if (isset($_POST['add_coupon'])) {
-            $this->add_coupon($_POST);
-        }
-        if (isset($_GET['delete'])) {
-            $this->delete_coupon($_GET['delete']);
-        }
-        $coupons = $this->get_coupons();
-        include 'admin-view.php';
-    }
-
-    private function add_coupon($data) {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'exclusive_coupons';
-        $code = sanitize_text_field($data['code']);
-        $wpdb->insert(
-            $table_name,
-            array(
-                'code' => $code,
-                'description' => sanitize_textarea_field($data['description']),
-                'affiliate_link' => esc_url_raw($data['affiliate_link']),
-                'discount' => sanitize_text_field($data['discount']),
-                'brand' => sanitize_text_field($data['brand']),
-                'max_uses' => intval($data['max_uses']),
-                'expiry' => $data['expiry']
-            )
+        add_menu_page(
+            'Exclusive Coupons',
+            'Coupons',
+            'manage_options',
+            'exclusive-coupons',
+            array($this, 'admin_page'),
+            'dashicons-tickets-alt',
+            30
         );
     }
 
-    private function delete_coupon($id) {
+    public function admin_page() {
         global $wpdb;
         $table_name = $wpdb->prefix . 'exclusive_coupons';
-        $wpdb->delete($table_name, array('id' => intval($id)), array('%d'));
-    }
+        $action = isset($_GET['action']) ? $_GET['action'] : 'list';
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-    private function get_coupons() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'exclusive_coupons';
-        return $wpdb->get_results("SELECT * FROM $table_name WHERE is_active = 1 ORDER BY created_at DESC");
+        if ($_POST && isset($_POST['submit'])) {
+            $data = array(
+                'title' => sanitize_text_field($_POST['title']),
+                'code' => sanitize_text_field($_POST['code']),
+                'affiliate_link' => esc_url_raw($_POST['affiliate_link']),
+                'discount' => sanitize_text_field($_POST['discount']),
+                'expiry' => sanitize_text_field($_POST['expiry']),
+                'usage_limit' => intval($_POST['usage_limit']),
+                'active' => isset($_POST['active']) ? 1 : 0
+            );
+            if ($id) {
+                $wpdb->update($table_name, $data, array('id' => $id));
+            } else {
+                $wpdb->insert($table_name, $data);
+            }
+            echo '<div class="notice notice-success"><p>Coupon saved!</p></div>';
+        }
+
+        if ($action === 'edit' && $id) {
+            $coupon = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $id));
+        }
+
+        if ($action === 'delete' && $id) {
+            $wpdb->delete($table_name, array('id' => $id));
+            echo '<div class="notice notice-success"><p>Coupon deleted!</p></div>';
+            $action = 'list';
+        }
+
+        echo '<div class="wrap"><h1>' . ($action === 'edit' ? 'Edit' : 'Manage') . ' Coupons</h1>';
+
+        if ($action === 'list') {
+            $coupons = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
+            echo '<table class="wp-list-table widefat fixed striped"><thead><tr><th>ID</th><th>Title</th><th>Code</th><th>Discount</th><th>Active</th><th>Actions</th></tr></thead><tbody>';
+            foreach ($coupons as $coupon) {
+                echo '<tr><td>' . $coupon->id . '</td><td>' . esc_html($coupon->title) . '</td><td>' . esc_html($coupon->code) . '</td><td>' . esc_html($coupon->discount) . '</td><td>' . ($coupon->active ? 'Yes' : 'No') . '</td><td><a href="?page=exclusive-coupons&action=edit&id=' . $coupon->id . '">Edit</a> | <a href="?page=exclusive-coupons&action=delete&id=' . $coupon->id . '" onclick="return confirm(\'Delete?\')">Delete</a></td></tr>';
+            }
+            echo '</tbody></table>';
+        }
+
+        echo '<h2>' . ($action === 'edit' ? 'Edit' : 'Add New') . ' Coupon</h2><form method="post">';
+        echo '<p><label>Title: <input type="text" name="title" value="' . (isset($coupon->title) ? esc_attr($coupon->title) : '') . '" required></label></p>';
+        echo '<p><label>Code: <input type="text" name="code" value="' . (isset($coupon->code) ? esc_attr($coupon->code) : '') . '" required></label></p>';
+        echo '<p><label>Affiliate Link: <input type="url" name="affiliate_link" style="width:100%;" value="' . (isset($coupon->affiliate_link) ? esc_attr($coupon->affiliate_link) : '') . '" required></label></p>';
+        echo '<p><label>Discount: <input type="text" name="discount" value="' . (isset($coupon->discount) ? esc_attr($coupon->discount) : '') . '"></label></p>';
+        echo '<p><label>Expiry: <input type="date" name="expiry" value="' . (isset($coupon->expiry) ? esc_attr($coupon->expiry) : '') . '"></label></p>';
+        echo '<p><label>Usage Limit: <input type="number" name="usage_limit" value="' . (isset($coupon->usage_limit) ? esc_attr($coupon->usage_limit) : '0') . '"></label></p>';
+        echo '<p><label>Active: <input type="checkbox" name="active" ' . (isset($coupon->active) && $coupon->active ? 'checked' : '') . '></label></p>';
+        echo '<p><input type="submit" name="submit" class="button-primary" value="Save"></p>';
+        echo '</form>';
+
+        if ($action === 'list') {
+            echo '<p>Use shortcode <code>[exclusive_coupon id="X"]</code> to display coupons on posts/pages.</p>';
+        }
+        echo '</div>';
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('code' => ''), $atts);
-        if (empty($atts['code'])) return '';
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'exclusive_coupons';
-        $coupon = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE code = %s AND is_active = 1", $atts['code']));
-        if (!$coupon) return '<p>Coupon not found or expired.</p>';
-        if ($coupon->max_uses > 0 && $coupon->uses >= $coupon->max_uses) return '<p>Coupon uses exhausted.</p>';
-        if ($coupon->expiry && $coupon->expiry < date('Y-m-d')) return '<p>Coupon expired.</p>';
-        $this->increment_uses($coupon->id);
-        ob_start();
-        ?>
-        <div class="exclusive-coupon" style="border: 2px dashed #0073aa; padding: 20px; background: #f9f9f9; margin: 20px 0;">
-            <h3><?php echo esc_html($coupon->brand); ?> Exclusive Deal!</h3>
-            <p><strong>Code:</strong> <code><?php echo esc_html($coupon->code); ?></code></p>
-            <p><strong>Discount:</strong> <?php echo esc_html($coupon->discount); ?></p>
-            <p><?php echo esc_html($coupon->description); ?></p>
-            <a href="<?php echo esc_url($coupon->affiliate_link); ?>" target="_blank" class="button button-primary" style="padding: 10px 20px;">Redeem Now & Shop</a>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
+        $atts = shortcode_atts(array('id' => 0), $atts);
+        $id = intval($atts['id']);
+        if (!$id) return '';
 
-    private function increment_uses($id) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'exclusive_coupons';
-        $wpdb->query($wpdb->prepare("UPDATE $table_name SET uses = uses + 1 WHERE id = %d", $id));
+        $coupon = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d AND active = 1", $id));
+        if (!$coupon) return '';
+
+        // Check expiry
+        if ($coupon->expiry && strtotime($coupon->expiry) < current_time('timestamp')) return '<p>This coupon has expired.</p>';
+
+        // Check usage
+        if ($coupon->usage_limit > 0 && $coupon->uses >= $coupon->usage_limit) return '<p>This coupon has reached its usage limit.</p>';
+
+        $link = add_query_arg('coupon_used', $coupon->id, $coupon->affiliate_link);
+
+        ob_start();
+        echo '<div class="exclusive-coupon" style="border:2px solid #0073aa; padding:20px; margin:20px 0; background:#f9f9f9;">';
+        echo '<h3>' . esc_html($coupon->title) . '</h3>';
+        echo '<p><strong>Code:</strong> <code>' . esc_html($coupon->code) . '</code></p>';
+        if ($coupon->discount) echo '<p><strong>Discount:</strong> ' . esc_html($coupon->discount) . '</p>';
+        echo '<p><a href="' . esc_url($link) . '" class="button" style="background:#0073aa; color:white; padding:10px 20px; text-decoration:none;" target="_blank">Redeem Now & Track</a></p>';
+        echo '</div>';
+        return ob_get_clean();
     }
 
     public function enqueue_scripts() {
@@ -135,16 +159,29 @@ class ExclusiveCouponsPro {
     }
 
     public function admin_enqueue_scripts($hook) {
-        if ($hook != 'toplevel_page_exclusive-coupons') return;
-        wp_enqueue_style('exclusive-coupons-admin', plugin_dir_url(__FILE__) . 'admin-style.css', array(), '1.0.0');
+        if (strpos($hook, 'exclusive-coupons') !== false) {
+            wp_enqueue_style('exclusive-coupons-admin', plugin_dir_url(__FILE__) . 'admin-style.css', array(), '1.0.0');
+        }
     }
 }
 
 new ExclusiveCouponsPro();
 
-// Freemium notice
-function exclusive_coupons_pro_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p><strong>Exclusive Coupons Pro:</strong> Upgrade to premium for unlimited coupons, analytics, auto-expiry, and brand API integrations. <a href="https://example.com/premium" target="_blank">Get Pro</a></p></div>';
-}
-add_action('admin_notices', 'exclusive_coupons_pro_notice');
+// Track coupon usage
+add_action('init', function() {
+    if (isset($_GET['coupon_used'])) {
+        $id = intval($_GET['coupon_used']);
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'exclusive_coupons';
+        $wpdb->query($wpdb->prepare("UPDATE $table_name SET uses = uses + 1 WHERE id = %d", $id));
+    }
+});
+
+// Premium notice
+add_action('admin_notices', function() {
+    if (!function_exists('is_plugin_active')) return;
+    $screen = get_current_screen();
+    if ($screen->id === 'toplevel_page_exclusive-coupons') {
+        echo '<div class="notice notice-info"><p>Upgrade to <strong>Premium</strong> for unlimited coupons, analytics dashboard, auto-generation, and API integrations! <a href="https://example.com/premium" target="_blank">Get Premium</a></p></div>';
+    }
+});
