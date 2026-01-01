@@ -1,39 +1,44 @@
 # Exclusive Coupons Pro
 
+A powerful WordPress plugin to create, manage, and track exclusive affiliate coupons directly on your site. Boost conversions with personalized promo codes and analytics.
+
 ## Features
 
-- **Generate Exclusive Coupons**: Create unique, personalized promo codes for your audience.
-- **Affiliate Integration**: Boost commissions with trackable affiliate links.
-- **Shortcode Support**: Embed coupons anywhere with `[exclusive_coupon id="0"]`.
-- **Admin Dashboard**: Easy management of coupons via JSON config.
-- **Conversion Optimized**: Eye-catching designs encourage clicks and sales.
-- **Freemium Model**: Free for basics, Pro unlocks unlimited coupons, analytics, auto-expiry, and custom branding ($49/year).
+- **Easy Coupon Creation**: Add coupons with unique codes, affiliate links, descriptions, and expiration dates via simple admin interface.
+- **Frontend Shortcode**: Display coupons with `[ecp_coupons]` or specific ones with `[ecp_coupons id="unique-id"]`.
+- **Click Tracking**: Tracks coupon usage with IP logging and timestamps (stored in DB).
+- **Auto-Expiration**: Coupons show as expired after set date.
+- **Freemium Model**: Free for basics; Pro adds unlimited coupons, detailed analytics dashboard, custom designs, email integrations, and more.
+- **SEO-Friendly**: Clean markup for better search visibility.
 
 ## Installation
 
 1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to configure your coupons.
-4. Use shortcode `[exclusive_coupon id="0"]` in posts/pages.
+3. Visit **Settings > Coupons Pro** to create your first coupon.
+4. Add `[ecp_coupons]` shortcode to any post/page.
 
 ## Setup
 
-1. In **Settings > Coupons Pro**, edit the JSON coupons array:
-   
-   [
-     {"name":"10% Off","code":"BLOG10","afflink":"https://your-affiliate.link","desc":"Exclusive deal"}
-   ]
-   
-2. Save changes. Each coupon gets a unique code on display (e.g., BLOG10-abc123).
-3. Embed via shortcode, specifying `id` (0-based index).
+1. Go to **Settings > Coupons Pro**.
+2. Fill in coupon details: Code (e.g., SAVE20), Affiliate URL, Description, Expiration (datetime-local).
+3. Click **Add Coupon**.
+4. Copy the shortcode for specific coupons: `[ecp_coupons id="unique-id"]`.
+
+**Pro Upgrade**: Purchase at example.com for advanced features like revenue tracking and API support.
 
 ## Usage
 
-- **Frontend**: Coupons display as styled boxes with unique codes and affiliate buttons.
-- **Customization**: Add CSS to target `.exclusive-coupon` class.
-- **Pro Features**: Analytics dashboard, bulk import, expiry dates, A/B testing.
-- **Monetization Tip**: Partner with brands for custom codes to increase reader loyalty and commissions.
+- **Display All**: `[ecp_coupons]`
+- **Single Coupon**: Use ID from admin list.
+- **Customization**: Style via CSS classes like `.ecp-coupon`, `.ecp-use-coupon`.
+- **Tracking**: Clicks redirect to affiliate URL after logging.
+
+## Changelog
+
+**1.0.0**
+- Initial release with core features.
 
 ## Support
 
-Contact support@example.com. Upgrade to Pro for priority help.
+Contact support@example.com for help.
