@@ -1,48 +1,36 @@
 # AI Affiliate Link Optimizer
 
 ## Description
-
-**AI Affiliate Link Optimizer** revolutionizes affiliate marketing on WordPress by automatically detecting keywords in your content, inserting relevant affiliate links, and generating AI-powered product recommendations. Boost conversions and earnings effortlessly.[1][2][3]
+Boost your WordPress blog revenue with **AI-powered affiliate links**. Automatically generates personalized product recommendations, custom discounts, and tracks conversions. Perfect for bloggers and marketers.[1][2][3]
 
 ## Features
-
-- **Auto-Link Insertion**: Automatically wraps keywords like "buy", "review" with affiliate links in posts.
-- **AI Link Generator (Pro)**: Uses OpenAI to suggest relevant products and links based on your keywords.
-- **Shortcode Support**: `[aiao_links keywords="best laptop"] ` for manual placements.
-- **Tracking Ready**: Built-in hooks for analytics (extend with Pro).
-- **Freemium Model**: Free for basics, Pro unlocks unlimited AI features.
-- **Lightweight & Self-Contained**: Single PHP file, no dependencies.
+- **AI-Generated Links**: Smart recommendations based on niche (Pro: Real AI API integration).[1][7]
+- **Personalized Discounts**: Simulate exclusive promo codes for higher conversions.[2]
+- **Shortcode Integration**: Easy `[ai_affiliate_links niche="seo" count="5"]` usage.
+- **Conversion Tracking**: Monitor clicks and commissions (Pro: Advanced analytics).
+- **Admin Dashboard**: Configure settings and API keys.
+- **Freemium Model**: Free core features; Pro unlocks unlimited everything ($49/year).
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > AI Affiliate Optimizer** to configure.
+1. Upload the plugin files to `/wp-content/plugins/ai-affiliate-optimizer`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Use shortcode `[ai_affiliate_links]` in posts/pages.
+4. Configure in **Settings > AI Affiliate**.
 
 ## Setup
-
-1. **Free Mode**: Enable auto-insertion; set max links (default 3/post).
-2. **Pro Mode**: Enter OpenAI API key, select networks (Amazon, etc.).
-3. Add affiliate tags (e.g., `?tag=yourid-20`) to sample links.
-4. Use shortcode: `[aiao_links keywords="your keywords"]`.
+1. Go to **Settings > AI Affiliate Optimizer**.
+2. Enter your affiliate network IDs or Pro AI API key.
+3. Add shortcodes to content: `[ai_affiliate_links niche="tech" count="3"]`.
+4. (Pro) Enable advanced tracking and custom discount generation.
 
 ## Usage
+- **Basic**: Drop shortcode anywhere for instant affiliate sections.
+- **Customization**: Edit niches like 'seo', 'ecommerce', 'tools'.
+- **Monetization**: Earn via affiliates (Amazon, etc.) + Pro upsells.[3][4][5]
+- **Pro Features**: Real-time AI suggestions, A/B testing, email capture.
 
-- **Automatic**: Publish posts; links insert on keywords.[1][3]
-- **Manual**: Generate links in admin, insert via shortcode.
-- **Pro Tips**: Integrate with WooCommerce/Affiliate plugins; track clicks with Google Analytics.
-
-## Pro Upgrade
-
-- Unlimited links & AI generations.
-- Advanced analytics dashboard.
-- Custom affiliate network support.
-
-**Get Pro for $49/year**: [Upgrade Link](https://example.com/pro)
+## Upgrade to Pro
+Get **unlimited links, AI API, analytics** for $49/year. <a href="https://example.com/pro">Upgrade Now</a>
 
 ## Support
-
-- GitHub Issues or email support@yourdomain.com.
-
-**Monetization Inspired by Top Strategies**: Affiliates, plugins, AI tools.[1][2][7]
+Contact support@example.com. Compatible with WordPress 6.0+, Gutenberg.
