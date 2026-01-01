@@ -1,37 +1,31 @@
 # Exclusive Coupons Pro
 
 ## Features
-
-- **Easy Coupon Management**: Add, edit, and display exclusive promo codes via intuitive admin dashboard.
-- **Shortcode Integration**: Use `[exclusive_coupon brand="BrandName" link="your-affiliate-link"]` anywhere on your site.
-- **Conversion Boost**: Personalized deals increase clicks and affiliate commissions.[1][2]
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Pro Version**: Unlimited coupons, click analytics, auto-expiration, API integrations ($49/year).
+- **Automated Coupon Display**: Use shortcode `[exclusive_coupons limit="5"]` to show randomized exclusive coupons.
+- **Admin Dashboard**: Easy JSON-based coupon management for brands, codes, affiliate links, and descriptions.
+- **Responsive Design**: Mobile-friendly grid layout with copy-ready codes and CTA buttons.
+- **Conversion Boost**: Personalized discounts increase affiliate clicks and sales[1][2].
+- **Freemium Ready**: Premium unlocks analytics, auto-expiry, and API integrations.
 
 ## Installation
-
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Coupons Pro** in admin menu to add coupons in JSON format (e.g., `{"Amazon":"SAVE20","Shopify":"PRO10"}`).
+3. Configure coupons in **Settings > Coupons Pro** using JSON format.
 
 ## Setup
-
-1. Navigate to **Coupons Pro** dashboard.
-2. Enter coupons as JSON: `{"Brand":"Code"}`.
-3. Click **Save Coupons**.
-4. Add shortcode to posts/pages: `[exclusive_coupon brand="Amazon"]`.
+1. Go to **Settings > Coupons Pro**.
+2. Paste JSON array of coupons:
+   
+   [
+     {"brand":"Nike","code":"WPBLOG20","afflink":"https://aff.link/nike","desc":"20% off sneakers"},
+     {"brand":"Amazon","code":"DEAL10","afflink":"https://aff.link/amazon","desc":"$10 off $50+"}
+   ]
+   
+3. Save changes.
 
 ## Usage
+- Add `[exclusive_coupons]` or `[exclusive_coupons limit="3"]` to any post/page.
+- Customize with CSS in **Appearance > Customize**.
+- Track clicks via your affiliate dashboard.
 
-- **Display Coupon**: `[exclusive_coupon brand="YourBrand" link="https://affiliate-link.com/?ref=yourid"]`.
-- **Customization**: Style via CSS class `.exclusive-coupon`.
-- **Tracking**: Pro version logs clicks for optimization.
-- **Monetization Tip**: Partner with brands for custom codes to drive exclusive traffic and commissions.[2][3]
-
-## Pro Upgrade
-
-Get advanced features like analytics and integrations. Visit [example.com/pro](https://example.com/pro).
-
-## Support
-
-Contact support@example.com. Licensed under GPL v2+.
+**Pro Tip**: Request custom codes from brands for exclusive value[2]. Upgrade to Pro for usage analytics and more.
