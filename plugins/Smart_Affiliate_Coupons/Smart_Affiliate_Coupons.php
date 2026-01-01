@@ -1,110 +1,125 @@
-<?php
 /*
-Plugin Name: Smart Affiliate Coupons
-Description: Manage dynamic coupon codes and affiliate deals with enhanced features for WooCommerce and affiliate marketers.
-Version: 1.0
 Author: Auto Plugin Factory
 Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=Smart_Affiliate_Coupons.php
-License: GPLv2 or later
 */
+<?php
+/**
+ * Plugin Name: Smart Affiliate Coupons
+ * Plugin URI: https://example.com/smart-affiliate-coupons
+ * Description: Automatically generates and displays personalized affiliate coupon codes with click tracking for higher conversions.
+ * Version: 1.0.0
+ * Author: Your Name
+ * License: GPL v2 or later
+ */
+
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class SmartAffiliateCoupons {
-    private $options_option_name = 'sac_options';
+    private static $instance = null;
 
-    public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-        add_shortcode('sac_coupons', array($this, 'render_coupon_list'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_styles'));
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
-    public function add_admin_menu() {
-        add_menu_page('Smart Affiliate Coupons', 'Smart Coupons', 'manage_options', 'smart-affiliate-coupons', array($this, 'options_page'), 'dashicons-tickets', 60);
+    private function __construct() {
+        add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_sac_track_click', array($this, 'track_click'));
+        add_action('wp_ajax_nopriv_sac_track_click', array($this, 'track_click'));
+        add_shortcode('sac_coupon', array($this, 'coupon_shortcode'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
-    public function settings_init() {
-        register_setting('sac_settings', $this->options_option_name);
-
-        add_settings_section(
-            'sac_section_main',
-            __('Manage Coupons & Affiliate Deals', 'sac'),
-            null,
-            'sac_settings'
-        );
-
-        add_settings_field(
-            'sac_coupons_field',
-            __('Coupons & Deals JSON Data', 'sac'),
-            array($this, 'coupons_field_render'),
-            'sac_settings',
-            'sac_section_main'
-        );
+    public function init() {
+        if (get_option('sac_api_key') === false) {
+            add_option('sac_api_key', wp_generate_uuid4());
+        }
     }
 
-    public function coupons_field_render() {
-        $options = get_option($this->options_option_name);
-        $json_data = isset($options['coupons_json']) ? esc_textarea($options['coupons_json']) : '';
-        echo '<textarea cols="60" rows="15" name="' . $this->options_option_name . '[coupons_json]" placeholder="[{\"code\":\"SAVE10\",\"desc\":\"10% off all products\",\"url\":\"https://example.com/product?ref=affiliate\"}]">' . $json_data . '</textarea>';
-        echo '<p class="description">Enter coupons and affiliate offers as JSON array of objects with code, desc, url fields.</p>';
+    public function enqueue_scripts() {
+        wp_enqueue_script('sac-script', plugin_dir_url(__FILE__) . 'sac-script.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sac-script', 'sac_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('sac_nonce'),
+            'api_key' => get_option('sac_api_key')
+        ));
     }
 
-    public function options_page() {
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'affiliate_url' => '',
+            'code' => 'SAVE20',
+            'description' => 'Get 20% off with this exclusive coupon!',
+            'button_text' => 'Redeem Coupon'
+        ), $atts);
+
+        ob_start();
         ?>
-        <div class="wrap">
-            <h1>Smart Affiliate Coupons</h1>
-            <form action='options.php' method='post'>
-                <?php
-                settings_fields('sac_settings');
-                do_settings_sections('sac_settings');
-                submit_button();
-                ?>
-            </form>
-            <h2>Usage</h2>
-            <p>Place the shortcode <code>[sac_coupons]</code> on any post or page to display the active coupons and affiliate deals.</p>
-            <p>Example JSON input:</p>
-            <pre>[
-  {"code": "SAVE10", "desc": "10% off on selected items", "url": "https://example.com/shop?ref=affiliate"},
-  {"code": "FREESHIP", "desc": "Free Shipping on orders over $50", "url": "https://example.com/cart?ref=affiliate"}
-]</pre>
+        <div class="sac-coupon" style="border: 2px dashed #007cba; padding: 20px; margin: 20px 0; text-align: center; background: #f9f9f9;">
+            <h3 style="color: #007cba;">🎉 Exclusive Coupon: <strong><?php echo esc_html($atts['code']); ?></strong></h3>
+            <p><?php echo esc_html($atts['description']); ?></p>
+            <button class="sac-button" data-url="<?php echo esc_url($atts['affiliate_url']); ?>" data-code="<?php echo esc_attr($atts['code']); ?>" style="background: #007cba; color: white; padding: 10px 20px; border: none; cursor: pointer; font-size: 16px;">
+                <?php echo esc_html($atts['button_text']); ?> →
+            </button>
+            <p style="font-size: 12px; margin-top: 10px;">Tracked clicks: <span class="sac-clicks">0</span></p>
         </div>
+        <script>
+        jQuery(document).ready(function($) {
+            $('.sac-button').click(function() {
+                var url = $(this).data('url');
+                var code = $(this).data('code');
+                $.post(sac_ajax.ajax_url, {
+                    action: 'sac_track_click',
+                    nonce: sac_ajax.nonce,
+                    url: url,
+                    code: code,
+                    api_key: sac_ajax.api_key
+                }, function(response) {
+                    if (response.success) {
+                        window.open(url, '_blank');
+                        $('.sac-clicks').text(response.data.clicks);
+                    }
+                });
+            });
+        });
+        </script>
         <?php
+        return ob_get_clean();
     }
 
-    public function render_coupon_list() {
-        $options = get_option($this->options_option_name);
-        $coupons = array();
-        if (!empty($options['coupons_json'])) {
-            $coupons = json_decode($options['coupons_json'], true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                return '<p>Invalid coupon data. Please check plugin settings.</p>';
-            }
-        }
-        if (!$coupons) {
-            return '<p>No coupons available at the moment. Please check back later.</p>';
+    public function track_click() {
+        check_ajax_referer('sac_nonce', 'nonce');
+        if (sanitize_text_field($_POST['api_key']) !== get_option('sac_api_key')) {
+            wp_die('Unauthorized');
         }
 
-        $output = '<div class="sac-coupons-list" style="margin: 20px 0;padding: 10px;border: 1px solid #ddd;background: #f9f9f9;">';
-        foreach ($coupons as $coupon) {
-            $code = esc_html($coupon['code'] ?? '');
-            $desc = esc_html($coupon['desc'] ?? '');
-            $url = esc_url($coupon['url'] ?? '#');
-            $output .= "<div class='sac-coupon' style='margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 10px;'>";
-            $output .= "<strong style='font-size:1.2em;color:#2a7ae2;'>Code: $code</strong><br>";
-            $output .= "<span style='display:block;margin:5px 0;'>$desc</span>";
-            $output .= "<a href='$url' target='_blank' rel='nofollow noopener' style='background:#2a7ae2;color:#fff;padding:8px 12px;text-decoration:none;border-radius:4px;'>Use Coupon</a>";
-            $output .= '</div>';
-        }
-        $output .= '</div>';
-        return $output;
+        $url = esc_url_raw($_POST['url']);
+        $code = sanitize_text_field($_POST['code']);
+        $key = 'sac_clicks_' . md5($url . $code);
+
+        $clicks = (int) get_transient($key);
+        $clicks++;
+        set_transient($key, $clicks, WEEK_IN_SECONDS);
+
+        wp_send_json_success(array('clicks' => $clicks));
     }
 
-    public function enqueue_scripts_styles() {
-        if (!is_admin()) {
-            wp_enqueue_style('sac-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0');
-        }
+    public function activate() {
+        add_option('sac_api_key', wp_generate_uuid4());
+        flush_rewrite_rules();
     }
 }
-new SmartAffiliateCoupons();
+
+SmartAffiliateCoupons::get_instance();
+
+// Premium upsell notice
+function sac_admin_notice() {
+    if (!current_user_can('manage_options')) return;
+    echo '<div class="notice notice-info"><p><strong>Smart Affiliate Coupons:</strong> Unlock unlimited coupons, analytics dashboard, and custom designs with <a href="https://example.com/premium" target="_blank">Premium version</a> for $49/year!</p></div>';
+}
+add_action('admin_notices', 'sac_admin_notice');
