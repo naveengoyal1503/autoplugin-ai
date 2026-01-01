@@ -1,29 +1,33 @@
 # Smart Affiliate Coupon Manager
 
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface with affiliate links.
-- **Beautiful Frontend Display**: Responsive coupon section with shortcode `[sac_coupon_section]`.
-- **Conversion Boost**: Exclusive codes increase clicks and sales.[1][2]
-- **Analytics Ready**: Google Analytics event tracking on clicks.
-- **Freemium Model**: Pro version adds auto-generation, tracking dashboard ($49/year).
+
+- **Easy Coupon Creation**: Add unlimited coupons (pro) with custom codes, affiliate URLs, and discount details via intuitive admin interface.[1][2]
+- **Click Tracking**: Automatically tracks clicks on coupon links with AJAX for real-time stats, boosting affiliate commissions.[3]
+- **Shortcode Integration**: Use `[sac_coupon id="0"]` to display coupons anywhere on your site.
+- **Conversion Optimized**: Eye-catching design encourages clicks and shares, perfect for bloggers monetizing via affiliates.[1][2]
+- **Freemium Model**: Free for basics; pro unlocks analytics, auto-expiration, A/B testing ($49/year).
 
 ## Installation
-1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-coupon-manager`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > SAC Manager** to configure coupons.
+
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Configure coupons at **Settings > Affiliate Coupons**.
 
 ## Setup
-1. In admin, enter coupons as JSON: `[{ "name":"Coupon1", "code":"SAVE10", "afflink":"https://yourafflink.com", "desc":"10% off" }]`.[1]
-2. Save settings.
-3. Add shortcode `[sac_coupon_section]` to any post/page.
+
+1. Go to **Settings > Affiliate Coupons**.
+2. Click **Add Coupon** to create: Name, Code (e.g., SAVE20), Affiliate URL, Discount (e.g., 20% OFF).
+3. Use shortcode `[sac_coupon id="0"]` (replace 0 with coupon index) in posts/pages.
+4. Upgrade to pro for advanced features like detailed analytics.
 
 ## Usage
-- Display coupons on blog posts, sidebar, or dedicated page.
-- Track clicks via browser console or integrate with GA4.
-- **Pro Tip**: Use for niche blogs (e.g., software, travel) to partner with brands for custom codes.[2]
 
-## Pro Upgrade
-Unlock advanced features like API integrations, usage stats, and more. Visit [Pro](https://example.com/pro).
+- **Display Coupon**: Embed shortcode in Gutenberg, Classic Editor, or widgets.
+- **Track Performance**: View click counts per coupon in the admin table.
+- **Monetize**: Ideal for niches like software, travel, eCommerce. Pair with affiliate programs for commissions.[1][2][3]
+- **Pro Tips**: Create SEO-friendly coupon pages; offer exclusive codes for higher conversions.[2]
 
 ## Support
-Contact support@example.com. Compatible with WordPress 6.0+.
+
+Report issues via WordPress.org forums. Pro support included with upgrade.
