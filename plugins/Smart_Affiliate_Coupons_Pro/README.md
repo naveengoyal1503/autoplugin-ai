@@ -1,47 +1,34 @@
 # Smart Affiliate Coupons Pro
 
 ## Features
-
-- **Easy Coupon Creation**: Add unlimited exclusive coupons via simple JSON in admin dashboard (free: up to 5; pro: unlimited).
-- **Auto-Expiring Coupons**: Coupons expire automatically based on date.
-- **Unique Tracking Links**: Append unique IDs to affiliate links for performance tracking.
-- **Shortcode Integration**: Use `[sac_coupon]` or `[sac_coupon id="0"]` anywhere.
+- **Easy Coupon Management**: Add unlimited coupons via admin dashboard with brand, code, discount, affiliate link, and description.
+- **Shortcode Integration**: Use `[affiliate_coupon]` to display coupons anywhere on your site.
+- **Copy-to-Clipboard**: One-click copy for coupon codes.
+- **Click Tracking**: Pro feature tracks clicks and referrals for analytics.
 - **Responsive Design**: Mobile-friendly coupon displays.
-- **Pro Features**: Analytics dashboard, email capture, A/B testing, WooCommerce integration, custom branding ($49/year).
+- **Freemium Upsell**: Unlock pro features like advanced tracking and unlimited coupons.
 
 ## Installation
-
-1. Upload the `smart-affiliate-coupons` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Affiliate Coupons** in the admin menu to add your coupons.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Access settings via **Affiliate Coupons** menu.
 
 ## Setup
-
-1. In the plugin dashboard, edit the JSON textarea with your coupons:
-   
-   [
-     {
-       "code": "SAVE20",
-       "afflink": "https://your-affiliate-link.com/?ref=blog",
-       "desc": "20% Off Sitewide",
-       "expires": "2026-12-31"
-     }
-   ]
-   
-2. Click **Save Coupons**.
-3. Add shortcode to any post/page: `[sac_coupon]`.
+1. Go to **Affiliate Coupons** in admin.
+2. Enter coupons in format: `Brand|Code|Discount|AffiliateLink|Description` (one per line).
+3. Check **Pro Tracking** for advanced features (upgrade required).
+4. Save settings.
+5. Add `[affiliate_coupon]` shortcode to any post/page.
 
 ## Usage
-
-- **Display Random Coupon**: `[sac_coupon]`
-- **Specific Coupon**: `[sac_coupon id="0"]` (index from array).
-- **Track Performance**: Check error logs or upgrade to Pro for dashboard analytics.
-- **Monetize**: Partner with brands for custom codes, embed in niche posts for higher conversions.
+- **Display Coupons**: Paste shortcode in Gutenberg blocks, Classic Editor, or widgets.
+- **Customization**: Style via CSS classes like `.sac-coupon`, `.sac-button`.
+- **Tracking**: Pro version logs clicks; integrate with analytics tools.
+- **Monetization Tip**: Partner with brands for exclusive codes to boost commissions[1][2].
 
 ## Pro Upgrade
-
-Unlock analytics, integrations, and support. Visit [pro link] (placeholder).
+Unlock unlimited coupons, detailed analytics, and API integrations for $49/year. [Upgrade Now](#).
 
 ## Support
-
-Report issues via WordPress.org forums.
+Contact support@example.com. Check [documentation](https://example.com/docs).
