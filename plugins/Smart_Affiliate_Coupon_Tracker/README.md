@@ -1,54 +1,54 @@
 # Smart Affiliate Coupon Tracker
 
+## Description
+
+**Smart Affiliate Coupon Tracker** is a powerful WordPress plugin that automatically generates unique, trackable coupon codes for affiliate links. Boost your blog's conversions by offering personalized discounts to readers while tracking usage in real-time. Perfect for bloggers and affiliate marketers.[1][2]
+
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Code|Affiliate Link|Description format).
-- **Randomized Display**: Shortcode `[sact_coupon]` shows a random coupon on any page/post.
-- **Click Tracking**: Tracks all coupon clicks/sessions with basic analytics dashboard.
-- **Conversion Boost**: Personalized coupons increase affiliate commissions.[1][2]
-- **Freemium Model**: Free core features; Pro adds advanced reports, scheduling, A/B testing ($49/year).
-- **Lightweight & Self-Contained**: Single PHP file, no dependencies.
+- **Auto-generate unique coupons**: Creates personalized codes like `SAVE10-ABC12345` for each visitor.
+- **Easy shortcode integration**: `[sac_coupon affiliate="https://example.com/ref" discount="20"]`
+- **Basic click tracking**: Logs coupon usage (free version limit: 100 entries).
+- **Customizable prefix and styling**: Brand coupons to match your site.
+- **Pro upgrade**: Unlimited coupons, dashboard analytics, export reports, API hooks ($49/year).
 
-**Pro Features (coming soon)**: Detailed analytics, custom branding, API integrations, unlimited coupons.[3][7]
+## Freemium Model
+
+- **Free**: Core generation and basic tracking.
+- **Pro**: Advanced features for serious monetizers.[7]
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress Admin: Plugins > Add New > Upload Plugin.
-3. Activate the plugin.
-4. Go to **Settings > Coupon Tracker** to add your coupons.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupon Tracker** to configure Affiliate ID and Coupon Prefix.
+4. Add shortcodes to posts/pages.
 
 ## Setup
 
-1. Navigate to **Settings > Coupon Tracker**.
-2. Enter coupons one per line: `Code|Affiliate Link|Description`
-   - Example:
-     
-     SAVE20|https://affiliate-link.com/?ref=you|20% off first purchase
-     DISCOUNT10|https://another-link.com/?ref=you|10% sitewide
-     
-3. Save changes.
-4. Use shortcode `[sact_coupon]` in posts/pages.
+1. In admin: Set your default **Coupon Prefix** (e.g., `SAVE20-`).
+2. Optional: Enter global **Affiliate ID** for tracking.
+3. Use shortcode in content:
+   
+   [sac_coupon affiliate="https://partner.com/your-ref-link" discount="15" text="Grab 15% OFF Now!"]
+   
 
 ## Usage
 
-- **Display Coupon**: Add `[sact_coupon]` to any post, page, or widget.
-- **Track Performance**: View total clicks in the admin dashboard.
-- **Monetization Tip**: Use with affiliate programs like Amazon Associates or custom brand deals for higher conversions.[1][2][3]
-- **Customization**: Style via CSS targeting `.sact-coupon` class.
+- Embed shortcodes in blog posts for product recommendations.[1][3]
+- Visitors see unique codes and click affiliate links.
+- Track usage in **Settings > Coupon Tracker** (pro dashboard coming soon).
+- **Pro Tip**: Pair with SEO plugins for maximum traffic and conversions.[1]
 
-## Pro Upgrade
+## Screenshots
 
-Upgrade for:
-- Exportable analytics reports.
-- Coupon scheduling/expiration.
-- Multiple coupon shortcodes with IDs.
-- White-label branding.
+*(Pro version includes dashboard visuals)*
 
-Visit [example.com/pro](https://example.com/pro) ($49/year).
+## Changelog
 
-## Support
+**1.0.0**
+- Initial release with core coupon generation and tracking.
 
-Report issues via WordPress.org forums. For Pro support, email support@example.com.
+## Upgrade to Pro
 
-**Built for 2026 monetization trends: Affiliate tracking + coupons = profitable blogs.[1][2]**
+Unlock unlimited features: [Upgrade Now](https://example.com/pro) ($49/year).
