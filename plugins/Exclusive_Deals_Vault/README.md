@@ -1,49 +1,31 @@
 # Exclusive Deals Vault
 
 ## Features
-
-- **Personalized Coupon Generation**: Automatically creates unique, trackable promo codes for each visitor or user.
-- **Affiliate Link Integration**: Seamlessly embed affiliate links with custom deals to boost commissions.
-- **Shortcode Support**: Use `[edv_deals limit="5"]` anywhere to display deals.
-- **Admin Dashboard**: Easy deal management with title, description, and link fields.
-- **Conversion Tracking**: Pro version includes click/session analytics.
+- **Custom Deals Post Type**: Easily create and manage exclusive coupons, discounts, and affiliate deals.[1][2]
+- **Shortcode Integration**: Use `[deals_vault limit="5"]` to display a responsive deals vault anywhere on your site.
+- **Affiliate Link Tracking**: Built-in support for affiliate links with customizable CTA buttons.[3][7]
+- **Admin Settings**: Customize button text, enable tracking, and more from a simple dashboard.
+- **SEO-Friendly**: Deals are public posts, perfect for driving traffic and conversions.[2]
 - **Mobile-Responsive**: Clean, modern design works on all devices.
-- **Freemium Model**: Free for basics, Pro unlocks unlimited deals ($49/year).
+
+**Premium Features (Upsell)**: Unlimited deals, click analytics, email capture, auto-expiring coupons, and integrations with WooCommerce/Affiliate plugins ($29+).[7][8]
 
 ## Installation
-
 1. Upload the `exclusive-deals-vault` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Deals Vault** in your admin menu to add deals.
-4. Insert `[edv_deals]` shortcode on any page/post.
+3. Go to **Deals > Add New** to create your first deal (add title, description, coupon code, affiliate link).
+4. Configure settings at **Deals > Settings**.
+5. Add `[deals_vault]` shortcode to any page or post.
 
 ## Setup
-
-1. Go to **Deals Vault** dashboard.
-2. Add new deals: Enter title, description, and affiliate link.
-3. Save and copy the shortcode to your content.
-4. **Pro Tip**: Use on high-traffic pages like blog posts or dedicated deals page for max conversions.
+1. **Create Deals**: Use the new 'Deals' post type. Fill in affiliate link and coupon code in the meta box.
+2. **Customize**: Update CTA text and tracking in settings.
+3. **Display**: Embed shortcode on a dedicated 'Deals' page for maximum SEO and conversions.[1][2]
 
 ## Usage
-
-- **Frontend**: Deals display with unique codes; clicking generates trackable promo.
-- **Customization**: Style via CSS targeting `.edv-deals`, `.edv-deal`, `.edv-code`, `.edv-btn`.
-- **Tracking**: Codes are user-specific (uses user ID or session). Pro adds full analytics.
-- **Shortcode Options**: `[edv_deals limit="3"]` to show 3 deals only.
-
-## Pro Upgrade
-
-Upgrade for:
-- Unlimited deals (free: 5 max)
-- Analytics dashboard
-- Custom branding
-- Premium integrations (Amazon, etc.)
-
-Get Pro: [Upgrade Now](https://example.com/pro)
+- **Shortcode Options**: `[deals_vault limit="10"]` to show more deals.
+- **Monetize**: Partner with brands for custom codes, embed affiliate links, and watch conversions rise.[1][2][3]
+- **Pro Tip**: Create a '/deals' page, add the shortcode, and promote it site-wide for passive income.
 
 ## Support
-
-- Report issues via WordPress.org forums.
-- Pro support included with purchase.
-
-**Boost your affiliate earnings with exclusive deals your audience loves!**
+Contact support@example.com or check premium upgrades for advanced features.
