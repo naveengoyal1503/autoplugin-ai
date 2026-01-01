@@ -1,55 +1,30 @@
 # Exclusive Coupons Pro
 
 ## Features
-
-- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (format: Code|Brand|Discount|Affiliate Link).
-- **Shortcode Support**: Use `[exclusive_coupon]` for random or `[exclusive_coupon id="1"]` for specific coupons.
-- **Click Tracking**: Basic analytics for coupon clicks (premium: advanced dashboard).
-- **Widget Ready**: Drag-and-drop widget for sidebars.
-- **Conversion Boost**: Personalized deals increase affiliate earnings and reader loyalty.[1][2]
-- **Freemium Model**: Free core features; premium unlocks unlimited coupons, exports, and integrations ($49/year).
+- **Easy Coupon Management**: Add, edit, and delete exclusive coupons via a simple admin dashboard.
+- **Custom Affiliate Deals**: Include brand names, promo codes, discounts, affiliate links, and expiration dates.
+- **Responsive Display**: Use the `[exclusive_coupons]` shortcode to showcase coupons in a beautiful, grid-based layout on any page or post.
+- **Active Filtering**: Automatically hides expired coupons.
+- **Monetization Ready**: Drive traffic to affiliate links and boost conversions with reader-first discounts.
+- **Freemium Upsell**: Premium version adds analytics, unlimited coupons, email capture, and more.
 
 ## Installation
-
-1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Coupons Pro** in the admin menu to add your first coupons.
-4. Use shortcodes or widgets on posts/pages.
+1. Download the plugin ZIP file.
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin** and upload the ZIP.
+3. Activate the plugin.
+4. Visit **Settings > Coupons Pro** to add your first coupon.
 
 ## Setup
-
-1. Navigate to **Coupons Pro** dashboard.
-2. Enter coupons in format: `CODE|Brand|Discount|Affiliate Link` (one per line).
-3. Example:
-   
-   SAVE20|Shopify|20% Off|https://affiliate.shopify.com
-   WELCOME50|BrandX|50% Off|https://yourlink.com
-   
-4. Save. Premium users get import/export.
+1. Go to **Settings > Coupons Pro** in your WordPress dashboard.
+2. Fill in **Brand**, **Coupon Code**, **Discount**, **Affiliate Link**, and optional **Expiration Date**.
+3. Click **Add Coupon**.
+4. Copy the shortcode `[exclusive_coupons]` (or `[exclusive_coupons limit="3"]` to limit display).
 
 ## Usage
-
-- **Shortcodes**:
-  - `[exclusive_coupon]` - Random coupon.
-  - `[exclusive_coupon id="2"]` - Specific coupon (1-indexed).
-
-- **Widget**: Add "Exclusive Coupon" widget to any sidebar.
-
-- **Templates**: Insert shortcode in themes for headers/footers.
-
-- **Tracking**: View basic stats in dashboard (premium: detailed reports).
-
-## Premium Features
-
-- Unlimited coupons & brands.
-- Analytics dashboard with click/conversion tracking.
-- Custom designs and email capture.
-- WooCommerce integration.
-- Priority support.
-
-**Upgrade: [Get Premium](https://example.com/premium) - $49/year**
+- Paste the shortcode into any post, page, or widget.
+- Coupons appear in a responsive grid with grab buttons linking to your affiliates.
+- **Pro Tip**: Place on sidebar, dedicated deals page, or niche blog posts for max conversions.
+- Upgrade to premium for advanced tracking and SEO-optimized coupon pages.
 
 ## Support
-
-- Free version: WordPress.org forums.
-- Premium: Dedicated support ticket system.
+Contact support@example.com or visit the plugin page for updates.
