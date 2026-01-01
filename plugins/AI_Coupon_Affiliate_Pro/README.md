@@ -2,37 +2,39 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation**: Automatically generates unique, niche-specific coupons using OpenAI (Pro feature).[1][2]
-- **Affiliate Link Integration**: Seamlessly embed trackable affiliate links from Amazon, etc., boosting commissions.[3][5]
-- **Customizable Coupon Boxes**: Shortcode `[ai_coupon_box niche="electronics"]` for easy placement anywhere.[1]
-- **Click Tracking & Analytics**: Monitor performance (Pro: Detailed reports with conversion matching).[3]
-- **Freemium Model**: Free for basics; Pro unlocks unlimited usage, API integration, and custom branding.
-- **SEO-Optimized**: Rich snippets for coupons improve search rankings and traffic.[2]
+- **AI-Powered Coupon Generation**: Automatically generates personalized coupons based on niche (e.g., fashion, tech) using mock AI logic (expandable with OpenAI API in Pro).
+- **Affiliate Link Integration**: Embeds trackable affiliate links in every coupon for commissions.[1][2]
+- **Shortcode Support**: Use `[ai_coupon_generator niche="tech"]` anywhere.
+- **Conversion Tracking**: Basic click/session tracking (Pro: advanced analytics).
+- **Freemium Model**: Free version limited to 3 coupons; Pro unlocks unlimited + no ads.
+- **SEO Optimized**: Coupons are schema-ready for rich snippets.[2]
+
+**Pro Features** (Upgrade for $49/year):
+- Unlimited coupons
+- Custom affiliate networks
+- AI enhancements via API
+- White-label branding
+- Export reports
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress Admin > Plugins > Add New > Upload Plugin.
-3. Activate the plugin.
-4. Go to **Settings > AI Coupon Pro** to configure.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via WordPress Admin > Plugins.
+3. Use shortcode `[ai_coupon_generator]` in posts/pages.
 
 ## Setup
 
-1. **Free Setup**:
-   - Add affiliate links in JSON format: `{"amazon":"https://amzn.to/xxx"}`.
-   - Use shortcode: `[ai_coupon_box niche="general"]`. Niche options: general, electronics, fashion, etc.
-
-2. **Pro Setup** (Recommended for profitability):
-   - Enter OpenAI API key.
-   - Upgrade for $49/year via [Pro Link].
+1. Go to **Settings > AI Coupon Pro** (Pro users).
+2. Add your affiliate links (e.g., Amazon, custom).
+3. Configure niches and limits.
+4. For Pro: Enter OpenAI key for real AI generation.
 
 ## Usage
 
-- **On Posts/Pages**: Insert shortcode for instant coupon sections.
-- **Sidebar/Widgets**: Add via Custom HTML widget.
-- **Track Performance**: View clicks in dashboard (Pro: Full analytics).
-
-**Pro Tips**: Pair with SEO plugins for max traffic. Personalized coupons increase conversions by 30%+.[2] Earn passive income via affiliates!
+- **Basic**: Add shortcode to any post/page. Click "Generate AI Coupon" to display deals.
+- **Advanced**: Customize via `niche` attribute: `[ai_coupon_generator niche="fashion"]`.
+- **Monetization Tips**: Place on high-traffic pages, promote via email. Earn from affiliate clicks + Pro upsells.[1][3]
+- **Tracking**: View stats in dashboard (Pro).
 
 ## Support
-Contact support@example.com. Upgrade to Pro for priority help.
+Contact support@example.com. Freemium users get community forum access.
