@@ -1,56 +1,31 @@
 # AI Content Monetizer
 
-**Automatically generates affiliate-optimized product reviews with exclusive coupon codes to boost conversions and revenue.**
-
 ## Features
-
-- **AI-Powered Content Generation**: Create ready-to-publish product reviews with affiliate links and custom coupons in seconds.
-- **Shortcode Integration**: Embed monetized content blocks anywhere on your site.
-- **Exclusive Coupons**: Generate unique promo codes for higher perceived value and partnerships.
-- **Freemium Model**: Free version for testing; Pro unlocks unlimited use, templates, and integrations.
-- **SEO Optimized**: Structured content with rich snippets for better search rankings.
-- **One-Click Setup**: No coding required.
+- **AI-Powered Content Generation**: Creates exclusive premium content for members using mock AI (integrate OpenAI for pro).
+- **Paywall Protection**: Locks content behind login or pro upgrade.
+- **Affiliate Integration**: Automatically embeds affiliate links and custom coupons in generated content.
+- **Shortcode Support**: Use `[ai_premium_content]` to add premium sections.
+- **Freemium Model**: Free version teases, pro unlocks unlimited generations.
+- **Analytics Ready**: Track member engagement for upselling.
 
 ## Installation
-
-1. Upload the `ai-content-monetizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Settings > AI Content Monetizer** to generate your first review.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Configure in **Settings > AI Monetizer**.
 
 ## Setup
-
-1. Go to **Settings > AI Content Monetizer**.
-2. Enter a **Product Name** (e.g., "Wireless Headphones").
-3. Add your **Affiliate Link**.
-4. Click **Generate Review Content** to get a custom shortcode.
+1. Enter your **Pro Version Key** (purchase at example.com for $49/year).
+2. Add **OpenAI API Key** for real AI (optional, mock used otherwise).
+3. Input **Affiliate Links** as JSON: `[{{"name":"Product","url":"https://aff.link","coupon":"SAVE20"}}]`.
+4. Create a members-only page/post with `[ai_premium_content]` shortcode.
+5. Use membership plugin like MemberPress to restrict access.
 
 ## Usage
+- **For Visitors**: See paywall teaser → Direct to upgrade/login.
+- **For Pro Members**: Click **Generate Premium AI Content** button, enter topic (e.g., "best WordPress plugins"), get instant exclusive content with deals.
+- **Monetize**: Earn from pro sales, affiliates in content, or sponsored coupons.
+- **Example Output**:
+  > In-depth guide on WordPress monetization: ... **Special Deal:** Check out this [Product](link) with coupon SAVE20!
 
-- **Insert Shortcode**: Paste the generated shortcode like `[ai_coupon_review product="Wireless Headphones" coupon="HEADPHONES20" link="https://your-affiliate-link.com"]` into any post or page.
-- **Customize**: Edit product details directly in the shortcode.
-- **Display**: Shows a beautiful review block with coupon and buy button.
-
-### Example Output
-
-### Wireless Headphones Deal
-Exclusive: **HEADPHONES20** saves 20%!
-[Claim Deal Button]
-
-
-## Pro Version
-
-Upgrade for:
-- Unlimited content generations.
-- Premium templates and niches (e.g., software, travel).
-- Affiliate network integrations (Amazon, etc.).
-- Analytics tracking for clicks/conversions.
-- Priority support.
-
-**Get Pro: [Upgrade Now](https://example.com/pro) - Only $49/year**
-
-## Support
-
-- [Documentation](https://example.com/docs)
-- [Submit a Ticket](https://example.com/support)
-
-**Boost your affiliate earnings today!**
+## Pro Upgrade
+Unlock unlimited AI, custom domains, priority support. Visit example.com/pricing.
