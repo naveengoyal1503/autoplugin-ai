@@ -2,35 +2,38 @@
 
 ## Features
 
-- **Easy Coupon Creation**: Add titles, codes, affiliate links, descriptions, expiration dates, and usage limits.
-- **Shortcode Integration**: Use `[sac_coupon id="unique-id"]` to display coupons anywhere.
-- **Auto-Expiration**: Coupons expire automatically based on date.
-- **Copy-to-Clipboard**: One-click code copying for users.
-- **SEO-Friendly**: Clean markup for better search visibility.
-- **Tracking Ready**: Query parameters for affiliate link analytics.
-- **Pro Features** (paid upgrade): Unlimited coupons, click analytics dashboard, custom branding, email notifications, API support.
+- **Easy Coupon Management**: Add, edit, and list coupons via intuitive admin dashboard.
+- **Click Tracking**: Automatically tracks clicks on affiliate links with real-time stats.
+- **Dynamic Shortcode**: Use `[sac_coupon_section limit="5"]` to display top coupons anywhere.
+- **Copy-to-Clipboard**: One-click copy for coupon codes.
+- **Responsive Design**: Mobile-friendly coupon displays.
+- **Freemium Ready**: Premium unlocks unlimited coupons, analytics dashboard, auto-generation, and custom branding.
+
+Boost affiliate revenue by offering exclusive deals and tracking performance seamlessly.[1][2]
 
 ## Installation
 
-1. Upload the `smart-affiliate-coupons` folder to `/wp-content/plugins/`.
-2. Activate the plugin via **Plugins > Installed Plugins**.
-3. Go to **Settings > Affiliate Coupons** to create your first coupon.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Access settings at **Settings > SAC Coupons** to add your first coupon.
+4. Insert shortcode `[sac_coupon_section]` in posts/pages.
 
 ## Setup
 
-1. Navigate to **Settings > Affiliate Coupons** in your WordPress admin.
-2. Fill in coupon details: title, code, affiliate link, etc.
-3. Save and copy the generated ID.
-4. Use shortcode `[sac_coupon id="YOUR-ID"]` in posts/pages.
+1. Go to **Settings > SAC Coupons**.
+2. Add coupon details: Title, Code, Affiliate URL, Discount, Brand (e.g., Amazon affiliate link).
+3. Save. Coupons appear in the list with click counts.
+4. Use shortcode with `limit` attribute to control display count.
 
 ## Usage
 
-- **Display Coupon**: Embed shortcode in content for eye-catching coupon boxes.
-- **Customization**: Style via CSS classes like `.sac-coupon`, `.sac-button`.
-- **Pro Upgrade**: Visit the admin notice link for advanced features.
-- **Tracking**: Monitor affiliate dashboard for `?sac=ID` parameter conversions.
-
-**Limits (Free Version)**: 5 coupons max. Upgrade to Pro for unlimited.
+- **Frontend**: Embed shortcode in sidebar, posts, or dedicated coupon pages for SEO boost.
+- **Tracking**: Clicks increment automatically via URL parameter.
+- **Customization**: Edit inline CSS in plugin file or enqueue custom styles.
+- **Pro Upgrade**: For advanced features like API integrations and reports, visit our site.
 
 ## Support
-Contact support@example.com for help.
+
+Report issues on WordPress.org forums. Premium support available.
+
+**Monetize your site effortlessly!**
