@@ -1,42 +1,47 @@
 # Exclusive Coupons Pro
 
-## Description
-**Exclusive Coupons Pro** allows WordPress site owners to create and display personalized, exclusive coupon codes to drive affiliate sales, boost engagement, and monetize their audience. Inspired by successful coupon strategies[1][2], this plugin turns your site into a go-to resource for deals.
-
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Format: Brand:CODE|Brand2:CODE2).
-- **Shortcode Integration**: Use `[exclusive_coupon]` or `[exclusive_coupon brand="Amazon"]` anywhere.
-- **One-Click Copy**: Users copy codes instantly with JavaScript.
-- **Responsive Design**: Mobile-friendly display.
-- **Freemium Upsell**: Built-in pro promotion for revenue.
 
-**Pro Version ($49/year)**: Unlimited coupons, analytics dashboard, affiliate link tracking, custom branding, export/import, API integration[7].
+- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (format: Code|Brand|Discount|Affiliate Link).
+- **Shortcode Integration**: Embed coupons anywhere with `[exclusive_coupon id="1"]`.
+- **Click Tracking**: Monitor usage (free: up to 100 clicks total; pro: unlimited with analytics dashboard).
+- **Responsive Design**: Mobile-friendly coupon displays with custom styling.
+- **Affiliate Optimized**: Direct links to affiliate offers, boosting conversions.[1][2]
+- **Pro Upgrade**: Advanced analytics, A/B testing, API integrations, white-label branding ($49/year).
 
 ## Installation
-1. Upload the plugin files to `/wp-content/plugins/exclusive-coupons-pro` or install via WordPress admin.
-2. Activate the plugin.
-3. Go to **Settings > Coupons Pro** to add your coupons (e.g., "Amazon:SAVE20|Shopify:DEAL15").
-4. Use shortcode `[exclusive_coupon]` in posts/pages.
+
+1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupons Pro** to add your coupons.
 
 ## Setup
-1. In admin, enter coupons separated by `|`.
-2. Optionally specify `brand` attribute in shortcode for filtered display.
-3. Customize styles via `assets/style.css`.
+
+1. In the admin page, enter coupons one per line: `CODE|Brand|Discount|https://affiliate-link.com`.
+2. Save changes.
+3. Use shortcodes like `[exclusive_coupon id="1"]` in posts/pages.
+
+**Example Output**:
+> ### Exclusive Deal: ExampleBrand
+> **WELCOME20** - 20% OFF
+> [Get Deal (Used 5 times)](link)
 
 ## Usage
-- **Basic**: `[exclusive_coupon]` shows all coupons.
-- **Filtered**: `[exclusive_coupon brand="Amazon"]` shows Amazon-only.
-- Embed in sidebar widgets, posts, or dedicated deals page.
-- Track usage manually or upgrade to Pro for analytics.
 
-## Screenshots
-*(Pro: Dashboard with stats)*
+- Place shortcodes in blog posts, sidebars, or dedicated coupon pages.
+- Track performance in admin (pro users get detailed reports).
+- Ideal for niches like software, travel, eCommerce.[2][3]
 
-## Changelog
-**1.0.0**: Initial release.
+## Pro Version
+
+Unlock full potential:
+- Unlimited clicks and coupons.
+- Exportable analytics.
+- Custom branding.
+- Priority support.
+
+[Upgrade to Pro](https://example.com/upgrade)
 
 ## Support
-Visit example.com/support. Premium support with Pro upgrade.
 
-## Upgrade to Pro
-Unlock full potential: [Get Pro Now](https://example.com/pro)
+Report issues on the support forum. For custom features, contact us.
