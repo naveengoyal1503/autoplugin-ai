@@ -2,31 +2,57 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons with titles, codes, descriptions, affiliate links, and expiry dates.[1][2]
-- **Shortcode Integration**: Use `[acv_coupons limit="5"]` to display coupons anywhere on your site.
-- **Monetization Ready**: Built-in affiliate link tracking and nofollow attributes for SEO compliance.
-- **Responsive Design**: Mobile-friendly coupon displays with professional styling.
-- **Pro Upgrade**: Unlock analytics, auto-expiry, custom templates, and sponsored slots ($49/year).
+- **Easy Shortcode Integration**: Use `[affiliate_coupon]` to embed trackable coupons anywhere.
+- **Auto-Generated Unique Codes**: Creates personalized, trackable coupon codes with one click.
+- **Click Tracking**: Monitors engagement (Pro: advanced analytics dashboard).
+- **Customizable Design**: Responsive, branded coupons that match your site.
+- **Affiliate Link Support**: Append tracking parameters automatically.
+- **Admin Generator**: Quick coupon creation panel in WordPress dashboard.
+- **Freemium Model**: Free for basics, Pro unlocks unlimited usage and premium features.
+
+**Pro Features** (Upgrade for $49/year):
+- Unlimited coupons and sites.
+- Detailed analytics and export.
+- Custom branding and API integrations.
+- Priority support.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Access settings via **Coupon Vault** in the admin menu.[4]
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Access settings at **Settings > Coupon Vault**.
 
 ## Setup
 
-1. Go to **Coupon Vault** in your WordPress dashboard.
-2. Click **Add New Coupon**.
-3. Fill in: **Title** (e.g., "50% Off Hosting"), **Code** (e.g., "SAVE50"), **Affiliate Link**, **Description**, **Expiry** (optional).
-4. Save. Free version limits to 10 coupons; pro for unlimited.[2]
+1. Go to **Settings > Coupon Vault**.
+2. Enter Pro license (if upgrading).
+3. Use the generator to create coupons or add via shortcode.
+4. Copy shortcode to posts/pages: `[affiliate_coupon offer="50% Off" code="SAVE50" link="https://your-affiliate-link.com" expires="2026-12-31"]`.
 
 ## Usage
 
-- **Display Coupons**: Add `[acv_coupons]` to any post/page for a full list, or `[acv_coupons limit="3"]` for limited view.
-- **Customization**: Style via CSS or pro templates.
-- **Monetize**: Partner with brands for custom codes, embed affiliate links to earn commissions.[1][3]
-- **Pro Features**: Dashboard analytics, email capture for leads, and integration with payment gateways.
+### Shortcode Parameters
+- `offer`: Discount text (e.g., "20% Off").
+- `code`: Coupon code (auto-generates if blank).
+- `link`: Affiliate URL.
+- `expires`: Expiration date (e.g., "2026-12-31").
 
-**Pro Tip**: Use on deal pages to boost conversions and SEO with reader-first content.[2]
+### Example
+
+[affiliate_coupon offer="Free Trial" code="FREETRIAL" link="https://example.com/?ref=unique" expires="2026-01-31"]
+
+
+### Dashboard Generator
+- Fill form in admin panel.
+- Click **Generate Coupon** for instant code and shortcode.
+
+### Tracking
+- View clicks on frontend (Pro: full reports).
+
+## FAQ
+
+**Is it compatible with Gutenberg?** Yes, shortcodes work in blocks.
+**Monetization?** Sell as freemium on WordPress.org or your site.
+
+## Support
+Contact support@example.com or upgrade to Pro.
