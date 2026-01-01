@@ -5,146 +5,114 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Custom Coupon Affiliate Pro
- * Plugin URI: https://example.com/custom-coupon-affiliate-pro
- * Description: Create, manage, and track custom affiliate coupons to boost conversions and monetize your site.
+ * Plugin URI: https://example.com/custom-coupon-pro
+ * Description: Generate exclusive custom coupons for affiliate marketing with tracking and analytics.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: custom-coupon-pro
  */
 
-if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
-}
+if (!defined('ABSPATH')) exit;
 
 class CustomCouponAffiliatePro {
-    public function __construct() {
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (null == self::$instance) {
+            self::$instance = new self;
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('coupon_display', array($this, 'coupon_shortcode'));
+        add_shortcode('ccap_coupon', array($this, 'coupon_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
+        load_plugin_textdomain('custom-coupon-pro');
         if (is_admin()) {
-            add_action('admin_post_save_coupon', array($this, 'save_coupon'));
+            add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
         }
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('coupon-script', plugin_dir_url(__FILE__) . 'coupon.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('coupon-style', plugin_dir_url(__FILE__) . 'coupon.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_menu_page('Coupons', 'Coupons', 'manage_options', 'custom-coupons', array($this, 'admin_page'));
+        add_menu_page(
+            'Custom Coupons',
+            'Coupons Pro',
+            'manage_options',
+            'custom-coupons',
+            array($this, 'admin_page'),
+            'dashicons-cart',
+            30
+        );
+    }
+
+    public function admin_scripts($hook) {
+        if ('toplevel_page_custom-coupons' !== $hook) return;
+        wp_enqueue_script('jquery');
     }
 
     public function admin_page() {
-        if (isset($_POST['save_coupon'])) {
-            $this->save_coupon();
+        if (isset($_POST['ccap_save'])) {
+            update_option('ccap_coupons', sanitize_text_field($_POST['coupons']));
+            echo '<div class="notice notice-success"><p>Coupon saved!</p></div>';
         }
-        $coupons = get_option('custom_coupons', array());
+        $coupons = get_option('ccap_coupons', 'SAVE10-YourBrand');
         ?>
         <div class="wrap">
-            <h1>Manage Custom Coupons</h1>
-            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-                <input type="hidden" name="action" value="save_coupon">
-                <?php wp_nonce_field('save_coupon_nonce'); ?>
+            <h1>Custom Coupon Generator</h1>
+            <form method="post">
                 <table class="form-table">
                     <tr>
-                        <th>Code</th>
-                        <td><input type="text" name="coupon_code" value="" /></td>
+                        <th>Coupon Code</th>
+                        <td><input type="text" name="coupons" value="<?php echo esc_attr($coupons); ?>" class="regular-text" placeholder="e.g., SAVE20-YourSite" /></td>
                     </tr>
                     <tr>
                         <th>Affiliate Link</th>
-                        <td><input type="url" name="affiliate_link" value="" size="50" /></td>
-                    </tr>
-                    <tr>
-                        <th>Discount</th>
-                        <td><input type="text" name="discount" value="" placeholder="e.g., 20% OFF" /></td>
-                    </tr>
-                    <tr>
-                        <th>Description</th>
-                        <td><textarea name="description" rows="4" cols="50"></textarea></td>
+                        <td><input type="url" name="afflink" value="" class="regular-text" placeholder="https://affiliate-link.com/?ref=yourid" /></td>
                     </tr>
                 </table>
-                <?php submit_button('Add Coupon'); ?>
+                <?php submit_button('Save Coupon'); ?>
             </form>
-            <h2>Existing Coupons</h2>
-            <table class="wp-list-table widefat fixed striped">
-                <thead><tr><th>Code</th><th>Discount</th><th>Link</th><th>Shortcode</th><th>Uses</th></tr></thead>
-                <tbody>
-        <?php foreach ($coupons as $id => $coupon): ?>
-                    <tr>
-                        <td><?php echo esc_html($coupon['code']); ?></td>
-                        <td><?php echo esc_html($coupon['discount']); ?></td>
-                        <td><a href="<?php echo esc_url($coupon['link']); ?>" target="_blank">View</a></td>
-                        <td>[coupon_display id="<?php echo $id; ?>"]</td>
-                        <td><?php echo isset($coupon['uses']) ? $coupon['uses'] : 0; ?></td>
-                    </tr>
-        <?php endforeach; ?>
-                </tbody>
-            </table>
+            <h2>Usage</h2>
+            <p>Use shortcode: <code>[ccap_coupon]</code></p>
+            <h2>Pro Features</h2>
+            <p>Upgrade for unlimited coupons, analytics, auto-expiry, and API integrations. <a href="#" onclick="alert('Pro version coming soon!')">Get Pro</a></p>
         </div>
         <?php
     }
 
-    public function save_coupon() {
-        if (!wp_verify_nonce($_POST['save_coupon_nonce'], 'save_coupon_nonce') || !current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
-        $coupons = get_option('custom_coupons', array());
-        $id = uniqid();
-        $coupons[$id] = array(
-            'code' => sanitize_text_field($_POST['coupon_code']),
-            'link' => esc_url_raw($_POST['affiliate_link']),
-            'discount' => sanitize_text_field($_POST['discount']),
-            'description' => sanitize_textarea_field($_POST['description']),
-            'uses' => 0
-        );
-        update_option('custom_coupons', $coupons);
-        wp_redirect(admin_url('admin.php?page=custom-coupons'));
-        exit;
-    }
-
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => ''), $atts);
-        $coupons = get_option('custom_coupons', array());
-        if (!isset($coupons[$atts['id']])) {
-            return '';
-        }
-        $coupon = $coupons[$atts['id']];
-        $coupon['uses'] = isset($coupon['uses']) ? $coupon['uses'] + 1 : 1;
-        $coupons[$atts['id']]['uses'] = $coupon['uses'];
-        update_option('custom_coupons', $coupons);
+        $atts = shortcode_atts(array('id' => 'default'), $atts);
+        $coupons = get_option('ccap_coupons', 'SAVE10-YourSite');
+        $afflink = get_option('ccap_afflink', '');
+        $clicks = get_option('ccap_clicks', 0) + 1;
+        update_option('ccap_clicks', $clicks);
+
         ob_start();
         ?>
-        <div class="coupon-box">
-            <h3><?php echo esc_html($coupon['discount']); ?></h3>
-            <p><?php echo esc_html($coupon['description']); ?></p>
-            <div class="coupon-code"><?php echo esc_html($coupon['code']); ?></div>
-            <a href="<?php echo esc_url($coupon['link']); ?}" class="coupon-btn" target="_blank">Get Deal</a>
-            <small>Used <?php echo $coupon['uses']; ?> times</small>
+        <div style="border: 2px dashed #0073aa; padding: 20px; text-align: center; background: #f9f9f9;">
+            <h3>Exclusive Coupon! 🔥</h3>
+            <div style="font-size: 2em; color: #0073aa; margin: 10px 0;"><?php echo esc_html($coupons); ?></div>
+            <p>Save 20% on your purchase! Limited time only.</p>
+            <?php if ($afflink): ?>
+            <a href="<?php echo esc_url($afflink . (strpos($afflink, '?') === false ? '?coupon=' : '&coupon=') . $coupons); ?>" target="_blank" class="button button-primary button-large" style="padding: 12px 24px;">Redeem Now</a>
+            <?php endif; ?>
+            <p style="font-size: 0.8em; margin-top: 15px;">Used <?php echo $clicks; ?> times today</p>
         </div>
         <?php
         return ob_get_clean();
     }
 
     public function activate() {
-        add_option('custom_coupons', array());
+        if (!get_option('ccap_coupons')) {
+            update_option('ccap_coupons', 'SAVE10-YourSite');
+        }
     }
 }
 
-new CustomCouponAffiliatePro();
-
-// Inline styles and scripts for self-contained
-add_action('wp_head', function() { ?>
-<style>
-.coupon-box { border: 2px dashed #007cba; padding: 20px; margin: 20px 0; background: #f9f9f9; text-align: center; border-radius: 8px; }
-.coupon-code { font-size: 24px; font-weight: bold; color: #e74c3c; background: white; padding: 10px; margin: 10px 0; display: inline-block; letter-spacing: 3px; }
-.coupon-btn { display: inline-block; background: #007cba; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px; }
-.coupon-btn:hover { background: #005a87; }
-</style>
-<script>jQuery(document).ready(function($) { $('.coupon-code').click(function() { var code = $(this).text(); navigator.clipboard.writeText(code).then(function() { $(this).after('<span>Copied!</span>'); }); }); });</script>
-<?php });
+CustomCouponAffiliatePro::get_instance();
