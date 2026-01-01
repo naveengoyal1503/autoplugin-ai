@@ -6,170 +6,106 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Affiliate Coupons Pro
  * Plugin URI: https://example.com/affiliate-coupons-pro
- * Description: Automatically generates and displays exclusive, trackable affiliate coupons to boost conversions and commissions.
+ * Description: Automatically generates, manages, and displays exclusive affiliate coupons with personalized promo codes to boost conversions and commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: affiliate-coupons-pro
+ * Text Domain: exclusive-affiliate-coupons-pro
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
-class AffiliateCouponsPro {
-    private static $instance = null;
-
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
+class ExclusiveAffiliateCouponsPro {
+    public function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('affiliate_coupon', array($this, 'coupon_shortcode'));
+        add_shortcode('eac_coupon', array($this, 'coupon_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        load_plugin_textdomain('affiliate-coupons-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
-        if (is_admin()) {
-            add_action('admin_init', array($this, 'admin_init'));
-        }
+        if (get_option('eac_enable') !== 'yes') return;
+        wp_register_style('eac-styles', plugin_dir_url(__FILE__) . 'style.css');
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_style('affiliate-coupons-pro', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
-        wp_enqueue_script('affiliate-coupons-pro', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0.0', true);
+        if (get_option('eac_enable') === 'yes') {
+            wp_enqueue_style('eac-styles');
+        }
     }
 
     public function admin_menu() {
-        add_options_page(
-            'Affiliate Coupons Pro',
-            'Affiliate Coupons',
-            'manage_options',
-            'affiliate-coupons-pro',
-            array($this, 'admin_page')
-        );
+        add_options_page('Affiliate Coupons', 'Affiliate Coupons', 'manage_options', 'eac-settings', array($this, 'settings_page'));
     }
 
-    public function admin_init() {
-        register_setting('affiliate_coupons_options', 'affiliate_coupons_settings');
-    }
-
-    public function admin_page() {
+    public function settings_page() {
+        if (isset($_POST['submit'])) {
+            update_option('eac_enable', sanitize_text_field($_POST['eac_enable']));
+            update_option('eac_api_key', sanitize_text_field($_POST['eac_api_key']));
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+        }
         ?>
         <div class="wrap">
-            <h1><?php _e('Affiliate Coupons Pro Settings', 'affiliate-coupons-pro'); ?></h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('affiliate_coupons_options');
-                do_settings_sections('affiliate_coupons_options');
-                ?>
+            <h1>Affiliate Coupons Settings</h1>
+            <form method="post">
                 <table class="form-table">
                     <tr>
-                        <th><?php _e('Coupons', 'affiliate-coupons-pro'); ?></th>
-                        <td>
-                            <textarea name="affiliate_coupons_settings[coupons]" rows="10" cols="50" placeholder='[{"name":"10% Off","code":"AFF10","affiliate_link":"https://example.com","description":"Exclusive discount"}]'><?php echo esc_textarea(get_option('affiliate_coupons_settings')['coupons'] ?? ''); ?></textarea>
-                            <p class="description"><?php _e('JSON array of coupons: {"name":"Name","code":"CODE","affiliate_link":"URL","description":"Desc"}', 'affiliate-coupons-pro'); ?></p>
-                        </td>
+                        <th>Enable Plugin</th>
+                        <td><input type="checkbox" name="eac_enable" value="yes" <?php checked(get_option('eac_enable'), 'yes'); ?> /></td>
+                    </tr>
+                    <tr>
+                        <th>Affiliate API Key (Premium)</th>
+                        <td><input type="text" name="eac_api_key" value="<?php echo esc_attr(get_option('eac_api_key')); ?>" /></td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
+            <p>Use <code>[eac_coupon id="1"]</code> shortcode to display coupons. Premium unlocks unlimited coupons and tracking.</p>
         </div>
         <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => 0), $atts);
-        $settings = get_option('affiliate_coupons_settings', array('coupons' => '[]'));
-        $coupons = json_decode($settings['coupons'], true);
-        if (!isset($coupons[$atts['id']])) {
-            return '';
-        }
-        $coupon = $coupons[$atts['id']];
-        $unique_code = $coupon['code'] . '-' . uniqid();
+        $atts = shortcode_atts(array('id' => 1), $atts);
+        $coupons = get_option('eac_coupons', array());
+        $coupon = isset($coupons[$atts['id']]) ? $coupons[$atts['id']] : array(
+            'title' => 'Exclusive Deal',
+            'code' => 'SAVE' . wp_generate_password(4, false),
+            'discount' => '20% OFF',
+            'affiliate_link' => 'https://example.com/affiliate',
+            'expires' => date('Y-m-d', strtotime('+30 days'))
+        );
         ob_start();
         ?>
-        <div class="affiliate-coupon-pro" data-id="<?php echo esc_attr($atts['id']); ?>">
-            <h3><?php echo esc_html($coupon['name']); ?></h3>
-            <p><?php echo esc_html($coupon['description']); ?></p>
-            <div class="coupon-code"><?php echo esc_html($unique_code); ?></div>
-            <a href="<?php echo esc_url($coupon['affiliate_link'] . '?coupon=' . urlencode($unique_code)); ?>" class="coupon-button" target="_blank">Get Deal Now (Affiliate Link)</a>
-            <p class="coupon-copy">Click to copy code: <button onclick="copyCoupon(this)">Copy</button></p>
+        <div class="eac-coupon" style="border: 2px dashed #007cba; padding: 20px; background: #f9f9f9; text-align: center;">
+            <h3><?php echo esc_html($coupon['title']); ?></h3>
+            <p><strong>Code: <?php echo esc_html($coupon['code']); ?></strong></p>
+            <p><?php echo esc_html($coupon['discount']); ?> - Expires: <?php echo esc_html($coupon['expires']); ?></p>
+            <a href="<?php echo esc_url($coupon['affiliate_link']); ?>" target="_blank" class="button button-primary" style="padding: 10px 20px;">Grab Deal & Track Commission</a>
         </div>
+        <style>
+        .eac-coupon { max-width: 400px; margin: 20px auto; border-radius: 10px; }
+        .eac-coupon .button { font-size: 18px; }
+        </style>
         <?php
         return ob_get_clean();
     }
 
     public function activate() {
-        add_option('affiliate_coupons_settings', array('coupons' => '[]'));
+        add_option('eac_enable', 'yes');
+        add_option('eac_coupons', array());
     }
 }
 
-AffiliateCouponsPro::get_instance();
+new ExclusiveAffiliateCouponsPro();
 
-/* style.css content (inline for single file) */
-function affiliate_coupons_pro_styles() {
-    ?>
-    <style>
-    .affiliate-coupon-pro {
-        border: 2px solid #007cba;
-        padding: 20px;
-        margin: 20px 0;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        text-align: center;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+// Premium teaser
+function eac_premium_teaser() {
+    if (!get_option('eac_api_key')) {
+        echo '<div class="notice notice-info"><p>Upgrade to Pro for unlimited coupons, analytics, and auto-generation! <a href="https://example.com/premium">Get Pro</a></p></div>';
     }
-    .affiliate-coupon-pro h3 {
-        color: #007cba;
-        margin: 0 0 10px;
-    }
-    .coupon-code {
-        font-size: 24px;
-        font-weight: bold;
-        background: #fff;
-        padding: 10px;
-        border: 1px dashed #007cba;
-        margin: 10px 0;
-        word-break: break-all;
-    }
-    .coupon-button {
-        display: inline-block;
-        background: #007cba;
-        color: white;
-        padding: 12px 24px;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: bold;
-        transition: background 0.3s;
-    }
-    .coupon-button:hover {
-        background: #005a87;
-    }
-    </style>
-    <?php
 }
-add_action('wp_head', 'affiliate_coupons_pro_styles');
-
-/* script.js content (inline) */
-function affiliate_coupons_pro_scripts() {
-    ?>
-    <script>
-    function copyCoupon(button) {
-        const code = button.parentElement.parentElement.querySelector('.coupon-code').textContent;
-        navigator.clipboard.writeText(code).then(() => {
-            button.textContent = 'Copied!';
-            setTimeout(() => { button.textContent = 'Copy'; }, 2000);
-        });
-    }
-    </script>
-    <?php
-}
-add_action('wp_footer', 'affiliate_coupons_pro_scripts');
+add_action('admin_notices', 'eac_premium_teaser');
