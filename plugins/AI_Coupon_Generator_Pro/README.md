@@ -1,39 +1,54 @@
 # AI Coupon Generator Pro
 
 ## Description
-**AI Coupon Generator Pro** is a powerful WordPress plugin that automatically generates unique, trackable coupon codes and integrates them with your affiliate links. Perfect for bloggers and site owners monetizing through coupons, deals, and affiliate marketing. Boost conversions with personalized discounts powered by AI simulation (Pro integrates real AI APIs).[1][2]
+
+**AI Coupon Generator Pro** is a powerful WordPress plugin that automatically generates unique, personalized coupon codes and displays them in eye-catching boxes via shortcodes. Perfect for affiliate marketers and bloggers to boost conversions and commissions.[1][2]
 
 ## Features
-- **One-Click Coupon Generation**: Shortcode-based widget generates custom coupons on any page/post.
-- **Affiliate Link Integration**: Append trackable coupons to your affiliate URLs for commissions.
-- **Freemium Model**: Free for 5 coupons; Pro unlocks unlimited, AI personalization, analytics, and white-label.
-- **SEO-Friendly**: Coupons are unique and shareable, driving traffic and partnerships.[1][2]
-- **Pro Only**: Real-time AI generation (OpenAI compatible), usage analytics, export reports, custom branding.
+
+- **AI-Powered Coupon Generation**: Creates unique codes like SAVE50NOW tailored to categories (free version uses pseudo-AI randomness; Pro uses real AI API).[1][2]
+- **Shortcode Integration**: Easy `[ai_coupon affiliate="amazon" category="electronics" amount="10"]` for instant coupon displays.[5]
+- **Affiliate Link Support**: Built-in links for Amazon, generic affiliates; Pro adds more networks.[3]
+- **Responsive Design**: Mobile-friendly coupon boxes with CTA buttons.
+- **Admin Dashboard**: Customize affiliate IDs and settings.
+- **Pro Features**: Unlimited coupons, true AI integration, analytics, premium templates ($49/year).
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Use shortcode `[ai_coupon_generator brand="Amazon" discount="20" affiliate="https://affiliate-link.com"]`.
+
+1. Upload the `ai-coupon-generator` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > AI Coupons** to configure your affiliate ID.
+4. Use the shortcode `[ai_coupon]` in any post or page.
 
 ## Setup
-1. Go to **Settings > AI Coupon Pro** to enter Pro license key (optional for basic).
-2. Add shortcode to posts/pages or use in templates.
-3. For Pro: Configure AI API key in settings for advanced generation.
+
+1. In **Settings > AI Coupons**, enter your affiliate tracking ID (e.g., Amazon tag).
+2. Customize shortcode attributes:
+   - `affiliate`: amazon, generic
+   - `category`: Any text (e.g., electronics, fashion)
+   - `amount`: Discount percentage (e.g., 20)
+3. **Pro Setup**: Purchase upgrade, enter API key for advanced AI generation.
 
 ## Usage
-- **Basic Shortcode**: `[ai_coupon_generator]` - Generates generic 10% off coupon.
-- **Custom**: `[ai_coupon_generator brand="YourBrand" discount="15" affiliate="https://youraffiliate.link/?ref=yourid"]`.
-- **Frontend**: Click "Generate My Coupon" to create unique code + link. Tracks clicks for Pro users.
-- **Monetization Tips**: Place on deal pages, sidebars. Partner with brands for custom codes.[1][2][3]
+
+- Add `[ai_coupon category="books" amount="15"]` to blog posts for instant coupons.
+- Track clicks via Pro analytics dashboard.
+- **Monetization Tip**: Pair with affiliate programs for commissions on every redemption.[1][3]
 
 ## Pro Upgrade
-Unlock full potential for $49/year:
-- Unlimited coupons
-- AI-powered personalization
-- Click/conversion analytics
-- White-label & priority support
 
-**Get Pro**: [Upgrade Now](https://example.com/upgrade)
+Unlock:
+- Real AI coupon suggestions via OpenAI integration.
+- Unlimited generations and custom templates.
+- Advanced analytics and A/B testing.
+
+Get Pro: [Upgrade Now](https://example.com/pro) - $49/year.
 
 ## Support
-Report issues via WordPress.org forums. Pro users get email support.
+
+Report issues on the support forum. Pro users get priority email support.
+
+## Changelog
+
+**1.0.0**
+- Initial release with core shortcode and settings.
