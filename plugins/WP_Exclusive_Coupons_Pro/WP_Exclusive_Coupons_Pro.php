@@ -6,11 +6,10 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: WP Exclusive Coupons Pro
  * Plugin URI: https://example.com/wp-exclusive-coupons
- * Description: Automatically generates, manages, and displays exclusive affiliate coupons with personalized promo codes to boost conversions and commissions.
+ * Description: Automatically generates and manages exclusive coupon codes for your WordPress site, boosting affiliate conversions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: wp-exclusive-coupons
  */
 
 if (!defined('ABSPATH')) {
@@ -21,7 +20,7 @@ class WPExclusiveCoupons {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null === self::$instance) {
+        if (null == self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -31,96 +30,126 @@ class WPExclusiveCoupons {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_wpec_generate_coupon', array($this, 'ajax_generate_coupon'));
-        add_shortcode('wpec_coupons', array($this, 'coupons_shortcode'));
+        add_action('wp_ajax_generate_coupon', array($this, 'ajax_generate_coupon'));
+        add_shortcode('exclusive_coupons', array($this, 'coupons_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        load_plugin_textdomain('wp-exclusive-coupons', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+        if (get_option('wpec_enable') !== 'yes') return;
+        wp_localize_script('wpec-frontend', 'wpec_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('wpec-frontend', plugin_dir_url(__FILE__) . 'assets/frontend.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('wpec-frontend', 'wpec_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('wpec_nonce')));
+        wp_enqueue_script('wpec-frontend', plugin_dir_url(__FILE__) . 'frontend.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('wpec-styles', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_options_page('Exclusive Coupons', 'Coupons Pro', 'manage_options', 'wpec-pro', array($this, 'admin_page'));
+        add_options_page('Exclusive Coupons', 'Coupons', 'manage_options', 'wpec-settings', array($this, 'settings_page'));
     }
 
-    public function admin_page() {
-        if (isset($_POST['wpec_save'])) {
-            update_option('wpec_coupons', sanitize_textarea_field($_POST['coupons']));
-            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
+    public function settings_page() {
+        if (isset($_POST['submit'])) {
+            update_option('wpec_enable', sanitize_text_field($_POST['wpec_enable']));
+            update_option('wpec_prefix', sanitize_text_field($_POST['wpec_prefix']));
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        $coupons = get_option('wpec_coupons', '[]');
+        $enable = get_option('wpec_enable', 'yes');
+        $prefix = get_option('wpec_prefix', 'SAVE');
         ?>
         <div class="wrap">
-            <h1>WP Exclusive Coupons Pro</h1>
+            <h1>WP Exclusive Coupons Settings</h1>
             <form method="post">
-                <textarea name="coupons" rows="20" cols="80" style="width:100%;" placeholder='[{"name":"10% Off","affiliate":"https://affiliate.com/?ref=blog","code":"BLOG10","expires":"2026-12-31"}]'><?php echo esc_textarea($coupons); ?></textarea>
-                <p class="description">JSON array: {"name":"Coupon Name","affiliate":"Affiliate URL","code":"Promo Code","expires":"YYYY-MM-DD"}</p>
-                <p><input type="submit" name="wpec_save" class="button-primary" value="Save Coupons"></p>
+                <table class="form-table">
+                    <tr>
+                        <th>Enable Plugin</th>
+                        <td><input type="checkbox" name="wpec_enable" value="yes" <?php checked($enable, 'yes'); ?> /></td>
+                    </tr>
+                    <tr>
+                        <th>Coupon Prefix</th>
+                        <td><input type="text" name="wpec_prefix" value="<?php echo esc_attr($prefix); ?>" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
             </form>
-            <h2>Shortcode</h2>
-            <p>Use <code>[wpec_coupons]</code> to display coupons on any page/post.</p>
-            <h2>Pro Features</h2>
-            <p>Upgrade to Pro for unlimited coupons, analytics, auto-expiration, and more! <a href="#pro">Buy Now ($49/year)</a></p>
         </div>
         <?php
     }
 
     public function ajax_generate_coupon() {
-        check_ajax_referer('wpec_nonce', 'nonce');
-        $code = wp_generate_uuid4();
-        wp_send_json_success(array('code' => $code));
+        if (!wp_verify_nonce($_POST['nonce'], 'wpec_nonce')) {
+            wp_die('Security check failed');
+        }
+        $prefix = get_option('wpec_prefix', 'SAVE');
+        $code = $prefix . '-' . wp_generate_uuid4() . substr(md5(uniqid()), 0, 8);
+        $coupon = array(
+            'code' => $code,
+            'discount' => '20% OFF',
+            'expires' => date('Y-m-d', strtotime('+30 days')),
+            'aff_link' => home_url(),
+            'used' => 0
+        );
+        $coupons = get_option('wpec_coupons', array());
+        $coupons[] = $coupon;
+        update_option('wpec_coupons', $coupons);
+        wp_send_json_success($coupon);
     }
 
     public function coupons_shortcode($atts) {
         $atts = shortcode_atts(array('limit' => 5), $atts);
-        $coupons_json = get_option('wpec_coupons', '[]');
-        $coupons = json_decode($coupons_json, true);
-        if (empty($coupons) || !is_array($coupons)) {
-            return '<p>No coupons available.</p>';
-        }
+        $coupons = get_option('wpec_coupons', array());
         $output = '<div class="wpec-coupons">';
-        $count = 0;
-        foreach ($coupons as $coupon) {
-            if ($count >= intval($atts['limit'])) break;
-            if (isset($coupon['expires']) && strtotime($coupon['expires']) < current_time('timestamp')) continue;
-            $output .= '<div class="wpec-coupon">';
-            $output .= '<h3>' . esc_html($coupon['name']) . '</h3>';
-            $output .= '<p>Code: <strong>' . esc_html($coupon['code']) . '</strong></p>';
-            $output .= '<a href="' . esc_url($coupon['affiliate']) . '" target="_blank" class="button">Get Deal</a>';
-            $output .= '</div>';
-            $count++;
+        $limit = min((int)$atts['limit'], count($coupons));
+        for ($i = 0; $i < $limit; $i++) {
+            if (isset($coupons[$i])) {
+                $c = $coupons[$i];
+                $output .= '<div class="wpec-coupon">';
+                $output .= '<h3>' . esc_html($c['code']) . '</h3>';
+                $output .= '<p>' . esc_html($c['discount']) . ' - Expires: ' . esc_html($c['expires']) . '</p>';
+                $output .= '<a href="' . esc_url($c['aff_link']) . '" class="button">Get Deal</a>';
+                $output .= '</div>';
+            }
         }
         $output .= '</div>';
-        $output .= '<style>.wpec-coupon {border:1px solid #ddd; padding:15px; margin:10px 0; background:#f9f9f9;}.wpec-coupon h3 {margin-top:0;}</style>';
+        $output .= '<button id="wpec-generate" data-nonce="' . wp_create_nonce('wpec_nonce') . '">Generate New Coupon</button>';
         return $output;
     }
 
     public function activate() {
-        if (!get_option('wpec_coupons')) {
-            update_option('wpec_coupons', '[]');
-        }
+        update_option('wpec_enable', 'yes');
+        update_option('wpec_prefix', 'SAVE');
     }
 }
 
 WPExclusiveCoupons::get_instance();
 
-// Pro Upsell Notice
-function wpec_pro_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>Unlock <strong>WP Exclusive Coupons Pro</strong>: Unlimited coupons, analytics & integrations. <a href="https://example.com/pro">Upgrade Now ($49)</a></p></div>';
-}
-add_action('admin_notices', 'wpec_pro_notice');
-
-// Frontend JS (inline for single file)
+// Frontend JS (embedded)
 function wpec_inline_js() {
-    ?>
-    <script>jQuery(document).ready(function($) { $('.wpec-generate').click(function() { $.post(wpec_ajax.ajax_url, {action:'wpec_generate_coupon', nonce:wpec_ajax.nonce}, function(res) { if(res.success) alert('New code: ' + res.data.code); }); }); });</script>
-    <?php
+    if (get_option('wpec_enable') === 'yes') {
+        ?>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#wpec-generate').click(function() {
+                $.post(wpec_ajax.ajaxurl, {
+                    action: 'generate_coupon',
+                    nonce: $(this).data('nonce')
+                }, function(resp) {
+                    if (resp.success) {
+                        alert('New coupon generated: ' + resp.data.code);
+                        location.reload();
+                    }
+                });
+            });
+        });
+        </script>
+        <style>
+        .wpec-coupons { display: flex; flex-wrap: wrap; gap: 20px; }
+        .wpec-coupon { border: 1px solid #ddd; padding: 20px; border-radius: 5px; width: 300px; }
+        .wpec-coupon h3 { color: #0073aa; }
+        #wpec-generate { background: #0073aa; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        </style>
+        <?php
+    }
 }
 add_action('wp_footer', 'wpec_inline_js');
