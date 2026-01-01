@@ -2,48 +2,35 @@
 
 ## Features
 
-- **Dynamic Coupon Display**: Use shortcode `[affiliate_coupon_vault]` or `[affiliate_coupon_vault id="1"]` to showcase coupons anywhere.
-- **Affiliate Tracking**: Built-in click tracking for affiliate links (Pro: advanced analytics).
-- **Admin Dashboard**: Easy coupon management with title, code, affiliate URL, description, expiry, and usage stats.
-- **Conversion Optimized**: Eye-catching designs with copy-to-clipboard codes and urgency elements.
-- **Freemium Ready**: Free version limited to 5 coupons; Pro unlocks unlimited + premium features.
-- **SEO Friendly**: Schema-ready coupon markup for better search visibility.
+- **Custom Coupon Post Type**: Easily create and manage exclusive coupons and deals via intuitive WordPress admin interface.
+- **Shortcode Integration**: Display coupons anywhere with `[acv_coupons limit="5"]`.
+- **Affiliate Link Randomizer**: Automatically rotates affiliate links from your settings for better tracking and compliance.
+- **Exclusive Discounts**: Generate unique promo codes to boost conversions and reader loyalty.
+- **Freemium Model**: Free version for basics; **Pro** adds unlimited coupons, click tracking, custom CSS, and API support.
+- **SEO-Friendly**: Archive pages and schema-ready for better search visibility.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate **Affiliate Coupon Vault**.
-4. Access settings via **Settings > Coupon Vault**.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Create your first coupon: **Coupons > Add New**.
+4. Configure settings: **Coupons > Settings** (add affiliate links as `Brand|Affiliate URL|Code`).
+5. Add `[acv_coupons]` shortcode to any page or post.
 
 ## Setup
 
-1. Go to **Settings > Coupon Vault**.
-2. Add new coupons: Enter title, promo code, affiliate link, description, and optional expiry.
-3. Save and copy the shortcode.
-4. Paste shortcode in posts, pages, or widgets.
-
-**Pro Tip**: Create a dedicated `/coupons/` page for SEO traffic.
+1. **Add Affiliate Links**: In settings, enter one per line: `Amazon|https://amzn.to/xxx|SAVE10`.
+2. **Create Coupons**: Use title for deal name, content for description/image. Featured image optional.
+3. **Display Options**:
+   - Shortcode: `[acv_coupons limit="10"]`
+   - Widget/Page: Embed via Gutenberg block or classic editor.
+   - Archive: Visit `/coupon/` for full list.
 
 ## Usage
 
-### Shortcodes
-- `[affiliate_coupon_vault limit="3"]` - Show latest 3 coupons.
-- `[affiliate_coupon_vault id="5"]` - Specific coupon.
+- **For Bloggers**: Embed in posts for niche deals (e.g., software, travel) to earn commissions.[1][2]
+- **Monetization Tips**: Partner with brands for custom codes; track via affiliate dashboards.[1][3]
+- **Pro Upgrade**: Get analytics, email capture, and sponsored slots ($49/year).
+- **Support**: Check plugin settings or contact support@example.com.
 
-### Customization
-- Style via CSS classes: `.affiliate-coupon-vault`, `.coupon-item`, `.coupon-btn`.
-- Pro: Custom templates and branding.
-
-### Monetization
-- Earn affiliate commissions on clicks.
-- Upsell Pro version.
-- Partner with brands for exclusive codes.
-
-## Pro Features (Upgrade for $49/year)
-- Unlimited coupons.
-- Click/conversion analytics.
-- Custom designs & auto-expiry.
-- Import/Export & API integrations.
-
-**Support**: [Contact Us](https://example.com/support) | **Upgrade**: [Get Pro](https://example.com/pro)
+**Start earning passive income today!**
