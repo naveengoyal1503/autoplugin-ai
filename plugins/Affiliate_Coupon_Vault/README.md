@@ -1,67 +1,34 @@
 # Affiliate Coupon Vault
 
-## 🎯 **Transform Your Blog into a Coupon Powerhouse**
+## Features
 
-**Affiliate Coupon Vault** automatically creates eye-catching, conversion-optimized coupon displays with unique promo codes. Perfect for affiliate marketers, bloggers, and eCommerce sites looking to boost commissions through exclusive deals.[1][2]
+- **Easy Coupon Management**: Add, edit, and manage exclusive affiliate coupons via a simple admin dashboard.
+- **Customizable Shortcode**: Use `[affiliate_coupon_vault]` or `[affiliate_coupon_vault limit="3"]` to display coupons anywhere.
+- **Responsive Design**: Mobile-friendly coupon display with eye-catching styling.
+- **Trackable Affiliate Links**: Boost commissions with personalized promo codes.
+- **Expiry & Active Status**: Control coupon visibility with dates and toggles.
+- **Freemium Model**: Free core features; premium unlocks auto-generation, analytics, imports ($49/year).
 
-## ✨ **Key Features**
+## Installation
 
-- **🔥 Instant Coupon Shortcodes**: `[affiliate_coupon discount="50%" link="your-affiliate-link"]`
-- **🎨 Beautiful, Animated Designs**: Mobile-responsive with hover effects
-- **✅ Unique Promo Codes**: Auto-generates personalized codes like `SAVEABC123`
-- **📊 Conversion Tracking Ready**: Google Analytics event integration
-- **⚡ One-Click Setup**: No coding required
-- **💎 Pro Version**: Unlimited coupons, analytics dashboard, premium integrations
+1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload Plugin**.
+2. Activate the plugin.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
+4. Add the shortcode `[affiliate_coupon_vault]` to any post, page, or widget.
 
-## 🎪 **Example Usage**
+## Setup
 
+1. **Add Coupons**: In the admin page, enter title, code, affiliate URL (with your tracking), discount, expiry, and active status.
+2. **Display**: Paste shortcode in Gutenberg blocks, Classic Editor, or widgets.
+3. **Customize**: Premium version offers categories, limits, and styling options.
 
-[affiliate_coupon affiliate="amazon" discount="30% OFF" link="https://your-amazon-affiliate-link.com" expires="+30 days"]
+## Usage
 
+- **Shortcode Options**:
+  - `[affiliate_coupon_vault]` - Shows latest 5 active coupons.
+  - `[affiliate_coupon_vault limit="10"]` - Limit results.
+- **Monetization Tips**: Partner with brands for custom codes, promote in niche posts for higher conversions.[1][2]
+- **Upgrade**: Get premium for AI coupon generation, click tracking, and unlimited storage at example.com/premium.
 
-**Result**: Professional coupon box with unique code, expiry date, and trackable CTA button.
-
-## 🛠 **Installation**
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`
-2. Activate via **Plugins > Installed Plugins**
-3. Use shortcode `[affiliate_coupon]` anywhere
-4. Configure defaults in **Settings > Coupon Vault**
-
-## ⚙️ **Setup & Customization**
-
-1. **Basic Shortcode**:
-       [affiliate_coupon discount="25%" link="https://example.com/deal"]
-   
-
-2. **Advanced**:
-       [affiliate_coupon affiliate="shopify" discount="FREE Trial" code="BLOG2026" link="https://your-link.com" expires="Dec 31, 2026"]
-   
-
-3. **Settings Page**: Set default link/discount for quick reuse
-
-## 💰 **Monetization Potential**
-
-- **Affiliate Commissions**: 20-50% higher conversions with exclusive codes[1][2]
-- **Pro Upgrade**: $49/year (unlimited + analytics)
-- **White-label**: Agency owners can rebrand
-
-## 🚀 **Pro Features (Coming Soon)**
-
-- Unlimited active coupons
-- Click/conversion analytics
-- Auto-expiry management
-- Email capture forms
-- Amazon/ShareASale integrations
-- Custom branding & templates
-
-## 📈 **Why It Converts**
-
-- **Trust Signals**: "Exclusive" + unique codes = urgency
-- **Visual Appeal**: Animated designs grab attention
-- **Mobile Optimized**: Perfect on all devices
-- **SEO Friendly**: Clean markup, schema-ready
-
-**Boost your affiliate earnings today!** 💥
-
-*Plugin optimized for 2026 WordPress standards. Free updates forever.*
+## Support
+Contact support@example.com. Contributions welcome on GitHub.
