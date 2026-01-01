@@ -2,36 +2,38 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation** (Pro): Automatically generates personalized promo codes using simple AI logic.
-- **Easy Coupon Management**: Add, edit, and organize coupons from affiliate brands via admin dashboard.
-- **Shortcode Display**: Embed coupon vaults anywhere with `[aicoupon_vault]` or `[aicoupon_vault num="3"]`.
-- **Copy-to-Clipboard**: One-click copy for user-friendly experience.
-- **Freemium Model**: Free for up to 3 coupons; Pro unlocks unlimited, analytics, custom branding.
-- **Affiliate Optimized**: Boost conversions with trackable, reader-first coupons[1][2].
+- **AI-Powered Coupon Generation** (Premium): Auto-generate personalized coupons using OpenAI integration.
+- **Easy Coupon Management**: Add/edit coupons via intuitive admin dashboard with JSON import/export.
+- **Affiliate-Ready**: Trackable affiliate links with nofollow for SEO compliance.
+- **Shortcode Display**: Use `[ai_coupon_vault]` or `[ai_coupon_vault limit="3"]` to showcase coupons anywhere.
+- **Expiry Management**: Automatically hide expired coupons.
+- **Responsive Design**: Mobile-friendly coupon grids.
+- **Freemium Model**: Free core features; Pro unlocks AI, analytics, unlimited coupons ($49/year).
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via WordPress Admin > Plugins.
-3. Go to **Settings > Coupon Vault** to add coupons (format: `Brand: CODE`).
-4. Use shortcode `[aicoupon_vault]` in posts/pages.
+3. Go to **Coupon Vault** in admin menu to add coupons.
 
 ## Setup
 
-1. In admin, enter coupons one per line: `Amazon: SAVE20\nShopify: DISCOUNT10`.
-2. Free limits to 3 coupons; upgrade for unlimited.
-3. Customize via CSS classes: `.aicoupon-vault`, `.coupon-item`.
+1. Navigate to **Coupon Vault** dashboard.
+2. Enter coupons in JSON format:
+   
+   {"coupons":[
+     {"code":"SAVE20","desc":"20% Off","afflink":"https://aff.link","expiry":"2026-12-31"}
+   ]}
+   
+3. Click **Save Coupons**.
+4. Add `[ai_coupon_vault]` to any post/page.
 
 ## Usage
 
-- **Frontend**: Shortcode auto-generates styled coupon list with copy buttons.
-- **Pro Features**: Enable AI generation, track clicks, export analytics.
-- **Monetization Tip**: Pair with affiliate links for commissions[3][4].
-
-## Pro Upgrade
-
-$49/year: Unlimited coupons, AI tools, priority support. Visit [example.com/pro](https://example.com/pro).
+- **Frontend**: Coupons display as clickable reveals with affiliate links.
+- **Customization**: Style via CSS classes like `.ai-coupon-vault`, `.coupon-item`.
+- **Pro Features**: Enter OpenAI API key for auto-generation (e.g., "Generate 5 coupons for SaaS tools").
+- **Monetization Tip**: High-conversion coupons boost affiliate earnings[1][2].
 
 ## Support
-
-Report issues via WordPress.org forums.
+Contact support@example.com. Upgrade to Pro for priority support.
