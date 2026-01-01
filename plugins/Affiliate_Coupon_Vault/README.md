@@ -2,46 +2,36 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited affiliate coupons via simple admin panel (Pro: unlimited; Free: 3 max).
-- **Click Tracking**: Tracks coupon clicks and redirects to affiliate links for commission optimization[1][2].
-- **Responsive Grid Display**: Beautiful, mobile-friendly coupon grid with shortcode `[affiliate_coupon]`.
-- **Personalized Promo Codes**: Generate exclusive codes like DISCOUNT10 for higher conversions[1][2].
-- **Pro Upsell Integration**: Built-in prompts drive upgrades for passive developer revenue.
-- **SEO-Friendly**: Clean markup for better search visibility on coupon pages[2].
-
-**Free vs Pro**:
-| Feature | Free | Pro ($49/yr) |
-|---------|------|---------------|
-| Coupons | 3 max | Unlimited |
-| Click Tracking | Basic | Advanced Analytics |
-| Custom Branding | No | Yes |
-| Priority Support | No | Yes |
+- **Easy Coupon Generation**: Create unique coupon codes with one click in the admin.
+- **Affiliate Tracking**: Built-in click tracking and ref links for commissions.
+- **Shortcode Display**: Use `[affiliate_coupon id="1"]` to embed coupons anywhere.
+- **Expiry & Stats**: Set expiry dates and view click counts.
+- **Pro Upgrade**: Unlimited coupons, analytics dashboard, custom templates ($49/year).
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add coupons (format: `Name|Code|Affiliate Link|Description`).
-4. Add `[affiliate_coupon]` shortcode to any post/page.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to generate your first coupon.
 
 ## Setup
 
-1. **Configure Coupons**:
-   - Example: `Amazon|AMAZON10|https://amzn.to/yourlink|10% off electronics`
-   - Save settings.
-2. **Embed on Site**: Use shortcode in Gutenberg block, Classic Editor, or widgets.
-3. **Upgrade to Pro**: Visit the admin link for unlimited features and analytics.
+1. Navigate to **Settings > Coupon Vault**.
+2. Fill in coupon details: title, affiliate link, discount, optional expiry.
+3. Click **Generate Coupon** to create a unique code and get the shortcode.
+4. Copy the shortcode `[affiliate_coupon id="X"]` and paste into posts/pages.
 
 ## Usage
 
-- **Frontend**: Visitors see clickable coupons; clicks are tracked and redirected.
-- **Tracking**: Pro users get click logs (extendable via hooks).
-- **Customization**: Style via CSS classes like `.acv-coupon`, `.acv-btn`.
-- **Monetization Tips**: Target niches like software, travel, eCommerce for high affiliate commissions[1][2][3]. Pair with SEO plugins for traffic[1].
+- **Embed Coupons**: Use the shortcode in Gutenberg blocks, classic editor, or widgets.
+- **Track Performance**: View clicks on each coupon in the admin table.
+- **Monetize**: Partner with brands for exclusive codes, earn affiliate commissions on clicks/sales [1][2].
+- **Pro Features**: Upgrade for A/B testing, email integration, and more.
 
-## Support
+## Screenshots
+*(In full distribution: admin generator, frontend display)*
 
-- Free support via WordPress.org forums.
-- Pro: Email support@example.com.
+## Changelog
 
-**Start earning passive income today!**
+**1.0.0**
+- Initial release with core coupon generation and tracking.
