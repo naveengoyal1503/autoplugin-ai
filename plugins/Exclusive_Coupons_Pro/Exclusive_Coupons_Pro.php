@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Generate exclusive affiliate coupons, track usage, and boost conversions on your WordPress site.
+ * Description: Automatically generates and displays exclusive, personalized coupon codes for your WordPress site, boosting affiliate conversions and reader loyalty with custom deals.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -14,98 +14,142 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class ExclusiveCouponsPro {
     public function __construct() {
         add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('exclusive_coupon', array($this, 'coupon_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        load_plugin_textdomain('exclusive-coupons-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        if (get_option('ecp_api_key') === false) {
+            add_option('ecp_api_key', '');
+        }
+        if (get_option('ecp_coupons') === false) {
+            add_option('ecp_coupons', array(
+                array('code' => 'SAVE10', 'afflink' => '', 'desc' => '10% off first purchase', 'uses' => 0, 'maxuses' => 100)
+            ));
+        }
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('ecp-script', plugin_dir_url(__FILE__) . 'ecp.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('ecp-style', plugin_dir_url(__FILE__) . 'ecp.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_options_page(
-            'Exclusive Coupons Pro',
-            'Coupons Pro',
-            'manage_options',
-            'exclusive-coupons-pro',
-            array($this, 'admin_page')
-        );
+        add_options_page('Exclusive Coupons Pro', 'Coupons Pro', 'manage_options', 'ecp-settings', array($this, 'settings_page'));
     }
 
-    public function admin_page() {
-        if (isset($_POST['submit'])) {
-            update_option('ecp_coupons', sanitize_textarea_field($_POST['coupons']));
-            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
+    public function settings_page() {
+        if (isset($_POST['ecp_save'])) {
+            update_option('ecp_api_key', sanitize_text_field($_POST['ecp_api_key']));
+            update_option('ecp_coupons', array_map(function($c) {
+                return array(
+                    'code' => sanitize_text_field($c['code']),
+                    'afflink' => esc_url_raw($c['afflink']),
+                    'desc' => sanitize_text_field($c['desc']),
+                    'uses' => intval($c['uses']),
+                    'maxuses' => intval($c['maxuses'])
+                );
+            }, $_POST['coupons']));
+            echo '<div class="notice notice-success"><p>Saved!</p></div>';
         }
-        $coupons = get_option('ecp_coupons', "Code1|Brand1|20% off|https://affiliate.link1\nCode2|Brand2|$10 off|https://affiliate.link2");
+        $api_key = get_option('ecp_api_key');
+        $coupons = get_option('ecp_coupons');
         ?>
         <div class="wrap">
-            <h1>Exclusive Coupons Pro</h1>
+            <h1>Exclusive Coupons Pro Settings</h1>
             <form method="post">
-                <p><label>Enter coupons (format: Code|Brand|Discount|Affiliate Link), one per line:</label></p>
-                <textarea name="coupons" rows="10" cols="80" class="large-text"><?php echo esc_textarea($coupons); ?></textarea>
-                <p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Coupons"></p>
+                <table class="form-table">
+                    <tr>
+                        <th>API Key (Premium)</th>
+                        <td><input type="text" name="ecp_api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text" /></td>
+                    </tr>
+                </table>
+                <h2>Coupons</h2>
+                <?php foreach ($coupons as $i => $coupon): ?>
+                <div style="border:1px solid #ccc; margin:10px 0; padding:10px;">
+                    <input type="hidden" name="coupons[<?php echo $i; ?>][code]" value="<?php echo esc_attr($coupon['code']); ?>" />
+                    <p><label>Code: <input type="text" name="coupons[<?php echo $i; ?>][code]" value="<?php echo esc_attr($coupon['code']); ?>" /></label></p>
+                    <p><label>Affiliate Link: <input type="url" name="coupons[<?php echo $i; ?>][afflink]" value="<?php echo esc_attr($coupon['afflink']); ?>" style="width:300px;" /></label></p>
+                    <p><label>Description: <input type="text" name="coupons[<?php echo $i; ?>][desc]" value="<?php echo esc_attr($coupon['desc']); ?>" /></label></p>
+                    <p><label>Uses: <input type="number" name="coupons[<?php echo $i; ?>][uses]" value="<?php echo esc_attr($coupon['uses']); ?>" /></label> / Max: <input type="number" name="coupons[<?php echo $i; ?>][maxuses]" value="<?php echo esc_attr($coupon['maxuses']); ?>" /></p>
+                </div>
+                <?php endforeach; ?>
+                <p><input type="submit" name="ecp_save" class="button-primary" value="Save Settings" /></p>
             </form>
-            <h2>Usage</h2>
-            <p>Use shortcode: <code>[exclusive_coupon id="1"]</code> (ID starts from 1)</p>
-            <p><strong>Pro Features:</strong> Usage tracking, analytics, unlimited coupons. <a href="https://example.com/upgrade">Upgrade Now</a></p>
+            <p><strong>Shortcode:</strong> <code>[exclusive_coupon]</code> - Use in posts/pages. Premium unlocks more features.</p>
         </div>
         <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => 1), $atts);
-        $id = intval($atts['id']);
-        $coupons = $this->get_coupons();
-        if (!isset($coupons[$id - 1])) {
-            return 'Coupon not found.';
-        }
-        list($code, $brand, $discount, $link) = explode('|', $coupons[$id - 1], 4);
-        $clicks = get_option("ecp_clicks_$id", 0);
-        return '<div class="exclusive-coupon" style="border:2px solid #0073aa;padding:20px;background:#f9f9f9;border-radius:5px;"><h3>Exclusive Deal: ' . esc_html($brand) . '</h3><p><strong>' . esc_html($code) . '</strong> - ' . esc_html($discount) . '</p><p><a href="' . esc_url($link) . '" target="_blank" class="button" style="background:#0073aa;color:white;padding:10px 20px;text-decoration:none;border-radius:3px;">Get Deal (Used ' . $clicks . ' times)</a></p></div>';
-    }
-
-    private function get_coupons() {
-        $data = get_option('ecp_coupons', '');
-        return array_filter(array_map('trim', explode("\n", $data)));
+        $atts = shortcode_atts(array('id' => 0), $atts);
+        $coupons = get_option('ecp_coupons');
+        if (empty($coupons)) return '';
+        $coupon = $coupons[array_rand($coupons)];
+        if ($coupon['uses'] >= $coupon['maxuses']) return '<p>Coupon expired!</p>';
+        $unique_code = $coupon['code'] . '-' . uniqid();
+        ob_start();
+        ?>
+        <div id="ecp-coupon" class="ecp-coupon-box">
+            <h3>Exclusive Deal: <?php echo esc_html($coupon['desc']); ?></h3>
+            <div class="ecp-code"><?php echo esc_html($unique_code); ?></div>
+            <a href="<?php echo esc_url($coupon['afflink']); ?>&coupon=<?php echo urlencode($unique_code); ?>" class="ecp-button" target="_blank">Redeem Now</a>
+            <small>Used <?php echo intval($coupon['uses']); ?> / <?php echo intval($coupon['maxuses']); ?> times</small>
+        </div>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#ecp-coupon .ecp-button').click(function() {
+                $(this).text('Redeemed!');
+                $.post(ajaxurl, {action: 'ecp_track_use', code: '<?php echo esc_js($unique_code); ?>'});
+            });
+        });
+        </script>
+        <?php
+        return ob_get_clean();
     }
 
     public function activate() {
-        if (!get_option('ecp_coupons')) {
-            update_option('ecp_coupons', "WELCOME20|ExampleBrand|20% OFF|https://your-affiliate-link.com\nSAVE10|ShopNow|Save $10|https://your-affiliate-link2.com");
-        }
+        flush_rewrite_rules();
     }
 }
 
 new ExclusiveCouponsPro();
 
-// Enqueue styles if needed
-add_action('wp_enqueue_scripts', function() {
-    wp_add_inline_style('dashicons', '.exclusive-coupon { max-width: 300px; margin: 20px 0; }');
-});
-
-// Track clicks (free version limit: 100 total)
-add_action('wp_loaded', function() {
-    if (isset($_GET['ecp_click'])) {
-        $id = intval($_GET['ecp_click']);
-        $clicks = get_option("ecp_clicks_$id", 0) + 1;
-        update_option("ecp_clicks_$id", $clicks);
-        $total_clicks = get_option('ecp_total_clicks', 0) + 1;
-        if ($total_clicks <= 100) {
-            update_option('ecp_total_clicks', $total_clicks);
-        }
-        $coupons = (new ExclusiveCouponsPro())->get_coupons();
-        if (isset($coupons[$id - 1])) {
-            list($code, $brand, $discount, $link) = explode('|', $coupons[$id - 1], 4);
-            wp_redirect(esc_url_raw($link));
-            exit;
+add_action('wp_ajax_ecp_track_use', function() {
+    $code = sanitize_text_field($_POST['code']);
+    $coupons = get_option('ecp_coupons');
+    foreach ($coupons as &$c) {
+        if (strpos($code, $c['code']) === 0) {
+            $c['uses']++;
+            break;
         }
     }
+    update_option('ecp_coupons', $coupons);
+    wp_die();
 });
+
+/* CSS */
+function ecp_add_css() {
+    echo '<style>
+    .ecp-coupon-box { border: 2px dashed #007cba; padding: 20px; text-align: center; background: #f9f9f9; border-radius: 10px; margin: 20px 0; }
+    .ecp-code { font-size: 2em; font-weight: bold; color: #007cba; background: white; padding: 10px; margin: 10px 0; display: inline-block; letter-spacing: 3px; }
+    .ecp-button { background: #007cba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0; }
+    .ecp-button:hover { background: #005a87; }
+    </style>';
+}
+add_action('wp_head', 'ecp_add_css');
+
+/* JS */
+function ecp_add_js() {
+    ?><script>jQuery(document).ready(function($){ /* Inline JS for tracking */ });</script><?php
+}
+
+?>
