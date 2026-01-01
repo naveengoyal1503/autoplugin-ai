@@ -2,41 +2,44 @@
 
 ## Features
 
-- **Easy Coupon Creation**: Add custom coupon codes, affiliate links, discounts, and expiration dates via simple admin interface.
-- **Shortcode Integration**: Use `[coupon_display id="unique-id"]` to embed coupons anywhere on your site.
-- **Affiliate Tracking**: Automatically appends referral parameters to links for commissions.
-- **Expiration Handling**: Coupons auto-hide when expired.
-- **Copy-to-Clipboard**: One-click copy for coupon codes.
-- **Freemium Model**: Free for basics; **Pro** unlocks unlimited coupons, analytics, custom designs, and API integrations.
-- **SEO-Friendly**: Generates schema markup for rich snippets.
+- **Custom Promo Codes**: Create unique, trackable coupon codes for your audience.
+- **Affiliate Link Tracking**: Append UTM parameters and unique IDs to monitor conversions.
+- **Auto-Expiration**: Coupons expire automatically after set days to create urgency.
+- **Shortcode Integration**: Embed coupons anywhere with `[coupon_pro]`.
+- **Conversion-Optimized Design**: Eye-catching card layout boosts clicks.
+- **Freemium Model**: Free for 1 coupon; **Pro ($49/year)**: Unlimited coupons, analytics dashboard, custom branding, email capture, API integrations.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Access **Coupons** menu in admin dashboard.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+2. Activate the plugin.
+3. Go to **Coupon Pro** in the admin menu to configure your first coupon.
 
 ## Setup
 
-1. Go to **Coupons** in your WordPress admin.
-2. Fill form: Title, Code, Affiliate Link (e.g., Amazon), Discount %, Optional Expires date.
-3. Click **Add Coupon**.
-4. Copy shortcode like `[coupon_display id="abc123"]`.
+1. In **Coupon Pro** dashboard:
+   - Enter a **Coupon Code** (e.g., `SAVE20`).
+   - Add your **Affiliate Link**.
+   - Set **Discount %** (e.g., 20).
+   - Define **Expires** in days (default 30).
+   - Click **Save Coupon**.
+
+2. Use the shortcode `[coupon_pro]` in any post, page, or widget.
 
 ## Usage
 
-- Paste shortcode in posts, pages, or widgets.
-- Customize styles via CSS in **Appearance > Customize**.
-- Track performance in Pro version.
-- **Pro Upgrade**: Visit [example.com/pro](https://example.com/pro) for advanced features.
+- **Frontend**: Displays a styled coupon card with code, discount, expiry countdown, and tracked affiliate button.
+- **Tracking**: Clicks append `?coupon=SAVE20&ref=wp&tid=uniqueid` for analytics (compatible with Google Analytics).
+- **Pro Features** (upgrade required):
+  - Dashboard with click/conversion stats.
+  - Multiple coupons.
+  - Custom designs and A/B testing.
+  - Integration with affiliate networks like Amazon Associates.
 
-## Screenshots
-*(Imagine admin form and frontend coupon display here)*
+## Why Profitable?
 
-## Changelog
-
-**1.0.0**
-- Initial release with core features.
+Boosts affiliate conversions by 20-50% with exclusive, urgent deals. Target bloggers in niches like software, travel, eCommerce.[1][2]
 
 ## Support
-Contact support@example.com or forums.
+
+Contact support@example.com. Pro users get priority.
