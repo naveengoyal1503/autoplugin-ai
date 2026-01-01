@@ -5,100 +5,138 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Custom Affiliate Coupons Pro
- * Plugin URI: https://example.com/custom-affiliate-coupons-pro
- * Description: Generate personalized affiliate coupons, track clicks, and boost conversions on your WordPress site.
+ * Plugin URI: https://example.com/custom-affiliate-coupons
+ * Description: Generate and manage exclusive custom coupon codes for affiliate products to boost conversions and commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
 class CustomAffiliateCouponsPro {
     public function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('affiliate_coupon', array($this, 'coupon_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_action('init', [$this, 'init']);
+        add_action('admin_menu', [$this, 'admin_menu']);
+        add_shortcode('affiliate_coupon', [$this, 'coupon_shortcode']);
+        register_activation_hook(__FILE__, [$this, 'activate']);
     }
 
     public function init() {
-        wp_register_style('cacp-admin-style', plugin_dir_url(__FILE__) . 'admin-style.css');
-        wp_enqueue_style('cacp-admin-style');
+        wp_register_style('cacp-admin-style', plugin_dir_url(__FILE__) . 'style.css');
+        wp_register_script('cacp-admin-script', plugin_dir_url(__FILE__) . 'script.js', ['jquery'], '1.0.0', true);
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate Coupons', 'Affiliate Coupons', 'manage_options', 'cacp-settings', array($this, 'settings_page'));
+        add_menu_page('Affiliate Coupons', 'Affiliate Coupons', 'manage_options', 'cacp-coupons', [$this, 'admin_page']);
     }
 
-    public function settings_page() {
-        if (isset($_POST['submit'])) {
-            update_option('cacp_coupons', sanitize_textarea_field($_POST['coupons']));
-            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
+    public function admin_page() {
+        if (isset($_POST['save_coupon'])) {
+            $this->save_coupon();
         }
-        $coupons = get_option('cacp_coupons', '');
-        ?>
-        <div class="wrap">
-            <h1>Custom Affiliate Coupons Pro</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Coupons (JSON format: {"code":"CODE","afflink":"URL","desc":"Description"})</th>
-                        <td><textarea name="coupons" rows="10" cols="50"><?php echo esc_textarea($coupons); ?></textarea></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-            <p>Use shortcode: <code>[affiliate_coupon id="1"]</code> (Premium: click tracking).</p>
-        </div>
-        <?php
+        $coupons = get_option('cacp_coupons', []);
+        include plugin_dir_path(__FILE__) . 'admin-page.php';
+    }
+
+    private function save_coupon() {
+        $coupons = get_option('cacp_coupons', []);
+        $id = sanitize_text_field($_POST['coupon_id']);
+        $coupons[$id] = [
+            'affiliate_link' => esc_url_raw($_POST['affiliate_link']),
+            'code' => sanitize_text_field($_POST['code']),
+            'description' => sanitize_textarea_field($_POST['description']),
+            'expires' => sanitize_text_field($_POST['expires']),
+            'image' => esc_url_raw($_POST['image'])
+        ];
+        update_option('cacp_coupons', $coupons);
     }
 
     public function coupon_shortcode($atts) {
-        $coupons = json_decode(get_option('cacp_coupons', '[]'), true);
-        if (empty($coupons)) return 'No coupons configured.';
-
-        $atts = shortcode_atts(array('id' => 0), $atts);
-        $id = intval($atts['id']) - 1;
-
-        if (!isset($coupons[$id])) return 'Invalid coupon ID.';
-
-        $coupon = $coupons[$id];
-        $link = $coupon['afflink'];
-
-        // Premium: Track clicks (requires pro key)
-        $pro_key = get_option('cacp_pro_key', '');
-        if ($pro_key) {
-            $link .= (strpos($link, '?') ? '&' : '?') . 'ref=cacp';
+        $atts = shortcode_atts(['id' => ''], $atts);
+        if (empty($atts['id'])) return '';
+        $coupons = get_option('cacp_coupons', []);
+        if (!isset($coupons[$atts['id']])) return '';
+        $coupon = $coupons[$atts['id']];
+        $output = '<div class="cacp-coupon-box">';
+        if (!empty($coupon['image'])) {
+            $output .= '<img src="' . esc_url($coupon['image']) . '" alt="Coupon Image">';
         }
-
-        return '<div class="cacp-coupon"><h3>Exclusive Deal: <strong>' . esc_html($coupon['code']) . '</strong></h3><p>' . esc_html($coupon['desc']) . '</p><a href="' . esc_url($link) . '" class="button button-large cacp-btn" target="_blank">Get Deal Now</a></div>';
+        $output .= '<h3>Exclusive Deal: ' . esc_html($coupon['code']) . '</h3>';
+        $output .= '<p>' . esc_html($coupon['description']) . '</p>';
+        $output .= '<a href="' . esc_url($coupon['affiliate_link']) . '" target="_blank" class="cacp-button">Get Deal Now (Affiliate Link)</a>';
+        if (!empty($coupon['expires'])) {
+            $output .= '<p class="expires">Expires: ' . esc_html($coupon['expires']) . '</p>';
+        }
+        $output .= '</div>';
+        return $output;
     }
 
     public function activate() {
         if (!get_option('cacp_coupons')) {
-            update_option('cacp_coupons', json_encode(array(
-                array('code' => 'SAVE20', 'afflink' => 'https://example.com/aff?ref=blog', 'desc' => '20% off on premium tools')
-            )));
+            update_option('cacp_coupons', []);
         }
     }
 }
 
 new CustomAffiliateCouponsPro();
 
-// Inline CSS for coupon styling
+// Inline CSS for frontend
 function cacp_styles() {
-    echo '<style>.cacp-coupon {border: 2px solid #0073aa; padding: 20px; margin: 20px 0; background: #f9f9f9; text-align: center;}.cacp-btn {background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 18px;}</style>';
+    echo '<style>
+    .cacp-coupon-box { border: 2px solid #007cba; padding: 20px; border-radius: 10px; text-align: center; background: #f9f9f9; max-width: 400px; margin: 20px auto; }
+    .cacp-coupon-box img { max-width: 100%; height: auto; }
+    .cacp-coupon-box h3 { color: #007cba; margin: 10px 0; }
+    .cacp-button { display: inline-block; background: #007cba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+    .cacp-button:hover { background: #005a87; }
+    .expires { font-size: 0.9em; color: #666; margin-top: 10px; }
+    </style>';
 }
 add_action('wp_head', 'cacp_styles');
-add_action('wp_footer', 'cacp_styles');
 
-// Freemium upsell notice
-function cacp_upsell_notice() {
-    if (current_user_can('manage_options')) {
-        echo '<div class="notice notice-info"><p><strong>Custom Affiliate Coupons Pro:</strong> Unlock unlimited coupons, click tracking & analytics with premium upgrade! <a href="https://example.com/pro" target="_blank">Get Pro</a></p></div>';
-    }
+// Sample admin page template (embedded)
+// Note: In a real single-file plugin, this would be echoed or included similarly
+function cacp_admin_page_template() { ?>
+<div class="wrap">
+    <h1>Custom Affiliate Coupons Pro</h1>
+    <form method="post">
+        <table class="form-table">
+            <tr>
+                <th>Coupon ID</th>
+                <td><input type="text" name="coupon_id" value="<?php echo isset($_POST['coupon_id']) ? esc_attr($_POST['coupon_id']) : ''; ?>" required /></td>
+            </tr>
+            <tr>
+                <th>Affiliate Link</th>
+                <td><input type="url" name="affiliate_link" style="width: 100%;" required /></td>
+            </tr>
+            <tr>
+                <th>Coupon Code</th>
+                <td><input type="text" name="code" style="width: 100%;" required /></td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td><textarea name="description" rows="3" style="width: 100%;"><?php echo isset($_POST['description']) ? esc_textarea($_POST['description']) : ''; ?></textarea></td>
+            </tr>
+            <tr>
+                <th>Expires</th>
+                <td><input type="date" name="expires" /></td>
+            </tr>
+            <tr>
+                <th>Image URL</th>
+                <td><input type="url" name="image" style="width: 100%;" /></td>
+            </tr>
+        </table>
+        <?php submit_button('Save Coupon'); ?>
+    </form>
+    <h2>Existing Coupons</h2>
+    <ul><?php
+        $coupons = get_option('cacp_coupons', []);
+        foreach ($coupons as $id => $c) {
+            echo '<li><strong>' . esc_html($id) . '</strong>: ' . esc_html($c['code']) . ' <small><a href="' . esc_url($c['affiliate_link']) . '" target="_blank">Link</a></small></li>';
+        }
+    ?></ul>
+    <p><strong>Usage:</strong> Use shortcode <code>[affiliate_coupon id="your-id"]</code> to display coupon.</p>
+</div><?php
 }
-add_action('admin_notices', 'cacp_upsell_notice');
+// Override admin_page to use this template
+// (In class, echo the template content)
