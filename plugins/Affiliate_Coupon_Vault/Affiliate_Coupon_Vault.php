@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Affiliate Coupon Vault
  * Plugin URI: https://example.com/affiliate-coupon-vault
- * Description: Automatically generates and displays exclusive affiliate coupons with tracking to boost your commissions.
+ * Description: Automatically generates and displays personalized affiliate coupons with tracking to boost conversions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -20,8 +20,8 @@ class AffiliateCouponVault {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
+        if (null == self::$instance) {
+            self::$instance = new self;
         }
         return self::$instance;
     }
@@ -32,46 +32,56 @@ class AffiliateCouponVault {
         add_shortcode('affiliate_coupon', array($this, 'coupon_shortcode'));
         add_action('wp_ajax_acv_generate_coupon', array($this, 'ajax_generate_coupon'));
         add_action('wp_ajax_nopriv_acv_generate_coupon', array($this, 'ajax_generate_coupon'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
         if (get_option('acv_pro_version')) {
-            // Pro features
+            // Pro features here
         }
-        register_setting('acv_settings', 'acv_api_key');
-        register_setting('acv_settings', 'acv_affiliate_id');
+        wp_register_style('acv-style', plugin_dir_url(__FILE__) . 'style.css');
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('acv-script', plugin_dir_url(__FILE__) . 'acv-script.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('acv-script', 'acv_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+        wp_enqueue_style('acv-style');
     }
 
     public function coupon_shortcode($atts) {
         $atts = shortcode_atts(array(
-            'product' => 'default',
-            'affiliate' => get_option('acv_affiliate_id', ''),
+            'affiliate_url' => '',
+            'description' => 'Get this exclusive deal!',
+            'discount' => '20%',
+            'code' => ''
         ), $atts);
+
+        if (empty($atts['affiliate_url'])) {
+            return '<p>Missing affiliate URL.</p>';
+        }
+
+        $unique_id = uniqid('acv_');
+        $coupon_code = $atts['code'] ?: 'SAVE' . substr(md5($unique_id), 0, 6);
+        $tracking_url = add_query_arg(array('ref' => get_current_user_id() ?: 'visitor', 'coupon' => $coupon_code), $atts['affiliate_url']);
 
         ob_start();
         ?>
-        <div id="acv-coupon-<?php echo esc_attr($atts['product']); ?>" class="acv-coupon-vault">
-            <div class="acv-loading">Loading exclusive coupon...</div>
-            <div class="acv-coupon-content" style="display:none;">
-                <h3>Exclusive Deal: <span class="acv-discount"></span> OFF</h3>
-                <div class="acv-code"></div>
-                <a href="#" class="acv-copy-btn">Copy Code</a>
-                <a href="#" class="acv-track-link" target="_blank">Shop Now & Save</a>
+        <div id="<?php echo esc_attr($unique_id); ?>" class="acv-coupon-vault" style="border: 2px dashed #0073aa; padding: 20px; background: #f9f9f9; text-align: center; max-width: 400px;">
+            <h3 style="color: #0073aa;">Exclusive Coupon</h3>
+            <p><?php echo esc_html($atts['description']); ?></p>
+            <div style="font-size: 24px; font-weight: bold; color: #28a745; margin: 10px 0;"><?php echo esc_html($atts['discount']); ?> OFF</div>
+            <div style="background: #fff; padding: 10px; border: 1px solid #ddd; font-family: monospace; font-size: 18px; margin: 10px 0;">
+                <?php echo esc_html($coupon_code); ?>
             </div>
+            <a href="<?php echo esc_url($tracking_url); ?>" target="_blank" class="button button-primary" style="padding: 12px 24px; font-size: 16px;">Redeem Now</a>
+            <p style="font-size: 12px; margin-top: 15px;">Generated for you on <?php echo date('Y-m-d H:i'); ?></p>
         </div>
         <script>
         jQuery(document).ready(function($) {
-            $('#acv-coupon-<?php echo esc_js($atts['product']); ?>').on('click', '.acv-copy-btn', function(e) {
-                e.preventDefault();
-                var code = $(this).siblings('.acv-code').text();
-                navigator.clipboard.writeText(code).then(function() {
-                    $(this).text('Copied!');
-                }.bind(this));
+            $('#<?php echo esc_attr($unique_id); ?> .button').click(function() {
+                var data = {
+                    action: 'acv_track_click',
+                    coupon_id: '<?php echo esc_attr($unique_id); ?>'
+                };
+                $.post(ajaxurl, data);
             });
         });
         </script>
@@ -80,87 +90,58 @@ class AffiliateCouponVault {
     }
 
     public function ajax_generate_coupon() {
-        $product = sanitize_text_field($_POST['product']);
-        $affiliate = get_option('acv_affiliate_id');
-
-        // Simulate coupon generation (integrate with real APIs in pro)
-        $coupons = array(
-            'default' => array('code' => 'SAVE20', 'discount' => '20%', 'url' => 'https://example.com/deal?aff=' . $affiliate),
-            'software' => array('code' => 'WP50', 'discount' => '50%', 'url' => 'https://example.com/software?aff=' . $affiliate),
+        if (!wp_verify_nonce($_POST['nonce'], 'acv_nonce')) {
+            wp_die('Security check failed');
+        }
+        $coupon = array(
+            'code' => 'ACV' . wp_rand(1000, 9999),
+            'generated' => current_time('mysql')
         );
-
-        $coupon = isset($coupons[$product]) ? $coupons[$product] : $coupons['default'];
-
         wp_send_json_success($coupon);
+    }
+
+    public function activate() {
+        add_option('acv_version', '1.0.0');
+        flush_rewrite_rules();
     }
 }
 
-// Admin settings
-if (is_admin()) {
-    add_action('admin_menu', function() {
-        add_options_page('Affiliate Coupon Vault', 'Coupon Vault', 'manage_options', 'acv-settings', 'acv_settings_page');
-    });
+AffiliateCouponVault::get_instance();
+
+// Admin settings page
+function acv_admin_menu() {
+    add_options_page('Affiliate Coupon Vault', 'Coupon Vault', 'manage_options', 'acv-settings', 'acv_settings_page');
 }
+add_action('admin_menu', 'acv_admin_menu');
 
 function acv_settings_page() {
     ?>
     <div class="wrap">
         <h1>Affiliate Coupon Vault Settings</h1>
+        <p>Upgrade to Pro for unlimited coupons and analytics! <a href="https://example.com/pro">Get Pro</a></p>
         <form method="post" action="options.php">
             <?php settings_fields('acv_settings'); ?>
+            <?php do_settings_sections('acv_settings'); ?>
             <table class="form-table">
                 <tr>
-                    <th>Affiliate ID</th>
-                    <td><input type="text" name="acv_affiliate_id" value="<?php echo esc_attr(get_option('acv_affiliate_id')); ?>" /></td>
-                </tr>
-                <tr>
-                    <th>API Key (Pro)</th>
-                    <td><input type="text" name="acv_api_key" value="<?php echo esc_attr(get_option('acv_api_key')); ?>" /></td>
+                    <th>Pro Status</th>
+                    <td><input type="checkbox" name="acv_pro_version" value="1" <?php checked(get_option('acv_pro_version')); ?> disabled> Pro License (Upgrade Required)</td>
                 </tr>
             </table>
             <?php submit_button(); ?>
         </form>
-        <p><strong>Pro Upgrade:</strong> Unlock unlimited coupons, real-time API integrations, and analytics for $49/year.</p>
+        <h2>Usage</h2>
+        <p>Use shortcode: [affiliate_coupon affiliate_url="https://example.com/offer" discount="25%" description="Save big today!"]</p>
     </div>
     <?php
 }
 
-AffiliateCouponVault::get_instance();
+register_setting('acv_settings', 'acv_pro_version');
 
-// Add CSS
+// CSS
 add_action('wp_head', function() {
     echo '<style>
-    .acv-coupon-vault { border: 2px solid #0073aa; padding: 20px; border-radius: 10px; text-align: center; background: #f9f9f9; }
-    .acv-loading { font-style: italic; color: #666; }
-    .acv-discount { color: #e74c3c; font-size: 1.5em; font-weight: bold; }
-    .acv-code { background: #fff; padding: 10px; font-family: monospace; font-size: 1.2em; margin: 10px 0; }
-    .acv-copy-btn, .acv-track-link { display: inline-block; padding: 10px 20px; margin: 5px; background: #0073aa; color: white; text-decoration: none; border-radius: 5px; }
-    .acv-track-link:hover { background: #005a87; }
+    .acv-coupon-vault { animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>';
-});
-
-// JS file content (base64 encoded or inline, but for single file, add here)
-add_action('wp_footer', function() {
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('.acv-coupon-vault').each(function() {
-            var $container = $(this);
-            var product = $container.attr('id').replace('acv-coupon-', '');
-            $.post(acv_ajax.ajax_url, {
-                action: 'acv_generate_coupon',
-                product: product
-            }, function(response) {
-                if (response.success) {
-                    $container.find('.acv-loading').hide();
-                    $container.find('.acv-discount').text(response.data.discount);
-                    $container.find('.acv-code').text(response.data.code);
-                    $container.find('.acv-track-link').attr('href', response.data.url);
-                    $container.find('.acv-coupon-content').show();
-                }
-            });
-        });
-    });
-    </script>
-    <?php
 });
