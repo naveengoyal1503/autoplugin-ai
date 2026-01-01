@@ -2,36 +2,36 @@
 
 ## Features
 
-- **Generate Exclusive Coupons**: Create unique promo codes with affiliate links and custom descriptions.
-- **Auto-Expiration**: Coupons expire automatically after set days.
-- **Usage Tracking**: Monitor redemptions and clicks.
-- **Shortcode Support**: Display coupons anywhere with `[exclusive_coupons]`.
-- **Free Tier**: Up to 5 coupons; **Pro**: Unlimited + analytics ($49/year).
-
-**Pro Features (Upgrade)**: Custom branding, email notifications, WooCommerce integration, detailed analytics.
+- **Personalized Coupon Generation**: Automatically creates unique, trackable coupon codes for visitors.
+- **Shortcode Integration**: Easy embedding with `[exclusive_coupon]` or `[exclusive_coupon brand="Brand1"]`.
+- **Admin Dashboard**: Manage coupon lists (format: `Brand:CODE`) and premium API keys.
+- **AJAX-Powered**: Instant coupon generation without page reloads.
+- **Freemium Ready**: Free for basics; premium unlocks unlimited codes, analytics, and branding removal.
+- **Boosts Conversions**: Inspired by top monetization strategies like custom deals for affiliate marketing.[1][2]
 
 ## Installation
 
-1. Upload the plugin ZIP to your WordPress admin.
-2. Activate the plugin.
-3. Navigate to **Coupons Pro** in the admin menu to add coupons.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Configure in **Settings > Exclusive Coupons Pro**.
 
 ## Setup
 
-1. Go to **Coupons Pro** > Add new coupon.
-2. Enter code (e.g., SAVE20), affiliate link, expiration days, and description.
-3. Save and use shortcode `[exclusive_coupons]` on any page/post.
+1. In the admin page, add coupons in `Brand:CODE` format (e.g., `Amazon:WP20OFF`).
+2. For premium: Enter your API key (purchase at example.com).
+3. Embed shortcode in posts/pages: `[exclusive_coupon]`.
 
 ## Usage
 
-- **Frontend**: Coupons display as styled cards with "Redeem Now" buttons.
-- **Admin**: View, edit (via delete/re-add), and track usage.
-- **Monetization Tip**: Partner with brands for custom codes; earn affiliate commissions.
+- **Basic**: Place shortcode; visitors click "Get Coupon" for a code.
+- **Advanced**: Use `brand` attribute to target specific deals.
+- **Tracking**: Premium version logs usage for affiliate optimization.
+- **Customization**: Edit `/assets/script.js` and `style.css` (auto-created on activation).
 
-## FAQ
+## Monetization Potential
 
-**Free vs Pro?** Free limits to 5 coupons. Pro removes limits and adds premium features.
+Ideal for bloggers/affiliates: Offer exclusive deals to drive sales and commissions. Pair with WooCommerce or affiliate links.[3][4]
 
-**Support**: Contact support@example.com or upgrade to Pro for priority help.
+## Support
 
-*Built for 2026 WordPress standards. Compatible with latest WP versions.*
+Contact support@example.com. Premium users get priority.
