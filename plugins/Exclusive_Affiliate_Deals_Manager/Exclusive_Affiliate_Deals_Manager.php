@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Affiliate Deals Manager
  * Plugin URI: https://example.com/deals-manager
- * Description: Automatically generates and manages exclusive affiliate coupon deals for your WordPress site.
+ * Description: Generate and manage exclusive affiliate coupon codes and deals to boost conversions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -26,9 +26,31 @@ class ExclusiveDealsManager {
     }
 
     public function init() {
-        if (is_admin()) {
-            add_action('admin_post_save_deal', array($this, 'save_deal'));
-        }
+        $this->create_table();
+    }
+
+    public function create_table() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'exclusive_deals';
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            title varchar(255) NOT NULL,
+            code varchar(100) NOT NULL,
+            affiliate_url varchar(500) DEFAULT '',
+            discount text DEFAULT '',
+            expiry date DEFAULT '0000-00-00',
+            active tinyint(1) DEFAULT 1,
+            clicks int DEFAULT 0,
+            created datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+
+    public function activate() {
+        $this->create_table();
     }
 
     public function admin_menu() {
@@ -36,129 +58,103 @@ class ExclusiveDealsManager {
     }
 
     public function admin_page() {
-        if (isset($_POST['save_deal'])) {
-            $this->save_deal();
+        if (isset($_POST['add_deal'])) {
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'exclusive_deals';
+            $code = sanitize_text_field($_POST['code']);
+            $wpdb->insert($table_name, array(
+                'title' => sanitize_text_field($_POST['title']),
+                'code' => $code,
+                'affiliate_url' => esc_url_raw($_POST['url']),
+                'discount' => sanitize_textarea_field($_POST['discount']),
+                'expiry' => sanitize_text_field($_POST['expiry'])
+            ));
         }
-        $deals = get_option('exclusive_deals', array());
+        $this->admin_html();
+    }
+
+    private function admin_html() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'exclusive_deals';
+        $deals = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created DESC");
         ?>
         <div class="wrap">
             <h1>Manage Exclusive Deals</h1>
-            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
-                <input type="hidden" name="action" value="save_deal">
-                <?php wp_nonce_field('save_deal_nonce'); ?>
+            <form method="post">
                 <table class="form-table">
-                    <tr>
-                        <th>Title</th>
-                        <td><input type="text" name="deal_title" required></td>
-                    </tr>
-                    <tr>
-                        <th>Affiliate Link</th>
-                        <td><input type="url" name="affiliate_link" required style="width: 400px;"></td>
-                    </tr>
-                    <tr>
-                        <th>Coupon Code</th>
-                        <td><input type="text" name="coupon_code" required></td>
-                    </tr>
-                    <tr>
-                        <th>Discount %</th>
-                        <td><input type="number" name="discount" min="1" max="100" required></td>
-                    </tr>
-                    <tr>
-                        <th>Expiration</th>
-                        <td><input type="date" name="expiration" required></td>
-                    </tr>
+                    <tr><th>Title</th><td><input type="text" name="title" required /></td></tr>
+                    <tr><th>Coupon Code</th><td><input type="text" name="code" required /></td></tr>
+                    <tr><th>Affiliate URL</th><td><input type="url" name="url" style="width: 400px;" /></td></tr>
+                    <tr><th>Discount</th><td><textarea name="discount"></textarea></td></tr>
+                    <tr><th>Expiry</th><td><input type="date" name="expiry" /></td></tr>
                 </table>
-                <p><input type="submit" class="button-primary" value="Add Deal"></p>
+                <p><input type="submit" name="add_deal" class="button-primary" value="Add Deal" /></p>
             </form>
             <h2>Active Deals</h2>
             <table class="wp-list-table widefat fixed striped">
-                <thead><tr><th>Title</th><th>Code</th><th>Discount</th><th>Shortcode</th><th>Actions</th></tr></thead>
+                <thead><tr><th>ID</th><th>Title</th><th>Code</th><th>URL</th><th>Discount</th><th>Clicks</th><th>Actions</th></tr></thead>
                 <tbody>
-        <?php foreach ($deals as $id => $deal): if (strtotime($deal['expiration']) > time()): ?>
+        <?php foreach ($deals as $deal): ?>
                     <tr>
-                        <td><?php echo esc_html($deal['title']); ?></td>
-                        <td><?php echo esc_html($deal['coupon_code']); ?></td>
-                        <td><?php echo esc_html($deal['discount']); ?>%</td>
-                        <td><code>[exclusive_deal id="<?php echo $id; ?>"]</code></td>
-                        <td><a href="<?php echo wp_nonce_url(admin_url('admin-post.php?action=delete_deal&id=' . $id), 'delete_deal'); ?>" onclick="return confirm('Delete?');">Delete</a></td>
+                        <td><?php echo $deal->id; ?></td>
+                        <td><?php echo esc_html($deal->title); ?></td>
+                        <td><strong><?php echo esc_html($deal->code); ?></strong></td>
+                        <td><?php echo esc_html($deal->affiliate_url); ?></td>
+                        <td><?php echo esc_html($deal->discount); ?></td>
+                        <td><?php echo $deal->clicks; ?></td>
+                        <td><a href="<?php echo admin_url('admin.php?page=exclusive-deals&delete=' . $deal->id); ?>" onclick="return confirm('Delete?')">Delete</a></td>
                     </tr>
-        <?php endif; endforeach; ?>
+        <?php endforeach; ?>
                 </tbody>
             </table>
-            <p><strong>Pro Features:</strong> Unlimited deals, click tracking, auto-expiration emails. <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p>
         </div>
         <?php
     }
 
-    public function save_deal() {
-        if (!wp_verify_nonce($_POST['_wpnonce'], 'save_deal_nonce') || !current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
-        $deals = get_option('exclusive_deals', array());
-        $id = uniqid();
-        $deals[$id] = array(
-            'title' => sanitize_text_field($_POST['deal_title']),
-            'affiliate_link' => esc_url_raw($_POST['affiliate_link']),
-            'coupon_code' => sanitize_text_field($_POST['coupon_code']),
-            'discount' => intval($_POST['discount']),
-            'expiration' => sanitize_text_field($_POST['expiration'])
-        );
-        update_option('exclusive_deals', $deals);
-        wp_redirect(admin_url('admin.php?page=exclusive-deals'));
-        exit;
-    }
-
     public function deal_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => ''), $atts);
-        $deals = get_option('exclusive_deals', array());
-        if (!isset($deals[$atts['id']])) {
-            return '';
-        }
-        $deal = $deals[$atts['id']];
-        if (strtotime($deal['expiration']) < time()) {
-            return '<p style="color: red;">Deal expired!</p>';
-        }
+        $atts = shortcode_atts(array('id' => 0), $atts);
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'exclusive_deals';
+        $deal = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d AND active = 1", $atts['id']));
+        if (!$deal) return '';
+
+        $click_url = add_query_arg('edm_track', $deal->id, $deal->affiliate_url);
+        $wpdb->query($wpdb->prepare("UPDATE $table_name SET clicks = clicks + 1 WHERE id = %d", $deal->id));
+
         ob_start();
         ?>
-        <div style="border: 2px solid #28a745; padding: 20px; border-radius: 10px; background: #f8fff9; text-align: center;">
-            <h3 style="color: #28a745;"><?php echo esc_html($deal['title']); ?></h3>
-            <p><strong>Exclusive Coupon:</strong> <code style="background: #fff; padding: 5px 10px; border-radius: 5px; font-size: 1.2em;"><?php echo esc_html($deal['coupon_code']); ?></code></p>
-            <p><strong><?php echo esc_html($deal['discount']); ?>% OFF</strong> - Limited Time!</p>
-            <a href="<?php echo esc_url(add_query_arg('ref', 'exclusive', $deal['affiliate_link'])); ?>" class="button" style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Grab Deal Now</a>
-            <p style="font-size: 0.9em; margin-top: 10px;">Expires: <?php echo date('M d, Y', strtotime($deal['expiration'])); ?></p>
+        <div style="border: 2px solid #007cba; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+            <h3><?php echo esc_html($deal->title); ?></h3>
+            <p><strong>Exclusive Code:</strong> <code><?php echo esc_html($deal->code); ?></code></p>
+            <?php if ($deal->discount): ?>
+            <p><strong>Discount:</strong> <?php echo esc_html($deal->discount); ?></p>
+            <?php endif; ?>
+            <?php if ($deal->expiry && $deal->expiry !== '0000-00-00'): ?>
+            <p><strong>Expires:</strong> <?php echo date('M j, Y', strtotime($deal->expiry)); ?></p>
+            <?php endif; ?>
+            <a href="<?php echo esc_url($click_url); ?>" class="button" style="background: #007cba; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Get Deal Now (<?php echo $deal->clicks; ?> used)</a>
         </div>
         <?php
         return ob_get_clean();
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_style('exclusive-deals', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0');
-    }
-
-    public function activate() {
-        if (!get_option('exclusive_deals')) {
-            update_option('exclusive_deals', array());
-        }
+        wp_enqueue_style('edm-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0');
     }
 }
 
 new ExclusiveDealsManager();
 
-// Pro upsell notice
-function exclusive_deals_notice() {
-    if (!current_user_can('manage_options')) return;
-    $screen = get_current_screen();
-    if ($screen->id === 'toplevel_page_exclusive-deals') {
-        echo '<div class="notice notice-info"><p><strong>Go Pro:</strong> Unlock unlimited deals, analytics & more for $49/year! <a href="https://example.com/pro" target="_blank">Learn More</a></p></div>';
-    }
-}
-add_action('admin_notices', 'exclusive_deals_notice');
-
-// Track clicks (basic)
-add_action('wp', function() {
-    if (isset($_GET['ref']) && $_GET['ref'] === 'exclusive') {
-        // Pro feature: set_transient('deal_click_' . $_GET['deal_id'], 1, 3600);
+// Track clicks
+add_action('init', function() {
+    if (isset($_GET['edm_track'])) {
+        // Already tracked in shortcode
     }
 });
 
-?>
+// Pro upgrade notice
+add_action('admin_notices', function() {
+    if (current_user_can('manage_options') && !get_option('edm_pro')) {
+        echo '<div class="notice notice-info"><p><strong>Exclusive Deals Manager:</strong> Unlock unlimited deals, analytics & integrations with <a href="https://example.com/pro" target="_blank">Pro version</a> for $49/year!</p></div>';
+    }
+});
