@@ -1,44 +1,47 @@
 # Affiliate Coupon Vault
 
-## Features
+## Description
+**Affiliate Coupon Vault** is a powerful WordPress plugin that automatically generates unique, trackable coupon codes for your affiliate links. Boost conversions by offering personalized discounts to your audience, perfect for bloggers and marketers.[1][2]
 
-- **Personalized Promo Codes**: Generates unique coupon codes per visitor (e.g., AFFHOST10-ABCD) for tracking and exclusivity[1][2].
-- **Affiliate Link Tracking**: Logs clicks and coupons used, viewable in admin dashboard for conversion optimization.
-- **Easy Shortcodes**: Use `[acv_coupon]` for random or `[acv_coupon id="0"]` for specific coupons.
-- **Customizable Display**: Supports coupon images, titles, and branded buttons.
-- **Freemium Ready**: Free version limits to 5 coupons; Pro unlocks unlimited, analytics export, and integrations.
-- **SEO-Friendly**: Schema-ready markup for rich snippets on coupon pages.
+## Features
+- **One-click coupon generation**: Visitors get unique codes instantly.
+- **Dynamic affiliate tracking**: Append unique params to links for precise analytics.
+- **Shortcode integration**: Easy `[affiliate_coupon]` placement anywhere.
+- **Admin dashboard**: Manage multiple affiliate offers (name|link|discount format).
+- **Self-contained**: Single PHP file, no dependencies.
+- **Freemium model**: Pro version adds analytics, unlimited coupons, custom designs ($49/year).[7]
 
 ## Installation
-
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to add your coupons via JSON.
+1. Download the plugin ZIP.
+2. In WordPress admin: **Plugins > Add New > Upload Plugin**.
+3. Activate **Affiliate Coupon Vault**.
+4. Go to **Settings > Coupon Vault** to configure your affiliate links.
 
 ## Setup
-
-1. In the admin page, enter coupons as JSON array:
+1. In the settings page, add your offers in format:
    
-   [
-     {"name":"10% Off Hosting","code":"AFFHOST10","affiliate_url":"https://host.com/?ref=you","image":""},
-     {"name":"Free Trial","code":"AFFTRIAL","affiliate_url":"https://tool.com/?ref=you","image":"https://example.com/trial.jpg"}
-   ]
+   Hosting Deal|https://aff.link/hosting?ref=you|20%
+   Premium Plugin|https://aff.link/plugin?ref=you|15%
    
 2. Save settings.
-3. Add shortcode to any post/page: `[acv_coupon]`.
+3. Add shortcode `[affiliate_coupon]` to any post/page/widget.
 
 ## Usage
+- Embed the shortcode in blog posts, sidebars, or landing pages.
+- Visitors click **Get Coupon** to reveal a unique code and tracked affiliate link.
+- Track performance in your affiliate dashboard (Pro: built-in stats).
 
-- **Display Coupons**: Embed shortcodes in posts, sidebars, or widgets.
-- **Track Performance**: View click stats in settings (Pro: detailed analytics).
-- **Monetize**: Earn commissions via affiliate URLs; personalized codes boost conversions[1][2][3].
-- **Pro Upgrade**: For unlimited coupons, A/B testing, email capture. Visit example.com/pro.
+## Pro Version
+Upgrade for:
+- Conversion analytics dashboard.
+- Unlimited coupon campaigns.
+- Custom styling and A/B testing.
+- Priority support.
 
-## Changelog
-
-**1.0.0**
-- Initial release with core tracking and shortcodes.
+**Get Pro: [Upgrade Now ($49/year)](https://example.com/pro)**
 
 ## Support
+- [Documentation](https://example.com/docs)
+- Report issues via WordPress.org forums.
 
-Report issues at example.com/support.
+**Boost your affiliate earnings today!**
