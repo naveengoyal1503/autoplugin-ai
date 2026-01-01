@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Generate and manage exclusive, personalized coupon codes for your WordPress site to boost affiliate conversions and reader engagement.
+ * Description: Generate exclusive affiliate coupons, track usage, and boost conversions on your WordPress site.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -14,22 +14,12 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class ExclusiveCouponsPro {
-    private static $instance = null;
-
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
+    public function __construct() {
         add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('exclusive_coupon', array($this, 'coupon_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
@@ -37,11 +27,6 @@ class ExclusiveCouponsPro {
 
     public function init() {
         load_plugin_textdomain('exclusive-coupons-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('exclusive-coupons-pro', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('exclusive-coupons-pro', plugin_dir_url(__FILE__) . 'assets/style.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
@@ -57,64 +42,70 @@ class ExclusiveCouponsPro {
     public function admin_page() {
         if (isset($_POST['submit'])) {
             update_option('ecp_coupons', sanitize_textarea_field($_POST['coupons']));
-            echo '<div class="notice notice-success"><p>Coupons updated!</p></div>';
+            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
         }
-        $coupons = get_option('ecp_coupons', "Brand1: SAVE20|Brand2: DISCOUNT15");
+        $coupons = get_option('ecp_coupons', "Code1|Brand1|20% off|https://affiliate.link1\nCode2|Brand2|$10 off|https://affiliate.link2");
         ?>
         <div class="wrap">
-            <h1>Exclusive Coupons Pro Settings</h1>
+            <h1>Exclusive Coupons Pro</h1>
             <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th scope="row">Coupons (Format: Brand:CODE|Brand2:CODE2)</th>
-                        <td><textarea name="coupons" rows="10" cols="50"><?php echo esc_textarea($coupons); ?></textarea></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
+                <p><label>Enter coupons (format: Code|Brand|Discount|Affiliate Link), one per line:</label></p>
+                <textarea name="coupons" rows="10" cols="80" class="large-text"><?php echo esc_textarea($coupons); ?></textarea>
+                <p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Coupons"></p>
             </form>
-            <p>Use shortcode <code>[exclusive_coupon]</code> to display coupons on any page/post.</p>
-            <p><strong>Pro Features:</strong> Unlimited coupons, analytics, custom designs, affiliate link tracking (Upgrade for $49/year).</p>
+            <h2>Usage</h2>
+            <p>Use shortcode: <code>[exclusive_coupon id="1"]</code> (ID starts from 1)</p>
+            <p><strong>Pro Features:</strong> Usage tracking, analytics, unlimited coupons. <a href="https://example.com/upgrade">Upgrade Now</a></p>
         </div>
         <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('brand' => ''), $atts);
-        $coupons = get_option('ecp_coupons', "Brand1: SAVE20|Brand2: DISCOUNT15");
-        $coupons_array = explode('|', $coupons);
-        $output = '<div id="ecp-coupons" class="ecp-container">';
-        foreach ($coupons_array as $coupon) {
-            list($brand, $code) = explode(':', $coupon);
-            if ($atts['brand'] && strpos($brand, $atts['brand']) === false) continue;
-            $output .= '<div class="ecp-coupon"><strong>' . esc_html($brand) . '</strong>: <span class="ecp-code">' . esc_html($code) . '</span> <button class="ecp-copy" data-code="' . esc_attr($code) . '">Copy</button></div>';
+        $atts = shortcode_atts(array('id' => 1), $atts);
+        $id = intval($atts['id']);
+        $coupons = $this->get_coupons();
+        if (!isset($coupons[$id - 1])) {
+            return 'Coupon not found.';
         }
-        $output .= '</div><p class="ecp-pro-upsell">Upgrade to Pro for analytics & more! <a href="https://example.com/pro">Get Pro</a></p>';
-        return $output;
+        list($code, $brand, $discount, $link) = explode('|', $coupons[$id - 1], 4);
+        $clicks = get_option("ecp_clicks_$id", 0);
+        return '<div class="exclusive-coupon" style="border:2px solid #0073aa;padding:20px;background:#f9f9f9;border-radius:5px;"><h3>Exclusive Deal: ' . esc_html($brand) . '</h3><p><strong>' . esc_html($code) . '</strong> - ' . esc_html($discount) . '</p><p><a href="' . esc_url($link) . '" target="_blank" class="button" style="background:#0073aa;color:white;padding:10px 20px;text-decoration:none;border-radius:3px;">Get Deal (Used ' . $clicks . ' times)</a></p></div>';
+    }
+
+    private function get_coupons() {
+        $data = get_option('ecp_coupons', '');
+        return array_filter(array_map('trim', explode("\n", $data)));
     }
 
     public function activate() {
         if (!get_option('ecp_coupons')) {
-            update_option('ecp_coupons', "Amazon: PRIME10|Shopify: WPDEAL20");
+            update_option('ecp_coupons', "WELCOME20|ExampleBrand|20% OFF|https://your-affiliate-link.com\nSAVE10|ShopNow|Save $10|https://your-affiliate-link2.com");
         }
     }
 }
 
-ExclusiveCouponsPro::get_instance();
+new ExclusiveCouponsPro();
 
-// Create assets directories if not exist
-function ecp_create_assets() {
-    $upload_dir = plugin_dir_path(__FILE__) . 'assets';
-    if (!file_exists($upload_dir)) {
-        wp_mkdir_p($upload_dir);
+// Enqueue styles if needed
+add_action('wp_enqueue_scripts', function() {
+    wp_add_inline_style('dashicons', '.exclusive-coupon { max-width: 300px; margin: 20px 0; }');
+});
+
+// Track clicks (free version limit: 100 total)
+add_action('wp_loaded', function() {
+    if (isset($_GET['ecp_click'])) {
+        $id = intval($_GET['ecp_click']);
+        $clicks = get_option("ecp_clicks_$id", 0) + 1;
+        update_option("ecp_clicks_$id", $clicks);
+        $total_clicks = get_option('ecp_total_clicks', 0) + 1;
+        if ($total_clicks <= 100) {
+            update_option('ecp_total_clicks', $total_clicks);
+        }
+        $coupons = (new ExclusiveCouponsPro())->get_coupons();
+        if (isset($coupons[$id - 1])) {
+            list($code, $brand, $discount, $link) = explode('|', $coupons[$id - 1], 4);
+            wp_redirect(esc_url_raw($link));
+            exit;
+        }
     }
-}
-register_activation_hook(__FILE__, 'ecp_create_assets');
-
-// Default JS
-$js_content = "jQuery(document).ready(function($) { $('.ecp-copy').click(function() { var code = $(this).data('code'); navigator.clipboard.writeText(code).then(function() { $(this).text('Copied!'); }); }); });");
-file_put_contents(plugin_dir_path(__FILE__) . 'assets/script.js', $js_content);
-
-// Default CSS
-$css_content = ".ecp-container { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; } .ecp-coupon { margin: 10px 0; font-size: 18px; } .ecp-code { font-family: monospace; background: #fff; padding: 5px 10px; border: 1px solid #ddd; } .ecp-copy { background: #0073aa; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-left: 10px; } .ecp-pro-upsell { text-align: center; font-style: italic; color: #666; }";
-file_put_contents(plugin_dir_path(__FILE__) . 'assets/style.css', $css_content);
-?>
+});
