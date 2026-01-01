@@ -2,31 +2,36 @@
 
 ## Features
 
-- **Easy Coupon Management**: Create exclusive coupon codes, discounts, and affiliate links from your WordPress admin.
-- **Shortcode Integration**: Use `[exclusive_coupon]` anywhere to display eye-catching coupon boxes.
-- **Conversion Boost**: Personalized deals improve click-through rates and affiliate earnings.[1][2]
-- **Tracking Ready**: Unique referral IDs for basic performance monitoring (Pro: advanced analytics).
-- **Freemium Model**: Free core features; upgrade for unlimited coupons and premium integrations.
+- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (code|brand|discount|affiliate link|description).
+- **Frontend Shortcode**: Use `[wpec_coupon_list]` to display beautiful, responsive coupon boxes.
+- **Affiliate Ready**: Track clicks and commissions with your affiliate links.
+- **Pro Version**: Unlimited coupons, auto-expiry, click analytics, custom branding, email capture ($49/year).
+- **SEO Optimized**: Unique value for readers improves engagement and rankings.[1][2]
 
 ## Installation
 
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
-2. Activate the plugin.
-3. Navigate to **Coupons** in your admin menu to configure your first coupon.
+1. Upload the plugin files to `/wp-content/plugins/wp-exclusive-coupons-pro`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Coupons Pro** in admin menu to add your first coupon.
+4. Add `[wpec_coupon_list]` shortcode to any page or post.
 
 ## Setup
 
-1. Go to **Coupons** in the WordPress admin.
-2. Enter **Coupon Code** (e.g., "SAVE20"), **Discount** (e.g., "20% Off"), **Affiliate Link**, and **Description**.
-3. Click **Save Coupon**.
-4. Add `[exclusive_coupon]` to any post, page, or widget.
+1. Navigate to **Coupons Pro** dashboard.
+2. Enter coupons in format: `SAVE20|Brand|20% Off|https://aff.link?code=SAVE20|Exclusive reader deal` (one per line).
+3. Save and embed shortcode.
+
+**Example Output**:
+- Eye-catching coupon cards with code, brand, discount, description, and 'Get Deal' button.
 
 ## Usage
 
-- **Display Coupons**: Embed the shortcode in content for instant promotional boxes.
-- **Customization**: Style via CSS classes like `.wpec-coupon-box`.
-- **Monetization Tips**: Partner with brands for custom codes to increase reader loyalty and commissions.[1][2]
-- **Upgrade to Pro**: Unlock unlimited coupons, analytics, email capture, and WooCommerce integration for $49/year.
+- **Shortcode**: `[wpec_coupon_list]` - Displays all active coupons.
+- **Customization**: Edit CSS in plugin or theme.
+- **Pro Tips**: Request custom codes from brands for higher conversions.[2] Integrate with memberships for exclusive access.[4]
 
-## Support
-Contact support@example.com for help.
+## Monetization Potential
+
+Boost affiliate earnings with personalized coupons. Freemium model ready for your premium sales.[1][7]
+
+**Support**: Contact support@example.com
