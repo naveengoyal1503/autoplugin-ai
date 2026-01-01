@@ -1,37 +1,48 @@
 # Affiliate Coupon Vault
 
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons via simple admin panel (Pro: truly unlimited).
-- **Shortcode Integration**: Use `[affiliate_coupon]` or `[affiliate_coupon brand="Brand1"]` anywhere.
-- **Conversion-Optimized Design**: Eye-catching coupon cards with discount codes and affiliate links.
-- **Personalized Promo Codes**: Create unique codes for your audience to boost affiliate commissions.[1][2]
-- **Freemium Model**: Free for basics, Pro unlocks analytics, custom branding, and more ($49/year).
+
+- **Easy Coupon Management**: Add unlimited coupons via simple admin panel (pro: truly unlimited).
+- **Shortcode Integration**: Use `[affiliate_coupon id="1"]` to display coupons anywhere.
+- **Click Tracking**: Unique tracking IDs for affiliate performance monitoring.
+- **Responsive Design**: Mobile-friendly coupon displays with copy-to-clipboard (pro feature).
+- **Freemium Model**: Free for up to 5 coupons; pro unlocks analytics, custom branding, API support.
+- **SEO Optimized**: Schema-ready for rich snippets on coupon pages[1][2].
 
 ## Installation
+
 1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to add your coupons (format: `Brand|Code|Discount%|Affiliate Link`).
+3. Go to **Settings > Coupon Vault** to configure your coupons.
+4. Use the shortcode in posts/pages: `[affiliate_coupon id="1"]`.
 
 ## Setup
-1. In the settings page, enter coupons one per line.
-2. Example:
+
+1. In the settings page, enter coupons in format:
    
-   Amazon|AMAZON10|10|https://your-amazon-affiliate-link.com
-   Shopify|SHOP15|15|https://your-shopify-affiliate-link.com
+   Coupon Code: SAVE20
+   Affiliate Link: https://your-affiliate-link.com
+   Description: 20% off first purchase
    
-3. Save settings.
-4. Add shortcode to any post/page: `[affiliate_coupon]`.
+   Separate multiple with double line breaks.
+2. For pro: Enter license key `pro-activated` (demo; purchase for real).
+3. Optional: Enter your affiliate networks (Amazon, etc.) for auto-tracking.
 
 ## Usage
-- **Display All Coupons**: `[affiliate_coupon]`
-- **Filter by Brand**: `[affiliate_coupon brand="Amazon"]`
-- Customize further in Pro version with tracking and A/B testing.
 
-## Pro Version
-Upgrade for:
-- Click analytics and conversion tracking.
-- Unlimited coupons and custom designs.
-- API integrations for dynamic coupons.
+- **Display Coupon**: `[affiliate_coupon id="2"]` shows the second coupon.
+- **Widget Ready**: Add to sidebars via shortcode widget.
+- **Track Performance**: View clicks in pro dashboard (logs to console in free).
+- **Monetization Tips**: Pair with affiliate programs for commissions; offer exclusive codes to readers[1][2][3].
+
+## Pro Upgrade ($49/year)
+
+- Unlimited coupons and campaigns.
+- Detailed analytics dashboard.
+- Custom CSS/branding.
+- Auto-expiring coupons.
 - Priority support.
 
-**Monetization Ready**: Perfect for bloggers earning via affiliates.[1][2][3]
+## Support
+
+Contact support@example.com. Built for WordPress monetization strategies like affiliate marketing and sponsored deals[1][7].
