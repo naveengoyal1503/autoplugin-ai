@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Generate and manage exclusive, personalized coupon codes for your WordPress site visitors, boosting affiliate conversions and reader loyalty with custom discounts from brands.
+ * Description: Automatically generates and displays exclusive, trackable coupon codes for affiliate products, boosting conversions and commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -14,120 +14,132 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class ExclusiveCouponsPro {
+    private static $instance = null;
 
-    public function __construct() {
+    public static function get_instance() {
+        if (null == self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('exclusive_coupon', array($this, 'coupon_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        wp_register_style('ecp-admin-style', plugin_dir_url(__FILE__) . 'admin-style.css');
-        wp_register_script('ecp-admin-script', plugin_dir_url(__FILE__) . 'admin-script.js', array('jquery'), '1.0.0', true);
         load_plugin_textdomain('exclusive-coupons-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        if (is_admin()) {
+            add_action('admin_init', array($this, 'admin_init'));
+        }
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('exclusive-coupons-pro', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('exclusive-coupons-pro', plugin_dir_url(__FILE__) . 'assets/style.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_options_page(
-            __('Exclusive Coupons Pro', 'exclusive-coupons-pro'),
-            __('Coupons Pro', 'exclusive-coupons-pro'),
-            'manage_options',
-            'exclusive-coupons-pro',
-            array($this, 'admin_page')
-        );
+        add_options_page('Exclusive Coupons Pro', 'Coupons Pro', 'manage_options', 'exclusive-coupons-pro', array($this, 'admin_page'));
+    }
+
+    public function admin_init() {
+        register_setting('exclusive_coupons_pro_options', 'exclusive_coupons_pro_settings');
+        add_settings_section('coupons_section', 'Coupon Settings', null, 'exclusive-coupons-pro');
+        add_settings_field('affiliate_links', 'Affiliate Links (JSON)', array($this, 'affiliate_links_field'), 'exclusive-coupons-pro', 'coupons_section');
+    }
+
+    public function affiliate_links_field() {
+        $settings = get_option('exclusive_coupons_pro_settings', array('links' => array()));
+        echo '<textarea name="exclusive_coupons_pro_settings[links]" rows="10" cols="50">' . esc_textarea(json_encode($settings['links'], JSON_PRETTY_PRINT)) . '</textarea>';
+        echo '<p class="description">Enter affiliate links as JSON array, e.g. [{ "name": "Product", "url": "https://aff.link", "discount": "10%" }]</p>';
     }
 
     public function admin_page() {
-        if (isset($_POST['ecp_save'])) {
-            update_option('ecp_coupons', sanitize_textarea_field($_POST['ecp_coupons']));
-            echo '<div class="notice notice-success"><p>' . __('Settings saved!', 'exclusive-coupons-pro') . '</p></div>';
-        }
-        $coupons = get_option('ecp_coupons', "Brand1: SAVE20\nBrand2: DISCOUNT15");
         ?>
         <div class="wrap">
-            <h1><?php _e('Exclusive Coupons Pro', 'exclusive-coupons-pro'); ?></h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php _e('Coupons List', 'exclusive-coupons-pro'); ?></th>
-                        <td>
-                            <textarea name="ecp_coupons" rows="10" cols="50" class="large-text"><?php echo esc_textarea($coupons); ?></textarea>
-                            <p class="description"><?php _e('Enter coupons one per line: Brand: CODE (e.g., Amazon: SAVE20)', 'exclusive-coupons-pro'); ?></p>
-                        </td>
-                    </tr>
-                </table>
-                <?php submit_button(__('Save Changes', 'exclusive-coupons-pro'), 'primary', 'ecp_save'); ?>
+            <h1>Exclusive Coupons Pro Settings</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('exclusive_coupons_pro_options');
+                do_settings_sections('exclusive-coupons-pro');
+                submit_button();
+                ?>
             </form>
-            <h2><?php _e('Usage', 'exclusive-coupons-pro'); ?></h2>
-            <p><?php _e('Use shortcode: [exclusive_coupon brand="Brand1"] or [exclusive_coupon] for random.', 'exclusive-coupons-pro'); ?></p>
+            <h2>Shortcode Usage</h2>
+            <p>Use <code>[exclusive_coupon id="1"]</code> to display a coupon. Free version limited to 3 coupons.</p>
+            <?php if (!$this->is_pro()) : ?>
+            <p><a href="#" class="button button-primary" onclick="alert('Upgrade to Pro for unlimited coupons!')">Upgrade to Pro</a></p>
+            <?php endif; ?>
         </div>
         <?php
     }
 
-    public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('brand' => ''), $atts);
-        $coupons_str = get_option('ecp_coupons', "");
-        $coupons = array_filter(array_map('trim', explode("\n", $coupons_str)));
-        if (empty($coupons)) {
-            return '<p>' . __('No coupons configured. Go to settings.', 'exclusive-coupons-pro') . '</p>';
-        }
-        if (!empty($atts['brand'])) {
-            foreach ($coupons as $coupon) {
-                list($c_brand, $code) = explode(':', $coupon, 2);
-                if (strtolower(trim($c_brand)) === strtolower(trim($atts['brand']))) {
-                    return $this->render_coupon(trim($c_brand), trim($code));
-                }
-            }
-            return '<p>' . sprintf(__('No coupon for %s.', 'exclusive-coupons-pro'), esc_html($atts['brand'])) . '</p>';
-        } else {
-            $random_coupon = $coupons[array_rand($coupons)];
-            list($brand, $code) = explode(':', $random_coupon, 2);
-            return $this->render_coupon(trim($brand), trim($code));
-        }
+    private function is_pro() {
+        return defined('EXCLUSIVE_COUPONS_PRO') && EXCLUSIVE_COUPONS_PRO;
     }
 
-    private function render_coupon($brand, $code) {
-        $affiliate_url = 'https://your-affiliate-link.com/?coupon=' . urlencode($code); // Replace with dynamic affiliate links in premium
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array('id' => 0), $atts);
+        $settings = get_option('exclusive_coupons_pro_settings', array('links' => array()));
+        $links = $settings['links'];
+
+        if (!isset($links[$atts['id']])) {
+            return '<p>Coupon not found.</p>';
+        }
+
+        $link = $links[$atts['id']];
+        $code = $this->generate_coupon_code($link['name']);
+        $tracked_url = add_query_arg('coupon', $code, $link['url']);
+
+        if (!$this->is_pro() && count($links) > 3) {
+            return '<p><strong>Pro Feature:</strong> Upgrade for more coupons!</p>';
+        }
+
         ob_start();
         ?>
-        <div style="border: 2px dashed #007cba; padding: 20px; background: #f9f9f9; text-align: center; max-width: 400px; margin: 20px auto;">
-            <h3 style="color: #007cba;">🎉 Exclusive Deal for You! 🎉</h3>
-            <p><strong><?php echo esc_html($brand); ?></strong></p>
-            <h2 style="color: #d63638; font-size: 2em;"> <?php echo esc_html(strtoupper($code)); ?> </h2>
-            <p>Save now with this reader-exclusive coupon!</p>
-            <a href="<?php echo esc_url($affiliate_url); ?>" target="_blank" style="background: #007cba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">🛒 Shop & Save</a>
-            <p style="font-size: 0.9em; margin-top: 15px; color: #666;">Limited time offer • Exclusive to our readers</p>
+        <div class="exclusive-coupon">
+            <h3><?php echo esc_html($link['name']); ?> - Exclusive <?php echo esc_html($link['discount']); ?> OFF!</h3>
+            <p>Your exclusive code: <strong><?php echo $code; ?></strong></p>
+            <a href="<?php echo esc_url($tracked_url); ?>" class="coupon-button" target="_blank">Get Deal Now</a>
+            <small>Track conversions and boost commissions!</small>
         </div>
         <?php
         return ob_get_clean();
     }
 
+    private function generate_coupon_code($product_name) {
+        return strtoupper(substr(md5($product_name . time() . wp_rand(1000, 9999)), 0, 8));
+    }
+
     public function activate() {
-        if (!get_option('ecp_coupons')) {
-            update_option('ecp_coupons', "Amazon: EXCLUSIVE20\nShopify: BLOG15");
-        }
+        add_option('exclusive_coupons_pro_settings', array('links' => array()));
     }
 }
 
-new ExclusiveCouponsPro();
+ExclusiveCouponsPro::get_instance();
 
-// Premium upsell notice
-function ecp_premium_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>' . sprintf(__('Upgrade to %s Premium for unlimited coupons, analytics, and API integrations!', 'exclusive-coupons-pro'), 'Exclusive Coupons Pro') . '</p></div>';
+// Pro check - define EXCLUSIVE_COUPONS_PRO in wp-config.php for pro features
+if (!function_exists('exclusive_coupons_pro_assets')) {
+    function exclusive_coupons_pro_assets() {
+        // Placeholder for pro assets
+    }
 }
-add_action('admin_notices', 'ecp_premium_notice');
 
-// Enqueue dummy CSS/JS placeholders (minified in real)
-function ecp_enqueue_admin_assets($hook) {
-    if ($hook !== 'settings_page_exclusive-coupons-pro') return;
-    wp_enqueue_style('ecp-admin-style');
-    wp_enqueue_script('ecp-admin-script');
-}
-add_action('admin_enqueue_scripts', 'ecp_enqueue_admin_assets');
-?>
+// Create assets directories and placeholder files
+register_activation_hook(__FILE__, function() {
+    $upload_dir = plugin_dir_path(__FILE__) . 'assets';
+    if (!file_exists($upload_dir)) {
+        wp_mkdir_p($upload_dir);
+    }
+    file_put_contents($upload_dir . '/script.js', '// Pro script placeholder\njQuery(document).ready(function($) { $(".coupon-button").hover(function() { $(this).text("Copy Code!"); }); });');
+    file_put_contents($upload_dir . '/style.css', '.exclusive-coupon { border: 2px dashed #0073aa; padding: 20px; margin: 20px 0; background: #f9f9f9; text-align: center; border-radius: 10px; } .coupon-button { background: #0073aa; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block; } .coupon-button:hover { background: #005a87; }');
+});
