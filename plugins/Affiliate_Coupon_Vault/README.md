@@ -2,42 +2,36 @@
 
 ## Features
 
-- **Personalized Coupon Generation**: One-click generation of unique coupon codes for each visitor.
-- **Affiliate Tracking**: Built-in click and usage tracking for performance analytics.
-- **Easy Shortcode Integration**: Use `[affiliate_coupon affiliate_id="123" discount="20%" product="Premium Theme" link="https://affiliate-link.com"]`.
-- **Freemium Model**: Free for up to 5 coupons; Pro unlocks unlimited, custom domains, and exports.
-- **Privacy Compliant**: GDPR-ready with no external dependencies.
-- **Pro Features**: Advanced analytics dashboard, API for custom integrations, white-label branding ($49/year).
+- **Easy Coupon Management**: Add, edit, and manage unlimited coupons (basic limit: 5) via intuitive admin dashboard.[1][2]
+- **Shortcode Integration**: Embed coupons anywhere with `[affiliate_coupon_vault id="0"]`.
+- **Affiliate Link Tracking**: Boost commissions with personalized promo codes and direct affiliate links.[1][3]
+- **Responsive Design**: Mobile-friendly displays with copy-to-clipboard functionality.
+- **Pro Upgrade**: Unlimited coupons, click analytics, auto-expiring deals, premium integrations ($49/year).
 
 ## Installation
 
 1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use the shortcode in any post, page, or widget.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
 
 ## Setup
 
-1. Go to **Settings > Affiliate Coupon Vault** (Pro dashboard available).
-2. Enter your affiliate IDs and basic settings.
-3. Add shortcodes to your content.
-4. View tracks under **Tools > Coupon Tracks**.
+1. In the admin panel, navigate to **Settings > Coupon Vault**.
+2. Click **Add Coupon** and fill in:
+   - **Code**: e.g., SAVE20
+   - **Description**: e.g., 20% off hosting
+   - **Affiliate Link**: Your tracked affiliate URL
+   - **Image**: Optional promo banner URL
+3. Save settings.
+4. Use shortcode `[affiliate_coupon_vault id="0"]` (ID matches coupon order).
 
 ## Usage
 
-### Basic Shortcode
+- **On Posts/Pages**: Insert shortcode where you want the coupon vault to appear.
+- **Widgets/Sidebar**: Add via Shortcode widget.
+- **Pro Tips**: Pair with SEO plugins for better visibility. Track performance in Pro version.[1][2]
+- **Monetization**: Earn via affiliates; upsell Pro to users for passive income.[3][8]
 
-[affiliate_coupon affiliate_id="unique123" discount="15%" product="Your Product" link="https://your-affiliate-link.com"]
+## Support
 
-
-### Example Output
-Visitors click to generate a unique code like `ACVunique123-AbCdEf12`, track clicks, and boost conversions.
-
-### Tracking
-- View generated codes and clicks in WordPress admin.
-- Pro: Export CSV, Google Analytics integration.
-
-### Upgrade to Pro
-Visit [example.com/pro](https://example.com/pro) for unlimited features and priority support.
-
-## Changelog
-- **1.0.0**: Initial release with core generation and tracking.
+Contact support@example.com. Upgrade to Pro for priority help.
