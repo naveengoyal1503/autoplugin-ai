@@ -1,47 +1,29 @@
 # Custom Affiliate Coupons Pro
 
+## Description
+A powerful WordPress plugin to create and display personalized affiliate coupons. Track clicks and boost conversions effortlessly. Freemium model with pro upgrades.[1][2]
+
 ## Features
-
-- **Generate Unique Coupons**: Create custom coupon codes with affiliate tracking links.
-- **Auto-Expiry**: Coupons expire automatically after set days to create urgency.
-- **Shortcode Integration**: Use `[cac_coupon id="0"]` anywhere on your site.
-- **Admin Dashboard**: Easy management of coupon details (name, link, code, expiry).
-- **Click Tracking**: Basic JS tracking for performance insights (Pro: advanced analytics).
-- **Freemium Model**: Free for 1 coupon; Pro unlocks unlimited + integrations.
-
-**Pro Features (Upgrade for $49/year)**:
-- Unlimited coupons
-- Detailed analytics dashboard
-- Email capture forms
-- WooCommerce integration
-- Custom branding
+- **Easy coupon management** via admin dashboard.
+- **Shortcode support**: `[cac_coupon id="0"]` to display coupons.
+- **Click tracking** with unique IDs (advanced analytics in Pro).
+- **Customizable design** with built-in styles.
+- **Pro version**: Unlimited coupons, detailed analytics, export reports, and priority support ($49/year).[3][4]
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Navigate to **Settings > Affiliate Coupons** to configure your first coupon.
+1. Upload the plugin files to `/wp-content/plugins/custom-affiliate-coupons-pro`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Coupons** in the admin menu to add coupons.
 
 ## Setup
-
-1. Go to **Settings > Affiliate Coupons**.
-2. Fill in: Coupon Name, Affiliate Link, Code (e.g., SAVE20), Expiry Days.
-3. Save.
-4. Add shortcode `[cac_coupon id="0"]` to any post/page (ID matches admin index).
+1. Navigate to **Coupons** > Add coupon details: Name, Code, Affiliate URL.
+2. Copy the shortcode (e.g., `[cac_coupon id="0"]`).
+3. Paste shortcode in posts, pages, or widgets.
 
 ## Usage
+- Use shortcodes anywhere: posts, pages, sidebars.
+- Track performance in Pro dashboard.
+- Example: Create exclusive promo codes for your audience to improve conversions.[1][2]
 
-- **Display Coupon**: Paste shortcode in Gutenberg, Classic Editor, or widgets.
-- **Customization**: Edit CSS in `wp_head` hook or child theme.
-- **Tracking**: Monitor console logs; upgrade for full stats.
-- **Best Practices**: Use in blog posts, sidebars for affiliate niches like software, eCommerce.[1][2]
-
-## Support
-
-Contact support@example.com. Freemium plugin - upgrade via [link].
-
-## Changelog
-
-**1.0.0**
-- Initial release with core features.
+## Pro Upgrade
+Unlock unlimited coupons, real-time analytics, and more. Visit [example.com/pro](https://example.com/pro).
