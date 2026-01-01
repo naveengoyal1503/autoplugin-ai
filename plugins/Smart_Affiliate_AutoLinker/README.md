@@ -1,14 +1,24 @@
 # Smart Affiliate AutoLinker
 
-**Automatically turns your content keywords into profitable affiliate links.** Boost revenue from Amazon Associates and more without manual linking.
+[![Contributors][badge-contributors]](https://example.com) [![ Forks][badge-forks]](https://example.com) [![Stargazers][badge-stars]](https://example.com) [![Issues][badge-issues]](https://example.com) [![License][badge-license]](https://example.com)
+
+Automatically turns keywords in your posts into profitable Amazon affiliate links. Boost your earnings effortlessly!
 
 ## Features
 
-- **Auto-Linking**: Detects keywords (e.g., "WordPress", "plugin") in posts/pages and replaces with your affiliate links.
-- **Easy Setup**: Comma-separated keywords and JSON links in settings.
-- **SEO-Friendly**: Adds `nofollow sponsored` attributes.
-- **Freemium Model**: Free for basics; Pro ($49/year) adds unlimited keywords, analytics dashboard, custom networks, A/B testing, and priority support.
-- **Self-Contained**: Single PHP file, no dependencies.
+- **Automatic Keyword Linking**: Detects keywords and wraps them in affiliate links.
+- **Amazon Integration**: Add your affiliate tag for instant commissions.
+- **Easy Keyword Management**: Add/edit keywords via simple dashboard.
+- **No Follow & Sponsored**: Links include proper rel attributes for compliance.
+- **Freemium Model**: Free for basics; Pro unlocks unlimited keywords, analytics, multi-networks.
+
+## Pro Features (Upgrade for $49/year)
+
+- Unlimited keywords
+- Multiple affiliate networks (Amazon, others)
+- Click tracking & analytics
+- A/B link testing
+- Priority support
 
 ## Installation
 
@@ -19,37 +29,39 @@
 
 ## Setup
 
-1. **Add Keywords**: Enter comma-separated terms (e.g., `WordPress,plugin,theme`).
-2. **Add Links**: Use JSON format, e.g.:
-   
-   {
-     "0": {"url": "https://amazon.com/your-affiliate-link1", "text": "Buy Now"},
-     "1": {"url": "https://amazon.com/your-affiliate-link2", "text": "Check It Out"}
-   }
-   
-   Indices match keyword positions (0 for first keyword, etc.).
-3. Save settings. Links auto-apply to new/existing content.
+1. **Enter Amazon Tag**: Add your Amazon Associates tag (e.g., `yourtag-20`).
+2. **Add Keywords**: Input keyword and Amazon product URL pairs.
+   - Example: Keyword `"laptop"` → `https://amazon.com/dp/B08XYZ`
+3. **Enable**: Toggle on auto-linking.
+4. Save changes.
 
 ## Usage
 
-- Write content naturally; plugin handles linking.
-- Test on a staging site first with your real affiliate IDs.
-- Monitor earnings via your affiliate dashboard.
-- **Pro Tip**: Target high-commission keywords for max profit.
+- Write posts as usual; keywords auto-link on frontend.
+- Test on a draft post.
+- Monitor earnings in Amazon Associates dashboard.
+- **Compliance**: Links use `rel="nofollow sponsored"`.
 
-## Pro Version
+## Screenshots
 
-Upgrade for:
-- Unlimited keywords & networks (Amazon, ClickBank, etc.).
-- Click analytics & performance reports.
-- Link cloaking & rotation.
-- [Buy Pro Now](https://example.com/pro)
-
-## Support
-
-- Free version: WordPress.org forums.
-- Pro: Dedicated email/tickets.
+*(Pro: Add screenshots of dashboard and linked content)*
 
 ## Changelog
 
-- **1.0.0**: Initial release with auto-linking core.
+### 1.0.0
+- Initial release with core auto-linking.
+
+## Upgrade to Pro
+
+[Get Pro Now](https://example.com/pro) for advanced features and support.
+
+## Support
+
+- [Submit a Ticket](https://example.com/support)
+- [Documentation](https://example.com/docs)
+
+[Contributors]: https://github.com/example/smart-affiliate-autolinker/contributors
+[Forks]: https://github.com/example/smart-affiliate-autolinker/network/members
+[Stargazers]: https://github.com/example/smart-affiliate-autolinker/stargazers
+[Issues]: https://github.com/example/smart-affiliate-autolinker/issues
+[License]: https://www.gnu.org/licenses/gpl-2.0.html
