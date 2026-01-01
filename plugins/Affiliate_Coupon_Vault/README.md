@@ -2,41 +2,37 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Pro: truly unlimited with tracking).
-- **Shortcode Integration**: Use `[affiliate_coupon]` for random or `[affiliate_coupon id="1"]` for specific.
-- **Copy-to-Clipboard**: One-click coupon code copying for users.
-- **Affiliate Tracking**: Unique tracking IDs on links (Pro: full analytics dashboard).
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Pro Upgrade**: Advanced analytics, custom templates, email capture, A/B testing ($49/year).
+- **Easy Shortcode Integration**: Use `[affiliate_coupons]` to display rotating coupon deals anywhere on your site.
+- **Personalized Coupons**: Add your affiliate links for automatic deal displays (5 free, unlimited in Pro).
+- **Conversion Boost**: Eye-catching designs encourage clicks and sales.
+- **Freemium Model**: Free core features with Pro upgrade for API integrations, analytics, and custom branding.
+- **Mobile Responsive**: Works perfectly on all devices.
+- **Pro Features**: Unlimited coupons, click tracking, A/B testing, email capture ($49/year).
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload Plugin**.
-2. Activate the plugin.
-3. Go to **Settings > Coupon Vault** to configure your coupons.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to configure your affiliate links.
+4. Add the shortcode `[affiliate_coupons limit="5"]` to any post or page.
 
 ## Setup
 
-1. In the settings page, enter coupons in format: `Coupon Code | Affiliate Link | Description` (one per line).
-2. Example:
-   
-   SAVE20 | https://yourafflink.com/?ref=blog | 20% off all items!
-   WELCOME10 | https://yourafflink2.com/?ref=blog | 10% welcome discount
-   
-3. Save settings.
+1. In **Settings > Coupon Vault**, enter up to 5 affiliate links (e.g., hosting deals, software discounts).
+2. Customize display with shortcode attributes: `category`, `limit`.
+3. Upgrade to Pro for advanced tracking and unlimited slots.
 
 ## Usage
 
-- Add shortcode to any post/page: `[affiliate_coupon]`.
-- Customize display with CSS in **Appearance > Customize > Additional CSS**.
-- Track performance in Pro dashboard (upgrade recommended for serious monetization).
+- **Basic**: `[affiliate_coupons]` - Shows 5 default coupons.
+- **Filtered**: `[affiliate_coupons category="hosting" limit="3"]`.
+- **Widget Ready**: Drag to sidebar or use in templates.
+- **Monetization Tip**: Pair with high-traffic blogs for passive affiliate income.
 
-**Monetization Tip**: Pair with high-traffic blog posts for affiliate commissions. Pro users see 30%+ conversion boosts[1][2].
+## Pro Upgrade
 
-## Pro Features
-- Click/session tracking
-- Conversion analytics
-- Custom coupon templates
-- Integration with WooCommerce/Affiliate plugins
+Unlock full potential: Visit <https://example.com/pro> for $49/year.
 
-Support: example@domain.com | Upgrade: https://example.com/pro
+## Support
+
+Report issues via WordPress.org forums.
