@@ -1,39 +1,42 @@
 # Smart Affiliate Coupon Manager
 
-Smart Affiliate Coupon Manager lets you easily create, manage, and display affiliate-linked coupons on your WordPress site to increase conversions and monetize affiliate partnerships.
-
 ## Features
 
-- Add, edit, and remove coupon codes with descriptions and affiliate URLs.
-- Set expiration dates for coupons to automatically hide expired deals.
-- Display coupons anywhere via shortcode `[sacm_coupons]`.
-- Redirect coupon clicks through the site to enable click tracking (basic).
-- Simple and user-friendly admin interface.
+- **Easy Coupon Creation**: Use shortcode `[sacm_coupon affiliate_url="https://aff.link" coupon_code="SAVE20" discount="20% OFF"]` to generate beautiful, responsive coupons.
+- **Click Tracking**: Free version tracks basic clicks; **Pro** saves detailed stats per coupon.
+- **Customizable Design**: Built-in styles with discount badges, expiry dates, and CTA buttons.
+- **Affiliate-Optimized**: Boosts conversions with personalized, urgent coupons inspired by top monetization strategies[1][2].
+- **Pro Features**: Unlimited coupons, analytics dashboard, A/B testing, email capture integration ($49/year).
 
 ## Installation
 
-1. Upload the plugin PHP file to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Access the "Affiliate Coupons" admin menu to add your coupons.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Use the shortcode in any post/page.
 
 ## Setup
 
-- Go to the Affiliate Coupons menu in your dashboard.
-- Use the form to add coupon codes, descriptions, affiliate URLs, and optional expiration dates.
-- Save your changes.
+1. Copy shortcode: `[sacm_coupon affiliate_url="YOUR_AFFILIATE_LINK" coupon_code="YOUR_CODE" discount="20% OFF" expires="2026-02-01" button_text="Grab Deal"]`.
+2. Paste into Gutenberg block, Classic Editor, or widgets.
+3. **Pro Upgrade**: Visit admin notice link to unlock advanced tracking.
 
 ## Usage
 
-- Insert the shortcode `[sacm_coupons]` into any post or page to display your active coupons.
-- Visitors clicking the coupon links will be redirected to the corresponding affiliate URLs.
+- **Basic Example**:
+  
+  [sacm_coupon affiliate_url="https://amazon.com/aff" coupon_code="AFF20"]
+  
+- Customize colors/fonts via CSS in **Appearance > Customize**.
+- Track performance in **Pro Dashboard** (stats update on clicks).
+- Best for blogs monetizing via affiliates, as coupons increase clicks by providing unique value[1][2][3].
 
-## Monetization
+## Pro Version
 
-A premium version can offer enhanced features like:
+Upgrade for:
+- Detailed click/conversion analytics.
+- Unlimited coupons and custom templates.
+- Integration with WooCommerce/affiliate plugins.
 
-- Automated coupon import from affiliate networks.
-- Advanced click and conversion analytics.
-- Scheduling and recurring coupon publishing.
-- Multi-network affiliate account integration.
+Support: example.com/support
 
-This plugin helps affiliate marketers and ecommerce bloggers efficiently manage deals to increase affiliate revenue.
+**Boost your affiliate revenue today!**
