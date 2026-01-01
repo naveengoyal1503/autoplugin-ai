@@ -1,68 +1,49 @@
 # Exclusive Coupons Pro
 
-**Boost affiliate commissions with exclusive, trackable coupons that create urgency and exclusivity.**
-
 ## Features
 
-### Free Version
-- Create unlimited coupons with custom codes and affiliate links
-- Responsive coupon display with discount badges
-- Easy shortcode `[ecp id="1"]` for any page/post
-- Widget support for sidebars
-
-### Pro Version ($49/year)
-- **One-time use limits** per coupon (e.g., 50 redemptions max)
-- **Auto-expiration dates** with real-time status
-- **Usage analytics** dashboard
-- **Custom branding** & styling options
-- **Priority support** & updates
-
-## Why It's Profitable
-Affiliate marketers earn 20-50% higher conversions with exclusive coupons[1][2]. Limited-supply codes create FOMO, driving immediate action.
+- **Easy Coupon Management**: Add unlimited exclusive coupons via simple JSON in admin dashboard (free: up to 5 coupons).
+- **Shortcode Integration**: Display coupons anywhere with `[exclusive_coupons limit="5" category="hosting"]`.
+- **Responsive Design**: Mobile-friendly coupon cards with copyable codes and CTA buttons.
+- **Affiliate Ready**: Track clicks and conversions (Pro feature).
+- **Categories Support**: Filter by niche like hosting, software, eCommerce.
+- **Pro Upgrade**: Unlimited coupons, auto-generation from APIs, analytics dashboard, custom branding ($49/year).
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`
-2. Activate via **Plugins > Installed Plugins**
-3. Navigate to **Coupons Pro** in admin menu
-4. Add your first coupon!
+1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupons Pro** to add your coupons.
+4. Use the shortcode in posts, pages, or widgets.
 
 ## Setup
 
-1. **Go to Coupons Pro** → Add coupon with:
-   - Unique **Code** (e.g., `SAVE50`)
-   - **Affiliate Link** (Amazon, etc.)
-   - **Discount %** (for display)
-2. **Copy shortcode** `[ecp id="0"]` (ID from table)
-3. **Paste in posts/pages** or use widget
-
-**Pro users:** Set max uses (e.g., 100) and expiry datetime.
+1. In admin, paste JSON like:
+   
+   [
+     {"title":"50% Off Hosting","description":"Exclusive WP deal","code":"WP50","link":"https://partner.com/?ref=you","category":"hosting"}
+   ]
+   
+2. Save and embed shortcode.
+3. **Pro Tip**: Negotiate custom codes with brands for higher conversions [1][2].
 
 ## Usage
 
-### Shortcode Examples
+- **Basic**: `[exclusive_coupons]` shows all coupons.
+- **Filtered**: `[exclusive_coupons category="software" limit="3"]`.
+- **Monetization**: Earn via affiliate commissions on clicks. Positions your site as a deals hub [1][2][3].
+- **Track Performance**: View clicks in Pro dashboard.
 
-[ecp id="1"]  <!-- Single coupon -->
+## Pro Features
 
+| Feature | Free | Pro ($49/yr) |
+|---------|------|--------------|
+| Coupon Limit | 5 | Unlimited |
+| Analytics | No | Yes |
+| API Integration | No | Yes |
+| Custom Designs | No | Yes |
 
-### Widget
-- Add "Exclusive Coupon" widget to sidebar
-- Select coupon ID
-
-### Best Practices
-- Place coupons in blog posts reviewing products[1]
-- Use on dedicated "Deals" page
-- Promote via email/social for urgency
-- Track performance in Pro dashboard
-
-## Screenshots
-*(In full distribution)*
-
-## Changelog
-**1.0.0**
-- Initial release
+Boost revenue with exclusive deals – perfect for 2026 monetization [1][3][4]!
 
 ## Support
-Submit tickets at example.com/support
-
-**Upgrade to Pro today and 10x your affiliate earnings!**
+Contact support@example.com
