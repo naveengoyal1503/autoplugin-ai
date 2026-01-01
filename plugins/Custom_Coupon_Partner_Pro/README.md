@@ -1,37 +1,45 @@
 # Custom Coupon Partner Pro
 
 ## Features
-- **Create exclusive custom coupons** for affiliate partnerships with brand, code, discount, link, and expiry.[1][2]
-- **Shortcode display**: Eye-catching, responsive coupon boxes `[cpp_coupon]` for posts/pages.[1]
-- **Admin dashboard**: Simple form to manage one coupon (Pro: unlimited).[2][7]
-- **Auto-expiry check**: Coupons hide after expiry date.[1]
-- **Conversion booster**: Personalized discounts improve rates and reader value.[1][2]
-- **Freemium**: Free basic; Pro adds analytics, bulk import, email capture ($49/year).[7]
+- **Create exclusive custom coupons** from affiliate partners to boost conversions and reader loyalty[1][2].
+- Easy JSON-based coupon management in WordPress admin.
+- Front-end shortcode `[cpp_coupon id="0"]` displays branded coupon boxes with affiliate links.
+- **Freemium model**: Free for up to 5 coupons; premium unlocks unlimited, analytics, auto-expiry ($49/year)[7].
+- Mobile-responsive design with hover effects.
+- SEO-friendly: Unique value for readers searching discounts[2].
 
 ## Installation
-1. Upload the plugin ZIP to WordPress admin > Plugins > Add New > Upload.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
 2. Activate the plugin.
-3. Go to **Coupons** menu to create your first coupon.[1]
+3. Go to **Coupons** in the admin menu to add your first coupons[1].
 
 ## Setup
-1. Navigate to **Coupons** in admin menu.
-2. Fill in: **Coupon Code** (e.g., SAVE20), **Discount** (e.g., 20), **Affiliate Link**, **Brand** (e.g., ExampleBrand), **Expiry Date**.
-3. Click **Save Coupon**.[2]
-4. Note: Free version limits to 1 active coupon.
+1. In **Coupons** admin page, enter coupons in JSON format:
+   
+   [
+     {"code":"SAVE20","desc":"20% off at Partner","link":"https://partner.com/?ref=yourid","affiliate":"Amazon"},
+     {"code":"WELCOME10","desc":"$10 off first purchase","link":"https://partner2.com/?ref=yourid","affiliate":"Partner2"}
+   ]
+   
+2. Click **Save Coupons**.
+3. Add shortcode to any post/page: `[cpp_coupon id="0"]` (use index 0,1,...).
 
 ## Usage
-- Insert shortcode `[cpp_coupon]` in any post, page, or widget.
-- Displays styled coupon box with code, discount, shop link, and expiry.
-- **Pro Tips**:
-  - Place on dedicated deals page for SEO.[1][2]
-  - Partner with brands for custom codes to build unique value.[2]
-  - Track clicks via affiliate dashboard; upgrade for built-in analytics.[3][7]
+- Embed coupons in blog posts for personalized deals[2].
+- Track clicks via premium analytics upgrade.
+- **Monetize**: Earn affiliate commissions from exclusive codes; upsell premium to users[1][3][7].
+- Example output:
+  > **Exclusive: SAVE20**  
+  > 20% off at Partner  
+  > [Get Deal] via Amazon
 
-## Screenshots
-*(Imagine: Sleek coupon display with dashed border, large code, prominent CTA button.)*
+## Premium Features
+- Unlimited coupons and partner integrations.
+- Click/conversion tracking.
+- Coupon expiry and usage limits.
+- White-label branding.
 
-## Changelog
-**1.0.0** - Initial release.
+**Upgrade: $49/year** - Perfect for bloggers monetizing with affiliate discounts[1][2].
 
 ## Support
-Contact support@example.com. Upgrade to Pro for priority help.
+Contact support@example.com. Contributions welcome on GitHub.
