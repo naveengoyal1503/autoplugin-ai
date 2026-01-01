@@ -1,46 +1,52 @@
 # Exclusive Coupons Pro
 
-A powerful WordPress plugin to create, manage, and track exclusive affiliate coupons. Boost conversions with personalized promo codes and dedicated coupon pages.[1][2]
-
 ## Features
-- **Easy Coupon Creation**: Add titles, unique codes, affiliate URLs, discounts, usage limits, and dates.
-- **Shortcode Support**: `[ecp_coupons]` displays active coupons anywhere.
-- **Usage Tracking**: Monitors clicks and redemptions (Pro: advanced analytics).
-- **Widget Ready**: Drag-and-drop widget for sidebars.
-- **Freemium Model**: Free for basics, Pro ($49/yr) unlocks unlimited coupons, dashboards, API.[7]
-- **SEO-Friendly**: Custom pages for coupon sections improve search rankings.[1]
 
-**Pro Features**: Revenue analytics, bulk import, email notifications, custom branding.
+- **Generate Exclusive Coupons**: Create custom discount codes with affiliate links for higher conversions.[1][2]
+- **Shortcode Display**: Use `[exclusive_coupon id="0"]` to embed coupons anywhere.[5]
+- **Expiration Tracking**: Auto-hide expired coupons.
+- **Click Logging**: Basic tracking for performance insights.
+- **Freemium Model**: Free for 5 coupons; Pro ($49/year) unlocks unlimited, analytics, automation.[7]
+- **SEO-Friendly**: Positions your site as a deals hub for affiliate revenue.[1][2]
 
 ## Installation
-1. Upload the plugin ZIP to **Plugins > Add New > Upload Plugin**.
-2. Activate the plugin.
-3. Access **Coupons Pro** in the admin menu.
-4. Add your first coupon!
+
+1. Upload the `exclusive-coupons-pro.php` file to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Navigate to **Coupons Pro** in the admin menu to configure.
 
 ## Setup
-1. Go to **Coupons Pro > Dashboard**.
-2. Click **Add New Coupon**.
-3. Fill in details: Title, Code (e.g., SAVE20), Affiliate URL, Discount.
-4. Set limits/dates if needed.
-5. Save and use shortcode `[ecp_coupons]` on pages/posts.
 
-**Pro Upgrade**: Visit dashboard upsell for license key.
+1. In **Coupons Pro** menu, enter coupons in JSON format:
+   
+   [
+     {
+       "code": "SAVE20",
+       "afflink": "https://your-affiliate-link.com",
+       "desc": "20% off all products",
+       "expires": "2026-12-31"
+     }
+   ]
+   
+2. Save changes.
+3. Add shortcode to posts/pages: `[exclusive_coupon id="0"]` (index starts at 0).
 
 ## Usage
-- **Display Coupons**: Add `[ecp_coupons]` to any post/page or use the widget.
-- **Track Performance**: View uses in dashboard (Pro: detailed analytics).
-- **Custom Pages**: Create a /coupons/ page with the shortcode for SEO.
-- **Monetization Tip**: Partner with brands for exclusive codes to increase commissions.[2][3]
 
-## Screenshots
-*(In full distribution: Dashboard, Frontend display, Analytics)*
+- **Frontend**: Coupons display with styled buttons linking to affiliates.
+- **Customization**: Edit JSON for codes, links, descriptions, expiration.
+- **Tracking**: Clicks logged to error log; Pro adds dashboard analytics.
+- **Monetization Tip**: Pair with affiliate programs for commissions on sales via exclusive deals.[3][4]
 
-## Changelog
-**1.0.0**
-- Initial release with core features.
+## Pro Upgrade
+
+- Unlimited coupons
+- Advanced analytics & reports
+- Auto-generation of codes
+- Email notifications
+
+Get Pro for $49/year: [Upgrade Link](https://example.com/pro)
 
 ## Support
-Submit tickets at example.com/support. Pro users get priority.
 
-**Built for 2026 monetization strategies: Affiliates, bloggers, eCommerce.[1][3]**
+Report issues via WordPress.org forums.
