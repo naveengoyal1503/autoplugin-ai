@@ -2,40 +2,31 @@
 
 ## Features
 
-- **Automatic Coupon Generation**: Creates exclusive discount codes for your audience from affiliate networks like Amazon and CJ[1][2].
-- **Shortcode Integration**: Use `[affiliate_coupon_vault]` anywhere to display coupon vaults.
-- **Customizable**: Set default discounts, select networks via admin settings.
-- **Conversion Boost**: Personalized deals improve click-through and commissions[1][2].
-- **Freemium Model**: Free for basics, Pro ($49/year) unlocks unlimited coupons, analytics, API integrations.
-
-**Pro Features** (coming soon):
-- Real-time API pulls from affiliate networks.
-- Analytics dashboard for tracking conversions.
-- Auto-rotation of expiring coupons.
-- Custom branding and email capture.
+- **Personalized Coupon Display**: Shortcode-based coupons with copy-to-clipboard and trackable affiliate links.
+- **Click Tracking**: Monitors coupon usage per brand for performance insights.
+- **Admin Dashboard**: Easy JSON-based coupon management.
+- **Freemium Model**: Free for basics; **Pro ($49/year)** unlocks unlimited coupons, analytics dashboard, API integrations, custom designs, and email capture.
+- **Conversion Boost**: Inspired by top monetization strategies like custom coupons and affiliate tracking.[1][2]
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault.php` file to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' screen in WordPress admin.
-3. Go to **Settings > Coupon Vault** to configure networks and discounts.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Configure in **Settings > Coupon Vault**.
 
 ## Setup
 
-1. In admin settings, check affiliate networks (Amazon, CJ) and set default discount %.
-2. Add shortcode `[affiliate_coupon_vault category="tech" count="3"]` to any post/page.
-3. For Pro: Enter API keys from your affiliate accounts.
+1. Go to **Settings > Coupon Vault**.
+2. Enter coupons as JSON: `{"brand1":"CODE20","brand2":"SAVE10"}`.
+3. Use shortcode: `[affiliate_coupon brand="brand1" afflink="https://affiliate-link.com" discount="20%"]`.
 
 ## Usage
 
-- **Shortcode Examples**:
-  - `[affiliate_coupon_vault]` - Default 5 coupons.
-  - `[affiliate_coupon_vault count="10"]` - Show 10 coupons.
-- Embed in sidebars, posts, or dedicated coupon pages for max monetization[1][2].
-- Track performance in Pro dashboard.
+- Embed shortcodes in posts/pages for eye-catching coupons.
+- Track clicks in settings page (Pro: detailed analytics).
+- **Pro Features**: Auto-generate codes, A/B testing, WooCommerce integration.
 
-## Why Profitable?
+**Monetization Ready**: Perfect for affiliate sites boosting conversions with exclusive deals.[1][2][3]
 
-Affiliate coupons drive higher conversions via exclusive deals, positioning your site as a savings hub[1][2]. Freemium model generates recurring revenue from upgrades.
-
-**Support**: Contact support@example.com | **Pro**: [Upgrade Here](https://example.com/pro)
+## Support
+Contact support@example.com | Upgrade to Pro: example.com/pro
