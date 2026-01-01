@@ -6,115 +6,102 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Affiliate Coupon Vault
  * Plugin URI: https://example.com/affiliate-coupon-vault
- * Description: Automatically generates and manages exclusive affiliate coupons for your WordPress site, boosting conversions and revenue.
+ * Description: Automatically generate and manage exclusive affiliate coupons to boost conversions and commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: affiliate-coupon-vault
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class AffiliateCouponVault {
-    private static $instance = null;
-
-    public static function get_instance() {
-        if (null == self::$instance) {
-            self::$instance = new self;
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
+    public function __construct() {
         add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('affiliate_coupon', array($this, 'coupon_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        load_plugin_textdomain('affiliate-coupon-vault', false, dirname(plugin_basename(__FILE__)) . '/languages');
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_style('affiliate-coupon-vault', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
-        wp_enqueue_script('affiliate-coupon-vault', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0.0', true);
+        wp_register_style('acv-admin-style', plugin_dir_url(__FILE__) . 'admin-style.css');
+        wp_enqueue_style('acv-admin-style');
     }
 
     public function admin_menu() {
-        add_options_page(
-            'Affiliate Coupon Vault',
-            'Coupon Vault',
-            'manage_options',
-            'affiliate-coupon-vault',
-            array($this, 'settings_page')
-        );
+        add_menu_page('Affiliate Coupons', 'Coupon Vault', 'manage_options', 'affiliate-coupon-vault', array($this, 'admin_page'));
     }
 
-    public function settings_page() {
+    public function admin_page() {
         if (isset($_POST['submit'])) {
             update_option('acv_coupons', sanitize_textarea_field($_POST['coupons']));
-            echo '<div class="notice notice-success"><p>Coupons updated!</p></div>';
+            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
         }
-        $coupons = get_option('acv_coupons', "Brand1: DISCOUNT10 - 10% off\nBrand2: SAVE20 - $20 off");
+        $coupons = get_option('acv_coupons', "Coupon Code: SAVE20\nAffiliate Link: https://affiliate-link.com\nDescription: 20% off first purchase");
         ?>
         <div class="wrap">
-            <h1>Affiliate Coupon Vault Settings</h1>
+            <h1>Affiliate Coupon Vault</h1>
             <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Coupons (Format: Brand: CODE - Description)</th>
-                        <td><textarea name="coupons" rows="10" cols="50"><?php echo esc_textarea($coupons); ?></textarea></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
+                <textarea name="coupons" rows="10" cols="80" placeholder="Enter coupons one per line: Code|Affiliate Link|Description|Uses Left"><?php echo esc_textarea($coupons); ?></textarea>
+                <p class="description">Format: Code|Affiliate Link|Description|Uses Left (e.g., SAVE20|https://example.com|20% off|Unlimited)</p>
+                <p><input type="submit" name="submit" class="button-primary" value="Save Coupons"></p>
             </form>
-            <p><strong>Pro Upgrade:</strong> Unlock unlimited coupons, analytics, auto-generation, and more for $49/year.</p>
+            <h2>Shortcode Usage</h2>
+            <p>Use <code>[affiliate_coupon id="1"]</code> to display coupons. Premium: Auto-rotation and tracking.</p>
         </div>
         <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => ''), $atts);
-        $coupons = explode('\n', get_option('acv_coupons', ''));
-        $html = '<div class="acv-vault">';
-        foreach ($coupons as $coupon) {
-            if (trim($coupon)) {
-                $parts = explode(':', $coupon, 2);
-                $brand = trim($parts);
-                $code_desc = isset($parts[1]) ? trim($parts[1]) : '';
-                $html .= '<div class="acv-coupon"><strong>' . esc_html($brand) . '</strong>: ' . esc_html($code_desc) . ' <span class="acv-use">Use now!</span></div>';
-            }
-        }
-        $html .= '</div><p class="acv-pro"><a href="https://example.com/pro">Go Pro for more features</a></p>';
-        return $html;
+        $coupons = explode("\n", get_option('acv_coupons', ''));
+        if (empty($coupons)) return '';
+
+        $lines = array_filter(array_map('trim', $coupons));
+        $coupon_data = array_map(function($line) {
+            $parts = explode('|', $line, 4);
+            return array(
+                'code' => isset($parts) ? trim($parts) : '',
+                'link' => isset($parts[1]) ? esc_url(trim($parts[1])) : '#',
+                'desc' => isset($parts[2]) ? trim($parts[2]) : '',
+                'uses' => isset($parts[3]) ? trim($parts[3]) : 'Unlimited'
+            );
+        }, $lines);
+
+        if (empty($coupon_data)) return '';
+
+        // Pick first for demo (premium: random/rotate)
+        $coupon = $coupon_data;
+
+        ob_start();
+        ?>
+        <div style="border: 2px dashed #0073aa; padding: 20px; background: #f9f9f9; text-align: center; max-width: 400px;">
+            <h3 style="color: #0073aa;">🎉 Exclusive Deal!</h3>
+            <p><strong><?php echo esc_html($coupon['desc']); ?></strong></p>
+            <p><strong>Code: <span style="background: #0073aa; color: white; padding: 5px 10px; font-size: 1.2em; border-radius: 5px;"><?php echo esc_html($coupon['code']); ?></span></strong></p>
+            <p>Uses left: <?php echo esc_html($coupon['uses']); ?></p>
+            <a href="<?php echo $coupon['link']; ?>" target="_blank" style="background: #0073aa; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Get Deal Now & Save!</a>
+        </div>
+        <?php
+        return ob_get_clean();
     }
 
     public function activate() {
         if (!get_option('acv_coupons')) {
-            update_option('acv_coupons', "Brand1: DISCOUNT10 - 10% off\nBrand2: SAVE20 - $20 off");
+            update_option('acv_coupons', "WELCOME10|https://your-affiliate-link.com|10% off first order|50");
         }
     }
 }
 
-AffiliateCouponVault::get_instance();
+new AffiliateCouponVault();
 
-// Inline styles and scripts for self-contained
-
-function acv_inline_styles() {
-    echo '<style>
-.acv-vault { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-.acv-coupon { margin-bottom: 10px; font-size: 16px; }
-.acv-use { color: #0073aa; font-weight: bold; }
-.acv-pro { text-align: center; margin-top: 20px; }
-    </style>';
+// Premium upsell notice
+function acv_admin_notice() {
+    if (current_user_can('manage_options')) {
+        echo '<div class="notice notice-info"><p><strong>Affiliate Coupon Vault Pro:</strong> Unlock unlimited coupons, click tracking, auto-rotation, and analytics for $49/year. <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
+    }
 }
-add_action('wp_head', 'acv_inline_styles');
+add_action('admin_notices', 'acv_admin_notice');
 
-function acv_inline_scripts() {
-    echo '<script>jQuery(document).ready(function($) { $(".acv-use").click(function() { $(this).text("Copied!"); }); });</script>';
-}
-add_action('wp_footer', 'acv_inline_scripts');
+// Prevent direct access
+if (!defined('ABSPATH')) exit;
