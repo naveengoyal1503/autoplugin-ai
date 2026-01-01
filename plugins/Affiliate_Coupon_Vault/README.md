@@ -1,34 +1,40 @@
 # Affiliate Coupon Vault
 
-## Features
+**Boost your affiliate earnings with exclusive, trackable coupons!** Automatically generates personalized promo codes and tracks clicks for optimized monetization.[1][2]
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (format: Brand:Code|Brand:Code).
-- **Shortcode Integration**: Use `[affiliate_coupon brand="Amazon"]` to display branded coupons anywhere.
-- **Affiliate Tracking**: Built-in click tracking (Pro: advanced analytics).
-- **Auto-Generate Codes**: Fallback random codes for missing brands.
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Freemium Model**: Free core features; Pro unlocks unlimited coupons, detailed stats, API integrations.
+## Features
+- **Easy Shortcode Integration**: Use `[affiliate_coupon]` for random or `[affiliate_coupon id="1"]` for specific coupons.
+- **Personalized Promo Codes**: Appends unique reader ID to codes (e.g., SAVE20-abc12) for tracking conversions.[2]
+- **Click Tracking**: AJAX-powered affiliate link tracking (Pro: full analytics dashboard).[3]
+- **Admin Dashboard**: Add coupons via simple format: `Name|Affiliate Link|Code|Image URL`.
+- **Mobile-Responsive Design**: Beautiful, conversion-optimized coupon boxes.
+- **Freemium Model**: Free for 5 coupons; **Pro ($49/year)**: Unlimited, auto-rotation, A/B testing, email capture.[1][7]
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your coupons.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to add your affiliate coupons.
+4. Insert shortcode in posts/pages: `[affiliate_coupon]`.
 
 ## Setup
-
-1. In admin, enter coupons like: `Amazon:WP10OFF|Shopify:FREEDEL|Brand3:50PERCENT`.
-2. Save settings.
-3. Add shortcode to posts/pages: `[affiliate_coupon brand="Amazon"]`.
-4. Customize affiliate links in code (edit `$aff_link`).
+1. In admin: Enter coupons one per line, e.g.:
+   
+   WP Rocket|https://wp-rocket.me/?aff=yourid|SAVE20|https://your-image.com/rocket.jpg
+   Elementor|https://elementor.com/?ref=yourid|PRO30|https://your-image.com/elementor.jpg
+   
+2. Save and embed shortcode anywhere.
+3. **Pro Tip**: Request custom codes from brands for exclusive deals.[2]
 
 ## Usage
+- **Posts/Blogs**: Add shortcodes to buying guides or deal roundups.
+- **Sidebar/Widgets**: Use in Gutenberg or Classic Editor.
+- **Tracking**: All clicks logged (view in Pro dashboard).
+- **Customization**: Edit CSS via `appearance.css` or Pro themes.
 
-- **Display Coupon**: `[affiliate_coupon brand="YourBrand"]` generates HTML with code, button, and tracking.
-- **Track Clicks**: JS sends AJAX on button click (Pro: full conversion tracking).
-- **Pro Upgrade**: For analytics dashboard, email capture, WooCommerce integration ($49/year).
-
-**Pro Tip**: Pair with affiliate programs like Amazon Associates for max revenue[1][2][3].
+## Pro Version
+Unlock unlimited coupons, real-time analytics, API for dynamic deals, and white-label branding. [Upgrade Now](https://example.com/pro)
 
 ## Support
-Contact support@example.com | Changelog in plugin files.
+Report issues on GitHub or email support@example.com. Compatible with latest WordPress (tested to 6.5+).
+
+**Monetize smarter in 2026 with coupon power!** [1][3]
