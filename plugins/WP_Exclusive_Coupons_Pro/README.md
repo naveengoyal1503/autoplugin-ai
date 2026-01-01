@@ -1,38 +1,37 @@
 # WP Exclusive Coupons Pro
 
+## Description
+A powerful WordPress plugin for bloggers and affiliate marketers to create **exclusive coupons** with custom promo codes, usage tracking, and affiliate link integration. Boost conversions and monetize your site with personalized deals.[1][2]
+
 ## Features
-- **Create unlimited exclusive coupons** with custom codes, affiliate links, and expiry dates (Pro).
-- **Track usage** via AJAX without page reloads.
-- **Shortcode support**: `[exclusive_coupon id="0"]` to display coupons anywhere.
-- **Admin dashboard** for easy management.
-- **Responsive design** with inline styles.
-- **Freemium model**: Free for 5 coupons, Pro unlocks analytics, auto-expiry, and more ($49/year).
+- Create unlimited exclusive coupons with promo codes, discounts, and expiry dates.
+- **Real-time usage tracking** with max uses limits.
+- Embed coupons anywhere using simple shortcodes: `[exclusive_coupon id="1"]`.
+- Affiliate-ready: Auto-appends tracking params to redemption links.
+- Responsive design with copy-to-clipboard functionality (Pro).
+- Admin dashboard for easy management.
+- **Freemium**: Pro unlocks analytics, bulk import, email notifications ($49/year).
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via WordPress Admin > Plugins.
-3. Go to **Coupons** menu to add coupons in JSON format.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New.
+2. Activate the plugin.
+3. Navigate to **Coupons** in the admin menu to add your first coupon.
+4. Copy the shortcode and paste into any post/page.
 
 ## Setup
-1. In **Coupons** admin page, edit the JSON textarea:
-   
-   {
-     "0": {
-       "name": "20% Off Hosting",
-       "code": "WP20",
-       "afflink": "https://your-affiliate-link.com",
-       "expiry": "2026-12-31",
-       "uses": 0
-     }
-   }
-   
-2. Save changes.
-3. Use shortcode `[exclusive_coupon id="0"]` in posts/pages.
+1. Go to **Coupons** > Add new coupon.
+2. Fill in title, unique code, affiliate URL, discount details, brand, max uses, and expiry.
+3. Save and get the shortcode.
+4. Use in Gutenberg blocks, classic editor, or widgets.
 
 ## Usage
-- Embed coupons in blog posts for affiliate boosts.
-- Track clicks and uses in real-time.
-- **Pro Tip**: Pair with SEO plugins for "exclusive coupons" traffic.[1][2]
+- **Shortcode**: `[exclusive_coupon id="X"]` where X is the coupon ID.
+- Track clicks and uses automatically.
+- Customize styles via CSS in Customizer.
+- **Pro Features**: View analytics, export data, integrate with email tools.
 
 ## Pro Upgrade
-Get unlimited coupons, detailed analytics, email notifications, and priority support for $49/year.
+Unlock premium features for serious monetization: [Upgrade Now](https://example.com/pro).
+
+## Support
+Contact support@example.com or visit the plugin page.
