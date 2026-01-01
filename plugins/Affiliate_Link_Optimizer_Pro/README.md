@@ -2,41 +2,31 @@
 
 ## Features
 
-- **Smart Link Cloaking**: Automatically detects and cloaks affiliate links (Amazon, ClickBank, etc.) to protect commissions and improve trust.
-- **Click Tracking**: Real-time tracking of affiliate link clicks with basic dashboard stats.
-- **Performance Analytics**: Monitor total clicks and optimize your links (Pro: Advanced reports).
-- **Easy Setup**: One-click activation, no coding required.
-- **Freemium Model**: Free core features; upgrade to Pro for A/B testing, unlimited links, detailed analytics, and priority support.
-
-**Pro Features (Upsell)**: A/B testing, conversion tracking, email reports, WooCommerce integration ($49/year).
+- **Automatic Link Cloaking**: Detects and cloaks affiliate links based on keywords like 'amazon', 'clickbank'.
+- **Click Tracking**: Tracks all clicks on affiliate links with detailed analytics dashboard.
+- **Performance Optimization**: Premium version includes A/B testing and auto-optimization for higher conversions.
+- **Easy Setup**: One-click activation, customizable via WordPress admin.
+- **Privacy Compliant**: Anonymized tracking, GDPR-ready.
 
 ## Installation
 
 1. Upload the `affiliate-link-optimizer-pro` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > ALO Pro** to configure cloaking and tracking.
-4. Add affiliate links to your posts/pages – they auto-optimize!
+3. Go to **Settings > Affiliate Optimizer** to configure.
 
 ## Setup
 
-1. In the settings page:
-   - Enable **Link Cloaking** to hide raw affiliate URLs.
-   - Enable **Click Tracking** for performance insights.
-2. Copy your unique API key for custom tracking.
-3. Upgrade to Pro via the in-plugin button for advanced features.
+1. Enable **Cloak Links** to automatically wrap detected affiliate URLs.
+2. Add **Track Keywords** (comma-separated, e.g., `amazon,clickbank,commissionjunction`).
+3. Enable **Tracking** for analytics.
+4. Premium: Enter license key for advanced features.
 
 ## Usage
 
-- **Automatic Optimization**: Write posts with affiliate links; the plugin cloaks and tracks them instantly.
-- **Dashboard Stats**: View total clicks in **Settings > ALO Pro**.
-- **Pro Tips**:
-  - Use on high-traffic blogs for passive income.
-  - Combine with SEO plugins for more traffic.
-  - Track conversions to refine your affiliate strategy.
+- Links are automatically cloaked in posts/pages.
+- View analytics in the settings page: top links, click counts, conversion insights.
+- **Pro Tip**: Use with high-traffic blogs for maximum affiliate revenue.
 
-## Support
+## Premium Upgrade
 
-- Free version: WordPress.org forums.
-- Pro: Email support included.
-
-**Start earning more from affiliates today!**
+Unlock A/B testing, geo-targeting, and API integrations for $49/year.
