@@ -2,35 +2,42 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation**: Automatically creates unique, personalized coupon codes for any store using simple AI logic (pro feature unlocks advanced AI).
-- **Affiliate Link Tracking**: Embeds trackable affiliate links in every coupon for commissions.
-- **Shortcode Integration**: Easy `[ai_coupon_box store="Amazon"]` shortcode for any page or post.
-- **Customizable Display**: Responsive boxes with generate button and instant coupon output.
-- **Analytics Dashboard** (Pro): Track clicks, conversions, and earnings.
-- **SEO Optimized**: Schema-ready for rich snippets in search results.
-- **Freemium Model**: Free core features; pro unlocks unlimited coupons, API integrations, and premium templates.
+- **AI-Powered Coupon Generation** (Pro): Automatically creates unique, niche-specific coupons using OpenAI.
+- **Affiliate Link Integration**: Embeds trackable affiliate links from Amazon, etc., for commissions.[1][2]
+- **Shortcode Support**: Use `[ai_coupon niche="fashion" count="5"]` anywhere.
+- **Customizable Coupon Cards**: Responsive design boosts click-through rates.
+- **Freemium Model**: Free basics, Pro unlocks AI, analytics, unlimited usage ($49/year).
+- **SEO-Friendly**: Schema markup for rich snippets on coupon pages.[2]
 
 ## Installation
 
 1. Upload the `ai-coupon-affiliate-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use the shortcode `[ai_coupon_box]` on any page/post.
+2. Activate via **Plugins > Installed Plugins**.
+3. Use shortcode `[ai_coupon]` in posts/pages.
 
 ## Setup
 
-1. Go to **Settings > AI Coupon Pro** (new menu added).
-2. Enter your affiliate network IDs (Amazon, etc.) for auto-links.
-3. Upgrade to Pro for AI generation and analytics ($49/year).
-4. Add shortcodes to sidebar, posts, or create a dedicated coupons page.
+1. Go to **Settings > AI Coupon Pro**.
+2. Enter affiliate IDs (e.g., Amazon tag: yourtag-20).
+3. **Pro**: Add OpenAI API key for AI generation.
+4. Save and insert shortcodes.
 
 ## Usage
 
-- **Basic**: Place `[ai_coupon_box store="Walmart"]` to generate coupons on-the-fly.
-- **Advanced (Pro)**: Use dashboard to bulk-create coupons, track performance, and export data.
-- **Monetization Tips**: Partner with brands for custom codes, embed in niche blogs (e.g., tech, fashion), and promote via SEO.
+- **Basic**: `[ai_coupon]` shows 3 static coupons.
+- **Advanced**: `[ai_coupon niche="tech" count="10"]`.
+- Customize CSS in `assets/style.css`.
+- **Monetization**: Earn via affiliate commissions on clicks. Pro analytics track performance.
+- **Pro Tips**: Target niches like software/travel for high conversions.[1][2]
 
-**Pro Upgrade**: Visit example.com/pricing for unlimited features and support.
+## Pro Upgrade
 
-## Changelog
+- Unlimited AI coupons
+- Affiliate tracking
+- Priority support
 
-- 1.0.0: Initial release with core coupon generator and affiliate tracking.
+<a href="https://example.com/buy-pro">Upgrade Now ($49/year)</a>
+
+## Support
+
+Contact: support@example.com
