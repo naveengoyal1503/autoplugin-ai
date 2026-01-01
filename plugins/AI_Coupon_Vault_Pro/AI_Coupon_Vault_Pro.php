@@ -6,132 +6,106 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Coupon Vault Pro
  * Plugin URI: https://example.com/aicouponvault
- * Description: AI-powered coupon management for affiliate marketing. Generate, track, and display personalized coupons.
+ * Description: AI-powered coupon management for affiliate revenue.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
 class AICouponVault {
-    private static $instance = null;
-
-    public static function get_instance() {
-        if (null == self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('aicoupon_vault', array($this, 'coupon_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+    public function __construct() {
+        add_action('init', [$this, 'init']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+        add_action('admin_menu', [$this, 'admin_menu']);
+        add_shortcode('ai_coupon_vault', [$this, 'coupon_shortcode']);
+        register_activation_hook(__FILE__, [$this, 'activate']);
     }
 
     public function init() {
-        load_plugin_textdomain('aicouponvault', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+        if (is_admin()) {
+            add_action('admin_post_save_coupons', [$this, 'save_coupons']);
+        }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('aicouponvault-js', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('aicouponvault-css', plugin_dir_url(__FILE__) . 'assets/style.css', array(), '1.0.0');
+        wp_enqueue_script('jquery');
+        wp_add_inline_script('jquery', 'jQuery(document).ready(function($){ $(".coupon-btn").click(function(){ $(this).next(".coupon-code").show(); }); });');
+        wp_enqueue_style('aicv-style', plugin_dir_url(__FILE__) . 'style.css', [], '1.0');
     }
 
     public function admin_menu() {
-        add_options_page('AI Coupon Vault', 'Coupon Vault', 'manage_options', 'aicouponvault', array($this, 'admin_page'));
+        add_menu_page('AI Coupon Vault', 'Coupon Vault', 'manage_options', 'ai-coupon-vault', [$this, 'admin_page']);
     }
 
     public function admin_page() {
-        if (isset($_POST['submit'])) {
-            update_option('aicouponvault_coupons', sanitize_textarea_field($_POST['coupons']));
-            update_option('aicouponvault_pro', isset($_POST['pro_version']));
+        if (isset($_POST['coupons'])) {
+            update_option('ai_coupon_vault_coupons', sanitize_textarea_field($_POST['coupons']));
+            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
         }
-        $coupons = get_option('aicouponvault_coupons', "Brand1: DISCOUNT10\nBrand2: SAVE20");
-        $pro = get_option('aicouponvault_pro', false);
+        $coupons = get_option('ai_coupon_vault_coupons', '{"coupons":[]}');
         ?>
         <div class="wrap">
             <h1>AI Coupon Vault Settings</h1>
-            <form method="post">
-                <p><label>Coupons (format: Brand: CODE):</label><br><textarea name="coupons" rows="10" cols="50"><?php echo esc_textarea($coupons); ?></textarea></p>
-                <p><label><input type="checkbox" name="pro_version" <?php checked($pro); ?>> Pro Version (Unlimited)</label></p>
-                <p><input type="submit" name="submit" class="button-primary" value="Save Settings"></p>
+            <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                <input type="hidden" name="action" value="save_coupons">
+                <?php wp_nonce_field('save_coupons'); ?>
+                <textarea name="coupons" rows="20" cols="80" style="width:100%;" placeholder='[{"code":"SAVE20","desc":"20% off","afflink":"https://aff.link","expiry":"2026-12-31"}]'><?php echo esc_textarea($coupons); ?></textarea>
+                <p class="description">JSON format: {"code":"CODE","desc":"Description","afflink":"Affiliate URL","expiry":"YYYY-MM-DD"}</p>
+                <p><input type="submit" class="button-primary" value="Save Coupons"></p>
             </form>
-            <p><strong>Pro Upgrade:</strong> Unlock AI generation, analytics, and unlimited coupons for $49/year.</p>
-            <p>Use shortcode: <code>[aicoupon_vault]</code></p>
+            <h2>Shortcode</h2>
+            <p>Use <code>[ai_coupon_vault]</code> to display coupons.</p>
+            <?php if (!function_exists('OpenAI')) { ?>
+            <div class="notice notice-warning">
+                <p>Premium: Integrate OpenAI for auto-generation (API key required).</p>
+            </div><?php } ?>
         </div>
         <?php
     }
 
+    public function save_coupons() {
+        if (!wp_verify_nonce($_POST['_wpnonce'], 'save_coupons')) wp_die('Security check failed');
+        if (!current_user_can('manage_options')) wp_die('Unauthorized');
+        update_option('ai_coupon_vault_coupons', sanitize_text_field($_POST['coupons']));
+        wp_redirect(admin_url('admin.php?page=ai-coupon-vault'));
+        exit;
+    }
+
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('num' => 5), $atts);
-        $coupons_text = get_option('aicouponvault_coupons', '');
-        $coupons = explode("\n", trim($coupons_text));
-        $pro = get_option('aicouponvault_pro', false);
-        if (!$pro && count($coupons) > 3) {
-            $coupons = array_slice($coupons, 0, 3);
-        }
-        $output = '<div class="aicoupon-vault">';
-        foreach (array_slice($coupons, 0, intval($atts['num'])) as $coupon) {
-            list($brand, $code) = explode(':', trim($coupon), 2);
-            if ($brand && $code) {
-                $output .= '<div class="coupon-item">';
-                $output .= '<h4>' . esc_html(trim($brand)) . '</h4>';
-                $output .= '<p>Code: <strong>' . esc_html(trim($code)) . '</strong></p>';
-                $output .= '<a href="#" class="copy-code" data-code="' . esc_attr(trim($code)) . '">Copy Code</a>';
-                $output .= '</div>';
-            }
+        $atts = shortcode_atts(['limit' => 5], $atts);
+        $coupons_json = get_option('ai_coupon_vault_coupons', '{"coupons":[]}');
+        $data = json_decode($coupons_json, true);
+        $coupons = isset($data['coupons']) ? array_slice($data['coupons'], 0, $atts['limit']) : [];
+        $output = '<div class="ai-coupon-vault">';
+        foreach ($coupons as $coupon) {
+            if (isset($coupon['expiry']) && strtotime($coupon['expiry']) < time()) continue;
+            $output .= '<div class="coupon-item">';
+            $output .= '<h3>' . esc_html($coupon['desc']) . '</h3>';
+            $output .= '<button class="coupon-btn button">Reveal Code</button>';
+            $output .= '<div class="coupon-code" style="display:none;"><strong>' . esc_html($coupon['code']) . '</strong> <a href="' . esc_url($coupon['afflink']) . '" target="_blank" rel="nofollow">Shop Now (Affiliate)</a></div>';
+            $output .= '</div>';
         }
         $output .= '</div>';
-        if (!$pro) {
-            $output .= '<p class="pro-upsell">Upgrade to Pro for AI-powered coupons and more!</p>';
-        }
         return $output;
     }
 
     public function activate() {
-        if (!get_option('aicouponvault_pro')) {
-            add_option('aicouponvault_pro', false);
-        }
+        add_option('ai_coupon_vault_coupons', '{"coupons":[{"code":"WELCOME10","desc":"10% off first purchase","afflink":"https://exampleaff.com","expiry":"2026-12-31"}]}');
     }
 }
 
-AICouponVault::get_instance();
+new AICouponVault();
 
-// Freemium upsell notice
-function aicouponvault_admin_notice() {
-    if (!get_option('aicouponvault_pro')) {
-        echo '<div class="notice notice-info"><p>Unlock <strong>AI Coupon Vault Pro</strong> for $49/year: Unlimited coupons, AI generation, analytics. <a href="https://example.com/pro">Upgrade Now</a></p></div>';
-    }
+// Premium teaser
+function aicv_pro_teaser() {
+    if (!is_super_admin()) return;
+    echo '<div class="notice notice-info"><p><strong>AI Coupon Vault Pro:</strong> Unlock AI generation, analytics & more! <a href="https://example.com/pro" target="_blank">Upgrade</a></p></div>';
 }
-add_action('admin_notices', 'aicouponvault_admin_notice');
+add_action('admin_notices', 'aicv_pro_teaser');
 
-// Assets (inline for single file)
-function aicouponvault_inline_assets() {
-    ?>
-    <style>
-    .aicoupon-vault { max-width: 400px; margin: 20px 0; }
-    .coupon-item { background: #f9f9f9; padding: 15px; margin: 10px 0; border-radius: 5px; }
-    .coupon-item h4 { margin: 0 0 5px; color: #333; }
-    .copy-code { background: #0073aa; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; }
-    .pro-upsell { background: #fff3cd; padding: 10px; border: 1px solid #ffeaa7; border-radius: 5px; text-align: center; }
-    </style>
-    <script>
-    jQuery(document).ready(function($) {
-        $('.copy-code').click(function(e) {
-            e.preventDefault();
-            navigator.clipboard.writeText($(this).data('code')).then(function() {
-                $(this).text('Copied!');
-            }.bind(this));
-        });
-    });
-    </script>
-    <?php
-}
-add_action('wp_head', 'aicouponvault_inline_assets');
-add_action('admin_head', 'aicouponvault_inline_assets');
+// Inline CSS
+add_action('wp_head', function() {
+    echo '<style>.ai-coupon-vault .coupon-item {border:1px solid #ddd; padding:15px; margin:10px 0; border-radius:5px;}.coupon-btn {background:#0073aa; color:white; border:none; padding:10px 20px; cursor:pointer;}.coupon-code {margin-top:10px;}</style>';
+});
