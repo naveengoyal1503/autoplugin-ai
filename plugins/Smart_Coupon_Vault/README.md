@@ -2,45 +2,38 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add and manage exclusive coupons via simple JSON in admin dashboard.
-- **Shortcode Display**: Use `[scv_coupon id="0"]` to display coupons anywhere.
-- **Click Tracking**: Tracks affiliate link clicks for performance insights (Pro: Advanced analytics).
-- **Responsive Design**: Mobile-friendly coupon boxes.
-- **Freemium Model**: Free core features; Pro unlocks AI generation, unlimited coupons, exports, and white-label.
-
-**Pro Features** (Upgrade for $49/year):
-- AI-powered coupon code suggestions.
-- Detailed analytics dashboard with conversion estimates.
-- Unlimited coupons and custom branding.
-- Import/Export CSV.
+- **Easy Coupon Creation**: Add titles, affiliate URLs, discount codes, percentages, and expiration dates.
+- **Shortcode Integration**: Embed coupons anywhere with `[scv_coupon id="0"]`.
+- **Auto-Expiration**: Coupons expire automatically based on days set.
+- **Click Tracking**: Track affiliate link clicks (Pro: full analytics dashboard).
+- **Revenue Optimized**: Designed for bloggers monetizing via personalized deals and affiliates.
+- **Pro Upgrade**: Unlimited coupons, API integrations, revenue reports ($49/year).
 
 ## Installation
 
 1. Upload the `smart-coupon-vault` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Coupons** in admin menu to add your coupons.
+3. Navigate to **Coupons** in admin menu to add coupons.
 
 ## Setup
 
-1. In **Coupons** page, enter JSON array of coupons:
-   
-   [
-     {"code":"SAVE20","desc":"20% off","afflink":"https://your-affiliate-link.com","expires":"2026-12-31"}
-   ]
-   
-2. Save. Note the ID (array index) for shortcodes.
+1. Go to **Coupons** > Add coupon details (title, URL, code, discount %, expires in days).
+2. Save and note the ID (array index, e.g., first is `id="0"`).
+3. Embed in posts/pages: `[scv_coupon id="0"]`.
 
 ## Usage
 
-- Add `[scv_coupon id="0"]` to any post/page/widget.
-- Customize with CSS targeting `.scv-coupon`.
-- Clicks redirect to affiliate links and are tracked.
+- **Frontend Display**: Shows coupon box with code and tracked 'Get Deal' button.
+- **Admin Management**: Edit/delete via dashboard.
+- **Monetization Tips**: Partner with brands for exclusive codes; track conversions for affiliate commissions.
+- **Pro Features**: Enter API key for advanced tracking.
 
-## Support
+## FAQ
 
-Contact support@example.com. Upgrade to Pro for priority support.
+**Is it free?** Yes, core features free. Pro for power users.
+
+**Shortcode params?** `id` (required, coupon index).
 
 ## Changelog
 
-**1.0.0**
-- Initial release.
+**1.0.0** Initial release.
