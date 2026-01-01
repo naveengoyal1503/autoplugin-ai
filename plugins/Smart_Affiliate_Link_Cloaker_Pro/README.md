@@ -1,72 +1,47 @@
 # Smart Affiliate Link Cloaker Pro
 
-[![Contributors][badge1]][contributors] [![ Forks][badge2]][forks] [![Stargazers][badge3]][stars] [![Issues][badge4]][issues] [![License][badge5]][license]
-
-Boost your affiliate earnings by cloaking and tracking links with built-in analytics and A/B testing (Pro).
+A powerful WordPress plugin that cloaks affiliate links, tracks clicks, and optimizes conversions. Boost your affiliate earnings with professional tools.
 
 ## Features
 
-- **Link Cloaking**: Pretty slugs like `/go/amazon-deal` redirect to affiliate URLs.
-- **Click Tracking**: Real-time click counts for all links.
-- **Shortcode Support**: `[afflink id="1"]` embeds trackable links.
-- **Free Tier**: Unlimited links, basic tracking.
-- **Pro Features** ($49/year):
-  - A/B Testing for variants.
-  - Detailed analytics dashboard.
-  - Priority support.
-  - No limits.
+- **Link Cloaking**: Automatically generates pretty, trackable URLs like `yoursite.com/go/amazon-deal/abc123/`
+- **Click Tracking**: Logs IP, timestamp, and user agent for each click (unlimited in Pro)
+- **Shortcode Support**: Easy embedding with `[sac_link id="0"]` or `[sac_link name="Amazon Link"]`
+- **Admin Dashboard**: Manage links via simple JSON interface
+- **Pro Features** (Premium Upgrade):
+  - A/B Testing for link variants
+  - Detailed analytics dashboard
+  - Conversion tracking
+  - Unlimited links and clicks
+  - WooCommerce integration
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-cloaker`.
-2. Activate the plugin via **Plugins > Installed Plugins**.
-3. Visit **Affiliate Links** in admin menu to add links.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Visit **Settings > Affiliate Cloaker** to add your first links
+4. Flush permalinks (Settings > Permalinks > Save)
 
 ## Setup
 
-1. Go to **Affiliate Links > Add New**.
-2. Enter name, target affiliate URL, and slug.
-3. Save. Use slug as `/yoursite.com/slug` or shortcode `[afflink id="X"]`.
-4. **Pro**: Enter license in settings to unlock premium features.
+1. In the settings page, add links in JSON format:
+   
+   [
+     {"name":"Amazon Deal","url":"https://amazon.com/aff?id=123","description":"Check this out!"}
+   ]
+   
+2. Save changes
+3. Embed in posts: `[sac_link name="Amazon Deal"]`
 
 ## Usage
 
-### Pretty Links
-Link directly: `https://yoursite.com/your-slug`
-
-### Shortcodes
-
-[afflink id="1"]
-
-
-### In Widgets/Posts
-Paste shortcode anywhere.
-
-### Analytics
-View clicks in **Affiliate Links > Analytics** (Pro for details).
-
-## Pro Upgrade
-
-Get A/B testing, exports, and more: [Buy Pro](https://example.com/pro)
+- **Basic**: Use shortcodes in posts, pages, or widgets
+- **Analytics**: View basic click data in Pro dashboard
+- **Monetization**: Earn commissions through cloaked, SEO-friendly links
+- **Upgrade**: Purchase Pro license for advanced features ($49/year)
 
 ## Support
 
-- [Docs](https://example.com/docs)
-- [Forum](https://example.com/forum)
+Contact support@example.com for help. Pro users get priority support.
 
-## Changelog
-
-**1.0.0**
-- Initial release.
-
-[contributors]: https://github.com/example/smart-affiliate/graphs/contributors
-[forks]: https://github.com/example/smart-affiliate/network/members
-[stars]: https://github.com/example/smart-affiliate/stargazers
-[issues]: https://github.com/example/smart-affiliate/issues
-[license]: https://github.com/example/smart-affiliate/blob/master/LICENSE
-
-[badge1]: https://img.shields.io/github/contributors/example/smart-affiliate?style=flat-square
-[badge2]: https://img.shields.io/github/forks/example/smart-affiliate?style=flat-square
-[badge3]: https://img.shields.io/github/stars/example/smart-affiliate?style=flat-square
-[badge4]: https://img.shields.io/github/issues/example/smart-affiliate?style=flat-square
-[badge5]: https://img.shields.io/github/license/example/smart-affiliate?style=flat-square
+**Boost your affiliate revenue today!**
