@@ -2,42 +2,51 @@
 
 ## Features
 
-- **Easy Coupon Creation**: Add affiliate coupons with codes, links, descriptions, discounts, and expiry dates via intuitive dashboard [1][2].
-- **Shortcode Integration**: Embed coupons anywhere with `[acv_coupon id="your_id"]` for seamless display [5].
-- **Click Tracking**: Unique tracking parameters boost affiliate performance [3].
-- **Responsive Design**: Mobile-friendly coupon boxes increase conversions [1].
-- **Freemium Model**: Free for basics; Pro unlocks unlimited coupons, analytics, and automation ($49/year) [7][8].
+- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Pro: Auto-generate from affiliate APIs)
+- **Trackable Affiliate Links**: Every click is logged for performance insights (Pro: Detailed analytics dashboard)
+- **Beautiful Shortcodes**: Embed coupons anywhere with `[affiliate_coupon]`
+- **Conversion Boost**: Exclusive deals increase reader trust and sales
+- **Lightweight & Self-Contained**: Single PHP file, no dependencies
+- **Freemium Model**: Free core features, premium unlocks advanced tracking and customization
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Access settings via **Coupon Vault** in the admin menu.
+1. Download the plugin ZIP
+2. In WordPress admin: Plugins > Add New > Upload Plugin
+3. Activate "Affiliate Coupon Vault"
+4. Go to Settings > Coupon Vault to add your first coupon
 
 ## Setup
 
-1. Go to **Coupon Vault** dashboard.
-2. Fill in coupon details: code, affiliate link, description, discount, expiry.
-3. Click **Save Coupon** to generate shortcode.
-4. Use shortcode like `[acv_coupon id="coupon_123"]` in posts/pages.
+1. **Add Coupons**: In Settings > Coupon Vault, enter coupons in format:
+   
+   Coupon Code: SAVE20
+   Affiliate Link: https://your-affiliate-link.com
+   Description: 20% off your first purchase!
+   
+2. **Embed on Site**: Use shortcode `[affiliate_coupon]` in posts/pages
+3. **Customize**: Style via CSS targeting `.acv-coupon` class
 
 ## Usage
 
-- **Display Coupons**: Paste shortcode in Gutenberg blocks, Classic Editor, or widgets.
-- **Track Performance**: Pro version provides click analytics dashboard.
-- **Customization**: Edit CSS in `/assets/frontend.css` for branding.
-- **Monetization Tip**: Pair with affiliate programs like Amazon Associates for passive income [3][4].
+- **Basic Shortcode**: `[affiliate_coupon]` - Shows first coupon
+- **Specific Coupon**: `[affiliate_coupon id="2"]` (line number, starting at 1)
+- **Track Clicks**: All buttons automatically track via AJAX
 
-## Pro Upgrade
+### Example Output
 
-Unlock:
-- Unlimited coupons (free limits to 5).
-- Advanced analytics & A/B testing.
-- Auto-expiry & email notifications.
-- Priority support.
+🎉 Exclusive Deal: SAVE20
+20% off your first purchase!
+[Get Deal Now (Tracked)]
 
-Visit [example.com/pro](https://example.com/pro) for details.
+
+## Pro Version (Coming Soon)
+- Unlimited coupons & auto-generation
+- Click analytics dashboard
+- Custom branding & templates
+- API integrations (Amazon, etc.)
 
 ## Support
+Contact support@example.com | Changelog in plugin files
 
-Report issues via WordPress.org forums. Pro users get dedicated support.
+**Boost your affiliate earnings today!**
