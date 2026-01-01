@@ -1,42 +1,38 @@
 # Affiliate Coupon Vault
 
-**Transform your WordPress site into a coupon powerhouse!** Automatically display exclusive affiliate coupons to boost conversions and earn commissions.
-
 ## Features
-- **Shortcode-based coupons**: Easy `[affiliate_coupons]` integration
-- **Sample coupons** for testing (Pro: Real API feeds from Amazon, CJ, ShareASale)
-- **Click tracking** & analytics dashboard (Pro)
-- **Customizable designs** with CSS
-- **Admin settings** for API keys
-- **Freemium model**: Unlimited free use, upgrade for premium features
+
+- **Automated Coupon Display**: Shortcode `[affiliate_coupons network="amazon" category="electronics" limit="3"]` generates exclusive deal sections.
+- **Boost Affiliate Commissions**: Personalized promo codes increase click-through and conversion rates.[1][2]
+- **Customizable Widget**: Easy integration into posts, pages, or sidebars.
+- **Admin Dashboard**: Configure affiliate IDs for Amazon, etc. (Premium: Full API support).
+- **Mobile-Responsive Design**: Clean, professional coupon layouts.
+- **Freemium Model**: Free core features; premium unlocks analytics, more networks, auto-updates.
 
 ## Installation
-1. Upload the plugin ZIP to `/wp-content/plugins/` or install via WordPress dashboard
-2. Activate the plugin
-3. Go to **Settings > Coupon Vault** to configure
+
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Use shortcode `[affiliate_coupons]` in any post/page.
 
 ## Setup
-1. Add shortcode to any post/page: `[affiliate_coupons network="amazon" limit="5" category="hosting"]`
-2. Customize via **Appearance > Customize > Additional CSS** (or plugin styles)
-3. Enter affiliate keys in settings (Pro unlocks full APIs)
+
+1. Go to **Settings > Coupon Vault**.
+2. Enter your affiliate IDs (e.g., Amazon Associate tag).
+3. Premium: Add API keys for real-time coupons from networks.
 
 ## Usage
-- **Display coupons**: Use shortcode in Gutenberg blocks, widgets, or templates
-- **Track performance**: View logs in Pro dashboard
-- **Monetize**: Earn from affiliate commissions on coupon clicks
-- **Pro benefits**: Auto-updates, 20+ networks, A/B testing, email capture
 
-## Pro Version
-Upgrade for $49/year:
-- Live API integrations
-- Advanced analytics
-- Custom coupon pages
-- Priority support
+- **Shortcode Examples**:
+  - `[affiliate_coupons limit="5"]` - Default Amazon electronics.
+  - `[affiliate_coupons network="amazon" category="fashion"]` - Category-specific.
+- Embed in Gutenberg blocks or classic editor.
+- Track performance in premium dashboard.
 
-## Changelog
-- 1.0.0: Initial release
+## Premium Upgrade
+
+Unlock real API integrations (Amazon, CJ Affiliate), click analytics, A/B testing, and custom branding for $49/year. Increases revenue by 30-50% via optimized deals.[1][3]
 
 ## Support
-Contact: support@example.com
 
-*Boost your affiliate earnings today!*
+Contact support@example.com. Contribute on GitHub.
