@@ -2,38 +2,35 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add, edit, and delete exclusive affiliate coupons via admin dashboard.
-- **Shortcode Display**: Use `[acv_coupons limit="5"]` to showcase coupons anywhere on your site.
-- **Usage Tracking**: Monitor coupon redemptions and set maximum uses per code.
-- **Expiry Dates**: Automatically hide expired coupons.
-- **Affiliate Integration**: Track clicks to your affiliate links for higher commissions.[1][2]
-- **Freemium Pro Upgrade**: Unlimited coupons, advanced analytics, custom designs, and priority support ($49/year).
+- **Easy Coupon Management**: Add, edit, and remove unlimited coupons via intuitive admin dashboard (Pro: truly unlimited).[1][2]
+- **Shortcode Integration**: Use `[affiliate_coupon_vault limit="3"]` to display coupons anywhere.[5]
+- **Affiliate-Optimized**: Trackable links with nofollow, mobile-responsive design for higher conversions.[3]
+- **Custom Images & Descriptions**: Upload coupon banners and detailed deal info.
+- **Pro Features**: Analytics dashboard, auto-expiring coupons, premium affiliate integrations (Amazon, etc.), custom branding ($49/year).[7]
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate **Affiliate Coupon Vault**.
-4. Access settings under **Settings > Coupon Vault**.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Configure coupons in **Settings > Coupon Vault**.
+4. Add shortcode `[affiliate_coupon_vault]` to posts/pages.
 
 ## Setup
 
-1. Go to **Settings > Coupon Vault** to enter your Pro license (if upgraded).
-2. Add new coupons: Title, Code, Affiliate URL, Description, Max Uses, Expiry.
-3. Save and use shortcode `[acv_coupons]` on any page/post.
-
-**Pro Setup**: Purchase at example.com/pro, enter license key in settings for full features.
+1. Go to **Settings > Coupon Vault**.
+2. Add coupon details: **Code**, **Description**, **Affiliate Link**, **Image URL**.
+3. Save settings.
+4. **Pro Tip**: Use high-CTR images and personalized codes for 20-50% better conversions.[2]
 
 ## Usage
 
-- **Display Coupons**: Add `[acv_coupons limit="10"]` to pages for a responsive grid.
-- **Customization**: Style via CSS targeting `.acv-vault`, `.acv-coupon`.
-- **Tracking**: Pro version logs clicks/sales for optimization.
-- **Monetization Tips**: Partner with brands for custom codes, embed in niche posts for SEO boost.[1][2][3]
+- **Shortcode**: `[affiliate_coupon_vault limit="5"]` limits display.
+- **Widget Ready**: Embed in sidebars via custom HTML.
+- **Templates**: Auto-styles with modern grid layout.
+- **Monetization Boost**: Positions your site as deal hub, driving affiliate commissions.[1][3]
 
-## Support
+## Pro Upgrade
 
-- Free: WordPress forums.
-- Pro: Dedicated email support.
+Unlock analytics, API integrations, and white-label for agencies. Visit [example.com/pro](https://example.com/pro).
 
-**Upgrade to Pro for 10x revenue potential with analytics!**
+**Support**: Contact support@example.com | Changelog in plugin files.
