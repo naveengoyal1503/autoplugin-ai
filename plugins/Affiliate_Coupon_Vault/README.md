@@ -2,49 +2,28 @@
 
 ## Features
 
-- **Easy Coupon Creation**: Add unlimited coupons via simple JSON in settings (Pro: visual editor).
-- **Click Tracking**: Tracks affiliate link clicks with nonce-secured AJAX (Pro: full analytics dashboard).
-- **Shortcode Integration**: Use `[acv_coupon name="yourcoupon"]` anywhere.
-- **Responsive Design**: Mobile-friendly coupon displays with reveal button.
-- **Pro Features**: Auto-expiry, custom branding, API integrations, conversion reporting ($49/year).
-
-**Why Profitable?** Leverages high-demand coupon affiliate marketing. Users report 20-50% conversion boosts.[1][2]
+- **Personalized Coupon Generation**: One-click generation of unique, trackable coupon codes for affiliate links[1][2].
+- **Shortcode Integration**: Easy `[affiliate_coupon product="Product Name" discount="20%"]` embedding in posts/pages.
+- **Conversion Boost**: Custom promo codes increase clicks and sales for bloggers[1].
+- **Tracking Ready**: Affiliate ID integration for commissions.
+- **Freemium Model**: Free core features; Pro adds analytics, unlimited coupons ($49/year).
 
 ## Installation
 
-1. Upload `affiliate-coupon-vault.php` to `/wp-content/plugins/`.
-2. Activate in WordPress Admin > Plugins.
-3. Go to Settings > Coupon Vault to add coupons.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to enter your Affiliate ID.
 
 ## Setup
 
-1. In Settings > Coupon Vault, enter JSON like:
-   
-   {
-     "save10": {
-       "title": "10% Off Sitewide",
-       "afflink": "https://affiliate-link.com/?ref=yourid",
-       "code": "SAVE10"
-     }
-   }
-   
-2. Save and use shortcode `[acv_coupon name="save10"]` in posts/pages.
+1. Configure your **Affiliate ID** in Settings > Coupon Vault.
+2. Use shortcode: `[affiliate_coupon product="Your Product" discount="15%"]`.
+3. Customize link URL in code (plugin_dir/acv-script.js section) to your affiliate shop.
 
 ## Usage
 
-- **Frontend**: Coupons show reveal button; clicks redirect to affiliate link with tracking.
-- **Backend**: Monitor logs (Pro: dashboard stats).
-- **Monetize**: Promote Pro via built-in teasers. Target bloggers in niches like software, travel, e-commerce.[1][3]
+- **Frontend**: Click 'Generate Coupon' to create unique codes and reveal shop link.
+- **Backend**: Monitor via Pro analytics (upgrade for full tracking).
+- **Pro Upgrade**: Unlimited coupons, click tracking, email integration at example.com/pro.
 
-## Pro Upgrade
-
-- Unlimited coupons & categories
-- Analytics: clicks, conversions
-- Custom designs & expiry dates
-- Priority support
-
-[Get Pro Now](https://example.com/pro) - $49/year
-
-## Support
-
-Report issues via WordPress.org forums. Pro users get email support.
+**Target**: Boost affiliate revenue with reader-first coupons[2]. Compatible with Gutenberg, Classic Editor.
