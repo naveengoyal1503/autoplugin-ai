@@ -1,96 +1,51 @@
 # Smart Affiliate AutoInserter
 
-[![Contributors][badge1]][contributors] [![ Forks][badge2]][forks] [![Stargazers][badge3]][stars] [![Issues][badge4]][issues] [![License][badge5]][license]
+**Automatically boost your affiliate earnings by inserting relevant links into your content with smart keyword matching.**
 
-Automatically detects keywords in your posts and inserts relevant **affiliate links** to maximize your earnings. Perfect for bloggers and content creators.
+## Features
 
-## 🚀 **Key Features**
+- **Automatic Link Insertion**: Scans posts and pages for keywords and replaces them with your affiliate links.
+- **Customizable Limits**: Set max links per post to avoid over-optimization.
+- **Easy Keyword Management**: Add, edit, or remove keywords and links via intuitive admin interface.
+- **SEO-Friendly**: Links include `nofollow`, `noopener`, and open in new tabs.
+- **Freemium Model**: Free version for basics; Pro unlocks AI suggestions, analytics, A/B testing, and more.
 
-- **Smart Keyword Matching**: Automatically finds and replaces keywords with your affiliate links.
-- **Non-Intrusive**: Only inserts 3 links per post (free version) with smart randomization.
-- **Easy Setup**: Add keywords and links via simple admin panel.
-- **SEO-Friendly**: Uses `nofollow` and `noopener` attributes.
-- **Premium Ready**: Upgrade for unlimited links, analytics, AI matching, and more!
+## Installation
 
-## 🎯 **Who It's For**
+1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate AutoInserter** to configure keywords and settings.
 
-- Bloggers monetizing with affiliates
-- Content sites with high traffic
-- E-commerce owners promoting products
-- Anyone wanting **passive income** from existing content
+## Setup
 
-## 📦 **Installation**
+1. **Add Keywords**: Enter target keywords (e.g., "best hosting") and your affiliate link (e.g., "https://affiliate.link.com").
+2. **Enable Auto-Insertion**: Toggle the option on.
+3. **Set Limits**: Choose max links per post (default: 3).
+4. Save settings. Links will auto-appear in existing and new content.
 
-1. Download the plugin ZIP
-2. Go to **Plugins → Add New → Upload Plugin**
-3. Upload and **Activate**
-4. Configure in **Settings → Affiliate Inserter**
+## Usage
 
-## ⚙️ **Setup**
+- Write content naturally using your keywords.
+- The plugin scans and inserts links on frontend display.
+- View inserted links with CSS class `smart-affiliate-link` for styling.
+- **Pro Features**: AI-powered keyword discovery, click tracking, performance reports.
 
-1. **Add Keywords** (one per line):
-   
-   wordpress
-   plugin
-   theme
-   hosting
-   
+## Pro Version
 
-2. **Add Affiliate Links** (keyword|URL|description):
-   
-   wordpress|https://your-affiliate-link.com/wp|Get WordPress
-   plugin|https://your-affiliate-link.com/plugin|Best Plugins
-   theme|https://your-affiliate-link.com/theme|Premium Themes
-   hosting|https://your-affiliate-link.com/hosting|Best Hosting
-   
+Upgrade for:
+- Unlimited keywords
+- AI keyword suggestions based on content
+- Detailed analytics dashboard
+- Priority support
 
-3. **Save** and watch links appear automatically!
+[Get Pro Now](https://example.com/pro)
 
-## 💰 **Monetization**
-
-**Free Version**: 3 links/post, basic matching
-
-**Premium ($49/year)**:
-- ✅ Unlimited links per post
-- ✅ Advanced AI keyword matching
-- ✅ Click analytics dashboard
-- ✅ A/B testing
-- ✅ Priority support
-- ✅ Auto-optimize links
-
-[Get Premium Now](https://example.com/premium)
-
-## 📊 **Example Usage**
-
-**Before**:
-> This is the best **wordpress plugin** for SEO.
-
-**After**:
-> This is the best <a href="https://aff-link.com/plugin" rel="nofollow">Best Plugins</a> for SEO.
-
-## 🤝 **Support**
-
-- 💬 [WordPress.org Forum](https://wordpress.org/support/plugin/smart-affiliate-autoinserter)
-- 📧 Premium: support@example.com
-- 🐛 [Submit Issue](https://github.com/yourusername/smart-affiliate-autoinserter/issues)
-
-## 📄 **Changelog**
-
-**1.0.0** (2026-01-01)
-- Initial release with auto-insertion
-- Admin settings panel
-- Free/premium structure
-
-## 🔗 **Links**
+## Support
 
 - [Documentation](https://example.com/docs)
-- [Premium](https://example.com/premium)
-- [Demo](https://example.com/demo)
+- [Submit Ticket](https://example.com/support)
 
-[contributors]: https://github.com/yourusername/smart-affiliate-autoinserter/graphs/contributors
-[forks]: https://github.com/yourusername/smart-affiliate-autoinserter/network/members
-[stars]: https://github.com/yourusername/smart-affiliate-autoinserter/stargazers
-[issues]: https://github.com/yourusername/smart-affiliate-autoinserter/issues
-[license]: https://github.com/yourusername/smart-affiliate-autoinserter/blob/main/LICENSE
+## Changelog
 
-*Built with ❤️ for WordPress creators*
+**1.0.0**
+- Initial release with core auto-insertion and admin panel.
