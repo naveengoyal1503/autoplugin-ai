@@ -1,54 +1,43 @@
 # Exclusive Coupons Pro
 
 ## Description
-
-**Exclusive Coupons Pro** is a powerful WordPress plugin that lets you create and display personalized, exclusive coupon codes for your audience. Perfect for bloggers and affiliate marketers to boost conversions with unique discounts from brands. Display via shortcodes anywhere on your site.
+**Exclusive Coupons Pro** is a powerful WordPress plugin that helps affiliate marketers and bloggers create and display trackable, exclusive coupon codes for their audience. Boost conversions by offering personalized discounts directly on your site.[1][2]
 
 ## Features
-
-- **Easy Coupon Management**: Add unlimited coupons in admin settings (Brand: CODE format).
-- **Shortcode Support**: `[exclusive_coupon]` for random, `[exclusive_coupon brand="Amazon"]` for specific.
-- **Beautiful Responsive Design**: Eye-catching coupon boxes with CTA buttons.
-- **Affiliate-Ready**: Customizable links for tracking commissions.
-- **Freemium Model**: Free core features; premium unlocks analytics, bulk import, expiration dates, and more.
+- **Auto-generate unique coupon codes** for each visitor or product.
+- **Trackable affiliate links** with custom parameters for analytics.
+- **Shortcode integration** for easy placement anywhere: `[exclusive_coupon id="0"]`.
+- **Admin dashboard** to manage unlimited affiliate links (Pro).
+- **Conversion-optimized design** with eye-catching buttons and codes.
+- **Freemium model**: Free for up to 3 coupons; Pro unlocks unlimited + analytics.
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupons Pro** to configure your coupons.
-4. Use shortcodes in posts, pages, or widgets.
+1. Upload the plugin files to `/wp-content/plugins/exclusive-coupons-pro`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupons Pro** to configure affiliate links.
+4. Use the shortcode in posts/pages.
 
 ## Setup
+1. In the admin settings, enter affiliate links as JSON:
+   
+   [
+     {"name": "Hosting Deal", "url": "https://aff.link/hosting", "discount": "50%"},
+     {"name": "Theme Sale", "url": "https://aff.link/theme", "discount": "30%"}
+   ]
+   
+2. Save settings.
+3. Embed with `[exclusive_coupon id="0"]` for the first link.
 
-1. In **Settings > Coupons Pro**, enter coupons like:
-   
-   Amazon: SAVE20
-   Shopify: DISCOUNT15
-   Nike: READER10
-   
-2. Save changes.
-3. Edit affiliate URLs in code (premium: dynamic via settings).
+**Pro Upgrade**: Define `define('EXCLUSIVE_COUPONS_PRO', true);` in `wp-config.php` or purchase license for full features.
 
 ## Usage
+- Place shortcodes in blog posts, sidebars, or widgets.
+- Codes auto-generate per use for exclusivity.
+- Track via `?coupon=CODE` in affiliate dashboards.
+- Ideal for niches like software, hosting, eCommerce.[1][2][3]
 
-- **Random Coupon**: `[exclusive_coupon]`
-- **Specific Brand**: `[exclusive_coupon brand="Amazon"]`
-
-Embed in sidebars, posts, or dedicated coupon pages for maximum engagement.
-
-## Premium Features (Coming Soon)
-
-- Usage analytics & click tracking.
-- Coupon expiration & usage limits.
-- API for brand partnerships.
-- White-label & custom designs.
+## Monetization Potential
+Sells via freemium upsells, aligning with proven WP strategies.[1][7]
 
 ## Support
-
-Report issues on GitHub or contact support@yourdomain.com.
-
-## Changelog
-
-**1.0.0**
-- Initial release with core shortcode and admin.
+Contact support@example.com. Check plugin settings for pro upgrade.
