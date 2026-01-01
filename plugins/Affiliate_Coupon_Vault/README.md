@@ -2,31 +2,30 @@
 
 ## Features
 
-- **Generate Exclusive Coupons**: Create custom promo codes with affiliate links in seconds.
-- **Auto-Expiry**: Coupons expire automatically after set days to create urgency.
-- **Shortcode Display**: Embed coupons anywhere with `[acv_coupon id="123"]`.
-- **Custom Post Type**: Dedicated `/coupons/` archive page for SEO-friendly promo landing pages.
-- **Freemium Model**: Free for 5 coupons; Pro unlocks unlimited, analytics, and integrations.
-- **Passive Income**: Drives affiliate commissions via unique, reader-first deals.[1][2]
+- **Easy Coupon Management**: Add unlimited coupons (pro) with codes, affiliate URLs, and descriptions via admin dashboard.[1][2]
+- **Shortcode Integration**: Use `[affiliate_coupon id="0"]` to display coupons anywhere on your site.
+- **Click Tracking**: Logs clicks for performance analysis (advanced analytics in pro).[3]
+- **Conversion Boost**: Exclusive deals improve reader engagement and affiliate earnings.[1][2]
+- **Freemium Model**: Free for basics, pro unlocks unlimited coupons and auto-expiration ($49/year).
 
 ## Installation
 
 1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Access **Coupon Vault** in admin menu.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
 
 ## Setup
 
-1. Go to **Coupon Vault** dashboard.
-2. Enter affiliate link, code (e.g., SAVE20), discount %, and expiry days.
-3. Click **Generate Coupon**.
-4. Copy shortcode (e.g., `[acv_coupon id="123"]`).
+1. In admin, add coupons: **Code** (e.g., SAVE20), **Affiliate URL** (your tracked link), **Description** (e.g., "20% off hosting").
+2. Copy shortcode like `[affiliate_coupon id="0"]` (ID matches list order).
+3. Paste shortcode in posts/pages/widgets.
 
 ## Usage
 
-- **On Posts/Pages**: Paste shortcode for styled coupon boxes.
-- **Promo Pages**: Visit `/coupons/` for archive; customize with Gutenberg.
-- **Tracking**: Monitor via affiliate dashboard; Pro adds click analytics.
-- **Pro Upgrade**: For unlimited coupons, email notifications, and API support – [Upgrade Now](https://example.com/pro).
+- **Display Coupon**: `[affiliate_coupon id="0"]` shows styled coupon box with code, description, and tracked button.
+- **Track Performance**: View console logs (pro: dashboard stats).
+- **Monetize**: Partner with brands for custom codes, embed in niche posts for commissions.[1][2][3]
+- **Pro Upgrade**: Visit [example.com/pro] for advanced features.
 
-**Proven Strategy**: Personalized coupons boost conversions and partnerships.[1][2] Start earning today!
+## Support
+Contact support@example.com. Rate 5⭐ on WordPress.org!
