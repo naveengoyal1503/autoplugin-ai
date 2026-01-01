@@ -6,14 +6,15 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Generate and manage exclusive affiliate coupons with custom promo codes, tracking, and automated affiliate link integration.
+ * Description: Generate and manage exclusive, personalized coupon codes for your WordPress site to boost affiliate conversions and reader loyalty.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: exclusive-coupons-pro
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class ExclusiveCouponsPro {
@@ -25,87 +26,101 @@ class ExclusiveCouponsPro {
     }
 
     public function init() {
-        wp_register_style('ecp-admin-css', plugin_dir_url(__FILE__) . 'admin.css');
-        wp_enqueue_style('ecp-admin-css');
+        if (is_admin()) {
+            wp_enqueue_script('ecp-admin-js', plugin_dir_url(__FILE__) . 'admin.js', array('jquery'), '1.0.0');
+            wp_enqueue_style('ecp-admin-css', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.0.0');
+        }
     }
 
     public function admin_menu() {
-        add_menu_page('Exclusive Coupons', 'Coupons', 'manage_options', 'exclusive-coupons', array($this, 'admin_page'));
+        add_menu_page(
+            'Exclusive Coupons',
+            'Coupons Pro',
+            'manage_options',
+            'exclusive-coupons',
+            array($this, 'admin_page'),
+            'dashicons-tickets-alt',
+            30
+        );
     }
 
     public function admin_page() {
-        if (isset($_POST['save_coupon'])) {
-            update_option('ecp_coupons', $_POST['coupons']);
-            echo '<div class="notice notice-success"><p>Coupon saved!</p></div>';
+        if (isset($_POST['generate_coupon'])) {
+            $this->generate_coupon();
         }
         $coupons = get_option('ecp_coupons', array());
-        ?>
-        <div class="wrap">
-            <h1>Manage Exclusive Coupons</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Brand</th>
-                        <th>Coupon Code</th>
-                        <th>Affiliate Link</th>
-                        <th>Description</th>
-                    </tr>
-                    <?php foreach ($coupons as $index => $coupon): ?>
-                    <tr>
-                        <td><input type="text" name="coupons[<?php echo $index; ?>][brand]" value="<?php echo esc_attr($coupon['brand']); ?>" /></td>
-                        <td><input type="text" name="coupons[<?php echo $index; ?>][code]" value="<?php echo esc_attr($coupon['code']); ?>" /></td>
-                        <td><input type="url" name="coupons[<?php echo $index; ?>][link]" value="<?php echo esc_attr($coupon['link']); ?>" /></td>
-                        <td><textarea name="coupons[<?php echo $index; ?>][desc]"><?php echo esc_textarea($coupon['desc']); ?></textarea></td>
-                    </tr>
-                    <?php endforeach; ?>
-                    <tr>
-                        <td><input type="text" name="coupons[new][brand]" placeholder="New Brand" /></td>
-                        <td><input type="text" name="coupons[new][code]" placeholder="COUPON123" /></td>
-                        <td><input type="url" name="coupons[new][link]" placeholder="https://affiliate-link.com" /></td>
-                        <td><textarea name="coupons[new][desc]" placeholder="Exclusive 20% off!"></textarea></td>
-                    </tr>
-                </table>
-                <p><input type="submit" name="save_coupon" class="button-primary" value="Save Coupons" /></p>
-            </form>
-            <p>Use shortcode: <code>[exclusive_coupon id="0"]</code> (replace 0 with coupon index)</p>
-            <p><em>Pro: Unlimited coupons, click tracking, analytics. Upgrade at example.com</em></p>
-        </div>
-        <?php
+        include plugin_dir_path(__FILE__) . 'admin-page.php';
+    }
+
+    private function generate_coupon() {
+        $code = strtoupper(wp_generate_uuid4());
+        $code = substr($code, 0, 12);
+        $description = sanitize_text_field($_POST['description']);
+        $affiliate_url = esc_url_raw($_POST['affiliate_url']);
+        $discount = sanitize_text_field($_POST['discount']);
+        $expiry = sanitize_text_field($_POST['expiry']);
+
+        $coupons = get_option('ecp_coupons', array());
+        $coupons[] = array(
+            'code' => $code,
+            'description' => $description,
+            'affiliate_url' => $affiliate_url,
+            'discount' => $discount,
+            'expiry' => $expiry,
+            'uses' => 0,
+            'created' => current_time('mysql')
+        );
+        update_option('ecp_coupons', $coupons);
+        echo '<div class="notice notice-success"><p>Coupon generated: <strong>' . $code . '</strong></p></div>';
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => 0), $atts);
+        $atts = shortcode_atts(array(
+            'id' => 0
+        ), $atts);
+
         $coupons = get_option('ecp_coupons', array());
-        $id = intval($atts['id']);
-        if (isset($coupons[$id])) {
-            $coupon = $coupons[$id];
-            $link = add_query_arg('ecp', $id, $coupon['link']);
-            return '<div class="exclusive-coupon"><h3>' . esc_html($coupon['brand']) . '</h3><p>' . esc_html($coupon['desc']) . '</p><p><strong>Code: ' . esc_html($coupon['code']) . '</strong></p><a href="' . esc_url($link) . '" class="button" target="_blank">Get Deal</a></div>';
+        if (!isset($coupons[$atts['id']])) {
+            return '';
         }
-        return '';
+
+        $coupon = $coupons[$atts['id']];
+        $today = current_time('timestamp');
+        $expiry_time = strtotime($coupon['expiry']);
+
+        if ($today > $expiry_time) {
+            return '<p class="ecp-expired">Coupon expired.</p>';
+        }
+
+        $output = '<div class="ecp-coupon-box">';
+        $output .= '<h3>' . esc_html($coupon['description']) . '</h3>';
+        $output .= '<p><strong>Code:</strong> <span class="ecp-code">' . $coupon['code'] . '</span></p>';
+        $output .= '<p><strong>Discount:</strong> ' . esc_html($coupon['discount']) . '% OFF</p>';
+        $output .= '<p><a href="' . esc_url($coupon['affiliate_url']) . '" target="_blank" class="button ecp-use-btn">Use Coupon</a></p>';
+        $output .= '</div>';
+
+        return $output;
     }
 
     public function activate() {
         if (!get_option('ecp_coupons')) {
-            update_option('ecp_coupons', array(array('brand' => 'Example Brand', 'code' => 'WELCOME20', 'link' => '', 'desc' => '20% off first purchase')));
+            add_option('ecp_coupons', array());
         }
     }
 }
 
 new ExclusiveCouponsPro();
 
-// Basic CSS
-add_action('wp_head', function() { ?>
-<style>
-.exclusive-coupon { border: 2px solid #0073aa; padding: 20px; margin: 20px 0; background: #f9f9f9; border-radius: 5px; }
-.exclusive-coupon .button { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 3px; }
-.exclusive-coupon .button:hover { background: #005a87; }
-</style>
-<?php });
+// Pro upsell notice
+function ecp_pro_notice() {
+    if (!current_user_can('manage_options')) return;
+    echo '<div class="notice notice-info"><p><strong>Exclusive Coupons Pro:</strong> Unlock unlimited coupons, analytics, auto-expiry, and custom branding. <a href="https://example.com/pro" target="_blank">Upgrade now ($49/year)</a></p></div>';
+}
+add_action('admin_notices', 'ecp_pro_notice');
 
-// Track clicks
-add_action('init', function() {
-    if (isset($_GET['ecp'])) {
-        update_option('ecp_clicks_' . intval($_GET['ecp']), (get_option('ecp_clicks_' . intval($_GET['ecp']), 0) + 1));
-    }
-});
+// Enqueue frontend styles
+function ecp_styles() {
+    wp_enqueue_style('ecp-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+}
+add_action('wp_enqueue_scripts', 'ecp_styles');
+?>
