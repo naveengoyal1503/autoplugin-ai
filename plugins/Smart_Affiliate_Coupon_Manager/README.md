@@ -1,33 +1,44 @@
 # Smart Affiliate Coupon Manager
 
-## Features
+## Description
+A powerful WordPress plugin to create, manage, and track exclusive affiliate coupons. Boost your commissions with personalized deals and click tracking. Freemium model with pro upgrades.[1][2]
 
-- **Easy Coupon Creation**: Add unlimited coupons (pro) with custom codes, affiliate URLs, and discount details via intuitive admin interface.[1][2]
-- **Click Tracking**: Automatically tracks clicks on coupon links with AJAX for real-time stats, boosting affiliate commissions.[3]
-- **Shortcode Integration**: Use `[sac_coupon id="0"]` to display coupons anywhere on your site.
-- **Conversion Optimized**: Eye-catching design encourages clicks and shares, perfect for bloggers monetizing via affiliates.[1][2]
-- **Freemium Model**: Free for basics; pro unlocks analytics, auto-expiration, A/B testing ($49/year).
+## Features
+- **Easy Coupon Creation**: Add coupons via simple JSON in settings (title, code, affiliate link, image).
+- **Shortcode Display**: Use `[sacm_coupon id="1"]` to embed beautiful, responsive coupon boxes.
+- **Click Tracking**: Tracks clicks on deals for performance analytics (pro: detailed reports).
+- **Customizable Design**: Styled coupons with hover effects.
+- **Admin Dashboard**: Manage all coupons from WordPress settings.
+- **Pro Features**: Unlimited coupons, analytics dashboard, auto-coupon generation, premium templates ($49/year).
 
 ## Installation
-
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Configure coupons at **Settings > Affiliate Coupons**.
+2. Activate via WordPress admin > Plugins.
+3. Go to Settings > Affiliate Coupons to configure.[1]
 
 ## Setup
-
-1. Go to **Settings > Affiliate Coupons**.
-2. Click **Add Coupon** to create: Name, Code (e.g., SAVE20), Affiliate URL, Discount (e.g., 20% OFF).
-3. Use shortcode `[sac_coupon id="0"]` (replace 0 with coupon index) in posts/pages.
-4. Upgrade to pro for advanced features like detailed analytics.
+1. In Settings > Affiliate Coupons, enter JSON array of coupons:
+   
+   [
+     {"id":"1","title":"50% Off Hosting","code":"SAVE50","afflink":"https://your-affiliate-link.com","image":"https://example.com/image.jpg"}
+   ]
+   
+2. Save settings.
+3. Add shortcode to any post/page: `[sacm_coupon id="1"]`.
 
 ## Usage
+- Embed coupons in posts, pages, sidebars.
+- Clicks redirect to affiliate links and are tracked.
+- View basic stats in WordPress options (pro: advanced dashboard).
+- **Monetization Tip**: Partner with brands for exclusive codes to increase conversions.[1][2]
 
-- **Display Coupon**: Embed shortcode in Gutenberg, Classic Editor, or widgets.
-- **Track Performance**: View click counts per coupon in the admin table.
-- **Monetize**: Ideal for niches like software, travel, eCommerce. Pair with affiliate programs for commissions.[1][2][3]
-- **Pro Tips**: Create SEO-friendly coupon pages; offer exclusive codes for higher conversions.[2]
+## Pro Version
+Upgrade for:
+- Unlimited coupons and A/B testing.
+- Detailed analytics and export.
+- Auto-generate personalized codes.
+- Priority support.
 
-## Support
-
-Report issues via WordPress.org forums. Pro support included with upgrade.
+## Changelog
+**1.0.0**
+- Initial release with core features.
