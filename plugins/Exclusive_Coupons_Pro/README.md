@@ -2,41 +2,43 @@
 
 ## Features
 
-- **Generate Unique Coupons**: Create custom coupon codes linked to affiliate offers.
+- **Generate Exclusive Coupons**: Create unique, trackable coupon codes with affiliate links.
 - **Auto-Expiration**: Coupons expire automatically based on date or usage limits.
-- **Easy Shortcodes**: Embed coupons anywhere with `[ecp_coupon id="1"]`.
-- **Usage Tracking**: Monitor redemptions and remaining uses.
-- **Admin Dashboard**: Manage all coupons from a simple interface.
-- **Freemium Model**: Free for basics; Pro unlocks analytics, unlimited coupons, and exports.
+- **Click Tracking**: Monitor usage and conversions (Pro: Advanced analytics).
+- **Shortcode Integration**: Easy `[exclusive_coupon id="0"]` embedding in posts/pages.
+- **One-Click Redemption**: Beautiful, mobile-responsive coupon displays.
+- **Freemium Model**: Free for basics, Pro ($49/year) for unlimited features.
 
-**Pro Features (Upgrade for $49/year)**: Advanced analytics, email notifications, WooCommerce integration, custom branding.
+**Pro Features**: Custom branding, email capture, A/B testing, WooCommerce integration.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Access dashboard at **Coupons Pro** in admin menu.
-4. Create your first coupon!
+1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupons Pro** to add your coupons in JSON format.
 
 ## Setup
 
-1. Go to **Coupons Pro** in WordPress admin.
-2. Fill in coupon details: code (e.g., SAVE20), description, affiliate link (append `?coupon=CODE`), expiry date, max uses.
-3. Save and copy the shortcode (e.g., `[ecp_coupon id="1"]`).
-4. Paste shortcode in posts/pages.
+1. In the admin panel: **Settings > Coupons Pro**.
+2. Enter coupons as JSON array, e.g.:
+   
+   [
+     {"code":"SAVE20","afflink":"https://youraffiliate.com/?ref=123","expiry":"2026-12-31","uses":"10"}
+   ]
+   
+3. Save. Note the ID (0 for first coupon).
+4. Use shortcode: `[exclusive_coupon id="0"]`.
 
 ## Usage
 
-- **Display Coupon**: Use shortcode in Gutenberg, Classic Editor, or widgets.
-- **Customization**: Style with CSS targeting `.ecp-coupon` class.
-- **Tracking**: Clicks decrement uses; expired coupons show status.
-- **Pro Upgrade**: Visit admin nag or [example.com/pro](https://example.com/pro) for revenue dashboard.
+- Embed shortcodes in posts, pages, or widgets.
+- Track clicks via admin (Pro: Detailed dashboard).
+- Customize styles via CSS.
 
 ## Support
 
-Report issues via WordPress.org forums. Pro users get priority email support.
+Report issues at [support@example.com](mailto:support@example.com). Upgrade to Pro for priority support.
 
 ## Changelog
 
-**1.0.0**
-- Initial release with core coupon management.
+**1.0.0** - Initial release.
