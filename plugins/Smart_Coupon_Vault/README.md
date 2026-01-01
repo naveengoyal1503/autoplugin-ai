@@ -1,32 +1,44 @@
 # Smart Coupon Vault
 
 ## Features
-- **Easy Coupon Management**: Add, edit, and display affiliate coupons via admin panel and shortcodes.
-- **Conversion-Optimized Display**: Eye-catching, mobile-responsive coupon boxes with copy-to-clipboard functionality.
-- **Affiliate Tracking Ready**: Embed your affiliate links directly in coupons for seamless monetization.
-- **Shortcode Support**: Use `[scv_coupon_display]` anywhere to show random or targeted coupons.
-- **Pro Features** (Upgrade for $49/year): AI-powered coupon generation using OpenAI, analytics dashboard, unlimited coupons, custom branding, email capture integration.
+
+- **Easy Coupon Management**: Add, edit, and delete coupons via intuitive admin dashboard (free: up to 5 coupons).
+- **Affiliate-Optimized**: Trackable links with custom discount codes for higher conversions.[1][2]
+- **Shortcode Display**: Use `[scv_coupon_display]` to embed beautiful, responsive coupon grids anywhere.
+- **Pro Features** (Upgrade for $49/year):
+  - Unlimited coupons
+  - AI-powered coupon generation & optimization
+  - Click analytics & conversion tracking
+  - Custom branding & premium templates
+  - Email capture integration
+
+**Boost revenue with exclusive deals that position your site as a money-saving hub!**[1][2]
 
 ## Installation
+
 1. Upload the `smart-coupon-vault` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to configure your coupons.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
+4. Insert `[scv_coupon_display]` shortcode on any page/post.
 
 ## Setup
-1. In the admin settings, paste your coupons as JSON (see example below).
-2. Example JSON:
-   
-   [
-     {"code":"SAVE20","desc":"20% off","afflink":"https://your-affiliate-link.com","expiry":"2026-12-31"}
-   ]
-   
-3. Replace `afflink` with your affiliate URLs.
-4. Save settings.
+
+1. **Add Coupons**: Enter code, description, affiliate link, and discount %.
+2. **Display**: Use shortcode in Gutenberg, Classic Editor, or widgets.
+3. **Customize**: Pro users get advanced styling options.
 
 ## Usage
-- Add `[scv_coupon_display]` shortcode to any post/page/sidebar.
-- Customize via CSS classes: `.scv-coupon-vault`, `.scv-code`, `.scv-button`.
-- **Pro Tip**: Place in blog posts, sidebars, or popups for max conversions. Track performance and upgrade for AI auto-generation.
+
+- **Frontend**: Coupons appear as eye-catching cards with % off badges and CTA buttons.
+- **Admin**: Real-time add/delete without page reloads.
+- **Monetization Tip**: Partner with brands for custom codes to increase affiliate earnings.[2]
+
+## Pro Upgrade
+
+Unlock full potential: [Upgrade Now](https://example.com/pro) ($49/year) for unlimited features and support.
 
 ## Support
-Contact support@example.com. Upgrade to Pro for priority support and advanced features.
+
+Report issues via WordPress.org forums or email support@example.com.
+
+**Version 1.0.0 | Compatible with WordPress 6.0+**
