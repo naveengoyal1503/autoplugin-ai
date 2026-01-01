@@ -6,224 +6,226 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Affiliate Coupon Vault
  * Plugin URI: https://example.com/affiliate-coupon-vault
- * Description: Create and display exclusive affiliate coupons to boost your commissions. Track clicks and manage expirations effortlessly.
+ * Description: Generate exclusive affiliate coupons with tracking, auto-expiration, and revenue stats. Boost conversions with custom promo codes.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: affiliate-coupon-vault
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
 class AffiliateCouponVault {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null == self::$instance) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    public function __construct() {
         add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_acv_save_coupon', array($this, 'ajax_save_coupon'));
-        add_action('wp_ajax_acv_delete_coupon', array($this, 'ajax_delete_coupon'));
-        add_shortcode('acv_coupons', array($this, 'coupons_shortcode'));
+        add_shortcode('acv_coupon', array($this, 'coupon_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        $this->create_table();
+        if (is_admin()) {
+            add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+        } else {
+            add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        }
+        wp_register_style('acv-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+        wp_register_script('acv-script', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0.0', true);
     }
 
-    private function create_table() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'acv_coupons';
-        $charset_collate = $wpdb->get_charset_collate();
-
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            title varchar(255) NOT NULL,
-            code varchar(100) NOT NULL,
-            affiliate_url text NOT NULL,
-            description text,
-            expiry_date datetime DEFAULT NULL,
-            clicks int DEFAULT 0,
-            is_active tinyint(1) DEFAULT 1,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
-
-    public function activate() {
-        $this->create_table();
+    public function enqueue_admin_scripts($hook) {
+        if ('toplevel_page_acv-dashboard' !== $hook) return;
+        wp_enqueue_style('acv-style');
+        wp_enqueue_script('acv-script');
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('jquery');
-        wp_add_inline_script('jquery', 'jQuery(document).ready(function($){ $(".acv-copy").click(function(){ var code = $(this).data("code"); navigator.clipboard.writeText(code).then(function(){ $(this).text("Copied!"); setTimeout(function(){ $(this).text("Copy"); }, 2000); }.bind(this)); }); });');
-        wp_enqueue_style('acv-style', plugins_url('style.css', __FILE__), array(), '1.0.0');
+        wp_enqueue_style('acv-style');
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate Coupon Vault', 'Coupon Vault', 'manage_options', 'acv-coupons', array($this, 'admin_page'));
-    }
-
-    public function admin_page() {
-        if (isset($_POST['submit'])) {
-            $this->save_coupon($_POST);
-        }
-        $coupons = $this->get_coupons();
-        include 'admin-page.php';
-    }
-
-    private function get_coupons() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'acv_coupons';
-        return $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
-    }
-
-    private function save_coupon($data) {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'acv_coupons';
-        $wpdb->insert(
-            $table_name,
-            array(
-                'title' => sanitize_text_field($data['title']),
-                'code' => sanitize_text_field($data['code']),
-                'affiliate_url' => esc_url_raw($data['affiliate_url']),
-                'description' => sanitize_textarea_field($data['description']),
-                'expiry_date' => !empty($data['expiry_date']) ? $data['expiry_date'] : null,
-                'is_active' => isset($data['is_active']) ? 1 : 0
-            )
+        add_menu_page(
+            'Coupon Vault',
+            'Coupon Vault',
+            'manage_options',
+            'acv-dashboard',
+            array($this, 'admin_page'),
+            'dashicons-cart',
+            30
         );
     }
 
-    public function ajax_save_coupon() {
-        if (!current_user_can('manage_options')) wp_die();
-        $this->save_coupon($_POST);
-        wp_send_json_success();
+    public function admin_page() {
+        if (!current_user_can('manage_options')) return;
+        $coupons = get_option('acv_coupons', array());
+        $stats = get_option('acv_stats', array('uses' => 0, 'revenue' => 0));
+        ?>
+        <div class="wrap">
+            <h1>Affiliate Coupon Vault</h1>
+            <div id="acv-form">
+                <h2>Add New Coupon</h2>
+                <form method="post" action="">
+                    <?php wp_nonce_field('acv_add_coupon', 'acv_nonce'); ?>
+                    <p><label>Affiliate Link: <input type="url" name="aff_link" required style="width:300px;"></label></p>
+                    <p><label>Coupon Code: <input type="text" name="code" required style="width:200px;"></label></p>
+                    <p><label>Discount (%): <input type="number" name="discount" min="1" max="100" required style="width:100px;"></label></p>
+                    <p><label>Expires (days): <input type="number" name="expires" min="1" max="365" value="30" style="width:100px;"></label></p>
+                    <p><label>Description: <textarea name="desc" rows="3" cols="50"></textarea></label></p>
+                    <?php submit_button('Generate Coupon'); ?>
+                </form>
+            </div>
+            <div id="acv-list">
+                <h2>Your Coupons</h2>
+                <?php if (empty($coupons)): ?>
+                    <p>No coupons yet. Create one above!</p>
+                <?php else: foreach ($coupons as $id => $coupon): ?>
+                    <div class="acv-coupon-item">
+                        <strong><?php echo esc_html($coupon['code']); ?></strong> - <?php echo esc_html($coupon['desc']); ?><br>
+                        Uses: <?php echo isset($stats['uses'][$id]) ? $stats['uses'][$id] : 0; ?> | Revenue: $<?php echo isset($stats['revenue'][$id]) ? $stats['revenue'][$id] : 0; ?><br>
+                        Expires: <?php echo date('Y-m-d', $coupon['expires']); ?> <a href="#" onclick="deleteCoupon(<?php echo $id; ?>)" style="color:red;">Delete</a>
+                    </div>
+                <?php endforeach; endif; ?>
+            </div>
+            <div id="acv-stats">
+                <h2>Stats</h2>
+                <p>Total Uses: <?php echo $stats['uses']['total'] ?? 0; ?></p>
+                <p>Est. Revenue: $<?php echo $stats['revenue']['total'] ?? 0; ?></p>
+                <p><em>Pro: Advanced analytics, A/B testing, API integrations.</em></p>
+                <a href="https://example.com/pro" class="button button-primary" target="_blank">Upgrade to Pro</a>
+            </div>
+        </div>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#acv-list').on('click', '.delete', function() {
+                if (confirm('Delete?')) location.href = '?page=acv-dashboard&delete=' + $(this).data('id');
+            });
+        });
+        function deleteCoupon(id) {
+            if (confirm('Delete coupon?')) {
+                window.location = '?page=acv-dashboard&action=delete&id=' + id;
+            }
+        }
+        </script>
+        <?php
+        $this->handle_admin_post();
     }
 
-    public function ajax_delete_coupon() {
-        if (!current_user_can('manage_options')) wp_die();
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'acv_coupons';
-        $wpdb->delete($table_name, array('id' => intval($_POST['id'])));
-        wp_send_json_success();
-    }
+    public function handle_admin_post() {
+        if (!isset($_POST['acv_nonce']) || !wp_verify_nonce($_POST['acv_nonce'], 'acv_add_coupon')) return;
+        if (!current_user_can('manage_options')) return;
 
-    public function coupons_shortcode($atts) {
-        $atts = shortcode_atts(array('limit' => 10), $atts);
-        $coupons = $this->get_active_coupons($atts['limit']);
-        ob_start();
-        include 'frontend-display.php';
-        return ob_get_clean();
-    }
+        $coupons = get_option('acv_coupons', array());
+        $stats = get_option('acv_stats', array('uses' => array('total' => 0), 'revenue' => array('total' => 0)));
 
-    private function get_active_coupons($limit = 10) {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'acv_coupons';
-        return $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE is_active = 1 AND (expiry_date IS NULL OR expiry_date > %s) ORDER BY created_at DESC LIMIT %d", current_time('mysql'), $limit));
-    }
+        $id = uniqid();
+        $coupon = array(
+            'aff_link' => sanitize_url($_POST['aff_link']),
+            'code' => sanitize_text_field($_POST['code']),
+            'discount' => intval($_POST['discount']),
+            'desc' => sanitize_textarea_field($_POST['desc']),
+            'expires' => time() + (intval($_POST['expires']) * DAY_IN_SECONDS)
+        );
+        $coupons[$id] = $coupon;
+        update_option('acv_coupons', $coupons);
 
-    public function track_click($coupon_id) {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'acv_coupons';
-        $wpdb->query($wpdb->prepare("UPDATE $table_name SET clicks = clicks + 1 WHERE id = %d", $coupon_id));
-    }
-}
+        wp_redirect(admin_url('admin.php?page=acv-dashboard&added=1'));
+        exit;
 
-// Track clicks
-add_action('init', function() {
-    if (isset($_GET['acv_click'])) {
-        $coupon_id = intval($_GET['acv_click']);
-        AffiliateCouponVault::get_instance()->track_click($coupon_id);
-        $coupon = $wpdb->get_row($wpdb->prepare("SELECT affiliate_url FROM " . $wpdb->prefix . "acv_coupons WHERE id = %d", $coupon_id));
-        if ($coupon) {
-            wp_redirect($coupon->affiliate_url);
+        if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
+            unset($coupons[$_GET['id']]);
+            update_option('acv_coupons', $coupons);
+            wp_redirect(admin_url('admin.php?page=acv-dashboard'));
             exit;
         }
     }
-});
+
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array('id' => ''), $atts);
+        $coupons = get_option('acv_coupons', array());
+        if (empty($atts['id']) || !isset($coupons[$atts['id']])) return '';
+
+        $coupon = $coupons[$atts['id']];
+        if ($coupon['expires'] < time()) {
+            $this->track_use($atts['id'], 0, 'expired');
+            return '<div class="acv-expired">Coupon expired!</div>';
+        }
+
+        ob_start();
+        ?>
+        <div class="acv-coupon" data-id="<?php echo esc_attr($atts['id']); ?>">
+            <h3><?php echo esc_html($coupon['desc']); ?></h3>
+            <div class="acv-code"><?php echo esc_html($coupon['code']); ?></div>
+            <div><?php echo $coupon['discount']; ?>% OFF</div>
+            <a href="#" class="acv-redeem button">Redeem Now</a>
+            <div class="acv-track">Tracking uses for revenue...</div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    public function track_use($id, $revenue = 0, $status = 'used') {
+        $stats = get_option('acv_stats', array('uses' => array('total' => 0), 'revenue' => array('total' => 0)));
+        $stats['uses'][$id] = ($stats['uses'][$id] ?? 0) + 1;
+        $stats['uses']['total']++;
+        if ($revenue > 0) {
+            $stats['revenue'][$id] = ($stats['revenue'][$id] ?? 0) + $revenue;
+            $stats['revenue']['total'] += $revenue;
+        }
+        update_option('acv_stats', $stats);
+    }
+
+    public function activate() {
+        flush_rewrite_rules();
+    }
+
+    public function deactivate() {
+        flush_rewrite_rules();
+    }
+}
 
 AffiliateCouponVault::get_instance();
 
-// Inline styles
-function acv_inline_styles() {
-    echo '<style>
-    .acv-coupon { border: 1px solid #ddd; padding: 20px; margin: 10px 0; border-radius: 8px; background: #f9f9f9; }
-    .acv-code { font-size: 24px; font-weight: bold; color: #e74c3c; cursor: pointer; }
-    .acv-btn { background: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
-    .expired { opacity: 0.5; }
-    </style>';
+// AJAX for tracking
+function acv_ajax_track() {
+    if (!wp_verify_nonce($_POST['nonce'], 'acv_nonce')) wp_die();
+    $id = sanitize_text_field($_POST['id']);
+    $revenue = floatval($_POST['revenue'] ?? 0);
+    AffiliateCouponVault::get_instance()->track_use($id, $revenue);
+    wp_send_json_success();
 }
-add_action('wp_head', 'acv_inline_styles');
+add_action('wp_ajax_acv_track', 'acv_ajax_track');
+add_action('wp_ajax_nopriv_acv_track', 'acv_ajax_track');
 
-// Admin page template
-file_put_contents(plugin_dir_path(__FILE__) . 'admin-page.php', '<?php
-if (!defined("ABSPATH")) exit;
-?>
-<div class="wrap">
-    <h1>Affiliate Coupon Vault</h1>
-    <form method="post">
-        <table class="form-table">
-            <tr><th>Title</th><td><input type="text" name="title" required style="width:300px;"></td></tr>
-            <tr><th>Coupon Code</th><td><input type="text" name="code" required style="width:300px;"></td></tr>
-            <tr><th>Affiliate URL</th><td><input type="url" name="affiliate_url" required style="width:500px;"></td></tr>
-            <tr><th>Description</th><td><textarea name="description" rows="3" style="width:500px;"></textarea></td></tr>
-            <tr><th>Expiry Date</th><td><input type="datetime-local" name="expiry_date"></td></tr>
-            <tr><th>Active</th><td><input type="checkbox" name="is_active" checked></td></tr>
-        </table>
-        <p><input type="submit" name="submit" class="button-primary" value="Add Coupon"></p>
-    </form>
-    <h2>Your Coupons</h2>
-    <table class="wp-list-table widefat fixed striped">
-        <thead><tr><th>ID</th><th>Title</th><th>Code</th><th>Clicks</th><th>Actions</th></tr></thead>
-        <tbody>
-        <?php foreach($coupons as $c): ?>
-        <tr>
-            <td><?php echo $c->id; ?></td>
-            <td><?php echo esc_html($c->title); ?></td>
-            <td><?php echo esc_html($c->code); ?></td>
-            <td><?php echo $c->clicks; ?></td>
-            <td><button class="button" onclick="deleteCoupon(<?php echo $c->id; ?>)" style="background:#e74c3c;color:white;">Delete</button></td>
-        </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-    <p>Use shortcode: <code>[acv_coupons]</code> or <code>[acv_coupons limit="5"]</code></p>
-</div>
-<script>
-function deleteCoupon(id) {
-    if(confirm("Delete?")) {
-        jQuery.post(ajaxurl, {action:"acv_delete_coupon", id:id}, function(){ location.reload(); });
-    }
-}
-</script>');
+// Basic CSS
+/* Add to plugin dir as style.css */
+/* .acv-coupon { border: 2px solid #0073aa; padding: 20px; margin: 20px 0; text-align: center; background: #f9f9f9; }
+.acv-code { font-size: 2em; font-weight: bold; color: #0073aa; margin: 10px 0; }
+.acv-redeem { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; }
+.acv-expired { border: 2px solid #dc3232; color: #dc3232; padding: 20px; text-align: center; } */
 
-// Frontend display template
-file_put_contents(plugin_dir_path(__FILE__) . 'frontend-display.php', '<?php if (!defined("ABSPATH")) exit; ?>
-<div class="acv-vault">
-    <?php foreach($coupons as $coupon): 
-        $expired = $coupon->expiry_date && $coupon->expiry_date < current_time("mysql");
-        if($expired) continue;
-    ?>
-    <div class="acv-coupon <?php echo $expired ? "expired" : ""; ?>">
-        <h3><?php echo esc_html($coupon->title); ?></h3>
-        <div class="acv-code" data-code="<?php echo esc_attr($coupon->code); ?>">Copy Code: <?php echo esc_html($coupon->code); ?></div>
-        <?php if($coupon->description): ?>
-        <p><?php echo esc_html($coupon->description); ?></p>
-        <?php endif; ?>
-        <a href="?acv_click=<?php echo $coupon->id; ?>" class="acv-btn" onclick="trackClick(<?php echo $coupon->id; ?>)" target="_blank">Redeem Deal & Track</a>
-        <small>Clicks: <?php echo $coupon->clicks; ?></small>
-    </div>
-    <?php endforeach; ?>
-</div>');
+// Basic JS
+/* Add to plugin dir as script.js */
+/* jQuery(document).ready(function($) {
+    $('.acv-redeem').click(function(e) {
+        e.preventDefault();
+        var $coupon = $(this).closest('.acv-coupon');
+        var id = $coupon.data('id');
+        $.post(ajaxurl, {
+            action: 'acv_track',
+            id: id,
+            nonce: '<?php echo wp_create_nonce('acv_nonce'); ?>'
+        }, function() {
+            window.location = $coupon.find('.acv-track').data('link') || '/';
+        });
+    });
+}); */
