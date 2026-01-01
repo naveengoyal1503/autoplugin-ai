@@ -6,22 +6,21 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Automatically generates and displays personalized, trackable coupon codes for affiliate partners, boosting conversions and commissions.
+ * Description: Automatically generates and displays exclusive, personalized coupon codes for your WordPress site visitors, boosting affiliate conversions and engagement.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: exclusive-coupons-pro
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class ExclusiveCouponsPro {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null === self::$instance) {
+        if (null == self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -31,136 +30,135 @@ class ExclusiveCouponsPro {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('ecp_coupon', array($this, 'coupon_shortcode'));
-        add_action('wp_ajax_ecp_generate_coupon', array($this, 'ajax_generate_coupon'));
-        add_action('wp_ajax_nopriv_ecp_generate_coupon', array($this, 'ajax_generate_coupon'));
+        add_shortcode('exclusive_coupon', array($this, 'coupon_shortcode'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        load_plugin_textdomain('exclusive-coupons-pro', false, dirname(plugin_basename(__FILE__)) . '/languages/');
-        $this->create_table();
-    }
-
-    private function create_table() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'ecp_coupons';
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            code varchar(20) NOT NULL,
-            affiliate_url varchar(500) NOT NULL,
-            description text,
-            usage_count int DEFAULT 0,
-            max_uses int DEFAULT 0,
-            expires datetime DEFAULT NULL,
-            created datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            UNIQUE KEY code (code)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        if (is_admin()) {
+            return;
+        }
+        $options = get_option('exclusive_coupons_options', array('affiliates' => array()));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('ecp-script', plugin_dir_url(__FILE__) . 'ecp-script.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('ecp-script', 'ecp_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('ecp_nonce')));
+        wp_enqueue_script('exclusive-coupons', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('exclusive-coupons', plugin_dir_url(__FILE__) . 'assets/style.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_options_page('Exclusive Coupons Pro', 'ECP Coupons', 'manage_options', 'ecp-coupons', array($this, 'admin_page'));
+        add_options_page('Exclusive Coupons Pro', 'Coupons Pro', 'manage_options', 'exclusive-coupons', array($this, 'admin_page'));
     }
 
     public function admin_page() {
-        if (isset($_POST['ecp_add_coupon'])) {
-            $this->add_coupon(
-                sanitize_text_field($_POST['code']),
-                esc_url_raw($_POST['affiliate_url']),
-                sanitize_textarea_field($_POST['description']),
-                intval($_POST['max_uses']),
-                $_POST['expires']
-            );
+        if (isset($_POST['submit'])) {
+            update_option('exclusive_coupons_options', $_POST['options']);
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        echo '<div class="wrap"><h1>Manage Coupons</h1><form method="post">';
-        echo '<table class="form-table"><tr><th>Code</th><td><input type="text" name="code" required /></td></tr>';
-        echo '<tr><th>Affiliate URL</th><td><input type="url" name="affiliate_url" style="width:400px;" required /></td></tr>';
-        echo '<tr><th>Description</th><td><textarea name="description" rows="3" cols="50"></textarea></td></tr>';
-        echo '<tr><th>Max Uses</th><td><input type="number" name="max_uses" /></td></tr>';
-        echo '<tr><th>Expires</th><td><input type="datetime-local" name="expires" /></td></tr>';
-        echo '<tr><td colspan="2"><input type="submit" name="ecp_add_coupon" class="button-primary" value="Add Coupon" /></td></tr></table></form>';
-        $this->list_coupons();
-        echo '</div>';
-    }
-
-    private function add_coupon($code, $url, $desc, $max_uses, $expires) {
-        global $wpdb;
-        $table = $wpdb->prefix . 'ecp_coupons';
-        $data = array(
-            'code' => $code,
-            'affiliate_url' => $url,
-            'description' => $desc,
-            'max_uses' => $max_uses,
-            'expires' => $expires ?: null
-        );
-        $wpdb->insert($table, $data);
-    }
-
-    private function list_coupons() {
-        global $wpdb;
-        $table = $wpdb->prefix . 'ecp_coupons';
-        $coupons = $wpdb->get_results("SELECT * FROM $table ORDER BY created DESC");
-        if ($coupons) {
-            echo '<h2>Existing Coupons</h2><table class="wp-list-table widefat fixed striped"><thead><tr><th>Code</th><th>URL</th><th>Uses</th><th>Max Uses</th><th>Expires</th></tr></thead><tbody>';
-            foreach ($coupons as $coupon) {
-                echo '<tr><td>' . esc_html($coupon->code) . '</td><td>' . esc_html($coupon->affiliate_url) . '</td><td>' . $coupon->usage_count . '</td><td>' . $coupon->max_uses . '</td><td>' . ($coupon->expires ? date('Y-m-d H:i', strtotime($coupon->expires)) : 'Never') . '</td></tr>';
-            }
-            echo '</tbody></table>';
-        }
+        $options = get_option('exclusive_coupons_options', array('affiliates' => array()));
+        ?>
+        <div class="wrap">
+            <h1>Exclusive Coupons Pro Settings</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Affiliate Offers</th>
+                        <td>
+                            <div id="affiliates">
+                                <?php foreach ($options['affiliates'] as $index => $aff): ?>
+                                    <div class="affiliate-row">
+                                        <input type="text" name="options[affiliates][<?php echo $index; ?>][name]" value="<?php echo esc_attr($aff['name']); ?>" placeholder="Brand Name" />
+                                        <input type="text" name="options[affiliates][<?php echo $index; ?>][code]" value="<?php echo esc_attr($aff['code']); ?>" placeholder="Coupon Code" />
+                                        <input type="url" name="options[affiliates][<?php echo $index; ?>][link]" value="<?php echo esc_attr($aff['link']); ?>" placeholder="Affiliate Link" />
+                                        <button type="button" class="button remove-aff">Remove</button>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button type="button" id="add-affiliate" class="button">Add Affiliate</button>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+        </div>
+        <script>
+        jQuery(document).ready(function($) {
+            var index = <?php echo count($options['affiliates']); ?>;
+            $('#add-affiliate').click(function() {
+                $('#affiliates').append(
+                    '<div class="affiliate-row">' +
+                    '<input type="text" name="options[affiliates][" + index + "][name]" placeholder="Brand Name" />' +
+                    '<input type="text" name="options[affiliates][" + index + "][code]" placeholder="Coupon Code" />' +
+                    '<input type="url" name="options[affiliates][" + index + "][link]" placeholder="Affiliate Link" />' +
+                    '<button type="button" class="button remove-aff">Remove</button>' +
+                    '</div>'
+                );
+                index++;
+            });
+            $(document).on('click', '.remove-aff', function() {
+                $(this).parent().remove();
+            });
+        });
+        </script>
+        <?php
     }
 
     public function coupon_shortcode($atts) {
         $atts = shortcode_atts(array('id' => 0), $atts);
-        if (!$atts['id']) return '';
-        global $wpdb;
-        $table = $wpdb->prefix . 'ecp_coupons';
-        $coupon = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $atts['id']));
-        if (!$coupon || ($coupon->max_uses > 0 && $coupon->usage_count >= $coupon->max_uses) || ($coupon->expires && strtotime($coupon->expires) < current_time('timestamp'))) {
-            return '<p class="ecp-expired">Coupon expired or invalid.</p>';
+        $options = get_option('exclusive_coupons_options', array('affiliates' => array()));
+        $id = intval($atts['id']);
+        if (!isset($options['affiliates'][$id])) {
+            return 'Invalid coupon ID.';
         }
+        $aff = $options['affiliates'][$id];
+        $unique_code = $aff['code'] . '-' . wp_generate_uuid4();
+        $visitor_ip = $_SERVER['REMOTE_ADDR'];
+        set_transient('coupon_' . md5($visitor_ip . $id), $unique_code, HOUR_IN_SECONDS);
+
         ob_start();
-        echo '<div class="ecp-coupon" data-id="' . $coupon->id . '">';
-        echo '<h3>Exclusive Deal: <strong>' . esc_html($coupon->code) . '</strong></h3>';
-        echo '<p>' . esc_html($coupon->description) . '</p>';
-        echo '<a href="#" class="button ecp-use-coupon">Use Coupon</a>';
-        echo '</div>';
+        ?>
+        <div class="exclusive-coupon" data-id="<?php echo $id; ?>">
+            <h3><?php echo esc_html($aff['name']); ?> Exclusive Deal!</h3>
+            <p>Your personal coupon: <strong id="coupon-code"><?php echo esc_html($unique_code); ?></strong></p>
+            <a href="<?php echo esc_url($aff['link']) . '?coupon=' . urlencode($unique_code); ?>" class="button exclusive-btn" target="_blank">Redeem Now (Affiliate Link)</a>
+            <p class="coupon-note">Generated exclusively for you. Valid for 1 hour.</p>
+        </div>
+        <?php
         return ob_get_clean();
     }
 
-    public function ajax_generate_coupon() {
-        check_ajax_referer('ecp_nonce', 'nonce');
-        if (!current_user_can('read')) wp_die();
-        global $wpdb;
-        $id = intval($_POST['id']);
-        $table = $wpdb->prefix . 'ecp_coupons';
-        $coupon = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE id = %d", $id));
-        if ($coupon && ($coupon->max_uses == 0 || $coupon->usage_count < $coupon->max_uses) && (!$coupon->expires || strtotime($coupon->expires) > current_time('timestamp'))) {
-            $wpdb->query($wpdb->prepare("UPDATE $table SET usage_count = usage_count + 1 WHERE id = %d", $id));
-            wp_redirect(add_query_arg('ecp_code', $coupon->code, $coupon->affiliate_url));
-            exit;
-        }
-        wp_send_json_error('Invalid coupon');
+    public function activate() {
+        add_option('exclusive_coupons_options', array('affiliates' => array(
+            array('name' => 'Sample Brand', 'code' => 'SAVE20', 'link' => 'https://example.com')
+        )));
     }
 }
 
 ExclusiveCouponsPro::get_instance();
 
 // Premium notice
-function ecp_premium_notice() {
+function exclusive_coupons_pro_notice() {
     if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>Upgrade to <strong>Exclusive Coupons Pro Premium</strong> for unlimited coupons, advanced analytics, and auto-generation! <a href="https://example.com/premium" target="_blank">Get it now ($49/year)</a></p></div>';
+    echo '<div class="notice notice-info"><p>Unlock <strong>Exclusive Coupons Pro Premium</strong>: Unlimited coupons, analytics, email capture & more! <a href="https://example.com/premium" target="_blank">Upgrade Now</a></p></div>';
 }
-add_action('admin_notices', 'ecp_premium_notice');
+add_action('admin_notices', 'exclusive_coupons_pro_notice');
 
-// JS file content (base64 encoded for single file)
-$js = "jQuery(document).ready(function($){ $('.ecp-use-coupon').click(function(e){ e.preventDefault(); var id = $(this).closest('.ecp-coupon').data('id'); $.post(ecp_ajax.ajax_url, {action: 'ecp_generate_coupon', id: id, nonce: ecp_ajax.nonce}, function(){ window.open('', '_blank'); }); }); });
-file_put_contents(plugin_dir_path(__FILE__) . 'ecp-script.js', base64_decode('...')); // Simplified, use actual JS
-?>
+// Assets would be created separately: script.js and style.css
+// For demo, inline styles
+/*
+.assets/style.css:
+.exclusive-coupon { border: 2px solid #0073aa; padding: 20px; border-radius: 10px; background: #f9f9f9; text-align: center; }
+.exclusive-btn { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+.affiliate-row { margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; }
+.assets/script.js:
+jQuery(document).ready(function($) {
+    $('.exclusive-coupon').each(function() {
+        var $this = $(this);
+        setTimeout(function() {
+            $this.fadeOut(function() {
+                $this.html('<p>Coupon expired. <a href="' + window.location.href + '">Generate new</a></p>').fadeIn();
+            });
+        }, 3600000); // 1 hour
+    });
+});
+*/
