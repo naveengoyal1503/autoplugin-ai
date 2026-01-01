@@ -1,58 +1,47 @@
 # Affiliate Coupon Vault
 
-**Boost your affiliate earnings with automatic, exclusive coupons!**
-
 ## Features
 
-- **Shortcode-powered**: Use `[affiliate_coupons category="hosting" limit="3"]` anywhere.
-- **Categories**: Filter by hosting, VPN, shopping, tools (Pro: 20+ categories).
-- **Conversion-optimized**: Eye-catching designs with copy-to-clipboard codes.
-- **Admin dashboard**: Customize links, track performance (Pro: Real-time analytics).
-- **Mobile-responsive**: Perfect for all devices.
-- **Freemium**: Free core features, Pro unlocks API integrations.
+- **Auto-Generate Unique Coupons**: Creates personalized, trackable coupon codes for affiliate links on demand.
+- **Shortcode Integration**: Easy `[affiliate_coupon count="5"]` for any page or post.
+- **Admin Dashboard**: Manage affiliate links with simple URL + %CODE% placeholders.
+- **Conversion Booster**: Displays eye-catching coupon boxes to increase clicks and sales.[1][2]
+- **Freemium Model**: Free for basics; Pro adds analytics, unlimited slots, email capture ($49/year).
 
-## Pro Features ($49/year)
-- Live coupon feeds from affiliate networks.
-- A/B testing for highest conversions.
-- Click tracking & revenue analytics.
-- Custom coupon generation.
-- Priority support.
+**Pro Features**: Click tracking, A/B testing, WooCommerce integration, priority support.
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Use the shortcode `[affiliate_coupons]` in posts/pages.
-4. Configure in **Settings > Coupon Vault**.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupon Vault** to add your affiliate links (format: `Brand: https://example.com/?code=%CODE%`).
+4. Add `[affiliate_coupon]` shortcode to any post/page.
 
 ## Setup
 
-1. Go to **Settings > Coupon Vault**.
-2. Add your affiliate tracking links (e.g., replace `?ref=affiliate` with your tags).
-3. Pro users: Enter API keys for live data.
+1. In admin settings, enter affiliate links one per line.
+2. Example:
+   
+   Amazon: https://amazon.com/aff?coupon=%CODE%
+   Shopify: https://shopify.com/aff?ref=%CODE%
+   
+3. Save. Coupons auto-generate on frontend.
+
+**Pro Setup**: Purchase upgrade for dashboard analytics.
 
 ## Usage
 
-### Basic Shortcode
+- **Frontend**: Shortcode loads dynamic coupons. Users see exclusive codes and affiliate links.
+- **Customization**: Style via CSS in `style` tag or theme.
+- **Tracking**: Free version uses unique codes; Pro tracks clicks/conversions.
+- **Monetization Tip**: Pair with high-traffic blogs for affiliate commissions.[3][4]
 
-[affiliate_coupons limit="5"]
+## FAQ
 
+**Is it mobile-friendly?** Yes, responsive design.
+**Compatible with Gutenberg?** Fully shortcode-based.
+**Support?** Free via forums; Pro email support.
 
-### Categorized
+**Upgrade to Pro**: Visit [pro link] for profitability boost.
 
-[affiliate_coupons category="hosting" limit="4"]
-
-
-**Categories**: `hosting`, `vpn`, `shopping`, `tools`, `all`.
-
-### Widget
-Add to sidebar via **Appearance > Widgets** or Gutenberg block.
-
-## Upgrade to Pro
-Visit [affiliatecouponvault.com](https://example.com) for Pro.
-
-## Support
-- [Documentation](https://example.com/docs)
-- Email: support@example.com
-
-**Start earning more today!**
+*Built for 2026 monetization trends: coupons drive 20-30% higher conversions.*[1][2]
