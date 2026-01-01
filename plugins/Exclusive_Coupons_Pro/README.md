@@ -1,45 +1,29 @@
 # Exclusive Coupons Pro
 
 ## Features
-
-- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (Pro: truly unlimited with analytics).
-- **Shortcode Integration**: Display coupons anywhere with `[exclusive_coupon]` or `[exclusive_coupon id="1"]`.
-- **Boost Conversions**: Personalized codes improve affiliate earnings and reader loyalty [1][2].
-- **Mobile-Responsive Design**: Beautiful, conversion-optimized coupon displays.
-- **Freemium Model**: Free for basics; Pro adds expiration dates, usage tracking, and brand API integrations.
+- **Create unlimited exclusive coupons** with custom codes, discounts, and expiry dates.[1][2]
+- **Affiliate integration**: Add affiliate links to each coupon for direct commissions.[3]
+- **Usage tracking**: Limit uses per coupon and track redemptions in real-time.[2]
+- **Shortcode display**: Easy `[exclusive_coupon id="1"]` embedding in posts/pages.
+- **SEO-friendly**: Positions your site as a deals hub, boosting traffic and conversions.[1]
+- **Freemium**: Premium unlocks analytics, bulk import, auto-generation, and more ($29/year).[7]
 
 ## Installation
-
 1. Upload the plugin files to `/wp-content/plugins/exclusive-coupons-pro`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Coupons** in your admin menu to add your first coupons.
+2. Activate via **Plugins > Add New** in WordPress admin.
+3. Access settings at **Settings > Coupons** to add your first coupon.[4]
 
 ## Setup
-
-1. Navigate to **Exclusive Coupons** in the WordPress admin.
-2. Enter coupons in the format:
-   
-   Code: SAVE20
-   Link: https://your-affiliate-link.com
-   Description: 20% off first purchase
-
-   Code: WELCOME10
-   Link: https://aff-link2.com
-   Description: 10% sitewide
-   
-3. Save changes.
+1. Go to **Settings > Coupons**.
+2. Fill in title, code (auto-uppercase), discount, affiliate URL, brand, expiry, and uses limit.
+3. Click **Add Coupon**.
+4. Copy shortcode like `[exclusive_coupon id="1"]` for posts/pages.
 
 ## Usage
+- Embed shortcodes in blog posts: "Grab **50% OFF** with our exclusive code! `[exclusive_coupon id="1"]`"[2]
+- Display on dedicated deals page for SEO benefits.[1]
+- Track usage in admin; coupons auto-deactivate on expiry/limits.
+- **Pro Tip**: Partner with brands for custom codes to increase engagement and revenue.[2]
 
-- Insert shortcode `[exclusive_coupon]` in any post/page for a random coupon.
-- Use `[exclusive_coupon id="1"]` for specific coupons (ID starts at 1).
-- Customize styling via CSS targeting `.exclusive-coupon`.
-- **Pro Features**: Analytics dashboard, auto-expire codes, import/export, and affiliate link cloaking.
-
-## Monetization Potential
-
-Perfect for bloggers monetizing via affiliates and custom deals. Earn commissions on every redemption [1][2][3]. Upgrade to Pro for advanced tracking.
-
-## Support
-
-Contact support@example.com or visit our documentation.
+## Premium Upgrade
+Unlock advanced features: analytics dashboard, coupon auto-generator, email capture, WooCommerce integration. Visit [your site] for details.
