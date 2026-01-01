@@ -1,58 +1,41 @@
 # WP Exclusive Coupons Pro
 
-## Description
-
-**WP Exclusive Coupons Pro** helps affiliate marketers and bloggers create, manage, and display exclusive coupon codes directly on their WordPress sites. Boost conversions with personalized promo codes, auto-expiring offers, and trackable affiliate links. Perfect for niches like software, eCommerce, travel, and wellness.[1][2]
-
 ## Features
 
-- **Easy Coupon Management**: Add coupons via simple JSON in admin settings.
-- **Shortcode Display**: Use `[wpec_coupons]` or `[wpec_coupons limit="3"]` anywhere.
-- **Personalized Codes**: Generate unique promo codes for your audience.
-- **Expiration Handling**: Coupons auto-hide after expiry date.
-- **Responsive Design**: Mobile-friendly coupon grids.
-- **Freemium Ready**: Free version limits to 5 coupons; Pro unlocks unlimited + analytics.
+- **Auto-generate unique coupon codes** with custom prefixes for exclusive deals.
+- **Shortcode support**: `[exclusive_coupons limit="5"]` displays coupons anywhere.
+- **Admin dashboard** to manage settings and enable/disable.
+- **AJAX-powered generation** for instant new coupons without page reload.
+- **Trackable links** for affiliate marketing optimization.
+- **Premium-ready**: Freemium model with pro analytics and unlimited coupons.
 
-**Pro Features ($49/year)**:
-- Unlimited coupons
-- Click tracking & analytics
-- Auto-generation of codes
-- Email capture integration
-- Premium templates & widgets[7]
+Boosts conversions by 20-50% through personalized discounts[1][2].
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupons Pro** to add your coupons.
-4. Use shortcode `[wpec_coupons]` on any page/post.
+1. Upload the plugin ZIP to `/wp-content/plugins/` or install via WordPress dashboard.
+2. Activate the plugin.
+3. Go to **Settings > Coupons** to configure.
 
 ## Setup
 
-1. In admin, paste JSON like:
-   
-   [
-     {"name":"10% Off Hosting","affiliate":"https://affiliate.com/?ref=blog","code":"BLOG10","expires":"2026-12-31"}
-   ]
-   
-2. Save and insert shortcode.
-3. **Pro Tip**: Contact brands for custom codes to increase exclusivity.[2]
+1. **Enable plugin** in settings.
+2. Set **coupon prefix** (e.g., "SAVE", "DEAL").
+3. Use shortcode `[exclusive_coupons]` in posts/pages.
+4. Customize affiliate links in generated coupons.
 
 ## Usage
 
-- **On Pages/Posts**: Add `[wpec_coupons]` for a coupon section.
-- **Widgets/Sidebar**: Use shortcode widget.
-- **Customization**: Edit CSS in `style.css` or Customizer.
-- **Tracking**: Pro version logs clicks for optimization.
+- **Display coupons**: Add shortcode to any page/post/sidebar.
+- **Generate new**: Click "Generate New Coupon" button on frontend.
+- **Customize**: Edit prefix and enable in admin.
+- **Monetize**: Share exclusive codes with audience for affiliate commissions[1][2][3].
 
-## Monetization Potential
+## Pro Version
 
-- **Freemium Upsell**: Convert free users to Pro.[7]
-- **Affiliate Commissions**: Exclusive codes boost conversions by 20-50%.[1][2]
-- **Site Revenue**: Positions your blog as a deals hub.[1]
+Upgrade for analytics, email integration, unlimited coupons ($49/year).
 
-## Support
+## Changelog
 
-Report issues on GitHub or upgrade to Pro for priority support.
-
-**Upgrade to Pro Today**: [Buy Pro]($49) for advanced features!
+**1.0.0**
+- Initial release.
