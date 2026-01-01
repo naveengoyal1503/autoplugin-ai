@@ -1,38 +1,40 @@
 # Affiliate Coupon Vault
 
 ## Description
-Boost your WordPress site's revenue with **Affiliate Coupon Vault**, a lightweight plugin for creating and displaying exclusive affiliate coupons. Perfect for bloggers and marketers to offer personalized discounts, track engagement, and earn commissions.[1][2]
+**Affiliate Coupon Vault** is a powerful WordPress plugin that helps you create and display exclusive affiliate coupons on your site. Generate unique promo codes, track clicks, and boost your affiliate commissions effortlessly. Perfect for bloggers and marketers inspired by successful strategies like WP Coupons.[1][2]
 
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons via admin dashboard (JSON format for flexibility).
-- **Shortcode Integration**: Use `[affiliate_coupon]` for random or `[affiliate_coupon id="1"]` for specific coupons.
-- **Trackable Affiliate Links**: Built-in click tracking (pro version unlocks full analytics).
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Freemium Model**: Free core features; pro adds dashboards, integrations, and support.
+- **Easy Shortcode Integration**: Use `[affiliate_coupon]` to embed customizable coupons anywhere.
+- **Clipboard Copy**: One-click coupon code copying for users.
+- **Customizable Design**: Styled coupons with discount badges, expiry dates, and affiliate links.
+- **Freemium Model**: Free for basics; Pro unlocks unlimited coupons, analytics, auto-generation, and premium integrations.
+- **SEO-Friendly**: Coupons are optimized for search engines and conversions.[2]
+
+## Pro Features (Upgrade for $49/year)
+- Unlimited coupon campaigns
+- Click tracking and analytics
+- Auto-generate personalized codes
+- A/B testing and premium templates
+- Integrations with Amazon Associates, WooCommerce, etc.[3][4]
 
 ## Installation
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Coupon Vault** in the admin menu to configure coupons.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Use the shortcode in posts/pages: `[affiliate_coupon affiliate_link="https://your-affiliate-link.com" coupon_code="SAVE20" discount="20% OFF" expires="2026-01-31"]`.
 
 ## Setup
-1. In **Coupon Vault** dashboard, enter coupons in JSON format:
-   
-   [
-     {"code": "SAVE20", "desc": "20% off hosting", "link": "https://your-aff-link.com"},
-     {"code": "WP10", "desc": "10% off tools", "link": "https://your-aff-link2.com"}
-   ]
-   
-2. Save changes.
-3. Add shortcode to any post/page: `[affiliate_coupon]`.
+1. Go to **Settings > Coupon Vault** for configuration.
+2. Add your affiliate links and customize coupons.
+3. Embed shortcodes in content, sidebars, or via widgets.
 
 ## Usage
-- Embed coupons in posts, sidebars, or pages to drive affiliate sales.[3][4]
-- Customize appearance with CSS in **style.css** (assets folder auto-created).
-- **Pro Features** (upgrade for $49/year): Real-time analytics, A/B testing, email capture, WooCommerce integration.
-
-## Why Profitable?
-Coupons increase conversions by 20-30% via exclusive deals. Monetize via freemium upgrades, aligning with top strategies like affiliate marketing and memberships.[1][2][5]
+- **Basic Example**: `[affiliate_coupon id="deal1"]` – Displays default coupon.
+- **Advanced**: Customize attributes like `coupon_code`, `discount`, `expires`.
+- **Monetization Tip**: Pair with affiliate programs for commissions on every redemption.[1][3]
+- Test on a staging site first.
 
 ## Support
-Contact support@example.com. Check [WordPress.org](https://wordpress.org/plugins/) for updates.
+Visit example.com/support or GitHub issues. Pro users get priority email support.
+
+## Changelog
+**1.0.0** – Initial release with core shortcode and admin panel.
