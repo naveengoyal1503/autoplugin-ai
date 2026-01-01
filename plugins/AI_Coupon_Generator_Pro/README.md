@@ -1,71 +1,46 @@
 # AI Coupon Generator Pro
 
-## 🚀 Features
+## Features
 
-- **AI-Powered Coupon Generation**: Instantly create unique, trackable coupon codes for any product[1][2].
-- **Affiliate Link Tracking**: Automatically appends your affiliate IDs to every redemption link[3][5].
-- **One-Click Shortcode**: `[ai_coupon product="iPhone" affiliate="yourid" discount="20"]` – embed anywhere[1].
-- **Conversion-Optimized Design**: Mobile-responsive, eye-catching layouts that boost clicks[2].
-- **Freemium Model**: Free version limited to 10 coupons/day; **Pro** unlocks unlimited + analytics ($49/year)[7].
-- **SEO-Friendly**: Generates schema markup for rich snippets in search results[2].
+- **AI-Powered Coupon Generation**: Automatically creates unique, personalized coupon codes based on affiliate products.
+- **Affiliate Integration**: Easily add affiliate links and track deals.
+- **Shortcode Support**: Use `[ai_coupon]` or `[ai_coupon category="tech"]` anywhere.
+- **Customizable Display**: Responsive, attractive coupon blocks.
+- **Pro Features** (Upgrade for $49/year):
+  - Unlimited coupons
+  - Real AI integration (OpenAI API)
+  - Analytics dashboard
+  - Custom branding
+  - Email capture for deals
 
-## 🎯 Target Users
-Bloggers, affiliate marketers, deal sites – perfect for niches like tech, fashion, software[1][3].
+## Installation
 
-## 💰 Why Profitable?
-- **Recurring Revenue**: Pro subscriptions via Stripe integration (Pro feature).
-- **Affiliate Commissions**: Users promote your links while you earn from theirs[1][3].
-- **Upsell Path**: Free → Pro → Agency (white-label for $199/year).
+1. Upload the `ai-coupon-generator` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > AI Coupons** to configure affiliate links.
 
-## 📦 Installation
+## Setup
 
-1. Download and upload the `.zip` to **Plugins > Add New > Upload**.
-2. Activate the plugin.
-3. Go to **Settings > AI Coupon Pro** to set your affiliate ID.
-
-## ⚙️ Setup
-
-1. **Basic Usage**:
+1. In the admin panel, add affiliate links in format: `Product|URL|Discount%` (one per line).
+2. Example:
    
-   [ai_coupon product="Laptop" affiliate="amazon123" discount="25"]
+   Hosting Deal|https://affiliate.com/hosting|50%
+   VPN Service|https://affiliate.com/vpn|30%
    
+3. Save settings.
+4. Insert shortcode `[ai_coupon]` in posts/pages.
 
-2. **Customize in Pro**:
-   - Dashboard analytics
-   - Custom coupon prefixes
-   - Email capture integration
-   - A/B testing
+## Usage
 
-## 📖 Usage Examples
+- **Basic**: `[ai_coupon]` - Shows random coupons.
+- **Filtered**: `[ai_coupon category="hosting"]` - Matches product names.
+- **Pro**: Unlock AI for dynamic generation based on visitor behavior.
 
-**On Posts/PAGES**:
-Embed the shortcode. Visitors click **Generate** → Get unique code → Click redeem (your affiliate link).
+## Monetization
 
-**Sidebar Widget**:
-Add shortcode to Text widget for site-wide coupons.
+- **Freemium**: Free version limits to 5 coupons. Pro unlocks full features.
+- **Upsell**: Built-in upgrade nag linking to purchase page.
 
-**Pro Features**:
-- Track redemptions & clicks
-- Export CSV reports
-- Custom branding
+## Support
 
-## 🔧 Pro Upgrade
-
-| Feature | Free | Pro ($49/yr) |
-|---------|------|--------------|
-| Coupons/day | 10 | Unlimited |
-| Analytics | ❌ | ✅ |
-| Custom Designs | ❌ | ✅ |
-| API Access | ❌ | ✅ |
-| Priority Support | ❌ | ✅ |
-
-**[Upgrade to Pro Now](https://example.com/pro)**
-
-## 📈 Monetization Success
-Proven model: Membership plugins generate recurring revenue[2][4]. Affiliate coupons convert 3x higher[1].
-
-## 🛠️ Support
-- WordPress.org forums (free)
-- Pro: Email support@yourdomain.com
-
-**Built for 2026 monetization trends[3].**
+Contact support@example.com for help.
