@@ -1,31 +1,45 @@
 # Exclusive Coupons Pro
 
 ## Features
-- **Automated Coupon Display**: Use shortcode `[exclusive_coupons limit="5"]` to show randomized exclusive coupons.
-- **Admin Dashboard**: Easy JSON-based coupon management for brands, codes, affiliate links, and descriptions.
-- **Responsive Design**: Mobile-friendly grid layout with copy-ready codes and CTA buttons.
-- **Conversion Boost**: Personalized discounts increase affiliate clicks and sales[1][2].
-- **Freemium Ready**: Premium unlocks analytics, auto-expiry, and API integrations.
+
+- **Easy Coupon Management**: Add unlimited exclusive coupons via simple admin interface (premium: truly unlimited with analytics).
+- **Shortcode Integration**: Use `[exclusive_coupon code="YOURCODE"]` anywhere on your site.
+- **Auto-Expiry**: Coupons expire automatically based on date.
+- **Conversion Boost**: Personalized discounts improve affiliate clicks and sales.[1][2]
+- **Mobile-Responsive Design**: Clean, professional display.
+- **Freemium Model**: Free for basics; premium unlocks advanced tracking and integrations.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Configure coupons in **Settings > Coupons Pro** using JSON format.
+
+1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to **Coupons** in your admin dashboard to add coupons.
 
 ## Setup
-1. Go to **Settings > Coupons Pro**.
-2. Paste JSON array of coupons:
-   
-   [
-     {"brand":"Nike","code":"WPBLOG20","afflink":"https://aff.link/nike","desc":"20% off sneakers"},
-     {"brand":"Amazon","code":"DEAL10","afflink":"https://aff.link/amazon","desc":"$10 off $50+"}
-   ]
-   
+
+1. Go to **Exclusive Coupons** in your WordPress admin.
+2. Enter coupons in format: `CODE|Description|Affiliate Link|Expiry Date (YYYY-MM-DD)`
+   - Example: `SAVE20|20% Off Hosting|https://affiliate-link.com/?ref=blog|2026-12-31`
 3. Save changes.
+4. Add shortcode to any post/page: `[exclusive_coupon code="SAVE20"]`
 
 ## Usage
-- Add `[exclusive_coupons]` or `[exclusive_coupons limit="3"]` to any post/page.
-- Customize with CSS in **Appearance > Customize**.
-- Track clicks via your affiliate dashboard.
 
-**Pro Tip**: Request custom codes from brands for exclusive value[2]. Upgrade to Pro for usage analytics and more.
+- **Display Coupons**: Embed shortcodes in posts, pages, sidebars, or widgets.
+- **Track Performance**: Monitor clicks via your affiliate dashboard (premium: built-in analytics).
+- **Customization**: Style via CSS targeting `.exclusive-coupon` class.
+- **Pro Tips**: Partner with brands for custom codes to increase engagement and revenue.[2][3]
+
+## Premium Features
+
+- Unlimited coupons and categories.
+- Click tracking and conversion reports.
+- Auto-generation of unique codes.
+- Email capture for leads.
+- One-click integrations with WooCommerce/Affiliate plugins.
+
+Upgrade at [example.com/premium](https://example.com/premium) for $49/year.
+
+## Support
+
+Report issues via WordPress.org forums or email support@example.com.
