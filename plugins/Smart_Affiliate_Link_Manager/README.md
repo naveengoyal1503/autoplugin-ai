@@ -1,39 +1,63 @@
 # Smart Affiliate Link Manager
 
+## Description
+**Smart Affiliate Link Manager** is a powerful WordPress plugin that automates affiliate link management, cloaking, click tracking, and analytics. Perfect for bloggers and marketers to maximize commissions effortlessly.
+
+**Free version**: Up to 5 links with basic tracking.
+**Pro version** ($49/year): Unlimited links, advanced analytics, auto-insertion into posts, A/B testing, and priority support.
+
 ## Features
-
-- **Automatic Link Insertion**: Scans post content and auto-inserts cloaked affiliate links on matching keywords (free).
-- **Link Cloaking**: Makes affiliate links look clean and tracks clicks.
-- **Basic Analytics**: Log clicks in WordPress (Pro: Detailed dashboard with A/B testing).
-- **Easy Setup**: Configure keywords and base affiliate URL in one page.
-- **Conversion Optimized**: Rel=nofollow, target=_blank for better affiliate compliance.
-- **Freemium Model**: Free core features; Pro unlocks unlimited links, analytics, and priority support.
-
-**Pro Features (Upgrade for $49/year)**: Click reports, A/B link testing, email notifications on high conversions, Stripe integration for sales.
+- 🔗 **Easy Link Creation**: Add affiliate URLs with custom cloaked slugs (e.g., yoursite.com/go/amazon-deal).
+- 📊 **Click Tracking**: Real-time click counts and performance stats.
+- 🔒 **Link Cloaking**: Protects affiliate links and improves UX.
+- 📝 **Shortcodes**: Embed links anywhere `[sal_link id="1"]`.
+- 🚀 **Pro Features**:
+  - Unlimited links
+  - Auto-insert links into posts based on keywords
+  - Export analytics to CSV
+  - Geo-targeted redirects
+  - Premium support
+- 📈 **Monetization Ready**: Integrates seamlessly with Amazon Associates, ClickBank, etc.
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress admin: Plugins > Add New > Upload Plugin.
-3. Activate the plugin.
-4. Go to Settings > Affiliate Manager to configure.
+1. Upload the `smart-affiliate-link-manager` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Visit **Affiliate Links** in your admin dashboard to add your first link.
+4. Flush permalinks: Settings > Permalinks > Save Changes.
 
 ## Setup
+1. Go to **Affiliate Links** in the WordPress admin.
+2. Click **Add New Link**:
+   - **Name**: Display name (e.g., "Best Wireless Mouse").
+   - **Affiliate URL**: Your full affiliate link.
+   - **Cloaked Slug**: Optional short slug (auto-generated if blank).
+3. Use the cloaked URL (e.g., yoursite.com/go/best-mouse) or shortcode in posts.
 
-1. **Add Keywords**: Enter comma-separated keywords (e.g., `shoes, hosting, VPN`).
-2. **Set Affiliate URL**: Input your base affiliate link (e.g., `https://affiliate.com/product?ref=%ID%`).
-3. Save settings. Links auto-appear in posts matching keywords.
-4. **Pro Upgrade**: Visit the settings page link for Pro.
+**Pro Upgrade**: Visit [example.com/pro](https://example.com/pro) for unlimited features.
 
 ## Usage
+- **Cloaked Links**: Share `/go/your-slug` anywhere.
+- **Shortcodes**: `[sal_link id="1"]` – Replace `1` with link ID from dashboard.
+- **View Stats**: Dashboard shows clicks per link.
+- **Auto-Insert (Pro)**: Enable in settings to replace keywords in posts automatically.
 
-- Write posts as usual; plugin auto-inserts links randomly (~33% match rate to avoid spam).
-- View basic click logs in `wp_options` table (Pro: dashboard).
-- **Monetization Tip**: Promote Pro version on your site or marketplaces like CodeCanyon. Earn recurring revenue from upgrades.
+## FAQ
+**How do I track performance?** View clicks in the dashboard. Pro includes detailed reports.
+
+**Is it compatible with WooCommerce?** Yes, works site-wide.
+
+**Free vs Pro?**
+
+| Feature | Free | Pro ($49/yr) |
+|---------|------|--------------|
+| Links | 5 | Unlimited |
+| Tracking | Basic | Advanced Analytics |
+| Auto-Insert | No | Yes |
+| Support | Community | Priority |
+
+## Changelog
+**1.0.0** - Initial release with core features.
 
 ## Support
-
-- Free: WordPress forums.
-- Pro: Dedicated email support.
-
-**Start earning commissions faster!**
+- Free support: WordPress.org forums.
+- Pro support: [example.com/support](https://example.com/support).
