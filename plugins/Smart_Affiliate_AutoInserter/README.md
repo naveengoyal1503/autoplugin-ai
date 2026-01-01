@@ -1,47 +1,45 @@
 # Smart Affiliate AutoInserter
 
-**Boost your WordPress site's revenue by automatically inserting relevant affiliate links into posts and pages.**
+**Automatically boosts your affiliate earnings by inserting relevant links into content using smart keyword matching.**
 
 ## Features
 
-- **Smart Auto-Insertion**: Automatically detects keywords in content and replaces them with your affiliate links.
-- **Customizable Rules**: Set keywords, affiliate URLs, and max inserts per post.
-- **Performance Optimized**: Runs efficiently without slowing down your site.
-- **Free Version**: Up to 3 links per post.
-- **Pro Version** ($49/year): Unlimited links, click analytics dashboard, AI keyword suggestions, premium integrations (Amazon, etc.), and priority support.
-- **SEO-Friendly**: Adds `rel="nofollow sponsored"` for compliance.
+- **Contextual Auto-Insertion**: Detects keywords like 'hosting', 'SEO', 'plugins' and inserts matching affiliate links.
+- **Customizable Limits**: Set max links per post (free: up to 3; Pro: unlimited).
+- **Multiple Networks**: Supports Amazon, ClickBank, and more (Pro adds premium integrations).
+- **SEO-Friendly**: Uses `nofollow` and `sponsored` attributes for compliance.
+- **Easy Admin Panel**: Toggle on/off, configure limits and networks.
+- **Freemium Model**: Free core features; Pro unlocks analytics, API keys, A/B testing.
+
+**Pro Features (Coming Soon)**: Real-time click tracking, Amazon Product API, performance reports, priority support.
 
 ## Installation
 
-1. Download the plugin ZIP from [your site](#).
-2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Go to **Settings > Affiliate Inserter** to configure.
+1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate AutoInserter** to configure.
+4. Add your affiliate links via settings or Pro dashboard.
 
 ## Setup
 
-1. Navigate to **Settings > Affiliate Inserter**.
-2. Add affiliate rules:
-   - **Keyword**: e.g., "WordPress hosting"
-   - **Affiliate Link**: e.g., "https://bluehost.com/aff?ref=yourid"
-   - **Max Inserts**: Limit per post (e.g., 2)
-3. Save settings. Links auto-appear in published content.
-4. **Upgrade to Pro** for advanced features via the settings page.
+1. **Enable the plugin** in settings.
+2. Set **Max Links per Post** (default: 3).
+3. Select **Networks** (Amazon, ClickBank).
+4. **Pro Users**: Enter API keys for dynamic links.
 
 ## Usage
 
-- Works on all single posts/pages automatically.
-- Test on a staging site first.
-- Track performance in Pro dashboard.
-- Complies with affiliate disclosure guidelines.
+- Write normal posts; plugin auto-inserts links in relevant paragraphs.
+- Example: Mention "WordPress hosting" → Inserts your Bluehost affiliate link.
+- Monitor earnings via your affiliate dashboards.
+- **Upgrade to Pro** for detailed analytics: [Get Pro](https://example.com/pro).
 
-## Pro Features
+## Support
 
-| Feature | Free | Pro |
-|---------|------|-----|
-| Links per Post | 3 | Unlimited |
-| Analytics | No | Click tracking dashboard |
-| AI Suggestions | No | Auto-keyword finder |
-| Premium Support | Community | Priority email |
+- Free support via WordPress.org forums.
+- Pro: Dedicated email support.
 
-**Start monetizing today!** [Upgrade to Pro](https://example.com/pro)
+## Changelog
+
+**1.0.0**
+- Initial release with auto-insertion and basic settings.
