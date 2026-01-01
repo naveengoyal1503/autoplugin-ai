@@ -2,36 +2,35 @@
 
 ## Features
 
-- **AI Detection**: Automatically scores content for AI-generation using advanced heuristics (repetition, sentence patterns)[1][2].
-- **Smart Optimization**: Humanizes AI content by adding natural variations, transitions, and reader-focused enhancements.
-- **Affiliate Integration**: Inserts trackable affiliate links and personalized coupon codes to boost conversions[1][2][3].
-- **Auto-Optimization**: Filters live posts/pages, optimizing high-AI-score content on-the-fly.
-- **Admin Dashboard**: Manual optimization tool with history and pro upgrade prompt.
-- **Freemium Model**: Free for basics; Pro unlocks unlimited use, custom affiliates, reports ($49/year).
-- **SEO Ready**: Improves readability scores for better rankings and monetization[1].
+- **AI Content Detection**: Automatically scans posts for AI-generated text using perplexity heuristics (free: basic, Pro: OpenAI-powered).
+- **Humanization**: Rewrites repetitive AI content to pass detectors and improve SEO/readability.
+- **Smart Affiliate Insertion**: Detects product mentions and inserts high-converting affiliate links (Amazon, etc.). Free: 1 link/post; Pro: Unlimited + keyword matching.
+- **Revenue Dashboard**: Pro-only analytics tracking clicks, estimated earnings.
+- **SEO Boost**: Adds schema and optimization suggestions.
+- **Privacy Compliant**: No data sent externally without API key.
 
 ## Installation
 
 1. Upload the `ai-content-profit-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Configure affiliates in plugin settings (Pro feature).
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > AI CPO** to configure (API key optional for Pro).
 
 ## Setup
 
-1. Go to **Settings > AI Profit Optimizer**.
-2. Paste sample content to test optimization.
-3. Replace affiliate URLs in code with your links (edit plugin file or Pro dashboard).
-4. Enable auto-optimization for live content.
+1. **Free Mode**: Works out-of-box on single posts.
+2. **Pro Upgrade**: Purchase license at [example.com/pro], enter key in settings.
+3. Add your Amazon Affiliate Tag in settings for custom links.
+4. Enable on specific post types via filters (advanced).
 
 ## Usage
 
-- **Automatic**: Plugin scans and optimizes posts with AI score >70%.
-- **Manual**: Use admin tool for bulk content - paste, optimize, copy enhanced version with links.
-- **Monetization Tips**: Use with niches like software, e-commerce, wellness. Track conversions via your affiliate dashboard[1][2].
-- **Pro Upgrade**: For custom coupons, API integrations, analytics[3].
+- Write or import AI content.
+- Plugin auto-optimizes on frontend display.
+- View yellow **AI Score** badges on posts (admin).
+- Track earnings: Pro dashboard shows affiliate performance.
+
+**Pro Benefits**: Unlimited processing, A/B testing, 50+ affiliate networks support.
 
 ## Changelog
 
-- 1.0.0: Initial release with core detection, optimization, and affiliate features.
-
-**Built for 2026 WordPress monetization trends: AI content + affiliates + coupons.**
+**1.0.0**: Initial release with core detection, humanization, and affiliate insertion.
