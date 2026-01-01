@@ -5,157 +5,135 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart Affiliate Coupon Manager
- * Description: Manage affiliate-linked coupons with tracking and automated expiration.
- * Version: 1.0
- * Author: Generated
+ * Plugin URI: https://example.com/smart-affiliate-coupon-manager
+ * Description: Automatically generates and displays personalized affiliate coupons with click tracking to boost conversions.
+ * Version: 1.0.0
+ * Author: Your Name
+ * License: GPL v2 or later
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit; // Exit if accessed directly.
 }
 
 class SmartAffiliateCouponManager {
-    private $option_name = 'sacm_coupons';
+    private static $instance = null;
 
-    public function __construct() {
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'register_settings'));
-        add_shortcode('sacm_coupons', array($this, 'display_coupons_shortcode'));
-        add_action('init', array($this, 'handle_coupon_click'));
-    }
-
-    public function add_admin_menu() {
-        add_menu_page('Coupon Manager', 'Affiliate Coupons', 'manage_options', 'sacm_coupon_manager', array($this, 'admin_page'), 'dashicons-tickets', 80);
-    }
-
-    public function register_settings() {
-        register_setting('sacm_settings_group', $this->option_name, array($this, 'validate_coupons'));
-    }
-
-    public function validate_coupons($input) {
-        // sanitize coupons array
-        if (!is_array($input)) {
-            return array();
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
         }
-        $clean = array();
-        foreach ($input as $coupon) {
-            $code = sanitize_text_field($coupon['code']);
-            $desc = sanitize_text_field($coupon['description']);
-            $url = esc_url_raw($coupon['affiliate_url']);
-            $exp = sanitize_text_field($coupon['expiration']);
-            $clean[] = array(
-                'code' => $code,
-                'description' => $desc,
-                'affiliate_url' => $url,
-                'expiration' => $exp
-            );
-        }
-        return $clean;
+        return self::$instance;
     }
 
-    public function admin_page() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized user');
+    private function __construct() {
+        add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_shortcode('sacm_coupon', array($this, 'coupon_shortcode'));
+        add_action('wp_ajax_sacm_track_click', array($this, 'track_click'));
+        add_action('wp_ajax_nopriv_sacm_track_click', array($this, 'track_click'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+    }
+
+    public function init() {
+        if (get_option('sacm_pro') !== 'activated') {
+            add_action('admin_notices', array($this, 'pro_notice'));
         }
-        $coupons = get_option($this->option_name, array());
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('sacm-script', plugin_dir_url(__FILE__) . 'sacm.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sacm-script', 'sacm_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+    }
+
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'affiliate_url' => '',
+            'coupon_code' => 'SAVE20',
+            'discount' => '20% OFF',
+            'expires' => date('Y-m-d', strtotime('+30 days')),
+            'button_text' => 'Get Deal',
+        ), $atts);
+
+        $unique_id = uniqid('sacm_');
+        ob_start();
         ?>
-        <div class="wrap">
-            <h1>Smart Affiliate Coupon Manager</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('sacm_settings_group'); ?>
-                <table class="widefat fixed" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Coupon Code</th>
-                            <th>Description</th>
-                            <th>Affiliate URL</th>
-                            <th>Expiration Date (YYYY-MM-DD)</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead>
-                    <tbody id="coupon-table-body">
-                        <?php
-                        if (empty($coupons)) {
-                            $coupons = array();
-                        }
-                        foreach ($coupons as $index => $coupon) {
-                            echo '<tr>' .
-                                '<td><input type="text" name="' . $this->option_name . '[' . $index . '][code]" value="' . esc_attr($coupon['code']) . '" required></td>' .
-                                '<td><input type="text" name="' . $this->option_name . '[' . $index . '][description]" value="' . esc_attr($coupon['description']) . '" required></td>' .
-                                '<td><input type="url" name="' . $this->option_name . '[' . $index . '][affiliate_url]" value="' . esc_attr($coupon['affiliate_url']) . '" required></td>' .
-                                '<td><input type="date" name="' . $this->option_name . '[' . $index . '][expiration]" value="' . esc_attr($coupon['expiration']) . '"></td>' .
-                                '<td><button type="button" class="button sacm-remove-row">Remove</button></td>' .
-                                '</tr>';
-                        }
-                        ?>
-                    </tbody>
-                </table>
-                <p><button type="button" class="button button-primary" id="sacm-add-row">Add Coupon</button></p>
-                <?php submit_button(); ?>
-            </form>
+        <div class="sacm-coupon" id="<?php echo esc_attr($unique_id); ?>">
+            <div class="sacm-coupon-code"><?php echo esc_html($atts['coupon_code']); ?></div>
+            <div class="sacm-discount"><?php echo esc_html($atts['discount']); ?></div>
+            <div class="sacm-expires">Expires: <?php echo esc_html($atts['expires']); ?></div>
+            <a href="#" class="sacm-button" data-url="<?php echo esc_url($atts['affiliate_url']); ?>" data-id="<?php echo esc_attr($unique_id); ?>"><?php echo esc_html($atts['button_text']); ?></a>
+            <div class="sacm-stats pro-only">Clicks: 0</div>
         </div>
-        <script>
-        (function(){
-            const body = document.getElementById('coupon-table-body');
-            const addBtn = document.getElementById('sacm-add-row');
-            addBtn.addEventListener('click', function(){
-                const rows = body.querySelectorAll('tr');
-                const index = rows.length;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><input type="text" name="<?php echo $this->option_name ?>[${index}][code]" required></td>
-                    <td><input type="text" name="<?php echo $this->option_name ?>[${index}][description]" required></td>
-                    <td><input type="url" name="<?php echo $this->option_name ?>[${index}][affiliate_url]" required></td>
-                    <td><input type="date" name="<?php echo $this->option_name ?>[${index}][expiration]"></td>
-                    <td><button type="button" class="button sacm-remove-row">Remove</button></td>
-                `;
-                body.appendChild(row);
-            });
-            body.addEventListener('click', function(e){
-                if(e.target.classList.contains('sacm-remove-row')) {
-                    e.target.closest('tr').remove();
-                }
-            });
-        })();
-        </script>
+        <style>
+        .sacm-coupon { border: 2px dashed #007cba; padding: 20px; margin: 20px 0; text-align: center; background: #f9f9f9; border-radius: 10px; }
+        .sacm-coupon-code { font-size: 2em; font-weight: bold; color: #007cba; margin-bottom: 10px; }
+        .sacm-discount { font-size: 1.2em; color: #28a745; margin-bottom: 5px; }
+        .sacm-expires { font-size: 0.9em; color: #6c757d; margin-bottom: 15px; }
+        .sacm-button { display: inline-block; background: #007cba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .sacm-button:hover { background: #005a87; }
+        .sacm-stats { margin-top: 10px; font-size: 0.8em; color: #6c757d; }
+        .pro-only { display: none; }
+        </style>
         <?php
+        return ob_get_clean();
     }
 
-    public function display_coupons_shortcode() {
-        $coupons = get_option($this->option_name, array());
-        if (empty($coupons)) {
-            return '<p>No coupons available at the moment.</p>';
+    public function track_click() {
+        if (!wp_verify_nonce($_POST['nonce'], 'sacm_nonce')) {
+            wp_die('Security check failed');
         }
-        $html = '<div class="sacm-coupon-list">';
-        $today = date('Y-m-d');
-        foreach ($coupons as $coupon) {
-            // check expiration
-            if (!empty($coupon['expiration']) && $coupon['expiration'] < $today) {
-                continue; // skip expired
-            }
-            $code = esc_html($coupon['code']);
-            $desc = esc_html($coupon['description']);
-            $url = esc_url(add_query_arg('sacm_redirect', urlencode($coupon['affiliate_url']), home_url('/')));
-            $html .= '<div class="sacm-coupon-item" style="margin-bottom:1em;padding:0.5em;border:1px solid #ccc;">';
-            $html .= '<strong>Coupon:</strong> ' . $code . '<br>';
-            $html .= '<span>' . $desc . '</span><br>';
-            $html .= '<a href="' . $url . '" target="_blank" rel="nofollow noopener">Get Deal</a>';
-            $html .= '</div>';
+        $url = sanitize_url($_POST['url']);
+        $id = sanitize_text_field($_POST['id']);
+        // In pro version, save to DB
+        if (get_option('sacm_pro') === 'activated') {
+            $clicks = get_option('sacm_clicks_' . $id, 0) + 1;
+            update_option('sacm_clicks_' . $id, $clicks);
         }
-        $html .= '</div>';
-        return $html;
+        wp_redirect($url);
+        exit;
     }
 
-    public function handle_coupon_click() {
-        if (isset($_GET['sacm_redirect'])) {
-            $target_url = esc_url_raw(urldecode($_GET['sacm_redirect']));
+    public function pro_notice() {
+        echo '<div class="notice notice-info"><p><strong>Smart Affiliate Coupon Manager:</strong> Unlock pro features like click tracking and unlimited coupons. <a href="https://example.com/pro" target="_blank">Upgrade now!</a></p></div>';
+    }
 
-            // Optional: Track clicks using transient or update user meta, not included here for brevity
+    public function activate() {
+        flush_rewrite_rules();
+    }
 
-            wp_redirect($target_url);
-            exit;
-        }
+    public function deactivate() {
+        flush_rewrite_rules();
     }
 }
 
-new SmartAffiliateCouponManager();
+SmartAffiliateCouponManager::get_instance();
+
+// JS file content (embedded for single file)
+function sacm_add_inline_script() {
+    ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.sacm-button').on('click', function(e) {
+            e.preventDefault();
+            var button = $(this);
+            var url = button.data('url');
+            var id = button.data('id');
+            $.post(sacm_ajax.ajax_url, {
+                action: 'sacm_track_click',
+                url: url,
+                id: id,
+                nonce: '<?php echo wp_create_nonce('sacm_nonce'); ?>'
+            }, function() {
+                window.location.href = url;
+            });
+        });
+    });
+    </script>
+    <?php
+}
+add_action('wp_footer', 'sacm_add_inline_script');
+
+// Pro activation simulation (manual via options)
+// To activate pro: update_option('sacm_pro', 'activated');
