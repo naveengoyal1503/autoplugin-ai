@@ -2,34 +2,44 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation**: Automatically creates unique, personalized coupon codes based on brand and product names (simulated AI in free version; full AI in Pro).
-- **Shortcode Integration**: Easy `[ai_coupon brand="Nike" product="Shoes"]` usage anywhere on your site.
-- **Customizable Discounts & Links**: Set default discounts and affiliate links via admin settings.
-- **Copy-to-Clipboard**: One-click code copying for users.
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Pro Features** (paid upgrade): Unlimited coupons, real AI API integration, usage analytics, export data, white-labeling, and premium support.
+- **AI-Powered Personalized Coupons**: Generates unique coupon codes based on user ID for higher conversions[1][2].
+- **Affiliate Integration**: Seamlessly appends coupons to your affiliate links to boost commissions.
+- **Shortcode Ready**: Easy `[ai_coupon_generator]` shortcode for posts/pages.
+- **Usage Tracking**: Limits coupons per code to create urgency.
+- **Freemium Model**: Free version for basics; **Pro** adds real AI API, analytics dashboard, unlimited coupons, custom branding ($49/year).
+- **Mobile-Responsive Design**: Eye-catching coupon display works on all devices.
+- **One-Click Setup**: Self-contained plugin, no dependencies.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your WordPress admin → Plugins → Add New → Upload Plugin.
-2. Activate the plugin.
-3. Go to **Settings → AI Coupons** to configure default discount and affiliate link.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > AI Coupon Generator** to configure.
+4. Add shortcode to any post/page: `[ai_coupon_generator affiliate_link="https://your-affiliate-link.com" base_discount="20" max_uses="50"]`.
 
 ## Setup
 
-1. Configure settings in **Settings → AI Coupons**:
-   - Set **Default Discount %** (e.g., 10).
-   - Add your **Affiliate Link** for tracking commissions.
-2. Use the shortcode in posts/pages: `[ai_coupon brand="Amazon" product="Electronics" expiry="2026-02-01"]`.
+1. **Admin Settings**: Enable "Pro Features" (simulated in free; real in paid).
+2. **Customize**: Edit affiliate links and discounts via shortcode attributes.
+3. **Pro Upgrade**: Purchase at example.com/buy-pro for advanced AI (OpenAI integration), exportable analytics, and white-label.
 
 ## Usage
 
-- **Generate Coupons**: Use shortcode with attributes:
-  - `brand`: Brand name (default: Example Brand).
-  - `product`: Product name (default: Product).
-  - `expiry`: Expiry date (default: +30 days).
-- **Display**: Coupons show code, discount, expiry, affiliate button, and copy feature.
-- **Monetization Tips**: Partner with brands for exclusive codes, track via affiliate links, upgrade to Pro for analytics.
-- **Pro Upgrade**: Visit admin notice or [example.com/pro](https://example.com/pro) for $49/year.
+- **Basic Shortcode**: `[ai_coupon_generator]` - Uses default affiliate link.
+- **Custom**: `[ai_coupon_generator affiliate_link="https://amazon.com/deal" base_discount="15"]`.
+- **Display**: Renders attractive, clickable coupon box with user-specific code.
+- **Monetization Tips**: Place on high-traffic pages, blogs, or sidebars. Track affiliate clicks for commissions[1][3].
 
-**Support**: For issues, check WordPress.org forums or Pro support.
+## Pro Features (Upgrade for $49/yr)
+
+- Real AI personalization via OpenAI.
+- Coupon analytics dashboard.
+- Unlimited codes and exports.
+- Custom designs and API hooks.
+
+## Support
+
+- WordPress.org forums for free version.
+- Priority email support for Pro.
+
+**Start earning passive affiliate income today!**
