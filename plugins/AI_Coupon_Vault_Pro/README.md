@@ -2,38 +2,48 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation** (Premium): Auto-generate personalized coupons using OpenAI integration.
-- **Easy Coupon Management**: Add/edit coupons via intuitive admin dashboard with JSON import/export.
-- **Affiliate-Ready**: Trackable affiliate links with nofollow for SEO compliance.
-- **Shortcode Display**: Use `[ai_coupon_vault]` or `[ai_coupon_vault limit="3"]` to showcase coupons anywhere.
-- **Expiry Management**: Automatically hide expired coupons.
-- **Responsive Design**: Mobile-friendly coupon grids.
-- **Freemium Model**: Free core features; Pro unlocks AI, analytics, unlimited coupons ($49/year).
+- **AI-Powered Coupon Generation**: Instantly create unique, personalized coupons using AI prompts (Pro feature uses advanced OpenAI integration).
+- **Affiliate Tracking**: Built-in affiliate link cloaking and click tracking for commissions.
+- **Shortcode Display**: Embed beautiful, responsive coupon vaults anywhere with `[ai_coupon_vault]`.
+- **Admin Dashboard**: Manage coupons, generate new ones, and track performance.
+- **Monetization Ready**: Perfect for blogs earning via affiliate deals, sponsored coupons, and exclusive discounts.
+- **Freemium Upsell**: Free version hooks users; Pro unlocks unlimited AI, analytics, custom branding ($49/year).
+
+**Pro Features (Upgrade Now)**:
+- Unlimited AI generations
+- Advanced analytics dashboard
+- Custom coupon designs
+- Email capture integration
+- White-label for agencies
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via WordPress Admin > Plugins.
-3. Go to **Coupon Vault** in admin menu to add coupons.
+1. Upload the `ai-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to manage coupons.
+4. Use shortcode `[ai_coupon_vault]` in posts/pages.
 
 ## Setup
 
-1. Navigate to **Coupon Vault** dashboard.
-2. Enter coupons in JSON format:
-   
-   {"coupons":[
-     {"code":"SAVE20","desc":"20% Off","afflink":"https://aff.link","expiry":"2026-12-31"}
-   ]}
-   
-3. Click **Save Coupons**.
-4. Add `[ai_coupon_vault]` to any post/page.
+1. **Add Affiliate Links**: In admin, edit coupons JSON or generate new ones.
+2. **Display Coupons**: Add shortcode to sidebar, posts, or dedicated deals page.
+3. **Customize**: Style via CSS or Pro themes.
+4. **Track Earnings**: Monitor clicks via Pro analytics.
+
+Example JSON for manual coupons:
+
+[
+  {"title":"Deal 1","code":"SAVE20","description":"20% Off","affiliate_link":"https://youraffiliate.link","expiry":"2026-12-31"}
+]
+
 
 ## Usage
 
-- **Frontend**: Coupons display as clickable reveals with affiliate links.
-- **Customization**: Style via CSS classes like `.ai-coupon-vault`, `.coupon-item`.
-- **Pro Features**: Enter OpenAI API key for auto-generation (e.g., "Generate 5 coupons for SaaS tools").
-- **Monetization Tip**: High-conversion coupons boost affiliate earnings[1][2].
+- **Frontend**: Visitors see exclusive coupons boosting engagement and clicks.
+- **Backend**: Generate coupons with prompts like "coupon for hosting services".
+- **Monetize**: Partner with brands for custom codes; earn commissions automatically.
+- **Pro Upgrade**: Visit admin page for purchase link.
 
-## Support
-Contact support@example.com. Upgrade to Pro for priority support.
+**Why Profitable?** Fills gap in AI-driven coupon tools; taps into booming affiliate market (2026 trends show 30% growth in deal sites).[1][2]
+
+Support: example@domain.com
