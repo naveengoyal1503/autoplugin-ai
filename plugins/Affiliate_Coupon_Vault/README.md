@@ -1,36 +1,40 @@
 # Affiliate Coupon Vault
 
-## Features
+## Description
+**Affiliate Coupon Vault** is a powerful WordPress plugin that helps affiliate marketers and bloggers create and display personalized coupon codes to drive conversions and boost commissions. Generate unique, trackable coupons instantly and embed them anywhere with shortcodes.[1][2]
 
-- **Easy Coupon Management**: Add, edit, and remove unlimited coupons via intuitive admin dashboard (Pro: truly unlimited).[1][2]
-- **Shortcode Integration**: Use `[affiliate_coupon_vault limit="3"]` to display coupons anywhere.[5]
-- **Affiliate-Optimized**: Trackable links with nofollow, mobile-responsive design for higher conversions.[3]
-- **Custom Images & Descriptions**: Upload coupon banners and detailed deal info.
-- **Pro Features**: Analytics dashboard, auto-expiring coupons, premium affiliate integrations (Amazon, etc.), custom branding ($49/year).[7]
+## Features
+- **Auto-generate unique coupon codes** with custom prefixes for any affiliate network (Amazon, ClickBank, etc.).
+- **Eye-catching, mobile-responsive designs** with copy-to-clipboard functionality.
+- **Shortcode-based**: Easy embedding in posts, pages, or widgets.
+- **Admin dashboard** to customize prefixes per affiliate.
+- **Pro Version ($49/year)**: Analytics, auto-expiry, email capture, unlimited affiliates, premium integrations.[7]
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Configure coupons in **Settings > Coupon Vault**.
-4. Add shortcode `[affiliate_coupon_vault]` to posts/pages.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to configure prefixes.
+4. Use the shortcode in any post or page.
 
 ## Setup
-
-1. Go to **Settings > Coupon Vault**.
-2. Add coupon details: **Code**, **Description**, **Affiliate Link**, **Image URL**.
-3. Save settings.
-4. **Pro Tip**: Use high-CTR images and personalized codes for 20-50% better conversions.[2]
+1. In **Settings > Coupon Vault**, set prefixes like `SAVE` for default, `AMZ` for Amazon.
+2. Example shortcode:
+   
+   [affiliate_coupon_vault affiliate_id="amazon" discount="20%" product="Laptop" link="https://amazon.com/product?tag=youraffiliateid"]
+   
 
 ## Usage
-
-- **Shortcode**: `[affiliate_coupon_vault limit="5"]` limits display.
-- **Widget Ready**: Embed in sidebars via custom HTML.
-- **Templates**: Auto-styles with modern grid layout.
-- **Monetization Boost**: Positions your site as deal hub, driving affiliate commissions.[1][3]
+- Embed shortcodes in affiliate posts to display exclusive deals.[1][2]
+- Track performance manually or upgrade to Pro for analytics.
+- Customize discounts and products per shortcode.
+- **Monetization Tip**: Pair with affiliate links for higher conversions![3][4]
 
 ## Pro Upgrade
+- Unlimited coupons & affiliates
+- Conversion tracking dashboard
+- Email opt-in forms
+- Automatic expiry & renewal
+<a href="https://example.com/pro">Get Pro for $49/year</a>
 
-Unlock analytics, API integrations, and white-label for agencies. Visit [example.com/pro](https://example.com/pro).
-
-**Support**: Contact support@example.com | Changelog in plugin files.
+## Support
+Submit tickets at example.com/support. Stars appreciated!
