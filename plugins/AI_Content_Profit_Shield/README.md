@@ -1,39 +1,34 @@
 # AI Content Profit Shield
 
 ## Features
-- **AI Content Detection**: Scans posts for AI-generated text using API integration (free tier limited).
-- **Profit Badges**: Adds eye-catching badges for AI-detected or human-verified content to build trust.
-- **Auto-Monetization**: Inserts affiliate links and promo boxes to generate passive income[1][2].
-- **Freemium Model**: Free basic version; Pro unlocks unlimited scans, custom affiliates, analytics.
-- **SEO Optimized**: Badges improve engagement and click-through rates for better rankings.
-- **One-Click Setup**: Self-contained plugin, no dependencies.
+
+- **AI Content Detector**: Scans posts for AI-generated content with a probability score (Pro: OpenAI integration).
+- **Smart Affiliate Injection**: Automatically adds relevant affiliate links to posts based on keywords like 'Amazon' or 'buy'.
+- **SEO Optimization Tips**: Provides suggestions to humanize AI content for better Google rankings.
+- **Monetization Dashboard**: Track scans, suggested links, and revenue potential.
+- **Freemium Model**: Free for basic scans; Pro unlocks unlimited scans, API integration, custom affiliates ($49/year).
 
 ## Installation
+
 1. Download the plugin ZIP.
-2. In WordPress Admin: Plugins > Add New > Upload Plugin.
-3. Activate **AI Content Profit Shield**.
-4. Go to Settings > AI Profit Shield to configure API key and affiliate links.
+2. In WordPress admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Go to **Settings > AI Profit Shield** to configure.
 
 ## Setup
-1. **Get Free AI API Key**: Sign up at openrouter.ai or similar for content detection.
-2. **Add Affiliate Link**: Enter your Amazon Associates, Jasper, or tool affiliate URL.
-3. **Pro Upgrade**: Purchase at example.com/pro ($49/year) for full features.
-4. Save settings – badges appear automatically on posts.
+
+1. Enter your affiliate links (e.g., `Amazon: https://your-amazon-link.com`) in the settings.
+2. For Pro: Add OpenAI API key for accurate AI detection.
+3. Enable on posts/pages via settings.
 
 ## Usage
-- **Automatic Detection**: Plugin scans every post on frontend display.
-- **Badges**: AI content gets red badge with affiliate CTA; Pro adds green verified badge.
-- **Monetization**: Earn commissions from clicks on inserted affiliate boxes[3][5].
-- **Customization**: Edit badges via CSS in Customizer.
-- **Stats**: Pro version tracks clicks and detections in dashboard.
 
-## Pro Features ($49/year)
-- Unlimited API calls.
-- Custom affiliate rotations.
-- Click analytics dashboard.
-- Priority support.
+- **Admin Scan**: Paste content in the settings page and click **Scan for AI Content**.
+- **Auto-Monetization**: Links inject automatically on frontend posts.
+- **Pro Features**: Upgrade for advanced analytics, bulk scanning, and premium affiliate networks.
 
-## Why Profitable?
-Positions your site as AI-aware, drives affiliate sales via trust badges, and scales with traffic. Ideal for 2026 AI content boom[1][2].
+## Pro Upgrade
+Visit [example.com/pro](https://example.com/pro) for $49/year.
 
-**Support**: example.com/support | **Changelog**: v1.0.0 - Initial release.
+## Support
+Contact support@example.com. Compatible with WordPress 6.0+.
