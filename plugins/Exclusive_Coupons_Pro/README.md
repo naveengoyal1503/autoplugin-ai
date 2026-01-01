@@ -1,44 +1,53 @@
 # Exclusive Coupons Pro
 
+## Description
+
+**Exclusive Coupons Pro** is a powerful WordPress plugin that lets you create and display exclusive affiliate coupons on your site. Boost conversions by offering personalized discount codes from brands, perfect for bloggers and affiliate marketers. [1][2]
+
 ## Features
 
-- **Personalized Coupons**: Generates unique, trackable coupon codes for each visitor to boost conversions.[1][2]
-- **Easy Shortcode Integration**: Use `[exclusive_coupon id="1"]` to display coupons anywhere.[5]
-- **Admin Dashboard**: Manage unlimited coupons via simple JSON configuration.
-- **Affiliate-Ready**: Append codes to affiliate links for precise tracking.
-- **Premium Upsell**: Unlock analytics, custom designs, and API integrations in pro version.
-- **Mobile-Responsive**: Clean, modern design works on all devices.
+- **Easy Coupon Management**: Add, edit, and organize unlimited coupons via intuitive admin dashboard.
+- **Customizable Display**: Use shortcodes to embed beautiful, responsive coupon boxes anywhere.
+- **Affiliate-Ready**: Trackable links with custom promo codes for higher commissions.
+- **Pro Version**: Unlimited coupons, click analytics, import/export, and premium templates ($49/year).
+- **SEO Optimized**: Coupon pages improve site stickiness and search rankings.[2]
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Configure coupons in **Settings > Coupons Pro**.
-4. Add shortcode `[exclusive_coupon]` to any post/page.
+1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Coupons Pro** in your admin menu to add coupons.
+4. Use the shortcode `[exclusive_coupon id="0"]` (replace 0 with coupon index) on any page/post.
 
 ## Setup
 
-1. Go to **Settings > Coupons Pro**.
-2. Enter coupons as JSON array:
-   
-   [
-     {"id":"1","brand":"Nike","code":"SAVE20","discount":"20% OFF","link":"https://affiliate-link.com"},
-     {"id":"2","brand":"Amazon","code":"DEAL15","discount":"15% OFF","link":"https://amazon.link"}
-   ]
-   
-3. Save settings.
-4. Use `[exclusive_coupon id="1"]` for specific or `[exclusive_coupon]` for random.
+1. **Add Coupons**:
+   - Navigate to **Coupons Pro**.
+   - Fill in Title, Code, Affiliate Link, Discount %, and Image URL.
+   - Click **Save Coupons**.
+
+2. **Display on Frontend**:
+   - Shortcode example: `[exclusive_coupon id="0"]` for first coupon.
+   - Customize with images and links for brands like software, travel, or eCommerce.[2]
 
 ## Usage
 
-- **On Posts**: Embed shortcode in content for contextual deals.
-- **Sidebar Widget**: Add via Custom HTML widget.
-- **Tracking**: Codes include visitor IP hash for analytics.
-- **Customization**: Style via CSS or upgrade to pro for themes.
+- **Shortcode**: `[exclusive_coupon id="X"]` where X is the coupon index (0-based).
+- **Example Output**:
+  html
+  <div class="ecp-coupon">
+    <h3>50% Off Hosting</h3>
+    <strong>Code: PROHOST50</strong>
+    <a href="affiliate-link">Get Deal</a>
+  </div>
+  
+- **Pro Tips**: Create dedicated coupon pages for SEO, email exclusive codes to subscribers.[1][2]
+- **Monetization**: Earn via affiliates; upgrade to Pro for advanced tracking.[3]
 
-## Freemium Benefits
+## Upgrade to Pro
 
-**Free**: 5 coupons, basic display.
-**Pro ($49/year)**: Unlimited coupons, click analytics, email capture, A/B testing.[7]
+Unlock unlimited features: [Get Pro Now](https://example.com/pro)
 
-Boost your affiliate earnings with exclusive, reader-first deals![1][2][3]
+## Support
+
+Report issues on the support forum.
