@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Automatically generates, manages, and displays exclusive affiliate coupons with personalized promo codes to boost conversions and revenue.
+ * Description: Automatically generates, manages, and displays exclusive affiliate coupons with personalized discount codes to boost conversions and revenue.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -14,7 +14,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class ExclusiveCouponsPro {
@@ -23,116 +23,124 @@ class ExclusiveCouponsPro {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('exclusive_coupon', array($this, 'coupon_shortcode'));
-        add_action('wp_ajax_generate_promo', array($this, 'ajax_generate_promo'));
-        add_action('wp_ajax_nopriv_generate_promo', array($this, 'ajax_generate_promo'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        if (get_option('ecp_license') !== 'activated') {
-            add_action('admin_notices', array($this, 'pro_notice'));
+        load_plugin_textdomain('exclusive-coupons-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        if (is_admin()) {
+            add_action('admin_init', array($this, 'admin_init'));
         }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('ecp-script', plugin_dir_url(__FILE__) . 'ecp.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('ecp-script', 'ecp_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
+        wp_enqueue_style('exclusive-coupons-pro', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+        wp_enqueue_script('exclusive-coupons-pro', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0.0', true);
     }
 
     public function admin_menu() {
         add_options_page('Exclusive Coupons Pro', 'Coupons Pro', 'manage_options', 'exclusive-coupons-pro', array($this, 'admin_page'));
     }
 
+    public function admin_init() {
+        register_setting('exclusive_coupons_pro_options', 'exclusive_coupons_pro_settings');
+        add_settings_section('coupons_section', 'Coupon Settings', null, 'exclusive-coupons-pro');
+        add_settings_field('coupons', 'Coupons', array($this, 'coupons_field'), 'exclusive-coupons-pro', 'coupons_section');
+    }
+
+    public function coupons_field() {
+        $settings = get_option('exclusive_coupons_pro_settings', array());
+        $coupons = isset($settings['coupons']) ? $settings['coupons'] : array(
+            array('name' => 'Sample Coupon', 'code' => 'SAVE20', 'afflink' => 'https://example.com/aff', 'desc' => '20% off')
+        );
+        echo '<textarea name="exclusive_coupons_pro_settings[coupons]" rows="10" cols="50">' . esc_textarea(json_encode($coupons, JSON_PRETTY_PRINT)) . '</textarea>';
+        echo '<p>Enter JSON array of coupons: {"name":"Name","code":"CODE","afflink":"Affiliate Link","desc":"Description"}</p>';
+    }
+
     public function admin_page() {
-        if (isset($_POST['ecp_save'])) {
-            update_option('ecp_coupons', sanitize_text_field($_POST['coupons']));
-            update_option('ecp_affiliate_id', sanitize_text_field($_POST['affiliate_id']));
-            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
-        }
-        $coupons = get_option('ecp_coupons', 'SAVE20|20% off first purchase|YourAffiliateLink');
-        $affiliate_id = get_option('ecp_affiliate_id', '');
         ?>
         <div class="wrap">
-            <h1>Exclusive Coupons Pro</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Coupons (format: CODE|Description|Affiliate URL):</th>
-                        <td><textarea name="coupons" rows="10" cols="50"><?php echo esc_textarea($coupons); ?></textarea></td>
-                    </tr>
-                    <tr>
-                        <th>Your Affiliate ID</th>
-                        <td><input type="text" name="affiliate_id" value="<?php echo esc_attr($affiliate_id); ?>" /></td>
-                    </tr>
-                </table>
-                <p><input type="submit" name="ecp_save" class="button-primary" value="Save Settings" /></p>
-                <?php if (get_option('ecp_license') !== 'activated') { ?>
-                <p><strong>Upgrade to Pro for unlimited coupons and analytics!</strong> <a href="https://example.com/pro">Get Pro</a></p>
-                <?php } ?>
+            <h1>Exclusive Coupons Pro Settings</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('exclusive_coupons_pro_options');
+                do_settings_sections('exclusive-coupons-pro');
+                submit_button();
+                ?>
             </form>
         </div>
         <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => '1'), $atts);
-        $coupons = explode('\n', get_option('ecp_coupons', 'SAVE20|20% off first purchase|https://example.com/ref'));
-        if (!isset($coupons[$atts['id']-1])) return 'Coupon not found.';
-        list($code, $desc, $url) = explode('|', $coupons[$atts['id']-1]);
-        $affiliate_id = get_option('ecp_affiliate_id', '');
-        $unique_code = $code . '-' . $affiliate_id . '-' . uniqid();
+        $atts = shortcode_atts(array('id' => 0), $atts);
+        $settings = get_option('exclusive_coupons_pro_settings', array());
+        $coupons = json_decode($settings['coupons'] ?? '[]', true);
+        if (!isset($coupons[$atts['id']])) {
+            return 'Coupon not found.';
+        }
+        $coupon = $coupons[$atts['id']];
+        $unique_code = $coupon['code'] . '-' . uniqid();
         ob_start();
         ?>
-        <div class="ecp-coupon" style="border: 2px dashed #0073aa; padding: 20px; margin: 20px 0; background: #f9f9f9;">
-            <h3>Exclusive Deal! <strong><?php echo esc_html($desc); ?></strong></h3>
-            <p><strong>Your Code: <span id="ecp-code"><?php echo esc_html($unique_code); ?></span></strong></p>
-            <button id="copy-code" class="button">Copy Code</button>
-            <a href="<?php echo esc_url($url); ?>" target="_blank" class="button button-primary" style="margin-left: 10px;">Shop Now & Save</a>
+        <div class="exclusive-coupon" data-afflink="<?php echo esc_attr($coupon['afflink']); ?>">
+            <h3><?php echo esc_html($coupon['name']); ?></h3>
+            <p><?php echo esc_html($coupon['desc']); ?></p>
+            <div class="coupon-code"><?php echo esc_html($unique_code); ?></div>
+            <button class="copy-code">Copy Code</button>
+            <a href="#" class="reveal-deal">Reveal Deal</a>
         </div>
-        <script>
-        jQuery('#copy-code').click(function() {
-            navigator.clipboard.writeText(jQuery('#ecp-code').text());
-            jQuery(this).text('Copied!');
-        });
-        </script>
         <?php
         return ob_get_clean();
     }
 
-    public function ajax_generate_promo() {
-        $code = wp_generate_password(8, false);
-        wp_send_json_success(array('code' => $code));
-    }
-
-    public function pro_notice() {
-        echo '<div class="notice notice-info"><p>Unlock <strong>Exclusive Coupons Pro</strong> features: Unlimited coupons, analytics, auto-expiration. <a href="https://example.com/pro">Upgrade now</a> for $49/year!</p></div>';
+    public function activate() {
+        add_option('exclusive_coupons_pro_settings', array('coupons' => json_encode(array(
+            array('name' => 'Sample Coupon', 'code' => 'SAVE20', 'afflink' => 'https://example.com/aff', 'desc' => '20% off')
+        ))));
     }
 }
 
 new ExclusiveCouponsPro();
 
-// Pro teaser: Limit to 3 coupons in free version
-function ecp_limit_coupons($coupons) {
-    if (get_option('ecp_license') !== 'activated') {
-        $lines = explode('\n', $coupons);
-        return implode('\n', array_slice($lines, 0, 3));
-    }
-    return $coupons;
+// Premium upsell notice
+function exclusive_coupons_pro_notice() {
+    if (!current_user_can('manage_options')) return;
+    echo '<div class="notice notice-info"><p>Unlock premium features like analytics and unlimited coupons: <a href="https://example.com/premium" target="_blank">Upgrade to Pro</a></p></div>';
 }
-add_filter('pre_update_option_ecp_coupons', 'ecp_limit_coupons');
+add_action('admin_notices', 'exclusive_coupons_pro_notice');
 
-// JS file content (inline for single file)
-function ecp_inline_js() {
-    if (!wp_script_is('ecp-script', 'enqueued')) return;
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('#generate-promo').click(function() {
-            $.post(ecp_ajax.ajaxurl, {action: 'generate_promo'}, function(res) {
-                if (res.success) $('#promo-code').val(res.data.code);
-            });
+// Create assets directories
+$upload_dir = wp_upload_dir();
+$css_dir = plugin_dir_path(__FILE__) . 'assets/css/';
+$js_dir = plugin_dir_path(__FILE__) . 'assets/js/';
+if (!file_exists($css_dir)) mkdir($css_dir, 0755, true);
+if (!file_exists($js_dir)) mkdir($js_dir, 0755, true);
+
+// Inline styles and scripts for single file
+add_action('wp_head', function() {
+    echo '<style>
+.exclusive-coupon { border: 2px dashed #007cba; padding: 20px; margin: 20px 0; text-align: center; background: #f9f9f9; border-radius: 10px; }
+.coupon-code { font-size: 24px; font-weight: bold; color: #e74c3c; background: #fff; padding: 10px; margin: 10px 0; display: block; }
+.copy-code, .reveal-deal { background: #007cba; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; border-radius: 5px; }
+.reveal-deal { background: #27ae60; }
+.copied { background: #f39c12 !important; }
+    </style>';
+});
+
+add_action('wp_footer', function() {
+    echo '<script>jQuery(document).ready(function($) {
+        $(".copy-code").click(function() {
+            var code = $(this).siblings(".coupon-code").text();
+            navigator.clipboard.writeText(code).then(function() {
+                $(this).text("Copied!").addClass("copied");
+                setTimeout(() => $(this).text("Copy Code").removeClass("copied"), 2000);
+            }.bind(this));
         });
-    });
-    </script>
-    <?php
-}
-add_action('wp_footer', 'ecp_inline_js');
+        $(".reveal-deal").click(function(e) {
+            e.preventDefault();
+            var link = $(this).siblings("[data-afflink]").data("afflink") + "?coupon=" + $(this).siblings(".coupon-code").text();
+            window.open(link, "_blank");
+        });
+    });</script>';
+});
