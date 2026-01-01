@@ -2,38 +2,42 @@
 
 ## Features
 
-- **Easy Coupon Creation**: Add titles, affiliate URLs, discount codes, percentages, and expiration dates.
-- **Shortcode Integration**: Embed coupons anywhere with `[scv_coupon id="0"]`.
-- **Auto-Expiration**: Coupons expire automatically based on days set.
-- **Click Tracking**: Track affiliate link clicks (Pro: full analytics dashboard).
-- **Revenue Optimized**: Designed for bloggers monetizing via personalized deals and affiliates.
-- **Pro Upgrade**: Unlimited coupons, API integrations, revenue reports ($49/year).
+- **AI-Powered Coupon Generation**: Automatically create unique, personalized promo codes and deals (Pro feature with OpenAI integration).[1][2]
+- **Affiliate Tracking**: Seamlessly add affiliate links to every coupon for passive income.[3]
+- **Customizable Shortcodes**: Display responsive coupon grids anywhere with `[scv_coupons count="5"]`.
+- **Admin Dashboard**: Manage coupons, settings, and track performance.
+- **Free Version Limits**: 50 coupons max, mock AI generation.
+- **Pro Features**: Unlimited coupons, real AI generation, WooCommerce integration, analytics, white-label, custom domains ($49/year).
+
+**Why Profitable?** Coupons drive conversions (up to 30% higher), perfect for bloggers monetizing via affiliates and exclusive deals.[1][2][4]
 
 ## Installation
 
-1. Upload the `smart-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Coupons** in admin menu to add coupons.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Coupon Vault** to configure affiliate ID.
+4. Use shortcode `[scv_coupons]` on any page/post.
 
 ## Setup
 
-1. Go to **Coupons** > Add coupon details (title, URL, code, discount %, expires in days).
-2. Save and note the ID (array index, e.g., first is `id="0"`).
-3. Embed in posts/pages: `[scv_coupon id="0"]`.
+1. **Free Setup**: Enter your affiliate ID (e.g., Amazon Associates) in settings.
+2. **Pro Setup**: Add OpenAI API key for real AI coupons.
+3. **Display**: Add shortcode to sidebar, posts, or pages. Customize grid with `count` attribute.
+4. **Generate**: Click "Generate New AI Coupon" on frontend to add fresh deals.
 
 ## Usage
 
-- **Frontend Display**: Shows coupon box with code and tracked 'Get Deal' button.
-- **Admin Management**: Edit/delete via dashboard.
-- **Monetization Tips**: Partner with brands for exclusive codes; track conversions for affiliate commissions.
-- **Pro Features**: Enter API key for advanced tracking.
+- **Embed on Site**: `[scv_coupons count="3" category="tech"]` for tech deals.
+- **Monetize**: Coupons auto-append your affiliate ID to links.
+- **Customize**: Edit CSS in `assets/frontend.css` or pro themes.
+- **Track**: Pro version includes click/conversion analytics.
+
+**Pro Upgrade**: Visit [pro link] for AI, unlimited storage, and premium support.
 
 ## FAQ
 
-**Is it free?** Yes, core features free. Pro for power users.
+- **Is it mobile-responsive?** Yes, CSS grid adapts to all devices.
+- **Integrations?** Pro: WooCommerce, Easy Digital Downloads, major affiliate networks.[3]
+- **Support**: Free via WordPress forums; Pro email support.
 
-**Shortcode params?** `id` (required, coupon index).
-
-## Changelog
-
-**1.0.0** Initial release.
+**Upgrade to Pro for full monetization power!**
