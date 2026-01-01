@@ -1,38 +1,39 @@
 # AI Content Monetizer
 
-A powerful WordPress plugin to monetize AI-generated content by locking it behind simple paywalls. Users pay a one-time micropayment to unlock premium content, generating passive income for bloggers and creators.[1][2][4][6]
+A powerful WordPress plugin to monetize your AI-generated or premium content by locking it behind simple paywalls with one-time micropayments.
 
 ## Features
-- **Auto-lock AI content**: Automatically paywalls posts tagged with `ai-generated`.
-- **Shortcode support**: Use `[aicm_paywall price="1.99"]Content[/aicm_paywall]` for custom paywalls.
-- **Micropayments**: One-time unlocks via simulated payments (Stripe/PayPal ready for pro).
-- **Admin settings**: Customize default prices and manage easily.
-- **Self-contained**: No external dependencies; works out-of-the-box.
-- **Freemium-ready**: Perfect base for premium upgrades like recurring payments or analytics.
+- **Automatic Content Locking**: Automatically locks full post content after a teaser on single posts.
+- **Shortcode Support**: Use `[acm_lock price="1.99"]` to lock any content block.
+- **Daily Unlocks**: Demo mode simulates payments with daily IP-based unlocks (premium integrates Stripe/PayPal).
+- **Admin Settings**: Customize unlock price and enable/disable auto-locking.
+- **Responsive Design**: Clean, mobile-friendly lock overlay.
+- **Freemium Ready**: Free core; upsell premium for payments, analytics, A/B testing.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > AI Content Monetizer** to set your default price.
+1. Upload the `ai-content-monetizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > AI Content Monetizer** to set your unlock price.
 
 ## Setup
-1. **Auto-locking**: Add the tag `ai-generated` to any post. Non-logged-in visitors see a paywall.
-2. **Manual paywall**: Insert shortcode `[aicm_paywall price="0.99"]Your premium AI content here.[/aicm_paywall]` in posts/pages.
-3. Customize price in shortcode or settings (e.g., `$0.99` to `$4.99` for high-value content).
-
-**Pro tip**: Generate content with AI tools, tag it, and watch revenue roll in from exclusive access.[1][3]
+1. In **Settings > AI Content Monetizer**, set the default unlock price (e.g., $0.99).
+2. Toggle auto-locking for posts (default: on).
+3. For custom locks, add `[acm_lock price="2.49"]Your premium content here[/acm_lock]` in posts/pages.
 
 ## Usage
-- **For visitors**: Click "Pay & Unlock" (demo simulates payment; pro integrates real gateways). Content unlocks via cookie for 30 days.
-- **Tracking**: View unlocked content post-refresh. Scale by offering tiered pricing.
-- **Monetization boost**: Combine with affiliate links or memberships for hybrid models.[2][4][5]
+- **Auto-Lock**: Publish posts; teaser shows, full content locks behind paywall.
+- **Manual Lock**: Embed shortcode anywhere for granular control.
+- **Visitor Experience**: Click "Unlock Now" simulates payment (shows message), reveals content for the day.
+- **Demo Mode**: Uses IP + date for free daily unlocks. Premium version processes real payments.
+- **Tracking**: View unlocks in options (premium dashboard coming).
 
-## FAQ
-**How do real payments work?** Freemium version simulates; upgrade to pro for Stripe/PayPal integration.
-**Is it mobile-friendly?** Yes, responsive design included.
-**Support?** Open GitHub issues or contact author.
+## Freemium Upsell
+Upgrade to Pro for:
+- Real payment gateways (Stripe, PayPal).
+- Usage analytics and earnings reports.
+- Unlimited shortcodes and custom designs.
 
-**Upgrade to Pro**: Advanced analytics, subscriptions, A/B pricing tests. Contact for details.
+## Support
+Contact support@example.com or visit plugin URI for help.
 
-*Built for 2026 monetization trends: memberships, digital locks, and AI content sales.*[3]
+**Version 1.0.0 | Compatible with WordPress 6.0+**
