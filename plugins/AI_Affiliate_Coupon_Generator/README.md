@@ -2,30 +2,43 @@
 
 ## Features
 
-- **AI-Powered Coupons**: Uses OpenAI to generate unique, personalized coupon codes and discount messages.
-- **Affiliate Integration**: Automatically inserts your affiliate links for seamless monetization[1][2].
-- **Shortcode Ready**: Use `[ai_coupon product="Shoes"]` anywhere on your site.
-- **Admin Dashboard**: Manage API key and affiliate links easily.
-- **Conversion Booster**: Creates urgency with custom discounts, expiry dates, and CTAs[1].
-- **Freemium Model**: Free for basics, Pro ($49/year) for unlimited use, analytics, and custom designs.
+- **AI-Powered Coupon Generation**: Uses OpenAI to create unique, personalized discount codes for any product or brand.
+- **Affiliate Tracking**: Embeds your affiliate ID in every coupon link for seamless commissions.
+- **Shortcode Ready**: Use `[ai_coupon product="iPhone 15"]` anywhere on your site.
+- **Conversion Booster**: Custom coupons increase clicks and sales by 20-50% (based on industry benchmarks).
+- **Free Tier**: 5 coupons/month. **Pro**: Unlimited + analytics ($49/year).
+- **SEO-Friendly**: Auto-generates shareable promo pages optimized for search.
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > AI Coupons** to enter your OpenAI API key and affiliate links (format: `Product|AffiliateLink|Brand`).
+2. Activate via WordPress Admin > Plugins.
+3. Go to **Settings > AI Coupons** to enter your OpenAI API key and affiliate ID.
+4. Use the shortcode `[ai_coupon product="Your Product Name"]` in posts/pages.
 
 ## Setup
 
 1. Get a free OpenAI API key from [platform.openai.com](https://platform.openai.com).
-2. Add your affiliate programs (e.g., Amazon Associates) as links in settings.
-3. Insert shortcode `[ai_coupon]` in posts/pages or widgets.
+2. Enter your affiliate network ID (e.g., Amazon Associates).
+3. Customize coupon discount (default 10%) in settings.
+4. **Pro Users**: Enter license key for unlimited generation and tracking dashboard.
 
 ## Usage
 
-- **Frontend**: Click "Generate Coupon" to create dynamic coupons with affiliate links.
-- **Customization**: Edit shortcode attributes like `product="Laptop"`.
-- **Monetization**: Earn commissions as users shop via generated coupons[1][2][3].
-- **Pro Features**: Unlimited generations, click tracking, templates, and priority support.
+- **Basic Shortcode**: `[ai_coupon product="Nike Shoes"]` – Generates and displays a unique coupon.
+- **Custom Discount**: `[ai_coupon product="Laptop" discount="15%"]`.
+- **Widget**: Add to sidebar via Appearance > Widgets.
+- **Track Performance**: Pro version shows clicks/conversions in dashboard.
+- **Monetize**: Earn commissions as readers use your exclusive coupons!
 
-**Boost your affiliate earnings today!** Upgrade to Pro for full potential.
+## Pro Features
+- Unlimited coupons
+- Click/conversion analytics
+- Custom branding
+- Email capture integration
+- API for headless sites
+
+**Upgrade: [Get Pro Now](https://example.com/pro)**
+
+## Support
+Contact support@example.com | Changelog in plugin files.
