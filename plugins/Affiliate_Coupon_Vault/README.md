@@ -2,41 +2,32 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add, edit, and delete coupons via intuitive admin dashboard.
-- **Auto-Expiration**: Coupons expire automatically based on set dates.
-- **Click Tracking**: Monitor performance with built-in click counters.
-- **Shortcode Support**: Display coupons anywhere with `[acv_coupons]` or `[acv_coupons limit="5"]`.
-- **Copy-to-Clipboard**: One-click coupon code copying for users.
-- **Affiliate Redirects**: Tracks clicks and redirects to your affiliate links.
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Freemium Ready**: Core free; premium unlocks analytics, unlimited coupons, imports.
+- **Generate Exclusive Coupons**: Create custom, trackable coupon codes with affiliate links, discounts, and expiration dates.[1][2]
+- **Shortcode Integration**: Embed coupons anywhere with `[acv_coupon id="unique-id"]`.
+- **Usage & Revenue Tracking**: Dashboard shows clicks, uses, and estimated revenue (Pro: real-time API tracking).
+- **Auto-Expiration**: Coupons expire automatically to create urgency.
+- **Freemium Model**: Unlimited basic coupons; Pro unlocks analytics, A/B testing, bulk import, white-label ($49/year).
+- **SEO-Friendly**: Custom pages for coupons boost traffic and conversions.[1]
 
 ## Installation
 
 1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your first coupon.
-4. Use the shortcode `[acv_coupons]` in posts, pages, or widgets.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Access **Coupon Vault** in your admin sidebar.
 
 ## Setup
 
-1. Navigate to **Settings > Coupon Vault**.
-2. Fill in coupon details: Title, Code, Affiliate URL, Description, Expiry (optional).
-3. Check **Active** and click **Add Coupon**.
-4. Embed shortcode on your site to display coupons.
+1. Go to **Coupon Vault** dashboard.
+2. Fill in affiliate link, code, discount %, expiration days, and description.
+3. Click **Generate Coupon** - copy the ID.
+4. Use shortcode `[acv_coupon id="your-id"]` in posts/pages.
 
 ## Usage
 
-- **Frontend**: Coupons appear as styled cards with copy button and tracked redeem link.
-- **Admin**: View all coupons in a table with delete options. Track clicks per coupon.
-- **Customization**: Edit inline CSS in plugin file or add custom styles targeting `.acv-coupon`.
-- **Monetization Tip**: Partner with brands for exclusive codes to boost uniqueness and conversions.
+- **Frontend**: Visitors see styled coupon box. 'Redeem' tracks click and redirects to affiliate link.
+- **Admin**: View stats, delete coupons, upgrade prompt for Pro features.
+- **Monetization Tips**: Partner with brands for custom codes, embed in niche blogs for high conversions.[1][2]
+- **Pro Features**: Email notifications, conversion API (e.g., Amazon), custom domains.
 
-## Premium Features (Upsell)
-
-- Unlimited coupons (free limits to 10).
-- Export/import CSV.
-- Advanced analytics dashboard.
-- Custom branding and templates.
-
-Support: example@domain.com | Version 1.0.0
+## Support
+Contact support@example.com. Upgrade at example.com/pro for priority help.
