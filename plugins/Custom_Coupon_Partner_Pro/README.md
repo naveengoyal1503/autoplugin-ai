@@ -1,35 +1,54 @@
 # Custom Coupon Partner Pro
 
+## Description
+
+**Custom Coupon Partner Pro** is a powerful WordPress plugin for bloggers and site owners to create, manage, and display personalized affiliate coupons. Generate unique promo codes from partners, track clicks, and boost conversions effortlessly. Perfect for monetizing through affiliate marketing.[1][2]
+
 ## Features
 
-- **Easy Coupon Creation**: Add custom brand coupons with unique codes, discounts, affiliate links, and expiry dates via simple admin dashboard[1][2].
-- **Beautiful Shortcodes**: Embed eye-catching, mobile-responsive coupon boxes anywhere on your site with `[ccpp_coupon id="0"]`[1].
-- **Usage Tracking**: Monitor coupon clicks/uses to optimize affiliate performance (Pro: Advanced analytics)[2][3].
-- **Conversion Booster**: Personalized deals increase reader trust and sales – perfect for blogs, niches like software, travel, wellness[1][2].
-- **Freemium Model**: Free for up to 5 coupons; **Pro ($49/year)** unlocks unlimited, API integrations, auto-emails[7].
+- **Easy Coupon Management**: Add coupons via simple format (Code|Brand|Link|Description) in admin dashboard.
+- **Shortcode Display**: Use `[cpp_coupons]` to embed beautiful coupon grids on any page/post.
+- **Click Tracking**: Pro version tracks all affiliate link clicks with analytics dashboard.
+- **Freemium Model**: Free for basics; Pro ($49/year) unlocks unlimited coupons, exports, and branding.
+- **Responsive Design**: Mobile-friendly coupon cards with one-click shop links.
+- **SEO Optimized**: Clean markup for better search visibility on discount pages.[2]
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Navigate to **Coupons Pro** in admin menu to create your first coupon.
+3. Go to **Coupons** in admin menu to configure.
+4. Add `[cpp_coupons]` shortcode to any post/page.
 
 ## Setup
 
-1. Go to **Coupons Pro** dashboard.
-2. Fill in **Brand**, **Code**, **Discount %**, **Affiliate Link**, and optional **Expiry**.
-3. Click **Add Coupon** – limited to 5 in free version.
-4. Copy shortcode like `[ccpp_coupon id="0"]` (ID matches list order).
+1. Navigate to **Coupons** dashboard.
+2. Enter coupons one per line: `SAVE20|Example Store|https://affiliate.link/ref=yourid|20% off sitewide`.
+3. Save changes.
+4. Embed shortcode and customize with CSS if needed.
+
+**Pro Activation**: Purchase at example.com/pro, enter license key in settings.
 
 ## Usage
 
-- Paste shortcode in posts, pages, or widgets.
-- Customize display with CSS if needed.
-- Track uses in dashboard – upgrade to Pro for exports and insights.
-- **Pro Tips**: Pair with SEO plugins for deal pages; contact brands for exclusive codes[1][2].
+- **Frontend**: `[cpp_coupons]` renders a grid of clickable coupons.
+- **Customization**: Edit `assets/style.css` for styling.
+- **Tracking**: Pro users see click stats in dashboard.
+- **Partners**: Request custom codes from brands for exclusive deals.[2]
 
-## Pro Upgrade
+## Pro Features
 
-Unlock full potential: Unlimited coupons, click analytics, expiry automation, and priority support. Visit [example.com/pro](https://example.com/pro).
+| Feature | Free | Pro |
+|---------|-----|-----|
+| Coupons | 10 max | Unlimited |
+| Click Tracking | No | Yes |
+| Analytics Dashboard | No | Yes |
+| Custom Branding | No | Yes |
+| Priority Support | No | Yes |
 
-**Built for 2026 monetization: Drive affiliate revenue with exclusive deals!**
+Upgrade to Pro for scalable affiliate monetization![1][3]
+
+## Changelog
+
+**1.0.0**
+- Initial release with core features.
