@@ -1,40 +1,68 @@
 # Exclusive Coupons Pro
 
+**Boost affiliate commissions with exclusive, trackable coupons that create urgency and exclusivity.**
+
 ## Features
 
-- **Generate Exclusive Coupons**: Create custom coupon codes with affiliate links for your audience.
-- **Auto-Expiration**: Coupons expire automatically after set days to create urgency.
-- **Shortcode Integration**: Use `[exclusive_coupon id="0"]` to display coupons anywhere.
-- **Easy Management**: Admin dashboard to add/edit coupons.
-- **Freemium Model**: Free for up to 3 coupons; **Pro ($49/year)** unlocks unlimited coupons, click tracking, analytics, and custom branding.
+### Free Version
+- Create unlimited coupons with custom codes and affiliate links
+- Responsive coupon display with discount badges
+- Easy shortcode `[ecp id="1"]` for any page/post
+- Widget support for sidebars
+
+### Pro Version ($49/year)
+- **One-time use limits** per coupon (e.g., 50 redemptions max)
+- **Auto-expiration dates** with real-time status
+- **Usage analytics** dashboard
+- **Custom branding** & styling options
+- **Priority support** & updates
+
+## Why It's Profitable
+Affiliate marketers earn 20-50% higher conversions with exclusive coupons[1][2]. Limited-supply codes create FOMO, driving immediate action.
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/exclusive-coupons-pro`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to manage your coupons.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`
+2. Activate via **Plugins > Installed Plugins**
+3. Navigate to **Coupons Pro** in admin menu
+4. Add your first coupon!
 
 ## Setup
 
-1. In the admin page, add your first coupon: name, code, affiliate link, and expiration days.
-2. Save changes.
-3. Use shortcode `[exclusive_coupon id="0"]` (replace 0 with coupon index) in posts/pages.
+1. **Go to Coupons Pro** → Add coupon with:
+   - Unique **Code** (e.g., `SAVE50`)
+   - **Affiliate Link** (Amazon, etc.)
+   - **Discount %** (for display)
+2. **Copy shortcode** `[ecp id="0"]` (ID from table)
+3. **Paste in posts/pages** or use widget
+
+**Pro users:** Set max uses (e.g., 100) and expiry datetime.
 
 ## Usage
 
-- **Display Coupon**: Paste shortcode in Gutenberg block, Classic Editor, or widgets.
-- **Track Performance**: Pro version logs clicks and views.
-- **Monetize**: Earn commissions via exclusive deals – partners love providing custom codes!
-- **Pro Upgrade**: Visit admin notice link for unlimited features.
+### Shortcode Examples
 
-## Pro Features
+[ecp id="1"]  <!-- Single coupon -->
 
-| Feature | Free | Pro |
-|---------|------|-----|
-| Max Coupons | 3 | Unlimited |
-| Click Tracking | No | Yes |
-| Analytics Dashboard | No | Yes |
-| Priority Support | No | Yes |
-| Custom Styling | No | Yes |
 
-Boost your affiliate earnings today!
+### Widget
+- Add "Exclusive Coupon" widget to sidebar
+- Select coupon ID
+
+### Best Practices
+- Place coupons in blog posts reviewing products[1]
+- Use on dedicated "Deals" page
+- Promote via email/social for urgency
+- Track performance in Pro dashboard
+
+## Screenshots
+*(In full distribution)*
+
+## Changelog
+**1.0.0**
+- Initial release
+
+## Support
+Submit tickets at example.com/support
+
+**Upgrade to Pro today and 10x your affiliate earnings!**
