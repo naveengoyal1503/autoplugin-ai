@@ -1,58 +1,48 @@
 # Smart Affiliate Coupons
 
-## Description
-
-Smart Affiliate Coupons is a WordPress plugin designed to help bloggers, eCommerce store owners, and affiliate marketers easily create, manage, and display dynamic coupon codes and affiliate deals. It supports creating niche-specific offers to increase conversions and user engagement.
-
 ## Features
 
-- Simple admin interface to manage coupons and affiliate deals as JSON
-- Display active coupons on any post or page with a shortcode `[sac_coupons]`
-- Supports coupon code, description, and affiliate URL for each deal
-- Mobile-friendly and visually clean coupon list output
-- Freemium-ready: core features available in free version; potential for premium upgrades like analytics, scheduling, and personalization
+- **Easy Coupon Creation**: Use simple shortcodes to embed trackable affiliate coupons anywhere on your site.
+- **Click Tracking**: Real-time click counters per coupon to measure performance.
+- **Personalized Codes**: Display exclusive coupon codes that boost conversions and reader trust.[1][2]
+- **Mobile-Responsive**: Clean, professional design works on all devices.
+- **Freemium Model**: Free core features; premium unlocks analytics, unlimited coupons, and integrations.
 
 ## Installation
 
-1. Download the `smart-affiliate-coupons.php` file.
-2. Upload it to your WordPress plugin directory `/wp-content/plugins/`.
-3. Activate the plugin through the 'Plugins' menu in WordPress.
-4. Navigate to the **Smart Coupons** menu in the admin dashboard.
-5. Enter your coupon codes and affiliate deals in JSON format.
+1. Download and upload the plugin ZIP to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Get your unique API key generated automatically for tracking.
 
 ## Setup
 
-Example JSON format to input in settings:
+1. Copy the shortcode: `[sac_coupon affiliate_url="https://affiliate-link.com" code="SAVE20" description="20% off exclusive deal!" button_text="Grab Deal"]`
+2. Paste into any post, page, or widget.
+3. Customize attributes as needed.
+4. View click stats directly on the frontend.
 
+**Example:**
 
-[
-  {
-    "code": "SAVE10",
-    "desc": "10% off on selected items",
-    "url": "https://example.com/shop?ref=affiliate"
-  },
-  {
-    "code": "FREESHIP",
-    "desc": "Free Shipping on orders over $50",
-    "url": "https://example.com/cart?ref=affiliate"
-  }
-]
+[sac_coupon affiliate_url="https://example.com/affiliate?ref=yourid" code="WP2026" description="Get 25% off WordPress tools!"]
 
 
 ## Usage
 
-- Place the shortcode `[sac_coupons]` on any page or post where you want to show the active coupons.
-- Coupons will display with their codes, descriptions, and clickable buttons linking to the affiliate URLs.
+- **Embed in Posts**: Add shortcodes to blog posts for affiliate promotions.[3]
+- **Sidebar Widgets**: Place coupons in sidebars for passive income.
+- **Track Performance**: Each coupon shows live click counts.
+- **Monetize Effectively**: Pair with affiliate programs like Amazon Associates or custom brand deals.[1][2][3]
 
-## Monetization
+## Premium Features (Upgrade for $49/year)
 
-The plugin uses a **freemium** model:
+- Advanced analytics dashboard.
+- Unlimited coupons and A/B testing.
+- Email capture integration.
+- Custom designs and auto-expiry.
 
-- Free: Basic coupon management and display
-- Premium (planned): Scheduled coupons, coupon A/B testing, detailed usage analytics, personalized deals based on user behavior
+## Support
 
-This scalable model allows plugin authors to start with a free version and expand monetization as users grow.
+- Report issues via WordPress.org forums.
+- Premium support included with upgrade.
 
----
-
-This plugin is a unique, self-contained profitable WordPress monetization tool tailored for affiliate marketers and eCommerce sites wanting to boost conversions using dynamic coupon management.
+**Boost your affiliate earnings today!**
