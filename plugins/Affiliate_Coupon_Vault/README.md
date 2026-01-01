@@ -2,42 +2,43 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple JSON in admin settings (Pro: truly unlimited).
-- **Click Tracking**: Tracks coupon usage and displays stats to build trust and urgency.
-- **Shortcode Display**: Use `[acv_coupons]` or `[acv_coupons limit="3"]` anywhere.
-- **Randomized Deals**: Shuffles coupons for fresh visitor experience.
-- **Affiliate Optimized**: Direct links with tracking to maximize commissions.
-- **Pro Features** (Upgrade for $49): Auto-expiration, WooCommerce integration, analytics dashboard, personalized coupons, email capture.
+- **Easy Coupon Management**: Add unlimited affiliate coupons via admin dashboard (Pro: truly unlimited, analytics included).
+- **Shortcode Integration**: Use `[affiliate_coupon id="0"]` to display coupons anywhere.
+- **Expiration Tracking**: Coupons auto-expire with visual indicators.
+- **Click Tracking**: Basic logging (Pro: advanced analytics dashboard).
+- **Exclusive Deals**: Create reader-first custom promo codes to boost conversions[1][2].
+- **Freemium Model**: Free starter, upgrade to Pro for $49/year.
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add coupons.
+2. Activate via WordPress Admin > Plugins.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
 
 ## Setup
 
-1. In **Settings > Coupon Vault**, paste JSON like:
-   
-   [
-     {"name":"SAVE10","code":"SAVE10","afflink":"https://yourafflink.com/?ref=10","desc":"10% off sitewide"},
-     {"name":"FREESHIP","code":"FREESHIP","afflink":"https://yourafflink.com/ship","desc":"Free shipping"}
-   ]
-   
-2. Save changes.
-3. Add `[acv_coupons]` to any post/page.
+1. In admin, add affiliate link, coupon code, discount %, and expiration date.
+2. Copy the shortcode (e.g., `[affiliate_coupon id="0"]`) for your posts/pages.
+3. Customize styles via CSS if needed.
+
+**Pro Setup**: Purchase upgrade for API integrations and full tracking.
 
 ## Usage
 
-- **Frontend**: Coupons display with codes, descriptions, click stats, and trackable affiliate buttons.
-- **Customization**: Style via CSS targeting `.acv-vault`, `.acv-coupon`, `.acv-btn`.
-- **Tracking**: Clicks logged by IP to prevent duplicates; view totals on each coupon.
-- **Monetization Tip**: Partner with brands for exclusive codes to boost conversions.[1][2]
+- **On Posts**: Embed shortcode to showcase deals.
+- **Landing Pages**: Create dedicated coupon pages for SEO[2].
+- **Affiliate Boost**: Personalized codes improve rates over generic links[1][3].
 
-## Pro Upgrade
+**Example**:
 
-Unlock advanced features: analytics, auto-coupon generation, integrations. Visit [example.com/pro](https://example.com/pro).
+[affiliate_coupon id="0"]
 
-## Support
+Displays: **SAVE20** - 20% OFF | [Get Deal Now]
 
-Report issues in WordPress forums or contact support@example.com.
+## Pro Features
+- Unlimited coupons & A/B testing.
+- Real-time click/conversion analytics.
+- Auto-generation of unique codes.
+- Email capture for leads.
+
+Support: example.com/support | Upgrade: example.com/pro
