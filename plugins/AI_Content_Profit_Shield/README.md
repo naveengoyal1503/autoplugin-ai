@@ -1,26 +1,39 @@
 # AI Content Profit Shield
 
 ## Features
-- **AI Detection**: Automatically scans posts for AI-generated content using keyword patterns and sentence analysis[1][2].
-- **Smart Monetization**: Inserts affiliate links, ads, and pro upgrade prompts on detected content[1][3][4].
-- **Freemium Model**: Free version with basic ads; Pro unlocks humanizer, advanced affiliates, and no ads ($49/year)[4][7].
-- **Site Scanner**: Admin tool to scan and report AI content across your site[2].
-- **Passive Income**: Earn from AdSense, affiliates (Jasper, Yoast), and pro sales[1][3][5].
+- **AI Content Detection**: Scans posts for AI-generated text using API integration (free tier limited).
+- **Profit Badges**: Adds eye-catching badges for AI-detected or human-verified content to build trust.
+- **Auto-Monetization**: Inserts affiliate links and promo boxes to generate passive income[1][2].
+- **Freemium Model**: Free basic version; Pro unlocks unlimited scans, custom affiliates, analytics.
+- **SEO Optimized**: Badges improve engagement and click-through rates for better rankings.
+- **One-Click Setup**: Self-contained plugin, no dependencies.
 
 ## Installation
-1. Upload the `ai-content-profit-shield` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Configure affiliates and AdSense ID in settings (Pro: via dashboard).
+1. Download the plugin ZIP.
+2. In WordPress Admin: Plugins > Add New > Upload Plugin.
+3. Activate **AI Content Profit Shield**.
+4. Go to Settings > AI Profit Shield to configure API key and affiliate links.
 
 ## Setup
-1. Go to **Settings > AI Profit Shield** to scan your site.
-2. Replace affiliate URLs and AdSense `ca-pub-XXXX` in plugin code with yours.
-3. For Pro: Purchase at example.com/pro, add license key in settings.
+1. **Get Free AI API Key**: Sign up at openrouter.ai or similar for content detection.
+2. **Add Affiliate Link**: Enter your Amazon Associates, Jasper, or tool affiliate URL.
+3. **Pro Upgrade**: Purchase at example.com/pro ($49/year) for full features.
+4. Save settings – badges appear automatically on posts.
 
 ## Usage
-- Publish content: Plugin auto-detects AI (score >70%) and adds monetization.
-- View stats: Admin scanner lists AI posts with scores.
-- Revenue: Free users get footer ads; Pro gets custom affiliates + memberships[4][5].
-- **Pro Tips**: Pair with SEO plugins for traffic, memberships for recurring income[2][4].
+- **Automatic Detection**: Plugin scans every post on frontend display.
+- **Badges**: AI content gets red badge with affiliate CTA; Pro adds green verified badge.
+- **Monetization**: Earn commissions from clicks on inserted affiliate boxes[3][5].
+- **Customization**: Edit badges via CSS in Customizer.
+- **Stats**: Pro version tracks clicks and detections in dashboard.
 
-**Upgrade to Pro for AI humanizer, unlimited scans, and 100% custom monetization!**
+## Pro Features ($49/year)
+- Unlimited API calls.
+- Custom affiliate rotations.
+- Click analytics dashboard.
+- Priority support.
+
+## Why Profitable?
+Positions your site as AI-aware, drives affiliate sales via trust badges, and scales with traffic. Ideal for 2026 AI content boom[1][2].
+
+**Support**: example.com/support | **Changelog**: v1.0.0 - Initial release.
