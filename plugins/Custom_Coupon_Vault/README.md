@@ -2,34 +2,40 @@
 
 ## Features
 
-- **Easy Coupon Management**: Create unlimited custom coupons with codes, discounts, affiliate links, and expiration dates (Pro: truly unlimited).
-- **Shortcode Integration**: Display coupons anywhere with `[coupon_vault id="1"]`.
-- **Copy-to-Clipboard**: One-click coupon code copying for better UX.
-- **Admin Dashboard**: Simple interface to add/edit coupons and track usage.
-- **Monetization Ready**: Perfect for affiliate marketing and sponsored deals.
-- **Pro Features**: Advanced analytics, auto-expiration, bulk import, and premium integrations ($49/year).
+- **Easy Coupon Management**: Add brands, codes, discounts, affiliate links, and expiry dates via intuitive admin dashboard.[1][2]
+- **Shortcode Display**: Embed coupons anywhere with `[coupon_vault id="unique-id"]`. Supports expiry checks.
+- **Reader Loyalty Boost**: Offer exclusive deals to increase conversions and position your site as a savings hub.[1]
+- **Affiliate Ready**: Trackable links for commissions from personalized promo codes.[2][3]
+- **Freemium Model**: Free for basics; Pro unlocks unlimited coupons, analytics, auto-generation ($49/year).
+
+**Pro Features (Upsell)**: Usage stats, A/B testing, email export, WooCommerce integration.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Access the dashboard at **Coupon Vault** in your admin menu.
+1. Upload the `custom-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Access dashboard at **Coupon Vault** in admin menu.
 
 ## Setup
 
-1. Go to **Coupon Vault** > **Add New**.
-2. Enter coupon details: Title, Code, Affiliate URL, Discount %, Expiry Date, Max Uses (Pro).
-3. Save and copy the coupon ID.
-4. Use shortcode `[coupon_vault id="YOUR_ID"]` in posts/pages.
+1. Go to **Coupon Vault** admin page.
+2. Fill form: Brand, Code, Discount (e.g., "50% OFF"), Affiliate Link, Expiry.
+3. Click **Add Coupon**.
+4. Copy shortcode (e.g., `[coupon_vault id="abc123"]`).
 
 ## Usage
 
-- **Frontend Display**: Embed shortcodes in blogs, sidebars, or widgets to showcase deals.
-- **Customization**: Style with CSS targeting `.coupon-vault-item`, `.coupon-code`, etc. (see plugin files).
-- **Tracking**: Basic usage counts; upgrade to Pro for detailed analytics.
-- **Pro Upgrade**: Visit [example.com/pro](https://example.com/pro) for advanced features.
+- Paste shortcode in posts, pages, or widgets.
+- Customize styles via CSS targeting `.ccv-coupon`.
+- Example:
+  
+  [coupon_vault id="abc123"]
+  
+- Expired coupons auto-hide offer, show warning.
 
-Boost your affiliate earnings with exclusive coupons your audience loves!
+## Why Profitable?
 
-### Changelog
-- 1.0.0: Initial release.
+Blogs earn via exclusive coupons (higher conversions than generic links).[1][2] Freemium drives upgrades; target affiliate niches like software, travel.[3]
+
+## Support
+Contact support@example.com. Rate 5⭐ on WordPress.org!
