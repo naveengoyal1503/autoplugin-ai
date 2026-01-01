@@ -1,27 +1,31 @@
 # Exclusive Coupons Pro
 
 ## Features
-- **Easy Coupon Creation**: Add exclusive promo codes, affiliate links, discounts, usage limits, and expiration dates via intuitive admin interface.[1][2]
-- **Shortcode Display**: Use `[exclusive_coupon code="YOURCODE"]` to embed trackable coupons anywhere on your site.
-- **Usage Tracking**: Automatically limits uses and expires coupons to create urgency and boost conversions.[1]
-- **Monetization Ready**: Perfect for affiliate marketing, sponsored deals, and personalized discounts.[2][3]
-- **Freemium Model**: Free core features; premium unlocks analytics, unlimited coupons, and API integrations.
+
+- **Generate Trackable Coupons**: Create unique, personalized coupon codes linked to affiliate URLs with usage limits and expiration dates.[1][2]
+- **Shortcode Integration**: Use `[ecp_coupon id="1"]` to display coupons anywhere on your site.
+- **Admin Dashboard**: Easy management of coupons, track usage stats.
+- **Conversion Boost**: Exclusive deals increase clicks and commissions for bloggers and affiliates.[1][2]
+- **Freemium Ready**: Premium unlocks unlimited coupons, analytics, auto-generation ($49/year).
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Create your first coupon at **Coupons > Manage Coupons**.
+
+1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Visit **Settings > ECP Coupons** to add your first coupon.
 
 ## Setup
-1. Go to **Coupons > Manage Coupons** in admin.
-2. Fill in code, affiliate link, discount, max uses, and expiry.
-3. Save and copy the shortcode: `[exclusive_coupon code="YOURCODE"]`.
-4. Paste shortcode in posts, pages, or widgets.
+
+1. Go to **Settings > ECP Coupons**.
+2. Add a coupon: Enter code (e.g., "SAVE20"), affiliate URL, description, max uses, and expiry.
+3. Copy the coupon ID and use shortcode: `[ecp_coupon id="1"]` in posts/pages.
+4. Visitors click "Use Coupon" to track and redirect with code appended.
 
 ## Usage
-- **Frontend**: Coupons display with styled boxes, track clicks/uses, and link to affiliates.
-- **Customization**: Edit CSS in `/wp-content/plugins/exclusive-coupons-pro/style.css`.
-- **Pro Upgrade**: For advanced tracking and unlimited coupons, visit the upsell link in admin.
 
-## Why Profitable?
-Affiliate coupons drive high conversions via exclusivity. Target bloggers and marketers for premium sales.[1][2][7]
+- **On Posts/Blogs**: Embed shortcodes for niche deals (e.g., software, travel).[2]
+- **Tracking**: Usage counts update automatically; expired coupons show message.
+- **Monetization Tip**: Partner with brands for custom codes to boost affiliate earnings.[1][2]
+- **Premium**: For API integrations, analytics dashboard, and more.
+
+**Support**: Contact support@example.com | **Changelog**: v1.0.0 - Initial release.
