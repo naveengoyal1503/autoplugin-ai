@@ -2,50 +2,43 @@
 
 ## Features
 
-- **Generate Unique Coupons**: Automatically creates personalized promo codes for each visitor.
-- **Affiliate Integration**: Embed your affiliate links directly in coupon displays.
-- **Shortcode Ready**: Use `[affiliate_coupon id="1"]` anywhere on your site.
-- **Admin Dashboard**: Easy interface to add/edit coupons with title, description, link, base code, and discount.
-- **Conversion Booster**: Increases clicks and sales with exclusive deal messaging.
-- **Freemium Model**: Free for up to 5 coupons; **Pro** ($49/year) unlocks unlimited coupons, click analytics, auto-expiry, and custom branding.
+- **Personalized Promo Codes**: Generates unique coupon codes per visitor (e.g., AFFHOST10-ABCD) for tracking and exclusivity[1][2].
+- **Affiliate Link Tracking**: Logs clicks and coupons used, viewable in admin dashboard for conversion optimization.
+- **Easy Shortcodes**: Use `[acv_coupon]` for random or `[acv_coupon id="0"]` for specific coupons.
+- **Customizable Display**: Supports coupon images, titles, and branded buttons.
+- **Freemium Ready**: Free version limits to 5 coupons; Pro unlocks unlimited, analytics export, and integrations.
+- **SEO-Friendly**: Schema-ready markup for rich snippets on coupon pages.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress Admin: Plugins > Add New > Upload Plugin.
-3. Activate the plugin.
-4. Go to Settings > Coupon Vault to create your first coupon.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to add your coupons via JSON.
 
 ## Setup
 
-1. Navigate to **Settings > Coupon Vault**.
-2. Fill in coupon details:
-   - **Title**: e.g., "20% Off Hosting"
-   - **Description**: Deal details
-   - **Affiliate Link**: Your affiliate URL
-   - **Base Code**: e.g., "SAVE20"
-   - **Discount**: e.g., "20% off first year"
-3. Note the **Coupon ID** (auto-generated).
-4. Add shortcode `[affiliate_coupon id="X"]` to any post/page (replace X with ID).
+1. In the admin page, enter coupons as JSON array:
+   
+   [
+     {"name":"10% Off Hosting","code":"AFFHOST10","affiliate_url":"https://host.com/?ref=you","image":""},
+     {"name":"Free Trial","code":"AFFTRIAL","affiliate_url":"https://tool.com/?ref=you","image":"https://example.com/trial.jpg"}
+   ]
+   
+2. Save settings.
+3. Add shortcode to any post/page: `[acv_coupon]`.
 
 ## Usage
 
-- **Frontend Display**: Shows unique code per visit, appends to affiliate link.
-- **Customization**: Style via CSS targeting `.acv-coupon-vault`.
-- **Pro Features**: Upgrade for tracking, scheduling, and more.
-
-## Pro Upgrade
-
-Get Affiliate Coupon Vault Pro for $49/year:
-- Unlimited coupons
-- Click/conversion analytics
-- Coupon expiry dates
-- Custom designs
-- Priority support
-
-Contact: pro@example.com
+- **Display Coupons**: Embed shortcodes in posts, sidebars, or widgets.
+- **Track Performance**: View click stats in settings (Pro: detailed analytics).
+- **Monetize**: Earn commissions via affiliate URLs; personalized codes boost conversions[1][2][3].
+- **Pro Upgrade**: For unlimited coupons, A/B testing, email capture. Visit example.com/pro.
 
 ## Changelog
 
 **1.0.0**
-- Initial release with core coupon generation and shortcodes.
+- Initial release with core tracking and shortcodes.
+
+## Support
+
+Report issues at example.com/support.
