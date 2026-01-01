@@ -13,106 +13,131 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class AIContentMonetizer {
-    private $option_key = 'aicm_settings';
-    private $prices = [];
+    private static $instance = null;
 
-    public function __construct() {
-        add_action('init', [$this, 'init']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
-        add_action('wp_ajax_aicm_unlock_content', [$this, 'handle_unlock']);
-        add_action('wp_ajax_nopriv_aicm_unlock_content', [$this, 'handle_unlock']);
-        add_shortcode('aicm_paywall', [$this, 'paywall_shortcode']);
-        register_activation_hook(__FILE__, [$this, 'activate']);
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_acm_unlock_content', array($this, 'handle_unlock'));
+        add_action('wp_ajax_nopriv_acm_unlock_content', array($this, 'handle_unlock'));
+        add_shortcode('acm_lock', array($this, 'lock_shortcode'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        $settings = get_option($this->option_key, ['default_price' => 0.99]);
-        $this->prices = $settings;
-
-        // Auto-lock new posts with AI tag
-        add_filter('the_content', [$this, 'lock_ai_content']);
+        if (get_option('acm_settings')) {
+            add_filter('the_content', array($this, 'lock_content'));
+        }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('aicm-script', plugin_dir_url(__FILE__) . 'aicm.js', ['jquery'], '1.0.0', true);
-        wp_enqueue_style('aicm-style', plugin_dir_url(__FILE__) . 'aicm.css', [], '1.0.0');
-        wp_localize_script('aicm-script', 'aicm_ajax', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('aicm_nonce'),
-        ]);
+        wp_enqueue_script('acm-script', plugin_dir_url(__FILE__) . 'acm.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('acm-script', 'acm_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('acm_nonce')));
+        wp_enqueue_style('acm-style', plugin_dir_url(__FILE__) . 'acm.css', array(), '1.0.0');
     }
 
-    public function lock_ai_content($content) {
-        if (is_single() && has_tag('ai-generated') && !is_user_logged_in()) {
-            $price = $this->prices['default_price'] ?? 0.99;
-            $locked_content = '<div id="aicm-paywall"><p>This premium AI-generated content is locked. Unlock for <strong>$' . $price . '</strong>:</p><button class="aicm-unlock-btn" data-price="' . $price . '" data-post="' . get_the_ID() . '">Pay & Unlock</button><div id="aicm-message"></div></div>';
-            $content = $locked_content . '<div id="aicm-content" style="display:none;">' . $content . '</div>';
+    public function lock_content($content) {
+        if (!is_single() || !in_the_loop()) {
+            return $content;
         }
-        return $content;
+        $settings = get_option('acm_settings', array('price' => 0.99));
+        $unlock_price = $settings['price'];
+        $locked_content = '<div id="acm-lock" class="acm-locked" data-price="' . $unlock_price . '"><p>Your content is locked! Unlock for <strong>$' . $unlock_price . '</strong></p><button id="acm-unlock-btn" class="button">Unlock Now</button><div id="acm-message"></div></div>';
+        return substr($content, 0, 200) . '...' . $locked_content . '<div id="acm-content" style="display:none;">' . $content . '</div>';
     }
 
-    public function paywall_shortcode($atts) {
-        $atts = shortcode_atts(['price' => 0.99, 'content' => ''], $atts);
-        if (!is_user_logged_in()) {
-            return '<div id="aicm-paywall-shortcode"><p>Unlock this content for <strong>$' . $atts['price'] . '</strong>:</p><button class="aicm-unlock-btn" data-price="' . $atts['price'] . '" data-post="shortcode">Pay & Unlock</button><div id="aicm-message-shortcode"></div></div><div id="aicm-content-shortcode" style="display:none;">' . $atts['content'] . '</div>';
-        }
-        return $atts['content'];
+    public function lock_shortcode($atts) {
+        $atts = shortcode_atts(array('price' => '0.99'), $atts);
+        return '<div class="acm-shortcode-lock" data-price="' . $atts['price'] . '"><button class="acm-unlock-shortcode">Unlock ($' . $atts['price'] . ')</button><div class="acm-locked-content">[Content here]</div></div>';
     }
 
     public function handle_unlock() {
-        check_ajax_referer('aicm_nonce', 'nonce');
-        $price = sanitize_text_field($_POST['price']);
-        $post_id = intval($_POST['post_id']);
-
-        // Simulate payment (integrate with Stripe/PayPal in pro version)
-        // For demo: always 'succeed'
-        if (true) { // Replace with real payment check
-            setcookie('aicm_unlock_' . $post_id, '1', time() + 3600 * 24 * 30, '/');
-            wp_send_json_success(['message' => 'Unlocked! Refreshing...']);
+        check_ajax_referer('acm_nonce', 'nonce');
+        if (!wp_verify_nonce($_POST['nonce'], 'acm_nonce')) {
+            wp_die('Security check failed');
+        }
+        $user_ip = $_SERVER['REMOTE_ADDR'];
+        $today = date('Y-m-d');
+        $unlocks = get_option('acm_unlocks', array());
+        $key = md5($user_ip . $today);
+        if (!isset($unlocks[$key])) {
+            $unlocks[$key] = true;
+            update_option('acm_unlocks', $unlocks);
+            wp_send_json_success('Unlocked for today!');
         } else {
-            wp_send_json_error(['message' => 'Payment failed.']);
+            wp_send_json_success('Already unlocked today!');
         }
     }
 
     public function activate() {
-        add_option($this->option_key, ['default_price' => 0.99]);
+        add_option('acm_settings', array('price' => 0.99));
     }
 }
 
-new AIContentMonetizer();
+// Dummy JS and CSS content (in real plugin, separate files)
+function acm_add_inline_scripts() {
+    $script = "jQuery(document).ready(function($) {
+        $('#acm-unlock-btn').click(function() {
+            var price = $(this).closest('#acm-lock').data('price');
+            $('#acm-message').html('<p>Processing payment of $' + price + '... (Demo: Unlocked!)</p>');
+            $.post(acm_ajax.ajaxurl, {
+                action: 'acm_unlock_content',
+                nonce: acm_ajax.nonce
+            }, function(response) {
+                if (response.success) {
+                    $('#acm-lock').hide();
+                    $('#acm-content').show();
+                }
+                $('#acm-message').html(response.data);
+            });
+        });
+    });";
+    wp_add_inline_script('jquery', $script);
 
-// Inline JS and CSS for self-contained plugin
-add_action('wp_head', function() {
-    echo '<script>jQuery(document).ready(function($) { $(".aicm-unlock-btn").click(function() { var btn = $(this); var price = btn.data("price"); var post = btn.data("post"); $.post(aicm_ajax.ajax_url, {action: "aicm_unlock_content", price: price, post_id: post, nonce: aicm_ajax.nonce}, function(res) { if (res.success) { $("#aicm-paywall, #aicm-paywall-shortcode").hide(); $("#aicm-content, #aicm-content-shortcode").show(); $("#aicm-message").html(res.data.message); } else { $("#aicm-message").html(res.data.message); } }); }); });</script>';
-    echo '<style>#aicm-paywall { background: #f9f9f9; padding: 20px; border: 2px dashed #ccc; text-align: center; margin: 20px 0; } .aicm-unlock-btn { background: #0073aa; color: white; padding: 10px 20px; border: none; cursor: pointer; } .aicm-unlock-btn:hover { background: #005a87; }</style>';
-});
+    $style = ".acm-locked { border: 2px solid #0073aa; padding: 20px; margin: 20px 0; background: #f9f9f9; text-align: center; } .acm-unlock-btn { background: #0073aa; color: white; padding: 10px 20px; border: none; cursor: pointer; }";
+    wp_add_inline_style('wp-block-library', $style);
+}
+add_action('wp_enqueue_scripts', 'acm_add_inline_scripts');
 
-// Settings page
-add_action('admin_menu', function() {
-    add_options_page('AI Content Monetizer', 'AI Content Monetizer', 'manage_options', 'aicm-settings', function() {
-        if (isset($_POST['submit'])) {
-            update_option('aicm_settings', $_POST['aicm_settings']);
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
-        }
-        $settings = get_option('aicm_settings', ['default_price' => 0.99]);
-        ?>
-        <div class="wrap">
-            <h1>AI Content Monetizer Settings</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Default Unlock Price ($)</th>
-                        <td><input type="number" step="0.01" name="aicm_settings[default_price]" value="<?php echo esc_attr($settings['default_price']); ?>" /></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-            <p><strong>Usage:</strong> Tag posts with <code>ai-generated</code> to auto-lock, or use shortcode <code>[aicm_paywall price="1.99"]Your content[/aicm_paywall]</code></p>
-        </div>
-        <?php
-    });
-});
+AIContentMonetizer::get_instance();
+
+// Admin settings page
+function acm_admin_menu() {
+    add_options_page('AI Content Monetizer Settings', 'AI Content Monetizer', 'manage_options', 'acm-settings', 'acm_settings_page');
+}
+add_action('admin_menu', 'acm_admin_menu');
+
+function acm_settings_page() {
+    if (isset($_POST['submit'])) {
+        update_option('acm_settings', array('price' => floatval($_POST['price'])));
+        echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+    }
+    $settings = get_option('acm_settings', array('price' => 0.99));
+    ?>
+    <div class="wrap">
+        <h1>AI Content Monetizer Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr>
+                    <th>Unlock Price ($)</th>
+                    <td><input type="number" step="0.01" name="price" value="<?php echo esc_attr($settings['price']); ?>" /></td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+        <p>Usage: Content is auto-locked on single posts. Use [acm_lock price="1.99"] for shortcodes. Premium unlocks via IP daily demo.</p>
+    </div>
+    <?php
+}
+?>
