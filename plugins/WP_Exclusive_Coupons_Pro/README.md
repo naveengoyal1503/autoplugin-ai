@@ -1,57 +1,41 @@
 # WP Exclusive Coupons Pro
 
-## Description
-
-**WP Exclusive Coupons Pro** is a powerful WordPress plugin that allows you to create, manage, and display exclusive, personalized coupon codes on your site. Perfect for bloggers, affiliate marketers, and e-commerce owners looking to boost conversions and provide unique value to readers.[1][2]
-
-Generate custom promo codes from brands, display them via shortcode, and even offer random coupon generation for visitors. This plugin taps into proven monetization strategies like affiliate marketing and exclusive deals.[1][2]
-
 ## Features
 
-- **Easy Coupon Management**: Add coupons in simple "Brand: CODE" format via admin settings.
-- **Shortcode Display**: Use `[wpec_coupons]` or `[wpec_coupons limit="3"]` to embed coupons anywhere.
-- **Copy-to-Clipboard**: One-click copy for codes.
-- **Random Coupon Generator**: AJAX-powered button for fresh coupons.
-- **Freemium Ready**: Free version limited to 10 coupons; Pro unlocks unlimited, analytics, custom branding, and affiliate tracking.
-- **Mobile-Responsive**: Clean, modern design works on all devices.
-
-**Pro Features** (Upgrade for $49/year):
-- Unlimited coupons
-- Usage analytics
-- Affiliate link integration
-- Custom branding
-- Export reports
+- **Generate Exclusive Coupons**: Automatically create unique, user-specific coupon codes for higher conversions[1][2].
+- **User Limits**: Control coupons per user (free: up to 5; pro: unlimited).
+- **Shortcode Integration**: Easy `[wpec_coupon_display]` for any page/post.
+- **Login Required**: Boosts engagement by requiring logins.
+- **Copy-to-Clipboard**: One-click copying for seamless UX.
+- **Pro Features**: Analytics, auto-expiration, affiliate tracking, custom discounts ($49/year).
 
 ## Installation
 
-1. Upload the `wp-exclusive-coupons-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Exclusive Coupons** to add your coupons (e.g., `Amazon: SAVE20\nShopify: DISCOUNT15`).
-4. Use the shortcode `[wpec_coupons]` in posts, pages, or widgets.
+1. Upload the `wp-exclusive-coupons` folder to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Configure in **Settings > Exclusive Coupons**.
+4. Add `[wpec_coupon_display]` shortcode to pages/posts.
 
 ## Setup
 
-1. In admin: **Settings > Exclusive Coupons**.
-2. Enter coupons, one per line: `Brand Name: COUPONCODE`.
-3. Save settings.
-4. Embed shortcode on your deals page, sidebar, or posts.
+1. Go to **Settings > Exclusive Coupons**.
+2. Enable coupons and set max per user.
+3. (Pro) Enter API key for advanced features.
+4. Create a dedicated page: "Exclusive Deals" with the shortcode.
 
 ## Usage
 
-- **Display Coupons**: `[wpec_coupons limit="5"]` shows up to 5 coupons.
-- **Random Generator**: Automatically included; visitors click "Get Random Coupon".
-- **Customization**: Style via CSS targeting `.wpec-container` classes.
-- **Pro Upgrade**: Visit plugin settings for upgrade link to unlock advanced features.
+- **Frontend**: Users log in, generate/copy exclusive codes (e.g., EXCABC123 for 20% off).
+- **Customization**: Style via CSS classes (`.wpec-container`, `.wpec-coupon`).
+- **Monetization Tips**: Partner with brands for real codes, track via pro analytics[1][2][3]. Embed in affiliate posts for commissions.
+- **Pro Upgrade**: Unlock full potential – <a href="https://example.com/pro">Buy Now ($49/year)</a>.
 
-## Why Profitable?
+## FAQ
 
-Exclusive coupons increase reader loyalty, improve affiliate clicks, and position your site as a deals hub. Proven strategy for 2026 monetization.[1][2][3]
+**Is it free?** Yes, basic version free. Pro for advanced monetization.
 
-## Support
+**Secure?** Yes, user-specific codes stored securely.
 
-Report issues via WordPress.org forums or upgrade to Pro for priority support.
+**Support:** Contact support@example.com.
 
-## Changelog
-
-**1.0.0**
-- Initial release with core features.
+*Boost conversions like WP Coupons pros![1]*
