@@ -2,36 +2,45 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add, edit, and manage unlimited coupons (basic limit: 5) via intuitive admin dashboard.[1][2]
-- **Shortcode Integration**: Embed coupons anywhere with `[affiliate_coupon_vault id="0"]`.
-- **Affiliate Link Tracking**: Boost commissions with personalized promo codes and direct affiliate links.[1][3]
-- **Responsive Design**: Mobile-friendly displays with copy-to-clipboard functionality.
-- **Pro Upgrade**: Unlimited coupons, click analytics, auto-expiring deals, premium integrations ($49/year).
+- **Easy Shortcode Integration**: Use `[affiliate_coupon affiliate="https://example.com/ref" product="Super Product" discount="20%"]` to embed trackable coupons anywhere.
+- **Auto-Generated Unique Codes**: One-click generation of exclusive promo codes like `ACV-ABC123` for higher conversions.[1][2]
+- **Click Tracking**: Built-in analytics show coupon performance (Pro: Advanced dashboard with conversions).
+- **Customizable Design**: Responsive, branded coupons that match your site.
+- **Freemium Model**: Free for basics, Pro unlocks unlimited coupons, API integrations (Amazon, etc.), and email capture.[3][7]
+
+**Pro Features ($49/year)**: Affiliate network tracking, A/B testing, auto-expiry, WooCommerce integration.
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to add your first coupon.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Use the shortcode in posts/pages: `[affiliate_coupon]`.
 
 ## Setup
 
-1. In the admin panel, navigate to **Settings > Coupon Vault**.
-2. Click **Add Coupon** and fill in:
-   - **Code**: e.g., SAVE20
-   - **Description**: e.g., 20% off hosting
-   - **Affiliate Link**: Your tracked affiliate URL
-   - **Image**: Optional promo banner URL
-3. Save settings.
-4. Use shortcode `[affiliate_coupon_vault id="0"]` (ID matches coupon order).
+1. **Add Your Affiliate Links**: Replace `affiliate="YOUR_LINK"` in shortcodes with your affiliate URLs.[1][3]
+2. **Customize**: Edit `product`, `discount`, or `code` attributes.
+3. **Pro Upgrade**: Visit admin notice link for premium features.
 
 ## Usage
 
-- **On Posts/Pages**: Insert shortcode where you want the coupon vault to appear.
-- **Widgets/Sidebar**: Add via Shortcode widget.
-- **Pro Tips**: Pair with SEO plugins for better visibility. Track performance in Pro version.[1][2]
-- **Monetization**: Earn via affiliates; upsell Pro to users for passive income.[3][8]
+### Basic Shortcode
+
+[affiliate_coupon affiliate="https://amazon.com/ref=yourid" product="Wireless Headphones" discount="15%"]
+
+
+### Generate New Coupons
+Click "Generate New Coupon" on live coupons for fresh codes.
+
+### Tracking
+View clicks on frontend. Pro users get admin dashboard with full stats.
+
+### Best Practices
+- Place in blog posts, sidebars, or dedicated coupon pages.[2]
+- Target niches like software, travel, e-commerce.[1][2]
+- Combine with SEO for "exclusive coupons" traffic.[2]
+
+**Monetization Tip**: High-traffic sites earn 20-50% more commissions via exclusive codes.[1][3]
 
 ## Support
-
-Contact support@example.com. Upgrade to Pro for priority help.
+Submit tickets at example.com/support. Pro includes priority support.
