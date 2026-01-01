@@ -1,44 +1,29 @@
 # Custom Coupon Vault Pro
 
 ## Features
-
-- **Create Exclusive Coupons**: Generate unique promo codes with custom discounts, expiry dates, and usage limits.
-- **Affiliate Integration**: Attach affiliate links to each coupon for direct monetization.
-- **Shortcode Display**: Use `[coupon_vault limit="5"]` to showcase coupons on any page or post.
-- **Admin Dashboard**: Full CRUD management for coupons with active/expired status.
-- **Usage Tracking**: Monitor used counts against limits (Pro feature unlocks advanced analytics).
-- **SEO-Friendly**: Brand-specific coupons improve site authority and conversions.
-
-**Pro Version ($49/year)**: Unlimited coupons, click tracking, export data, custom branding, priority support.
+- **Easy Coupon Management**: Admin dashboard to add/edit exclusive promo codes, descriptions, and affiliate links.[1][2]
+- **Shortcode Integration**: Use `[coupon_vault]` anywhere to display styled coupons.[1]
+- **Conversion Boost**: Custom discounts improve affiliate clicks and sales.[2][3]
+- **Responsive Design**: Mobile-friendly coupon display.
+- **Freemium**: Free for basics; Pro adds analytics, unlimited coupons, expiry dates ($49/year).
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Navigate to **Coupon Vault** in the admin menu to create your first coupon.
+1. Upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Configure coupons at **Settings > Coupon Vault** (JSON format).
+4. Add `[coupon_vault]` shortcode to any post/page.
 
 ## Setup
-
-1. Go to **Coupon Vault** menu.
-2. Click **Add New Coupon**.
-3. Fill in title, code (auto-uppercases), discount, affiliate link, expiry, limit, brand, and description.
-4. Save and set active.
-5. Add `[coupon_vault]` shortcode to any page/post.
+- Default sample coupon included on activation.
+- Edit JSON array: `[{ "code": "SAVE20", "desc": "20% off", "afflink": "https://youraffiliate.link" }]`.
 
 ## Usage
+1. Create exclusive coupons by contacting brands.[2]
+2. Embed shortcode in sidebar, posts, or dedicated pages.
+3. Track clicks via affiliate dashboards; upgrade for built-in stats.
+4. **Monetize**: Earn commissions from linked deals.[1][3]
 
-- **Frontend**: Coupons display in a responsive grid with copy-friendly codes and shop links.
-- **Tracking**: Basic usage count included; Pro adds real-time analytics.
-- **Customization**: Edit CSS in the inline styles or enqueue custom stylesheets.
-- **Monetization Tip**: Partner with brands for custom codes to boost exclusivity and commissions.
+## Pro Upgrade
+Unlock premium features: session tracking, click analytics, auto-expiry, and more. Visit [premium link] for details.
 
-## FAQ
-
-**Is it free?** Yes, basic version is free. Pro unlocks advanced features.
-
-**Shortcode options?** `[coupon_vault limit="10"]` limits displayed coupons.
-
-**Compatibility?** WordPress 5.0+, no conflicts with major themes/plugins.
-
-Support: Contact via plugin page.
+**Tested up to WordPress 6.6. Supports Gutenberg and Classic Editor.**
