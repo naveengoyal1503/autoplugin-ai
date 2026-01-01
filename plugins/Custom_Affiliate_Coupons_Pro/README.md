@@ -1,32 +1,33 @@
 # Custom Affiliate Coupons Pro
 
 ## Features
-- **Generate Exclusive Coupons**: Create unique promo codes and pair them with affiliate links for higher conversions.[1][2]
-- **Shortcode Display**: Embed beautiful coupon boxes anywhere with `[affiliate_coupon id="your-id"]`.
-- **Admin Dashboard**: Easy interface to add/edit coupons with images, descriptions, expiration dates.
-- **Responsive Design**: Mobile-friendly coupon displays with hover effects.
-- **Freemium Ready**: Premium unlocks unlimited coupons, click tracking, and auto-expiration.
+
+- **Easy Coupon Creation**: Add unlimited personalized coupon codes with affiliate links and discounts directly from WordPress admin.[1][2]
+- **Shortcode Integration**: Embed coupons anywhere with `[affiliate_coupon id="0"]` for seamless blog monetization.[1]
+- **Usage Tracking**: Real-time click and use counters to monitor performance and optimize affiliate earnings.[3]
+- **Conversion Booster**: Custom discounts improve reader engagement and commissions from affiliate programs.[2]
+- **Freemium Model**: Free core features; premium unlocks advanced analytics, API integrations, and priority support ($49/year).
+- **Mobile-Responsive**: Clean, professional design works on all devices.
 
 ## Installation
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
-2. Activate the plugin.
-3. Navigate to **Affiliate Coupons** in the admin menu to create your first coupon.
+
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Navigate to **Affiliate Coupons** in the admin menu to create your first coupon.
 
 ## Setup
-1. Go to **Affiliate Coupons** dashboard.
-2. Enter a unique **Coupon ID** (e.g., `amazon-deal-1`).
-3. Add your **Affiliate Link**, **Coupon Code**, **Description**, optional **Image URL** and **Expiration Date**.
-4. Click **Save Coupon**.
+
+1. Go to **Affiliate Coupons** menu.
+2. Add coupon details: Name, Code (e.g., SAVE20), Affiliate Link, Discount (e.g., 20% OFF).
+3. Save and copy the shortcode (e.g., `[affiliate_coupon id="0"]`).
+4. Paste shortcode in posts, pages, or widgets.
 
 ## Usage
-- Use the shortcode `[affiliate_coupon id="your-coupon-id"]` in any post, page, or widget.
-- Example output: Eye-catching box with image, code, description, and trackable affiliate link.
-- **Pro Tip**: Place coupons in blog posts for niche affiliate marketing to boost commissions.[3][7]
 
-## Premium Features (Coming Soon)
-- Click analytics and conversion tracking.
-- Unlimited coupons and import/export.
-- Integration with popular affiliate networks.
+- **Display Coupons**: Use shortcode in content for exclusive deals that drive affiliate clicks.[1][2]
+- **Track Performance**: View live usage stats on frontend; admin tracks total clicks.
+- **Monetization Tips**: Partner with brands for custom codes, promote in niche posts for higher conversions.[2][3]
+- **Pro Upgrade**: For dashboards, exports, and WooCommerce integration.
 
-## Support
-Contact support@example.com. Contribute on GitHub.
+**Boost your blog revenue today with exclusive coupons!**
