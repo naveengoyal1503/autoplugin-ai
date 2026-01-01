@@ -2,43 +2,43 @@
 
 ## Features
 
-- **Generate Unique Coupons**: Automatically creates trackable, exclusive coupon codes for any affiliate product[1][2].
-- **Shortcode Integration**: Easy `[exclusive_coupon id="0"]` embedding in posts/pages[1].
-- **Conversion Boost**: Personalized codes improve affiliate clicks and sales[1][2].
-- **Admin Dashboard**: Manage products, links, and discounts via simple JSON config.
-- **Freemium Model**: Free for basics; Pro adds unlimited coupons, analytics, email capture ($49/year).
-- **SEO-Friendly**: Custom discount pages rank well for savings searches[2].
-
-**Pro Only**: Advanced tracking, A/B testing, WooCommerce integration, premium templates.
+- **Personalized Coupons**: Generates unique, trackable coupon codes for each visitor to boost conversions.[1][2]
+- **Easy Shortcode Integration**: Use `[exclusive_coupon id="1"]` to display coupons anywhere.[5]
+- **Admin Dashboard**: Manage unlimited coupons via simple JSON configuration.
+- **Affiliate-Ready**: Append codes to affiliate links for precise tracking.
+- **Premium Upsell**: Unlock analytics, custom designs, and API integrations in pro version.
+- **Mobile-Responsive**: Clean, modern design works on all devices.
 
 ## Installation
 
-1. Upload the plugin ZIP to `/wp-content/plugins/` or install via WordPress dashboard.
-2. Activate the plugin.
-3. Go to **Settings > Coupons Pro** to configure affiliate products.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Configure coupons in **Settings > Coupons Pro**.
+4. Add shortcode `[exclusive_coupon]` to any post/page.
 
 ## Setup
 
-1. In admin settings, edit the JSON products array:
+1. Go to **Settings > Coupons Pro**.
+2. Enter coupons as JSON array:
    
    [
-     {"name":"Your Product","affiliate_url":"https://aff.link/?ref=yourid","base_discount":"20"}
+     {"id":"1","brand":"Nike","code":"SAVE20","discount":"20% OFF","link":"https://affiliate-link.com"},
+     {"id":"2","brand":"Amazon","code":"DEAL15","discount":"15% OFF","link":"https://amazon.link"}
    ]
    
-2. Save settings.
-3. Use shortcode `[exclusive_coupon id="0"]` (id matches array index).
+3. Save settings.
+4. Use `[exclusive_coupon id="1"]` for specific or `[exclusive_coupon]` for random.
 
 ## Usage
 
-- Embed shortcode in posts/blogs for instant coupon displays.
-- Customize via CSS in `assets/style.css`.
-- Track usage: Unique codes like "PRODYSITE1234" for analytics.
-- **Monetize**: Earn commissions from boosted conversions[1][3]. Upgrade to Pro for full potential.
+- **On Posts**: Embed shortcode in content for contextual deals.
+- **Sidebar Widget**: Add via Custom HTML widget.
+- **Tracking**: Codes include visitor IP hash for analytics.
+- **Customization**: Style via CSS or upgrade to pro for themes.
 
-## Support
-Contact support@example.com. Pro users get priority.
+## Freemium Benefits
 
-## Changelog
+**Free**: 5 coupons, basic display.
+**Pro ($49/year)**: Unlimited coupons, click analytics, email capture, A/B testing.[7]
 
-**1.0.0**
-- Initial release.
+Boost your affiliate earnings with exclusive, reader-first deals![1][2][3]
