@@ -2,38 +2,36 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation**: Automatically creates unique, personalized coupon codes using simple algorithmic randomization simulating AI behavior.
-- **Affiliate Link Integration**: Easily add affiliate deals for Amazon, Shopify, and more to earn commissions.
-- **Shortcode Support**: Use `[ai_coupon_vault product="Your Product"]` anywhere on your site.
-- **Freemium Model**: Free version limited to basic coupons; **Pro** unlocks unlimited deals, analytics, custom branding, and priority support ($49/year).
-- **Admin Dashboard**: Manage deals, enable Pro features, and track usage.
-- **Conversion-Optimized Design**: Eye-catching coupons boost clicks and sales.
-- **SEO-Friendly**: Generates reader-first content for better search rankings.
+- **AI-Powered Coupon Generation** (Pro): Automatically generates personalized promo codes using simple AI logic.
+- **Easy Coupon Management**: Add, edit, and organize coupons from affiliate brands via admin dashboard.
+- **Shortcode Display**: Embed coupon vaults anywhere with `[aicoupon_vault]` or `[aicoupon_vault num="3"]`.
+- **Copy-to-Clipboard**: One-click copy for user-friendly experience.
+- **Freemium Model**: Free for up to 3 coupons; Pro unlocks unlimited, analytics, custom branding.
+- **Affiliate Optimized**: Boost conversions with trackable, reader-first coupons[1][2].
 
 ## Installation
 
-1. Upload the `ai-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to configure affiliate deals.
-4. Add `[ai_coupon_vault]` shortcode to any post or page.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via WordPress Admin > Plugins.
+3. Go to **Settings > Coupon Vault** to add coupons (format: `Brand: CODE`).
+4. Use shortcode `[aicoupon_vault]` in posts/pages.
 
 ## Setup
 
-1. In the admin settings, enter affiliate deals in format: `Name:Code:Link:Discount` (one per line).
-   - Example: `Amazon:AMAZON10:https://amazon.com/deal:10% off`
-2. Check **Pro Version** for unlimited features (requires license key in Pro).
-3. Customize CSS in `/wp-content/plugins/ai-coupon-vault/assets/style.css`.
+1. In admin, enter coupons one per line: `Amazon: SAVE20\nShopify: DISCOUNT10`.
+2. Free limits to 3 coupons; upgrade for unlimited.
+3. Customize via CSS classes: `.aicoupon-vault`, `.coupon-item`.
 
 ## Usage
 
-- **Basic**: `[ai_coupon_vault]` displays a random coupon.
-- **Custom**: `[ai_coupon_vault product="Shopify"]` generates deal for specific product.
-- **Monetization Tips**: Place on blog posts, sidebars, or dedicated coupon pages. Track clicks via affiliate dashboards. Promote exclusive deals to build partnerships.
-- **Pro Benefits**: Analytics dashboard, email capture, A/B testing, WooCommerce integration.
+- **Frontend**: Shortcode auto-generates styled coupon list with copy buttons.
+- **Pro Features**: Enable AI generation, track clicks, export analytics.
+- **Monetization Tip**: Pair with affiliate links for commissions[3][4].
+
+## Pro Upgrade
+
+$49/year: Unlimited coupons, AI tools, priority support. Visit [example.com/pro](https://example.com/pro).
 
 ## Support
 
-- Free version: WordPress forums.
-- Pro: Dedicated email support at support@example.com.
-
-**Start earning passive income today!**
+Report issues via WordPress.org forums.
