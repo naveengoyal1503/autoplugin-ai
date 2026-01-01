@@ -2,53 +2,33 @@
 
 ## Features
 
-- **Personalized Coupons**: Generates unique coupon codes for each visitor/user, making them feel exclusive.
-- **Easy Shortcode**: Use `[exclusive_coupon brand="BrandA"]` anywhere on your site.
-- **Admin Settings**: Customize coupons and promo text via WordPress admin.
-- **Copy-to-Clipboard**: One-click copy functionality for better UX.
-- **Freemium Upsell**: Built-in premium notice to drive upgrades.
-- **Self-Contained**: Single PHP file, no dependencies.
-
-**Premium Features (Coming Soon)**: Analytics, custom branding, unlimited coupons, affiliate link integration.
+- **Easy Coupon Management**: Add unlimited exclusive coupons via simple textarea (Pro: truly unlimited with analytics).
+- **Shortcode Display**: Use `[exclusive_coupon code="SAVE10"]` to embed coupons in posts/pages.
+- **Auto-Expiry**: Coupons expire automatically on set date.
+- **Affiliate-Ready**: Direct links to affiliate offers for commissions.
+- **Conversion Booster**: Personalized codes increase clicks and sales [1][2].
+- **Freemium Model**: Free for basics, Pro upgrade for advanced features like tracking and API.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Configure settings at **Settings > Coupons Pro**.
+1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to **Coupons Pro** in admin menu to add coupons.
 
 ## Setup
 
-1. Go to **Settings > Coupons Pro**.
-2. Enter coupons in format `Brand:Code` (one per line), e.g.:
-   
-   Amazon:WP20OFF
-   Shopify:FREESHIP
-   
-3. Set your promo text.
-4. Save changes.
+1. Go to **Coupons Pro** dashboard.
+2. Enter coupons in format: `CODE|Description|Affiliate URL|Expiry (YYYY-MM-DD)`.
+   - Example: `SAVE20|20% off software|https://aff.link/?ref=you&coupon=SAVE20|2026-06-30`
+3. Save changes.
+4. Use shortcode `[exclusive_coupon code="SAVE20"]` in any post/page.
 
 ## Usage
 
-Insert the shortcode in any post/page:
-
-- Basic: `[exclusive_coupon]`
-- Specific brand: `[exclusive_coupon brand="Amazon"]`
-
-**Example Output**:
-
-> ### Get your exclusive coupon!
-> **WP20OFF-abc1**
-> Copy and use at checkout for your discount!
-> [Copy Code]
-
-## Monetization Potential
-
-- **Freemium Upsell**: Premium version at $49/year.
-- **Affiliate Boost**: Increases conversions with exclusive codes[1][2].
-- **Target Niches**: Blogs, eCommerce, affiliates[3].
+- **Frontend**: Shortcode renders styled coupon box with link.
+- **Backend**: Edit coupons anytime; free version limits to 10 lines (Pro unlimited).
+- **Monetization Tips**: Partner with brands for custom codes, embed in niche posts for higher conversions [1][2][3].
+- **Pro Upgrade**: Analytics, click tracking, email notifications ($49/year).
 
 ## Support
-
-Contact support@example.com for help.
+Contact support@example.com. Contribute on GitHub.
