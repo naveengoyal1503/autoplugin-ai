@@ -1,42 +1,66 @@
 # Exclusive Coupons Pro
 
+## Description
+
+**Exclusive Coupons Pro** is a powerful WordPress plugin that lets you create, manage, and display exclusive, trackable coupon codes for your audience. Perfect for bloggers and affiliate marketers to boost conversions with personalized discounts from brands.[1][2]
+
+Display beautiful coupons via **shortcodes**, **Gutenberg blocks**, or **widgets**. Track usage to prove value to partners.
+
 ## Features
 
-- **Easy Coupon Management**: Add unlimited exclusive coupons via simple JSON in settings (Pro: truly unlimited with UI builder).
-- **Shortcode Integration**: Use `[exclusive_coupon id="0"]` to display coupons anywhere.
-- **Affiliate-Optimized**: Built-in affiliate link tracking and conversion-boosting designs.
-- **Responsive Design**: Mobile-friendly coupon boxes with hover effects.
-- **Pro Features** (Upgrade for $49/year): Analytics dashboard, auto-expiry, custom branding, A/B testing, email capture.
+- **Easy Coupon Creation**: Generate unique codes, descriptions, affiliate links, and discount details.
+- **Multiple Display Options**:
+  * Shortcode: `[ecp_coupon id="123"]`
+  * Gutenberg Block
+  * Sidebar Widget
+- **Usage Tracking**: Monitor how many times each coupon is used.
+- **Freemium Model**: Free for up to 5 coupons; **Pro** unlocks unlimited + analytics.
+- **Pro Features** (Upgrade for $49/year):
+  * Unlimited coupons
+  * Advanced analytics dashboard
+  * Custom branding
+  * Email integration
+  * Priority support
 
 ## Installation
 
 1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to configure your coupons.
+2. Activate the plugin through the **Plugins** menu in WordPress.
+3. Navigate to **Coupons Pro** in your admin menu to create coupons.
+4. Use shortcodes, blocks, or widgets to display on your site.
 
 ## Setup
 
-1. In **Settings > Coupons Pro**, edit the JSON textarea with your coupons:
-   
-   [
-     {"code":"SAVE20","afflink":"https://yourafflink.com","desc":"20% off sitewide"},
-     {"code":"WELCOME10","afflink":"https://yourafflink2.com","desc":"10% off first order"}
-   ]
-   
-2. Save changes.
-3. Use shortcode `[exclusive_coupon id="0"]` for first coupon, `id="1"` for second, etc.
+1. Go to **Coupons Pro** > Create your first coupon (code, description, affiliate link, discount).
+2. Copy the shortcode (e.g., `[ecp_coupon id="abc123"]`).
+3. Paste into posts/pages, or add widget/block.
+
+**Free Limit**: 5 coupons. Upgrade to Pro for unlimited!
 
 ## Usage
 
-- **On Posts/Pages**: Insert shortcode `[exclusive_coupon id="0"]`.
-- **Widgets/Sidebar**: Add via Text widget.
-- **Boost Revenue**: Exclusive codes improve conversions by 20-50% per affiliate benchmarks[1][2].
-- **Pro Tip**: Pair with SEO plugins for coupon pages to rank for deal searches.
+### Shortcode
 
-## Support
-Contact support@example.com. Upgrade to Pro for priority support.
+[ecp_coupon id="your_coupon_id"]
+
+
+### Widget
+Add "Exclusive Coupon" widget to sidebar, select coupon.
+
+### Gutenberg
+Search "Coupon" block, pick coupon ID.
+
+### Tracking
+Each view increments usage counter. Use data to negotiate better affiliate deals![2]
+
+## Screenshots
+*(In full distribution: admin panel, frontend coupon display)*
 
 ## Changelog
 
 **1.0.0**
-- Initial release with core coupon features.
+* Initial release with core features.
+
+## Upgrade to Pro
+
+Unlock unlimited coupons and analytics: [Get Pro](https://example.com/pro) ($49/year).
