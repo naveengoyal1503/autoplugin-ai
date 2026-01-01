@@ -1,33 +1,39 @@
 # Smart Affiliate Coupons Pro
 
 ## Features
-- **Easy Coupon Display**: Use shortcode `[sac_coupon id="1"]` to embed trackable affiliate coupons anywhere.
-- **Click Tracking**: Logs clicks and shows live counters (Pro: Full analytics dashboard).
-- **Customizable**: Edit coupons via admin panel with name, code, affiliate link, discount %.
-- **Conversion Optimized**: Eye-catching design boosts clicks and commissions[1][2].
-- **Freemium Model**: Free for 5 coupons; Pro ($49/yr) unlocks unlimited, auto-generation, API integrations[7].
+- **Easy Coupon Management**: Add unlimited affiliate coupons via simple admin panel (JSON format).
+- **Click Tracking**: Tracks clicks on coupons with basic analytics (pro: advanced dashboard).
+- **Shortcode Integration**: Use `[affiliate_coupon id="demo"]` anywhere.
+- **Responsive Design**: Mobile-friendly coupon displays.
+- **Pro Features**: Unlimited coupons, A/B testing, detailed analytics, custom templates ($49/year).
 
 ## Installation
-1. Upload the `smart-affiliate-coupons` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Configure at **Settings > SAC Pro**.
+1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-coupons`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Coupons** to add your coupons.
 
 ## Setup
-1. Go to **Settings > SAC Pro**.
-2. Enter your coupons as JSON array (see example).
-3. Add shortcode to posts/pages: `[sac_coupon id="1"]`.
-4. (Pro) Enter API key for advanced tracking.
+1. In the admin panel, enter coupons as JSON:
+   
+   {
+     "demo": {
+       "code": "SAVE20",
+       "url": "https://your-affiliate-link.com",
+       "desc": "20% Off Everything",
+       "pro": false
+     }
+   }
+   
+2. Save settings.
+3. Add shortcode to posts/pages: `[affiliate_coupon id="demo"]`.
 
 ## Usage
-- **Embed Coupon**: `[sac_coupon id="1"]` displays coupon with button.
-- **Track Revenue**: Clicks logged; Pro integrates with affiliate networks like wecantrack[3].
-- **Monetize Blog**: Perfect for niches like software, travel, e-commerce[2].
-- **Upgrade to Pro**: Unlimited coupons, analytics, personalized codes for higher conversions.
+- Embed coupons in blog posts for affiliate deals.
+- Track clicks to optimize high-converting offers.
+- **Pro Tip**: Use personalized codes from brands for better partnerships.
 
-## Pro Benefits
-- Unlimited coupons and auto-generation.
-- Detailed analytics dashboard.
-- Custom promo code API.
-- Priority support.
+## Pro Upgrade
+Unlock premium features: [Buy Pro](https://example.com/pro). Support development!
 
-Built for 2026 monetization trends: affiliates + coupons = passive income[1][3].
+## Support
+Contact support@example.com. Contributions welcome on GitHub.
