@@ -2,41 +2,42 @@
 
 ## Features
 
-- **Generate Exclusive Coupons**: Create unique, trackable promo codes for your audience[1][2].
-- **Usage Tracking**: Monitor how many times each coupon is used to prove value to brands[1].
-- **Easy Shortcodes**: Embed coupons anywhere with `[exclusive_coupon code="SAVE20"]`.
-- **Affiliate Boost**: Increases conversions with personalized discounts[2][3].
-- **Pro Version**: Unlimited coupons, analytics dashboard, auto-expiration, email capture ($49/year).
+- **Easy Coupon Management**: Admin dashboard to add/edit exclusive coupons in simple format (Code|Affiliate Link|Description|Discount).
+- **Shortcode Integration**: Use `[exclusive_coupon code="SAVE10"]` anywhere on your site.
+- **Conversion Boost**: Personalized coupons increase affiliate clicks and sales.[1][2]
+- **Responsive Design**: Mobile-friendly coupon display.
+- **Freemium Model**: Free for basics, Pro unlocks tracking, unlimited coupons, analytics ($49/year).
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/exclusive-coupons-pro`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to add your coupons.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+2. Activate the plugin.
+3. Go to **Coupons Pro** in the admin menu to add your first coupon.
 
 ## Setup
 
-1. In the admin panel, enter coupons in JSON format:
+1. In the Coupons Pro dashboard, enter coupons one per line:
    
-   {
-     "SAVE20": {
-       "discount": "20% OFF Sitewide",
-       "afflink": "https://your-affiliate-link.com",
-       "uses": 0
-     }
-   }
+   SAVE10|https://your-affiliate-link.com|10% off first purchase|10
+   WELCOME20|https://aff-link2.com|20% sitewide|20
    
-2. Save and use shortcode `[exclusive_coupon code="SAVE20"]` in posts/pages.
+2. Save coupons.
+3. Add shortcode to posts/pages: `[exclusive_coupon code="SAVE10"]`.
 
 ## Usage
 
-- Place shortcodes in blog posts for exclusive deals[1].
-- Track usage to negotiate better affiliate deals[2].
-- **Pro Tip**: Contact brands for custom codes to make your site indispensable[1][2].
+- Embed coupons in blog posts, sidebars, or dedicated pages to monetize via affiliates.[1][2][3]
+- Track performance manually or upgrade to Pro for click analytics.
+- Ideal for niches like software, travel, eCommerce.[2]
 
-## Pro Upgrade
+## Pro Version
 
-Unlock analytics, unlimited coupons, and integrations. Visit [premium site](#) for $49/year.
+- Unlimited coupons
+- Click tracking & analytics
+- White-label branding
+- Priority support
+
+**Upgrade: [Get Pro]($49/year)**
 
 ## Support
 
