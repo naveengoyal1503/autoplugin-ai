@@ -2,42 +2,51 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Pro: truly unlimited with analytics).
-- **Trackable Affiliate Links**: Clicks are logged for performance insights.
-- **Responsive Design**: Mobile-friendly coupon display.
-- **Shortcode Ready**: Use `[affiliate_coupon]` anywhere.
-- **Pro Features**: Advanced dashboard, auto-expiry, email capture, premium integrations ($49/year).
+- **Easy Coupon Creation**: Use shortcode to display exclusive affiliate coupons with custom titles, discounts, images, and affiliate links.
+- **Click Tracking**: Tracks clicks on coupons with database logging (IP, time, coupon ID).
+- **Usage Limits**: Free version limits clicks per coupon to prevent abuse; Pro removes limits.
+- **Visual Appeal**: Responsive, styled coupon boxes with progress counters.
+- **Analytics Ready**: View click data in database; Pro adds dashboard charts.
+- **Monetization Boost**: Perfect for blogs promoting deals, increasing affiliate commissions.[1][2]
+
+**Free vs Pro**
+
+| Feature | Free | Pro ($49/year) |
+|---------|------|----------------|
+| Click Limit per Coupon | 10 | Unlimited |
+| Custom Dashboard | No | Yes |
+| Export Reports | No | Yes |
+| Priority Support | No | Yes |
 
 ## Installation
 
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
-2. Activate the plugin.
-3. Go to Settings > Coupon Vault to add your coupons (format: `Brand|Code|Affiliate Link|Description`).
-4. Insert `[affiliate_coupon]` shortcode in posts/pages.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Access settings at **Settings > Coupon Vault** to set click limits.
 
 ## Setup
 
-1. In admin, enter coupons one per line, e.g.:
-   
-   Amazon|PRIME20|https://your-aff-link.com|20% off select items
-   Shopify|SAVE50|https://aff-link.com|50% off first month
-   
-2. Save settings.
-3. Basic click tracking works out-of-box (view in database or upgrade to Pro for dashboard).
+1. Go to **Settings > Coupon Vault**.
+2. Set global click limit (default: 10).
+3. Use shortcode in posts/pages:
+
+
+[affiliate_coupon_vault id="coupon1" title="50% Off Hosting" discount="50% OFF" afflink="https://your-affiliate-link.com" image="https://example.com/coupon.jpg"]
+
 
 ## Usage
 
-- **Frontend**: Shortcode displays coupons with trackable buttons.
-- **Customization**: Style via CSS targeting `.acv-coupon`, `.acv-button`.
-- **Monetization Tip**: Use your affiliate links to earn commissions on redemptions.[1][2]
-- **Upgrade**: Unlock pro features at [example.com/pro](https://example.com/pro).
+- **Embed Anywhere**: Posts, pages, sidebars via shortcode or widgets.
+- **Track Performance**: Clicks logged in `wp_acv_clicks` table. Query via phpMyAdmin or Pro dashboard.
+- **Boost Conversions**: Show limited-time deals to drive urgency.[2]
+- **Pro Upgrade**: Remove limits, add analytics. Contact for license.
 
-## FAQ
+## Support
 
-**Is it free?** Yes, core features free. Pro for advanced tools.
-
-**Tracks clicks?** Yes, basic logging. Pro: detailed analytics.
+- Free support via WordPress forums.
+- Pro: Email support@affiliatecouponvault.com.
 
 ## Changelog
 
-**1.0.0** Initial release.
+**1.0.0**
+- Initial release with core tracking and shortcodes.
