@@ -2,37 +2,43 @@
 
 ## Features
 
-- **AI-Powered Coupon Generation**: Automatically creates unique, personalized coupon codes for popular stores like Amazon, Shopify, Walmart.
-- **Affiliate Tracking**: Built-in affiliate link integration to boost commissions[1][2].
-- **Shortcode Ready**: Easy embed with `[ai_coupon_box store="amazon"]` for posts/pages.
-- **Conversion Optimized**: Eye-catching design increases clicks and sales[1].
-- **Freemium Model**: Free core features; Pro adds unlimited stores, analytics, custom AI coupons ($49/year).
-- **SEO Friendly**: Generates reader-first discount pages for better search rankings[2].
+- **Easy Coupon Creation**: Generate and display exclusive coupon boxes with affiliate links using simple shortcodes `[ai_coupon_box]`.
+- **Admin Dashboard**: Customize coupon text, codes, and affiliate URLs from WordPress admin.
+- **Responsive Design**: Mobile-friendly coupon boxes that boost click-through rates.
+- **Monetization Ready**: Perfect for affiliate marketing, sponsored deals, and passive income.
+- **Freemium Model**: Free core features; Pro unlocks AI-powered coupon generation, usage analytics, unlimited coupons, custom branding, and integration with payment gateways.
+
+**Pro Features (Upgrade for $49/year)**:
+- AI-generated personalized coupons based on niche/audience.
+- Click tracking and conversion analytics.
+- Sponsored deal pages with SEO optimization.
+- Membership integration for exclusive coupons.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
-2. Activate the plugin.
-3. Use the shortcode `[ai_coupon_box store="amazon"]` in any post or page.
+1. Download the plugin ZIP file.
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate the plugin.
+4. Navigate to **AI Coupons** in the admin menu to configure your first coupon.
 
 ## Setup
 
-1. Go to **AI Coupons** in your WordPress admin menu.
-2. Configure your affiliate tags in Pro version.
-3. Embed shortcodes in blog posts targeting shopping niches.
-4. For Pro: Enter license key and API for AI generation.
+1. Go to **AI Coupons** in your WordPress dashboard.
+2. Enter your coupon text (e.g., "SAVE 20% with AFF20").
+3. Add your affiliate link (e.g., Amazon Associates or custom merchant URL).
+4. Save and copy the shortcode `[ai_coupon_box]`.
+5. Paste the shortcode into any post, page, or widget.
 
 ## Usage
 
-- **Basic**: Add `[ai_coupon_box store="amazon"]` to display interactive coupon generator.
-- **Customization**: Change `store` to `shopify`, `walmart`, etc.
-- **Monetization Tips**: Place in niche posts (e.g., "Best Deals 2026"), track clicks, earn commissions[1][3].
-- **Pro Features**: AI detects user location for localized deals, analytics dashboard, sponsored coupon slots.
-
-## Pro Upgrade
-
-Unlock full potential: [Get Pro Now](https://example.com/pro) - $49/year for unlimited coupons, AI, and priority support.
+- **Display Coupons**: Use `[ai_coupon_box]` anywhere on your site.
+- **Customize**: Edit text and links via admin panel for each campaign.
+- **Monetize**: Partner with brands for custom codes; earn commissions on clicks/sales.
+- **Pro Tips**: Place coupons in blog posts, sidebars, or dedicated deal pages for max conversions. Track performance in Pro version.
 
 ## Support
 
-Contact support@example.com. Contribute on GitHub.
+- Free support via WordPress forums.
+- Pro users: Dedicated email support and updates.
+
+**Start earning with exclusive coupons today!**
