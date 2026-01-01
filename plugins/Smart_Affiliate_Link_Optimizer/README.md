@@ -1,45 +1,36 @@
 # Smart Affiliate Link Optimizer
 
+## Description
+**Smart Affiliate Link Optimizer** automatically detects, cloaks, and tracks affiliate links in your posts and pages. Boost conversions with clean links, click analytics, and shortcode support. Freemium model: Free core features, premium for advanced A/B testing and reports.
+
 ## Features
-
-- **Automatic Link Cloaking**: Converts raw affiliate links (Amazon, ClickBank, etc.) into branded, trackable short links to improve click-through rates.
-- **Click Tracking**: Logs every click with basic stats dashboard in WordPress admin.
-- **SEO-Friendly**: Maintains original link attributes for search engines.
-- **Easy Setup**: Works out-of-the-box on posts and pages.
-- **Freemium Model**: Free core features; premium unlocks analytics, A/B testing, auto-optimization, and API integrations.
-
-**Proven Profit Potential**: Affiliate marketing is a top WordPress monetization strategy, with plugins simplifying tracking and boosting commissions.[1][2][3]
+- **Auto-cloaking**: Automatically replaces affiliate links in content with branded /go/ URLs.
+- **Click tracking**: Monitors clicks and stores analytics in WordPress database.
+- **Shortcode support**: Use `[saol_link url="https://affiliate.com/?ref=you"]` for manual links.
+- **Admin dashboard**: View all tracked links, clicks, and performance.
+- **Premium upsell**: A/B testing, detailed reports, auto-optimization ($49/year).
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Visit **Settings > SAO Settings** to configure.
+1. Upload the `smart-affiliate-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Links are auto-cloaked on frontend posts/pages.
 
 ## Setup
-
-1. Enable **Cloak Links** and **Track Clicks** in settings.
-2. Add affiliate links to your posts normally – they auto-cloak.
-3. View basic stats in the settings page.
-4. For premium: Enter your API key after purchase.
+1. Go to **Settings > Affiliate Optimizer** to view tracked links.
+2. Add affiliate links normally in posts; they auto-cloak.
+3. Use shortcode `[saol_link url="YOUR_AFFILIATE_URL"]` for custom placements.
 
 ## Usage
-
-- Write posts with affiliate links (e.g., `https://amazon.com/dp/B123?tag=yourtag`).
-- Plugin auto-detects and cloaks them.
-- Clicks redirect seamlessly while logging data for optimization.
-- Monitor performance and upgrade to premium for deeper insights.
+- **Automatic**: Write posts with affiliate links (e.g., containing `?ref=` or `affiliate`). They become `/go/[hash]`.
+- **Manual**: `[saol_link url="https://example.com/aff?ref=123"]`. Customize text with `text="Buy Now"`.
+- **Analytics**: Check dashboard for clicks per link.
+- **Premium**: Purchase upgrade for A/B variants, conversion tracking, and optimization suggestions.
 
 ## Premium Features
-
-- Detailed analytics dashboard.
-- A/B link testing.
-- Conversion tracking.
-- Auto-optimization suggestions.
-
-Purchase at [example.com/premium](https://example.com/premium) ($49/year).
+- A/B testing on links.
+- Exportable analytics reports.
+- Integration with Google Analytics.
+- Auto-rotation to highest-performing links.
 
 ## Support
-
-Report issues via WordPress.org forums or email support@example.com.
+Submit tickets at example.com/support. Contributions welcome on GitHub.
