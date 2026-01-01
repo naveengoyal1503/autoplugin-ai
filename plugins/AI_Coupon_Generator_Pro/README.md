@@ -2,47 +2,43 @@
 
 ## Features
 
-- **AI-Powered Coupon Creation**: Instantly generates unique, personalized coupons for any niche using smart templates[1][2].
-- **Shortcode Integration**: Embed coupons anywhere with `[ai_coupon niche="hosting"]`.
-- **Conversion Boost**: Custom promo codes improve affiliate clicks and sales[1][2].
-- **Pro Version**: Unlimited generations, link tracking, custom branding, analytics ($49/year).
-- **Easy Setup**: One-file plugin, no dependencies.
+- **AI-Powered Coupon Creation**: Automatically generates unique, personalized promo codes using AI prompts tailored to your brand or niche.
+- **Shortcode Integration**: Easy `[ai_coupon brand="Amazon" discount="20"]` shortcode for any post or page.
+- **Copy-to-Clipboard**: One-click copy functionality for user convenience.
+- **Affiliate Boost**: Increases conversions with exclusive deals, perfect for bloggers and marketers.
+- **Freemium Model**: Free for 5 coupons/month; Pro unlocks unlimited generation, analytics, OpenAI integration, and custom branding ($49/year).
+- **SEO-Friendly**: Generates shareable, trackable coupons to drive traffic and sales.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. Upload to `/wp-content/plugins/` via WordPress admin.
-3. Activate in Plugins > Installed Plugins.
-4. Access settings in Settings > AI Coupons.
+1. Upload the `ai-coupon-generator-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Assets (JS/CSS) auto-generate on activation.
 
 ## Setup
 
-1. Go to **Settings > AI Coupons**.
-2. Enter niche (e.g., "VPN", "hosting").
-3. Generate and copy coupon code.
-4. Use shortcode `[ai_coupon niche="your-niche"]` in posts/pages.
-
-**Pro Tip**: Upgrade for tracking conversions and premium templates[2][3].
+1. Go to **Settings > AI Coupon Pro**.
+2. Enter your OpenAI API key (Pro feature) and default brand.
+3. Save settings.
+4. Upgrade to Pro for full AI integration and unlimited usage.
 
 ## Usage
 
-### Basic Example
-Add to any post:
+- Insert shortcode: `[ai_coupon]` for default or `[ai_coupon brand="YourBrand" discount="15"]` for custom.
+- Display on pages, posts, sidebars, or widgets.
+- Track usage in settings (Pro: detailed analytics).
 
-[ai_coupon niche="fitness"]
+## Pro Upgrade
 
+Unlock:
+- Unlimited coupons
+- Real OpenAI API integration
+- Conversion tracking
+- Custom templates
+- Priority support
 
-Outputs a styled coupon box with exclusive deal.
-
-### Admin Generation
-- Navigate to **Settings > AI Coupons**.
-- Input niche and generate instantly.
-
-### Customization
-Edit `ai-coupon.css` for styles or upgrade to Pro for advanced options.
-
-## Monetization Potential
-Perfect for bloggers: Generate exclusive deals, add affiliate links, boost revenue via higher conversions[1][2][3].
+Purchase at [example.com/pro](https://example.com/pro) for $49/year.
 
 ## Support
-Contact support@example.com. Pro users get priority.
+
+Contact support@example.com or visit the plugin dashboard.
