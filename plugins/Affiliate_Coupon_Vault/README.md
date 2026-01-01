@@ -1,36 +1,34 @@
 # Affiliate Coupon Vault
 
-A freemium WordPress plugin to create, manage, and display affiliate coupons with built-in click tracking for maximum monetization.[1][2]
-
 ## Features
-- **Easy Coupon Management**: Add, edit, delete coupons via intuitive admin dashboard.
-- **Shortcode Display**: Use `[acv_coupons]` to embed responsive coupon grids on any page/post.
-- **Click Tracking**: Automatic tracking of coupon clicks with analytics-ready events.
-- **Expiry Dates**: Set expiration for time-sensitive deals.
-- **Affiliate Integration**: Append coupon IDs to affiliate links for precise attribution.[3]
-- **Premium Upsell**: Unlock custom designs, bulk import, and API integrations (coming soon).[7]
+
+- **Easy Coupon Management**: Add, edit, and display exclusive affiliate coupons via simple admin panel.
+- **Shortcode Integration**: Use `[affiliate_coupon]` anywhere to show a styled coupon vault.
+- **Conversion Boost**: Personalized discounts increase clicks and affiliate commissions.[1][2]
+- **Freemium Model**: Free for basics; Pro ($49/year) adds unlimited coupons, analytics, auto-generation, and API integrations.
+- **SEO-Friendly**: Optimized for search engines and AI crawlers.[2]
+- **Self-Contained**: Single PHP file, no dependencies.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via WordPress Admin > Plugins.
-3. Access settings at **Coupon Vault** in the admin menu.[1]
+
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate **Affiliate Coupon Vault**.
+4. Configure coupons in **Settings > Coupon Vault**.
 
 ## Setup
-1. Go to **Coupon Vault** > Add New Coupon.
-2. Enter title, code, affiliate URL, description, and optional expiry.
-3. Save and copy shortcode `[acv_coupons]`.
-4. Paste shortcode in posts/pages or use Gutenberg block.
+
+1. Go to **Settings > Coupon Vault**.
+2. Enter coupons in format: `Brand: CODE - Description` (one per line).
+3. Save changes.
+4. Add `[affiliate_coupon]` shortcode to any post/page.
 
 ## Usage
-- **Frontend**: Coupons display in a responsive grid. Clicks redirect to affiliate links with tracking.
-- **Tracking**: View click stats in admin. Integrates with Google Analytics via `gtag` events.
-- **Monetization Tips**: Partner with brands for exclusive codes, optimize for SEO, combine with memberships.[2][4]
-- **Shortcode Options**: `[acv_coupons limit="5"]` to limit display.
 
-## Premium Features (Freemium Model)
-- Advanced analytics dashboard.
-- Custom coupon templates.
-- Auto-expiry notifications.
-- WooCommerce integration.
+- **Display Coupons**: Paste shortcode in Gutenberg, Classic Editor, or widgets.
+- **Customize**: Edit coupons anytime in settings.
+- **Monetize**: Link codes to affiliate offers for commissions.[1][3]
+- **Pro Features**: Upgrade for tracking, custom designs, and bulk import.
 
-Support: Contact via plugin page. Updates ensure compatibility with WordPress 6.5+.
+## Support
+Contact support@example.com. Upgrade to Pro for priority help.
