@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Monetizer
  * Plugin URI: https://example.com/ai-content-monetizer
- * Description: Automatically generates affiliate-optimized product review content with personalized coupon codes and monetization blocks.
+ * Description: Automatically generates premium AI-powered content for paid members, with affiliate links and personalized coupons to boost monetization.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -19,93 +19,128 @@ if (!defined('ABSPATH')) {
 class AIContentMonetizer {
     public function __construct() {
         add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('ai_coupon_review', array($this, 'coupon_review_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_shortcode('ai_premium_content', array($this, 'premium_content_shortcode'));
+        add_action('wp_ajax_generate_ai_content', array($this, 'handle_ai_content'));
+        add_action('wp_ajax_nopriv_generate_ai_content', array($this, 'handle_ai_content'));
     }
 
     public function init() {
-        if (isset($_POST['aicm_generate'])) {
-            $this->generate_content();
+        if (get_option('aicm_pro_version')) {
+            // Pro features enabled
+            add_filter('the_content', array($this, 'protect_premium_content'));
         }
+        register_setting('aicm_settings', 'aicm_api_key');
+        register_setting('aicm_settings', 'aicm_pro_version');
+        register_setting('aicm_settings', 'aicm_affiliate_links');
     }
 
-    public function admin_menu() {
-        add_options_page('AI Content Monetizer', 'AI Content Monetizer', 'manage_options', 'ai-content-monetizer', array($this, 'admin_page'));
+    public function enqueue_scripts() {
+        wp_enqueue_script('aicm-script', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('aicm-script', 'aicm_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('aicm_nonce')));
     }
 
-    public function admin_page() {
-        if (isset($_POST['product_name'])) {
-            $product = sanitize_text_field($_POST['product_name']);
-            $affiliate_link = esc_url($_POST['affiliate_link']);
-            $coupon_code = strtoupper(substr(md5($product . time()), 0, 8));
-            $content = $this->generate_review_content($product, $affiliate_link, $coupon_code);
-            echo '<div class="notice notice-success"><p>Content generated! Use shortcode: [ai_coupon_review product="' . $product . '" coupon="' . $coupon_code . '" link="' . $affiliate_link . '"]</p></div>';
+    public function premium_content_shortcode($atts) {
+        if (!is_user_logged_in() || !current_user_can('read_premium_content')) {
+            return '<div id="aicm-paywall"><p><strong>Premium Content</strong>: <a href="' . wp_login_url() . '">Upgrade to Pro</a> to unlock AI-generated exclusive content with affiliate deals!</p></div>';
         }
+        ob_start();
         ?>
-        <div class="wrap">
-            <h1>AI Content Monetizer</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Product Name</th>
-                        <td><input type="text" name="product_name" class="regular-text" placeholder="e.g., Wireless Headphones" required /></td>
-                    </tr>
-                    <tr>
-                        <th>Affiliate Link</th>
-                        <td><input type="url" name="affiliate_link" class="regular-text" placeholder="https://affiliate-link.com" required /></td>
-                    </tr>
-                </table>
-                <p class="submit"><input type="submit" name="aicm_generate" class="button-primary" value="Generate Review Content" /></p>
-            </form>
-            <h2>Usage</h2>
-            <p>Insert the generated shortcode into any post or page to display monetized content with coupon.</p>
-            <p><strong>Upgrade to Pro</strong> for unlimited generations and advanced features: <a href="https://example.com/pro">Get Pro</a></p>
+        <div id="aicm-content">
+            <button id="generate-ai" class="button">Generate Premium AI Content</button>
+            <div id="aicm-output"></div>
         </div>
         <?php
+        return ob_get_clean();
     }
 
-    private function generate_review_content($product, $link, $coupon) {
-        $content = "<h3>Why You'll Love the " . esc_html($product) . "</h3>
-        <p>This amazing " . esc_html($product) . " offers top-tier performance at an unbeatable price. Perfect for everyday use!</p>
-        <blockquote><strong>Exclusive Coupon:</strong> Use code <code>" . esc_html($coupon) . "</code> for 20% off!</blockquote>
-        <p><a href=\"\" . esc_url($link) . \"\" class=\"button\" target=\"_blank\">Buy Now & Save <span class=\"coupon\">" . esc_html($coupon) . "</span></a></p>
-        <p><em>Affiliate disclosure: We earn from qualifying purchases.</em></p>";
+    public function handle_ai_content() {
+        check_ajax_referer('aicm_nonce', 'nonce');
+        if (!is_user_logged_in() || !get_option('aicm_pro_version')) {
+            wp_die('Pro required');
+        }
+        $topic = sanitize_text_field($_POST['topic']);
+        $api_key = get_option('aicm_api_key');
+        // Simulate AI generation (replace with real OpenAI API call)
+        $content = $this->generate_mock_ai_content($topic);
+        $affiliates = get_option('aicm_affiliate_links', array());
+        foreach ($affiliates as $link) {
+            $content .= "\n\n**Special Deal:** Check out this [affiliate product](" . esc_url($link['url']) . ") with exclusive coupon: " . $link['coupon'];
+        }
+        wp_send_json_success($content);
+    }
+
+    private function generate_mock_ai_content($topic) {
+        $templates = array(
+            "In-depth guide on $topic: Start with basics, advanced tips, and pro strategies.",
+            "Top 10 $topic tools with reviews and affiliate recommendations.",
+            "Ultimate $topic checklist for success in 2026."
+        );
+        return $templates[array_rand($templates)];
+    }
+
+    public function protect_premium_content($content) {
+        if (has_shortcode($content, 'ai_premium_content') && !current_user_can('read_premium_content')) {
+            return 'Premium content locked. <a href="/upgrade">Join Pro</a> for full access.';
+        }
         return $content;
-    }
-
-    public function coupon_review_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'product' => 'Product',
-            'coupon' => 'SAVE20',
-            'link' => '#',
-        ), $atts);
-
-        $product = esc_html($atts['product']);
-        $coupon = esc_html($atts['coupon']);
-        $link = esc_url($atts['link']);
-
-        return "<div class=\"ai-coupon-review\"><h3>" . $product . " Deal</h3><p>Exclusive: <strong>" . $coupon . "</strong> saves 20%!</p><a href=\"\" . $link . \"\" class=\"button button-primary\" target=\"_blank\">Claim Deal</a></div>";
-    }
-
-    public function activate() {
-        add_option('aicm_pro', 'free');
-        flush_rewrite_rules();
     }
 }
 
 new AIContentMonetizer();
 
-// Enqueue styles
-function aicm_styles() {
-    wp_enqueue_style('aicm-style', plugin_dir_url(__FILE__) . 'style.css');
-}
-add_action('wp_enqueue_scripts', 'aicm_styles');
+// Admin menu
+add_action('admin_menu', function() {
+    add_options_page('AI Content Monetizer', 'AI Monetizer', 'manage_options', 'aicm-settings', 'aicm_settings_page');
+});
 
-// Pro upsell notice
-function aicm_admin_notice() {
-    if (!get_option('aicm_dismissed_notice', false) && get_option('aicm_pro') === 'free') {
-        echo '<div class="notice notice-info is-dismissible"><p>Upgrade to <strong>AI Content Monetizer Pro</strong> for unlimited AI content generation! <a href="https://example.com/pro">Learn More</a></p></div>';
-    }
+function aicm_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1>AI Content Monetizer Settings</h1>
+        <form method="post" action="options.php">
+            <?php settings_fields('aicm_settings'); ?>
+            <table class="form-table">
+                <tr>
+                    <th>Pro Version Key</th>
+                    <td><input type="text" name="aicm_pro_version" value="<?php echo esc_attr(get_option('aicm_pro_version')); ?>" /></td>
+                </tr>
+                <tr>
+                    <th>AI API Key (OpenAI)</th>
+                    <td><input type="password" name="aicm_api_key" value="<?php echo esc_attr(get_option('aicm_api_key')); ?>" /></td>
+                </tr>
+                <tr>
+                    <th>Affiliate Links (JSON)</th>
+                    <td><textarea name="aicm_affiliate_links"><?php echo esc_textarea(json_encode(get_option('aicm_affiliate_links'))); ?></textarea><br><small>Format: [{"name":"Product","url":"link","coupon":"SAVE20"}]</small></td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
 }
-add_action('admin_notices', 'aicm_admin_notice');
+
+// Create assets/script.js placeholder (in real plugin, include file)
+// For single-file, inline JS
+add_action('wp_footer', function() {
+    if (is_user_logged_in()) {
+        ?>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#generate-ai').click(function() {
+                var topic = prompt('Enter content topic:');
+                $.post(aicm_ajax.ajax_url, {
+                    action: 'generate_ai_content',
+                    nonce: aicm_ajax.nonce,
+                    topic: topic
+                }, function(res) {
+                    if (res.success) {
+                        $('#aicm-output').html('<div class="aicm-generated">' + res.data + '</div>');
+                    }
+                });
+            });
+        });
+        </script>
+        <?php
+    }
+});
