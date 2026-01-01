@@ -6,10 +6,11 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoInserter
  * Plugin URI: https://example.com/smart-affiliate-autoinserter
- * Description: Automatically inserts relevant affiliate links into your WordPress content using keyword matching and AI-powered suggestions.
+ * Description: Automatically inserts relevant affiliate links into your WordPress content to boost monetization. Freemium model with Pro upgrade.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: smart-affiliate-autoinserter
  */
 
 if (!defined('ABSPATH')) {
@@ -21,56 +22,42 @@ class SmartAffiliateAutoInserter {
 
     public function __construct() {
         add_action('init', array($this, 'init'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_filter('the_content', array($this, 'auto_insert_links'), 99);
         add_action('admin_menu', array($this, 'admin_menu'));
         add_action('admin_init', array($this, 'admin_init'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        $this->options = get_option('smart_affiliate_options', array());
-    }
-
-    public function activate() {
-        add_option('smart_affiliate_options', array(
-            'keywords' => array(),
-            'enabled' => 1,
-            'max_links_per_post' => 3
+        $this->options = get_option('smart_affiliate_settings', array(
+            'api_key' => '',
+            'affiliates' => array(
+                array('keyword' => 'WordPress', 'link' => 'https://example.com/aff/wp?ref=123', 'max_inserts' => 2)
+            ),
+            'is_pro' => false,
+            'max_links_free' => 3
         ));
     }
 
-    public function deactivate() {
-        // Cleanup optional
-    }
-
     public function enqueue_scripts() {
-        if (is_admin()) return;
-        wp_enqueue_script('smart-affiliate-frontend', plugin_dir_url(__FILE__) . 'assets/frontend.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_script('smart-affiliate-js', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
     }
 
     public function auto_insert_links($content) {
-        if (!isset($this->options['enabled']) || !$this->options['enabled']) {
-            return $content;
-        }
+        if (is_admin() || !is_single()) return $content;
 
-        $keywords = isset($this->options['keywords']) ? $this->options['keywords'] : array();
-        if (empty($keywords)) {
-            return $content;
-        }
-
-        $max_links = isset($this->options['max_links_per_post']) ? (int)$this->options['max_links_per_post'] : 3;
         $inserted = 0;
+        $max_links = $this->options['is_pro'] ? 999 : $this->options['max_links_free'];
 
-        foreach ($keywords as $keyword => $link) {
+        foreach ($this->options['affiliates'] as $aff) {
             if ($inserted >= $max_links) break;
 
-            $pattern = '/\b' . preg_quote($keyword, '/') . '\b/i';
+            $pattern = '/\b' . preg_quote($aff['keyword'], '/') . '\b/i';
             if (preg_match_all($pattern, $content, $matches)) {
                 foreach ($matches as $match) {
                     if ($inserted >= $max_links) break;
-                    $replacement = '<a href="' . esc_url($link) . '" target="_blank" rel="nofollow noopener" class="smart-affiliate-link">' . $match . '</a>';
+                    $replacement = '<a href="' . esc_url($aff['link']) . '" target="_blank" rel="nofollow sponsored" class="smart-aff-link">' . $match . '</a>';
                     $content = preg_replace('/\b' . preg_quote($match, '/') . '\b/i', $replacement, $content, 1);
                     $inserted++;
                 }
@@ -81,61 +68,44 @@ class SmartAffiliateAutoInserter {
     }
 
     public function admin_menu() {
-        add_options_page(
-            'Smart Affiliate AutoInserter',
-            'Affiliate AutoInserter',
-            'manage_options',
-            'smart-affiliate',
-            array($this, 'admin_page')
-        );
+        add_options_page('Smart Affiliate Settings', 'Affiliate Inserter', 'manage_options', 'smart-affiliate', array($this, 'settings_page'));
     }
 
     public function admin_init() {
-        register_setting('smart_affiliate_options_group', 'smart_affiliate_options');
+        register_setting('smart_affiliate_group', 'smart_affiliate_settings');
     }
 
-    public function admin_page() {
+    public function settings_page() {
         if (isset($_POST['submit'])) {
-            update_option('smart_affiliate_options', $_POST['smart_affiliate_options']);
+            $this->options = wp_parse_args($_POST['smart_affiliate'], $this->options);
+            update_option('smart_affiliate_settings', $this->options);
             echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        $options = $this->options;
         ?>
         <div class="wrap">
             <h1>Smart Affiliate AutoInserter Settings</h1>
             <form method="post" action="">
-                <?php settings_fields('smart_affiliate_options_group'); ?>
+                <?php settings_fields('smart_affiliate_group'); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Enable Auto-Insertion</th>
-                        <td>
-                            <input type="checkbox" name="smart_affiliate_options[enabled]" value="1" <?php checked($options['enabled'], 1); ?> />
-                        </td>
+                        <th>Pro License Key</th>
+                        <td><input type="text" name="smart_affiliate[api_key]" value="<?php echo esc_attr($this->options['api_key']); ?>" /></td>
                     </tr>
                     <tr>
-                        <th>Max Links Per Post</th>
+                        <th>Affiliate Links</th>
                         <td>
-                            <input type="number" name="smart_affiliate_options[max_links_per_post]" value="<?php echo esc_attr($options['max_links_per_post']); ?>" min="1" max="10" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Keywords & Affiliate Links</th>
-                        <td>
-                            <div id="keyword-list">
-                                <?php
-                                $keywords = isset($options['keywords']) ? $options['keywords'] : array();
-                                $i = 0;
-                                foreach ($keywords as $kw => $link) {
-                                    echo '<div class="keyword-row">';
-                                    echo '<input type="text" name="smart_affiliate_options[keywords][' . $i . '][keyword]" placeholder="Keyword" value="' . esc_attr($kw) . '" />';
-                                    echo '<input type="url" name="smart_affiliate_options[keywords][' . $i . '][link]" placeholder="Affiliate Link" value="' . esc_attr($link) . '" />';
-                                    echo '<button type="button" class="button remove-keyword">Remove</button></div>';
-                                    $i++;
-                                }
-                                ?>
+                            <div id="affiliates">
+                                <?php foreach ($this->options['affiliates'] as $i => $aff): ?>
+                                <div class="aff-row">
+                                    <input type="text" name="smart_affiliate[affiliates][<?php echo $i; ?>][keyword]" placeholder="Keyword" value="<?php echo esc_attr($aff['keyword']); ?>" />
+                                    <input type="url" name="smart_affiliate[affiliates][<?php echo $i; ?>][link]" placeholder="Affiliate Link" value="<?php echo esc_attr($aff['link']); ?>" />
+                                    <input type="number" name="smart_affiliate[affiliates][<?php echo $i; ?>][max_inserts]" placeholder="Max Inserts per Post" value="<?php echo esc_attr($aff['max_inserts']); ?>" />
+                                    <button type="button" class="button remove-aff">Remove</button>
+                                </div>
+                                <?php endforeach; ?>
                             </div>
-                            <button type="button" id="add-keyword" class="button">Add Keyword</button>
-                            <p class="description">Enter keywords to match in content and corresponding affiliate links.</p>
+                            <button type="button" id="add-aff" class="button">Add Affiliate</button>
+                            <p class="description">Free version limited to <?php echo $this->options['max_links_free']; ?> links per post. <strong>Upgrade to Pro for unlimited!</strong></p>
                         </td>
                     </tr>
                 </table>
@@ -143,33 +113,35 @@ class SmartAffiliateAutoInserter {
             </form>
             <script>
             jQuery(document).ready(function($) {
-                let rowIndex = <?php echo $i; ?>;
-                $('#add-keyword').click(function() {
-                    $('#keyword-list').append(
-                        '<div class="keyword-row">' +
-                        '<input type="text" name="smart_affiliate_options[keywords][" + rowIndex + "][keyword]" placeholder="Keyword" />' +
-                        '<input type="url" name="smart_affiliate_options[keywords][" + rowIndex + "][link]" placeholder="Affiliate Link" />' +
-                        '<button type="button" class="button remove-keyword">Remove</button>' +
-                        '</div>'
-                    );
-                    rowIndex++;
+                $('#add-aff').click(function() {
+                    var i = $('#affiliates .aff-row').length;
+                    $('#affiliates').append('<div class="aff-row"><input type="text" name="smart_affiliate[affiliates]['+i+'][keyword]" placeholder="Keyword" /><input type="url" name="smart_affiliate[affiliates]['+i+'][link]" placeholder="Affiliate Link" /><input type="number" name="smart_affiliate[affiliates]['+i+'][max_inserts]" placeholder="Max Inserts per Post" /><button type="button" class="button remove-aff">Remove</button></div>');
                 });
-                $(document).on('click', '.remove-keyword', function() {
-                    $(this).parent().remove();
+                $(document).on('click', '.remove-aff', function() {
+                    $(this).closest('.aff-row').remove();
                 });
             });
             </script>
         </div>
         <?php
     }
+
+    public function activate() {
+        if (!get_option('smart_affiliate_settings')) {
+            update_option('smart_affiliate_settings', $this->options);
+        }
+    }
 }
 
 new SmartAffiliateAutoInserter();
 
-// Pro upgrade notice
-function smart_affiliate_pro_notice() {
+// Pro upsell notice
+function smart_affiliate_notice() {
     if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>Upgrade to <strong>Pro</strong> for AI keyword suggestions, analytics, and unlimited links! <a href="https://example.com/pro" target="_blank">Learn More</a></p></div>';
+    $options = get_option('smart_affiliate_settings');
+    if (!$options['is_pro']) {
+        echo '<div class="notice notice-info"><p>Unlock <strong>unlimited links, analytics, and AI optimization</strong> with <a href="https://example.com/pro" target="_blank">Smart Affiliate Pro</a> for just $49/year!</p></div>';
+    }
 }
-add_action('admin_notices', 'smart_affiliate_pro_notice');
+add_action('admin_notices', 'smart_affiliate_notice');
 ?>
