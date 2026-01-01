@@ -1,66 +1,38 @@
 # WP Exclusive Coupons Pro
 
-## Description
-
-**WP Exclusive Coupons Pro** is a powerful WordPress plugin that helps affiliate marketers and bloggers generate **exclusive, trackable coupon codes** automatically. Boost your commissions by offering personalized discounts that drive higher conversions. Inspired by top monetization strategies like custom coupons and affiliate links[1][2][3].
-
 ## Features
-
-- **Auto-generate unique coupon codes** for any affiliate product.
-- **Trackable affiliate links** with your ID embedded.
-- **Shortcode support**: `[wpec_coupons count="5"]` for easy embedding.
-- **Admin dashboard** to manage API keys and settings.
-- **Frontend AJAX** for instant coupon generation without page reloads.
-- **Freemium model**: Free for basics, Pro for unlimited coupons, analytics, and more.
-
-## Pro Features (Upgrade for $49/year)
-
-- Unlimited coupons and products.
-- Advanced analytics dashboard.
-- API integrations (Amazon, etc.).
-- Custom branding and white-label.
-- Priority support.
+- **Create unlimited exclusive coupons** with custom codes, affiliate links, and expiry dates (Pro).
+- **Track usage** via AJAX without page reloads.
+- **Shortcode support**: `[exclusive_coupon id="0"]` to display coupons anywhere.
+- **Admin dashboard** for easy management.
+- **Responsive design** with inline styles.
+- **Freemium model**: Free for 5 coupons, Pro unlocks analytics, auto-expiry, and more ($49/year).
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > Coupons Pro** to configure your affiliate ID and API key.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via WordPress Admin > Plugins.
+3. Go to **Coupons** menu to add coupons in JSON format.
 
 ## Setup
-
-1. Enter your **Affiliate ID** (e.g., Amazon Associates ID) in settings.
-2. Add affiliate product URLs where needed (shortcode buttons use placeholders).
-3. Use shortcode `[wpec_coupons]` in posts/pages.
-4. Customize CSS in `assets/frontend.js` (create folder for production).
+1. In **Coupons** admin page, edit the JSON textarea:
+   
+   {
+     "0": {
+       "name": "20% Off Hosting",
+       "code": "WP20",
+       "afflink": "https://your-affiliate-link.com",
+       "expiry": "2026-12-31",
+       "uses": 0
+     }
+   }
+   
+2. Save changes.
+3. Use shortcode `[exclusive_coupon id="0"]` in posts/pages.
 
 ## Usage
+- Embed coupons in blog posts for affiliate boosts.
+- Track clicks and uses in real-time.
+- **Pro Tip**: Pair with SEO plugins for "exclusive coupons" traffic.[1][2]
 
-### Basic Shortcode
-
-[wpec_coupons count="3"]
-
-Displays 3 coupon generators.
-
-### Custom Product
-Edit shortcode data-product attribute in code for real affiliate links.
-
-### Tracking
-Coupons append `?coupon=CODE&aff=YOURID` to links for tracking.
-
-## FAQ
-
-**How does it make money?**
-Affiliates earn commissions from higher conversions via exclusive coupons[2][3].
-
-**Is it compatible with WooCommerce?**
-Yes, works with any theme/shortcode-enabled site.
-
-**Support**
-Free version: Forums. Pro: Email support.
-
-## Changelog
-
-**1.0.0**
-* Initial release.
+## Pro Upgrade
+Get unlimited coupons, detailed analytics, email notifications, and priority support for $49/year.
