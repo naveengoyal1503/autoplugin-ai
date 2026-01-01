@@ -2,31 +2,36 @@
 
 ## Features
 
-- **Easy Shortcode Integration**: Use `[affiliate_coupon affiliate="amazon" discount="20%"]` to generate unique, trackable coupons instantly.
-- **Affiliate Link Tracking**: Automatically appends your affiliate tags and custom codes for commissions.
-- **Copy-to-Clipboard**: One-click coupon code copying for users.
-- **Freemium Model**: Free for basics; Pro adds unlimited coupons, analytics, and templates ($49/year).
-- **SEO-Friendly**: Custom discount pages optimized for search engines.
+- **Dynamic Coupon Generation**: Automatically creates unique, trackable coupon codes for affiliate offers.
+- **Shortcode Integration**: Use `[affiliate_coupon id="unique" affiliate="brand"]` anywhere on your site.
+- **Affiliate Tracking**: Appends your referral parameters to links for commissions.
+- **Admin Dashboard**: Manage API keys and affiliate links easily.
+- **Freemium Model**: Free core features; Pro unlocks unlimited coupons, analytics, and templates.
+- **Conversion Boost**: Personalized discounts increase clicks and sales.[1][2]
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your affiliate API keys (e.g., Amazon tag).
+3. Configure in **Coupon Vault** menu under admin dashboard.
 
 ## Setup
 
-1. Configure affiliate keys in settings.
-2. Add shortcode to any post/page: `[affiliate_coupon affiliate="amazon" discount="10% OFF"]`.
-3. Customize styles via CSS if needed.
+1. Go to **Coupon Vault** in WordPress admin.
+2. Enter your **API Key** (your unique tracking ID).
+3. Add affiliate links in JSON format: `{"amazon":"https://amazon.com/ref=yourid", "shopify":"https://shopify.link/ref=yourid"}`.
+4. Save settings.
 
 ## Usage
 
-- **Generate Coupon**: Use shortcode with `affiliate` (amazon, shopify, etc.), `discount`, optional `code`.
-- **Track Performance**: View stored coupons in settings (Pro: dashboard analytics).
-- **Pro Features**: Purchase upgrade for A/B testing, email capture, and more integrations.
+- Insert shortcode: `[affiliate_coupon affiliate="amazon"]` in posts/pages.
+- Visitors click **Generate Coupon** to reveal code and tracked link.
+- **Pro Upgrade**: $49/year for analytics dashboard, custom templates, and email capture.
 
-## Support
-Contact support@example.com. Pro users get priority.
+## Pro Features
 
-**Boost conversions 30%+ with exclusive coupons!**
+- Click/session tracking.
+- Custom coupon designs.
+- Integration with WooCommerce and memberships.[3][4]
+
+Support: example@example.com
