@@ -1,42 +1,57 @@
 # AI Content Profit Shield
 
-## Features
+**Monetize your WordPress site automatically!** This plugin scans posts for AI-generated content and inserts high-converting affiliate links, ads, or upsells to generate passive income.[1][2]
 
-- **AI Detection**: Scans content for AI generation patterns with a 0-100 score[1][2].
-- **Humanization Tips**: Provides actionable suggestions to make content more natural.
-- **Profit Booster**: Automatically inserts affiliate-optimized CTAs and discount promos in posts[1][3].
-- **Freemium Model**: Free for basic use; Pro unlocks unlimited scans and auto-optimization ($49/year).
-- **SEO-Friendly**: Enhances content for better rankings and conversions[2].
-- **One-Click Integration**: Works with Gutenberg and Classic Editor.
+## 🚀 Key Features
+- **AI Detection**: Uses OpenAI to identify AI-written content (free tier limited to 5 scans/day; Pro: unlimited).[1]
+- **Smart Monetization**: Auto-inserts affiliate links, AdSense code, or custom upsells in detected content.[3][4]
+- **Customizable**: Add your affiliate URLs, ad snippets, or promo codes via simple dashboard.[2][5]
+- **SEO-Friendly**: Monetization blocks are mobile-optimized and non-intrusive.[1]
+- **Pro Version**: A/B testing, bulk scanning, premium AI models, analytics ($49/year).[7]
 
-## Installation
+## 🎯 Target Users
+Bloggers, affiliate marketers, and site owners creating AI-assisted content who want to turn it into revenue streams.[1][3]
 
-1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate **AI Content Profit Shield**.
-4. Access settings via **Settings > AI Profit Shield**.
+## 💰 Why Profitable?
+- **Passive Income**: Earn commissions on every AI post without manual work.[1][2]
+- **High Demand**: With AI content booming in 2026, every site needs this edge.[1]
+- **Freemium Upsell**: Convert free users to Pro for recurring revenue.[7]
 
-## Setup
+## 📥 Installation
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > AI Profit Shield** to configure.[4]
 
-1. Go to **Settings > AI Profit Shield**.
-2. Enter Pro key (purchase at example.com/pro) for premium features.
-3. Enable **Auto-insert CTAs** for site-wide monetization.
-4. Customize CTA links in settings for your affiliate programs.
+## ⚙️ Setup
+1. **Get OpenAI Key**: Sign up at openai.com/api, paste API key in settings (free tier works).[1]
+2. **Add Affiliates**: Enter comma-separated links (e.g., Amazon, ClickBank) in settings.[2][3]
+3. **Insert Ad Code**: Paste AdSense/Google Ads or custom HTML.
+4. **Test**: Publish an AI-generated post and view frontend to see monetization in action.
 
-## Usage
+**Pro Tip**: Use with SEO plugins for max traffic and conversions.[1]
 
-### Quick Scan
-- Paste content in the admin tool.
-- Click **Scan for AI** to get instant score and tips.
-- Pro users: Click **Optimize** to humanize and add profit CTAs.
+## 📖 Usage
+- Install and configure once.
+- Plugin auto-scans **every single post** on frontend.
+- Detected AI content gets a styled monetization box with your links/ads.
+- Track earnings via your affiliate dashboards.
 
-### Auto-Monetization
-- Approved posts get affiliate CTAs appended automatically.
-- Edit `/affiliate-link` and `/affiliates` to your promo pages.
+**Example Output**:
 
-### Pro Upgrade
-- Unlimited scans.
-- Auto-optimization with personalized discounts.
-- Priority support.
+Related Deals & Tools:
+• Check this AI writing tool → [Affiliate Link]
+• [Your AdSense Ad]
 
-**Boost your blog revenue today!** Compatible with WooCommerce, memberships[4][5].
+
+## 🔒 Privacy & Security
+- No data sent without your API key.
+- GPL licensed, fully self-hosted.
+- Pro version includes GDPR tools.
+
+## 🆘 Support
+- Free: WordPress.org forums.
+- Pro: Priority email + updates.
+
+**Upgrade to Pro**: <a href="https://example.com/pro">Get Unlimited Scans & Analytics - $49/year</a>
+
+*Built for 2026 monetization trends: Affiliates + AI + WordPress.*[1][3]
