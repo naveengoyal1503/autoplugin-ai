@@ -1,67 +1,47 @@
 # Affiliate Coupon Vault
 
-**Boost your affiliate earnings with exclusive, auto-generated coupons!**
+A freemium WordPress plugin for bloggers and affiliate marketers to create dynamic coupon showcase pages that drive conversions and revenue.[1][2]
 
 ## Features
 
-- **Unique Coupons**: Generates personalized discount codes for each visitor
-- **Shortcode Ready**: Easy `[affiliate_coupon]` integration anywhere
-- **Conversion Optimized**: Eye-catching designs with one-click deals
-- **Affiliate Friendly**: Custom tracking links for Amazon, ClickBank, etc.
-- **Freemium Model**: Free core + Pro upgrade for advanced features
+- **Custom Post Type for Coupons**: Easily add coupons with affiliate links, codes, and discounts.[1][2]
+- **Shortcode Support**: Use `[acv_coupons count="5"]` to display coupons anywhere.[5]
+- **Responsive Grid Layout**: Mobile-friendly coupon cards with click-to-redeem buttons.
+- **Admin Dashboard**: Manage coupons and settings from WordPress backend.
+- **Pro Upsell**: Unlimited coupons, click tracking, analytics, custom branding ($49/year).[3][4][8]
 
-**Pro Features** (Upgrade for $49/year):
-- Unlimited coupons & products
-- Built-in analytics dashboard
-- Premium affiliate network integrations
-- Custom branding & templates
-- Export coupon data
+**Free vs Pro**
+
+| Feature | Free | Pro |
+|---------|------|-----|
+| Coupons | 10 max | Unlimited |
+| Tracking | No | Yes |
+| Analytics | No | Yes |
+| Support | Community | Priority |
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Use shortcode `[affiliate_coupon product="Your Product" url="your-link.com"]`
-4. Configure in **Settings > Coupon Vault**
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Create coupons at **Coupons > Add New** (add title, affiliate link, code, discount %).
+4. Insert `[acv_coupons]` shortcode on any page/post.
 
 ## Setup
 
-1. Go to **Settings > Coupon Vault**
-2. Set default discount percentage (10% default)
-3. Add your affiliate links via shortcode `url` parameter
-4. Embed shortcode in posts, pages, or sidebars
-
-**Example:**
-`[affiliate_coupon affiliate="amazon" product="Wireless Headphones" url="https://amazon.com/product?tag=yourid"]`
+1. Go to **Coupons > Settings** to configure version (Pro license for upgrade).
+2. Add your first coupon: Title (e.g., "50% Off Hosting"), Affiliate Link, Code (e.g., "SAVE50"), Discount (50%).
+3. Publish and embed shortcode on a dedicated "Deals" page for SEO traffic.[1][2]
 
 ## Usage
 
-### Basic Shortcode
-
-[affiliate_coupon product="50% Off Hosting"]
-
-
-### Advanced
-
-[affiliate_coupon product="Exclusive VPN Deal" url="https://vpn.com/?ref=yourid"]
-
-
-### Dynamic Features
-- Click "New Coupon" for fresh codes
-- Mobile-responsive design
-- Tracks clicks (Pro)
-
-## Why It's Profitable
-
-- **Unique Value**: Personalized coupons increase trust & conversions[1][2]
-- **Passive Income**: Works 24/7 on autopilot
-- **Scalable**: Unlimited sites with Pro
-- **High Demand**: Coupon plugins dominate affiliate niches[1][3]
+- **On Frontend**: Shortcode auto-generates a grid of clickable coupon cards.
+- **Customization**: Style via CSS or Pro customizer.
+- **Monetization Tips**: Promote niche deals (software, travel, wellness) for high conversions. Track Pro stats to optimize.[2][3]
+- **Pro Upgrade**: Visit settings for seamless upgrade to unlock tracking and remove limits.[8]
 
 ## Support
 
-- Documentation: Inside plugin
-- Pro Support: upgrade@affiliatecouponvault.com
-- Community: WordPress.org forums
+- Free: WordPress.org forums.
+- Pro: Email support@example.com.
 
-**Start earning commissions today! 🚀**
+**Start earning with exclusive coupons today!**
