@@ -1,35 +1,37 @@
 # Exclusive Affiliate Coupons Pro
 
-A powerful WordPress plugin that generates unique, trackable affiliate coupons to skyrocket your commissions. Inspired by successful monetization strategies like personalized discounts and affiliate tracking.[1][2]
-
 ## Features
-- **Generate Exclusive Coupons**: Create custom coupon codes with unique tracking IDs for each visitor.
-- **Shortcode Integration**: Use `[affiliate_coupon id="0"]` to display coupons anywhere.
-- **Affiliate Link Tracking**: Append coupon codes to affiliate links for performance tracking.
-- **Copy-to-Clipboard**: One-click copy functionality for user convenience.
-- **Responsive Design**: Mobile-friendly coupon displays with eye-catching styling.
-- **Admin Dashboard**: Easy JSON-based coupon management (Premium: Unlimited + templates).
-- **Freemium Ready**: Free version limits to 5 coupons; Pro unlocks unlimited features.
+
+- **Personalized Coupon Generation**: Create unique, trackable affiliate coupons with usage limits.
+- **Click Tracking**: Monitors coupon clicks and usage to optimize campaigns.
+- **Shortcode Integration**: Easy `[eac_coupon affiliate="amazon" code="SAVE20" discount="20%" link="https://amazon.com/deal" limit="50"]`.
+- **Freemium Model**: Free for 100 uses per coupon; Pro unlocks unlimited, analytics, and custom branding.
+- **Conversion Boost**: Displays remaining uses to create urgency[1][2].
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Affiliate Coupons** to configure.
+
+1. Upload the single PHP file to `/wp-content/plugins/exclusive-affiliate-coupons-pro/`.
+2. Activate via WordPress Admin > Plugins.
+3. Use shortcodes in posts/pages.
 
 ## Setup
-1. In the admin panel, add your coupons as JSON:
-   
-   [
-     {"name":"10% Off Hosting","code":"HOST10","affiliate_link":"https://affiliate.com/?ref=yourid","description":"Exclusive deal for our readers"}
-   ]
-   
-2. Save settings.
-3. Add shortcode to posts/pages: `[affiliate_coupon id="0"]` (id matches array index).
+
+1. Go to Settings > Exclusive Coupons (added by plugin).
+2. Enter your affiliate links and codes.
+3. For Pro: Purchase at example.com/pro and enter license key.
 
 ## Usage
-- **On Posts/Blog**: Embed shortcodes in affiliate content for personalized deals.[1][2]
-- **Landing Pages**: Create dedicated coupon pages for SEO and conversions.[2]
-- **Tracking**: Monitor unique codes in affiliate dashboards (e.g., Amazon Associates, wecantrack).[3]
-- **Pro Upgrade**: Get analytics, auto-generation, and integrations for $49/year.
 
-Boost your affiliate earnings today—start with exclusive coupons your audience loves![1][2][3]
+Insert shortcode: `[eac_coupon code="MYCOUPON" discount="15%" link="your-affiliate-link" limit="100"]`.
+
+- Tracks clicks via AJAX.
+- Limits free version to encourage Pro upgrade.
+- Style with CSS: `.eac-coupon { border: 1px solid #ccc; padding: 20px; }`.
+
+## Pro Features
+- Unlimited coupons.
+- Detailed analytics dashboard[3].
+- Custom promo code generation.
+- Priority support.
+
+Boost affiliate earnings today![1][2]
