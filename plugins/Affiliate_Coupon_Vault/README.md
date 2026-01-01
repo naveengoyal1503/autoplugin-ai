@@ -2,43 +2,32 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited affiliate coupons via admin dashboard (Pro: truly unlimited, analytics included).
-- **Shortcode Integration**: Use `[affiliate_coupon id="0"]` to display coupons anywhere.
-- **Expiration Tracking**: Coupons auto-expire with visual indicators.
-- **Click Tracking**: Basic logging (Pro: advanced analytics dashboard).
-- **Exclusive Deals**: Create reader-first custom promo codes to boost conversions[1][2].
-- **Freemium Model**: Free starter, upgrade to Pro for $49/year.
+- **Easy Coupon Management**: Add affiliate links and auto-generate tracking coupons via admin settings.
+- **Shortcode Integration**: Use `[affiliate_coupon brand="Amazon"]` to display branded coupons anywhere.
+- **Conversion Tracking**: Appends coupon codes to links for performance monitoring.
+- **Customizable Design**: Styled coupon boxes with click tracking support for Google Analytics.
+- **Freemium Ready**: Premium unlocks unlimited brands, analytics dashboard, and API imports.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via WordPress Admin > Plugins.
-3. Go to **Settings > Coupon Vault** to add your first coupon.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to configure affiliate links (JSON format: `{"Amazon":"https://amazon.com/?tag=yourid"}`).
 
 ## Setup
 
-1. In admin, add affiliate link, coupon code, discount %, and expiration date.
-2. Copy the shortcode (e.g., `[affiliate_coupon id="0"]`) for your posts/pages.
-3. Customize styles via CSS if needed.
-
-**Pro Setup**: Purchase upgrade for API integrations and full tracking.
+1. In the settings page, enter your affiliate links as JSON.
+2. Set a default coupon code (e.g., `SAVE20`).
+3. Add shortcodes to posts/pages: `[affiliate_coupon brand="YourBrand"]`.
+4. Optional: Integrate with Google Analytics for click tracking.
 
 ## Usage
 
-- **On Posts**: Embed shortcode to showcase deals.
-- **Landing Pages**: Create dedicated coupon pages for SEO[2].
-- **Affiliate Boost**: Personalized codes improve rates over generic links[1][3].
+- **Display Coupons**: Embed shortcodes in blog posts for exclusive deals.
+- **Track Performance**: Monitor conversions via your affiliate dashboard using appended coupon codes.
+- **Boost Revenue**: Personalized coupons increase clicks and sales[1][2].
+- **Upgrade to Pro**: For advanced features like auto-expiration and email capture.
 
-**Example**:
+## Support
 
-[affiliate_coupon id="0"]
-
-Displays: **SAVE20** - 20% OFF | [Get Deal Now]
-
-## Pro Features
-- Unlimited coupons & A/B testing.
-- Real-time click/conversion analytics.
-- Auto-generation of unique codes.
-- Email capture for leads.
-
-Support: example.com/support | Upgrade: example.com/pro
+Report issues or suggest features via WordPress.org forums.
