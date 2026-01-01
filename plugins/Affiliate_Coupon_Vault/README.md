@@ -2,42 +2,37 @@
 
 ## Features
 
-- **Automatic Coupon Display**: Shortcode `[acv_coupons limit="5"]` to show latest affiliate coupons.
-- **Click Tracking**: Built-in Google Analytics event tracking for commissions optimization.
-- **Responsive Design**: Mobile-friendly coupon grids.
-- **Sample Coupons Included**: Ready-to-use demo data; premium fetches real-time from affiliate APIs.
-- **Freemium Upsell**: Premium version adds API integrations (CJ, ShareASale), custom categories, analytics dashboard ($49/year).
-
-**Why Profitable?** Coupon plugins drive high engagement and affiliate conversions. Similar plugins like WP Coupons generate revenue via freemium[1][2].
+- **Easy Shortcode Integration**: Use `[acv_coupon affiliate_url="https://example.com" code="SAVE20" description="20% off!" expiry="2026-12-31" brand="Example Brand"]` to embed trackable coupons anywhere.
+- **Click Tracking**: Monitors coupon redemptions with unique stats per coupon (free version limited to 5 clicks per coupon).
+- **Customizable Design**: Responsive, branded coupon boxes with expiry dates and descriptions.
+- **Pro Upgrade**: Unlimited coupons, detailed analytics dashboard, affiliate network integrations, exportable reports ($49/year).
+- **SEO-Friendly**: Generates schema markup for rich snippets in search results.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Use shortcode `[acv_coupons]` in any post/page.
+1. Download and upload the plugin ZIP to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Use the shortcode in any post, page, or widget.
 
 ## Setup
 
-1. Add your Google Analytics ID (via gtag.js) for tracking.
-2. Customize coupons in premium dashboard.
-3. For premium: Enter API keys from affiliate networks.
+1. **Basic Usage**: Insert the shortcode with your affiliate link and coupon details.
+2. **Pro Activation**: Purchase Pro, upload license key in Settings > Affiliate Coupon Vault.
+3. **Customization**: Style via CSS or Pro theme options.
 
 ## Usage
 
-- Insert `[acv_coupons limit="3"]` to display 3 coupons.
-- Track clicks in Google Analytics under Events > coupon.
-- **Pro Tip**: Place on sidebar, dedicated coupon page, or niche posts for max conversions[1][3].
+### Example Shortcode
 
-## Premium Features
+[acv_coupon affiliate_url="https://your-affiliate-link.com" code="WELCOME10" description="10% off first purchase!" expiry="2026-06-30" brand="Your Partner Brand"]
 
-- Live API syncing from 10+ networks.
-- Custom expiration alerts.
-- Advanced analytics and A/B testing.
 
-**Upgrade**: Visit admin notice or [example.com/premium].
+### Viewing Stats
+Coupon stats appear below each box after clicks (Pro users get full dashboard at `/wp-admin/admin.php?page=acv-pro-dashboard`).
 
-## Support
+### Pro Features
+- Advanced tracking with UTM parameters.
+- Bulk coupon importer.
+- Integration with Amazon Associates, etc.
 
-Report issues on GitHub or email support@example.com.
-
-**License**: GPL v2+
+**Upgrade now for higher conversions and revenue!**
