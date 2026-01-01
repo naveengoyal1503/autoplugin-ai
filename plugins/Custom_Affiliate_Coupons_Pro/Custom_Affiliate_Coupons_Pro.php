@@ -5,124 +5,148 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Custom Affiliate Coupons Pro
- * Plugin URI: https://example.com/affiliate-coupons-pro
- * Description: Generate personalized affiliate coupons with tracking and analytics to maximize commissions.
+ * Plugin URI: https://example.com/custom-affiliate-coupons
+ * Description: Create, manage, and track personalized affiliate coupons to boost conversions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: custom-affiliate-coupons
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class CustomAffiliateCouponsPro {
-    private static $instance = null;
-    public $coupons = [];
-
-    public static function get_instance() {
-        if (null == self::$instance) {
-            self::$instance = new self;
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
-        add_action('init', [$this, 'init']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
-        add_action('admin_menu', [$this, 'admin_menu']);
-        add_shortcode('cac_coupon', [$this, 'coupon_shortcode']);
-        register_activation_hook(__FILE__, [$this, 'activate']);
+    public function __construct() {
+        add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_shortcode('cac_coupon', array($this, 'coupon_shortcode'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        $this->coupons = get_option('cac_coupons', []);
+        if (is_admin()) {
+            add_action('admin_init', array($this, 'admin_init'));
+        }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('cac-script', plugin_dir_url(__FILE__) . 'cac.js', ['jquery'], '1.0.0', true);
-        wp_enqueue_style('cac-style', plugin_dir_url(__FILE__) . 'cac.css', [], '1.0.0');
+        wp_enqueue_style('cac-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+        wp_enqueue_script('cac-script', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0.0', true);
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate Coupons', 'Affiliate Coupons', 'manage_options', 'cac-pro', [$this, 'admin_page']);
+        add_menu_page('Coupons', 'Coupons', 'manage_options', 'cac-coupons', array($this, 'admin_page'));
+    }
+
+    public function admin_init() {
+        register_setting('cac_options', 'cac_coupons', array($this, 'sanitize_coupons'));
+    }
+
+    public function sanitize_coupons($input) {
+        return is_array($input) ? array_map('sanitize_text_field', $input) : array();
     }
 
     public function admin_page() {
-        if (isset($_POST['cac_save'])) {
-            update_option('cac_coupons', $_POST['coupons']);
+        if (isset($_POST['submit'])) {
+            update_option('cac_coupons', $_POST['cac_coupons']);
             echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
         }
+        $coupons = get_option('cac_coupons', array());
         ?>
         <div class="wrap">
-            <h1>Custom Affiliate Coupons Pro</h1>
-            <form method="post">
+            <h1>Manage Affiliate Coupons</h1>
+            <form method="post" action="">
                 <table class="form-table">
                     <tr>
-                        <th>Coupon Name</th>
-                        <td><input type="text" name="coupons[name]" value="<?php echo esc_attr($this->coupons['name'] ?? ''); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th>Affiliate Link</th>
-                        <td><input type="url" name="coupons[link]" value="<?php echo esc_attr($this->coupons['link'] ?? ''); ?>" size="50" /></td>
-                    </tr>
-                    <tr>
+                        <th>Name</th>
                         <th>Code</th>
-                        <td><input type="text" name="coupons[code]" value="<?php echo esc_attr($this->coupons['code'] ?? 'SAVE10'); ?>" /></td>
+                        <th>Affiliate URL</th>
+                        <th>Action</th>
                     </tr>
+                    <?php foreach ($coupons as $index => $coupon): ?>
                     <tr>
-                        <th>Expiry (days)</th>
-                        <td><input type="number" name="coupons[expiry]" value="<?php echo esc_attr($this->coupons['expiry'] ?? 30); ?>" /></td>
+                        <td><input type="text" name="cac_coupons[<?php echo $index; ?>][name]" value="<?php echo esc_attr($coupon['name']); ?>" /></td>
+                        <td><input type="text" name="cac_coupons[<?php echo $index; ?>][code]" value="<?php echo esc_attr($coupon['code']); ?>" /></td>
+                        <td><input type="url" name="cac_coupons[<?php echo $index; ?>][url]" value="<?php echo esc_attr($coupon['url']); ?>" /></td>
+                        <td><a href="#" onclick="return deleteRow(this)">Delete</a></td>
                     </tr>
+                    <?php endforeach; ?>
                 </table>
-                <p class="submit"><input type="submit" name="cac_save" class="button-primary" value="Save Coupon" /></p>
+                <p><input type="button" class="button" value="Add New" onclick="addRow()" /></p>
+                <?php submit_button(); ?>
             </form>
-            <h2>Shortcode</h2>
-            <p>Use <code>[cac_coupon id="0"]</code> to display.</p>
-            <?php if (!function_exists('cac_pro_features')) { ?>
-            <div class="notice notice-info"><p>Upgrade to Pro for unlimited coupons and analytics!</p></div>
-            <?php } ?>
         </div>
+        <script>
+        function addRow() {
+            const table = document.querySelector('.form-table');
+            const row = table.insertRow();
+            row.innerHTML = `<td><input type="text" name="cac_coupons[${table.rows.length - 1}][name]" /></td><td><input type="text" name="cac_coupons[${table.rows.length - 1}][code]" /></td><td><input type="url" name="cac_coupons[${table.rows.length - 1}][url]" /></td><td><a href="#" onclick="return deleteRow(this)">Delete</a></td>`;
+        }
+        function deleteRow(link) {
+            if (confirm('Delete this coupon?')) {
+                link.closest('tr').remove();
+            }
+            return false;
+        }
+        </script>
         <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(['id' => 0], $atts);
-        $coupon = $this->coupons[$atts['id']] ?? null;
-        if (!$coupon) return 'Coupon not found.';
-
-        $expired = isset($coupon['created']) && (time() - $coupon['created'] > $coupon['expiry'] * 86400);
-        if ($expired) return '<div class="cac-expired">Coupon expired!</div>';
-
-        $code = $coupon['code'];
-        $link = $coupon['link'] . (strpos($coupon['link'], '?') ? '&' : '?') . 'ref=' . uniqid();
-
+        $atts = shortcode_atts(array('id' => 0), $atts);
+        $coupons = get_option('cac_coupons', array());
+        if (!isset($coupons[$atts['id']])) {
+            return 'Coupon not found.';
+        }
+        $coupon = $coupons[$atts['id']];
+        $track_id = uniqid('cac_');
+        $tracked_url = add_query_arg('cac_track', $track_id, $coupon['url']);
         ob_start();
         ?>
-        <div class="cac-coupon">
+        <div class="cac-coupon" data-track="<?php echo esc_attr($track_id); ?>">
             <h3><?php echo esc_html($coupon['name']); ?></h3>
-            <p>Use code: <strong><?php echo esc_html($code); ?></strong></p>
-            <a href="<?php echo esc_url($link); ?>" class="cac-button" target="_blank">Get Deal</a>
-            <small>Expires in <?php echo $coupon['expiry']; ?> days</small>
+            <div class="coupon-code"><?php echo esc_html($coupon['code']); ?></div>
+            <a href="<?php echo esc_url($tracked_url); ?>" class="coupon-button" target="_blank">Get Deal & Track</a>
         </div>
         <?php
         return ob_get_clean();
     }
 
     public function activate() {
-        $default = ['0' => ['name' => 'Sample Deal', 'link' => '#', 'code' => 'WELCOME20', 'expiry' => 30, 'created' => time()]];
-        update_option('cac_coupons', $default);
+        if (!get_option('cac_coupons')) {
+            update_option('cac_coupons', array());
+        }
     }
 }
 
-CustomAffiliateCouponsPro::get_instance();
+new CustomAffiliateCouponsPro();
 
-// Pro check stub
-function cac_pro_features() { return false; } // Replace with license check in pro
+// Pro notice
+function cac_pro_notice() {
+    if (!current_user_can('manage_options')) return;
+    echo '<div class="notice notice-info"><p>Upgrade to <strong>Custom Affiliate Coupons Pro</strong> for analytics and unlimited coupons! <a href="https://example.com/pro" target="_blank">Learn More</a></p></div>';
+}
+add_action('admin_notices', 'cac_pro_notice');
 
-// Inline styles and scripts for single file
-add_action('wp_head', function() {
-    echo '<style>.cac-coupon { border: 2px dashed #0073aa; padding: 20px; margin: 20px 0; text-align: center; background: #f9f9f9; }.cac-button { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }.cac-expired { color: red; }</style>';
-});
+// Minimal CSS
+/*
+.cac-coupon { border: 2px dashed #0073aa; padding: 20px; text-align: center; margin: 20px 0; background: #f9f9f9; }
+.coupon-code { font-size: 2em; font-weight: bold; color: #0073aa; margin: 10px 0; }
+.coupon-button { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+.coupon-button:hover { background: #005a87; }
+*/
 
-add_action('wp_footer', function() {
-    echo '<script>jQuery(".cac-button").click(function(){ console.log("Coupon clicked!"); });</script>';
-});
+// Minimal JS
+/*
+(function($) {
+    $(document).on('click', '.coupon-button', function(e) {
+        const track = $(this).closest('.cac-coupon').data('track');
+        // Send tracking beacon in pro version
+        console.log('Tracking coupon:', track);
+    });
+})(jQuery);
+*/
+?>
