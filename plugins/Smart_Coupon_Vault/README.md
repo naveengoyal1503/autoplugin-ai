@@ -2,43 +2,42 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add, edit, and delete coupons via intuitive admin dashboard (free: up to 5 coupons).
-- **Affiliate-Optimized**: Trackable links with custom discount codes for higher conversions.[1][2]
-- **Shortcode Display**: Use `[scv_coupon_display]` to embed beautiful, responsive coupon grids anywhere.
-- **Pro Features** (Upgrade for $49/year):
-  - Unlimited coupons
-  - AI-powered coupon generation & optimization
-  - Click analytics & conversion tracking
-  - Custom branding & premium templates
-  - Email capture integration
+- **Easy Coupon Management**: Add, edit, and delete custom coupon codes with affiliate links via intuitive admin dashboard.
+- **Randomized Display**: Shortcode `[scv_coupon_display limit="5"]` shows random active coupons on any page or post.
+- **Usage Tracking**: Monitor coupon uses and set maximum limits.
+- **Expiration Dates**: Automatically hide expired coupons.
+- **Copy-to-Clipboard**: One-click copy for user convenience.
+- **Freemium Ready**: Built-in Pro upsell notice for premium features like analytics and unlimited coupons.
+- **Self-Contained**: Single PHP file, no dependencies.
 
-**Boost revenue with exclusive deals that position your site as a money-saving hub!**[1][2]
+**Pro Version** (coming soon): Advanced analytics, email capture, A/B testing, WooCommerce integration ($29/year).
 
 ## Installation
 
-1. Upload the `smart-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to add your first coupon.
-4. Insert `[scv_coupon_display]` shortcode on any page/post.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate **Smart Coupon Vault**.
+4. Visit **Settings > Coupon Vault** to add your first coupon.
 
 ## Setup
 
-1. **Add Coupons**: Enter code, description, affiliate link, and discount %.
-2. **Display**: Use shortcode in Gutenberg, Classic Editor, or widgets.
-3. **Customize**: Pro users get advanced styling options.
+1. Go to **Settings > Coupon Vault**.
+2. Fill in **Code**, **Affiliate URL**, **Discount**, **Brand**, **Max Uses**, and **Expires**.
+3. Click **Add Coupon**.
+4. Use shortcode `[scv_coupon_display]` in posts/pages/widgets to display coupons.
 
 ## Usage
 
-- **Frontend**: Coupons appear as eye-catching cards with % off badges and CTA buttons.
-- **Admin**: Real-time add/delete without page reloads.
-- **Monetization Tip**: Partner with brands for custom codes to increase affiliate earnings.[2]
+- **Display Coupons**: Paste `[scv_coupon_display limit="3"]` anywhere (limit is optional).
+- **Customization**: Style via CSS targeting `.scv-coupon` class.
+- **Monetization**: Link affiliate URLs to earn commissions on clicks/sales.
+- **Ajax Generate**: Premium feature for auto-generating unique codes.
 
-## Pro Upgrade
+## FAQ
 
-Unlock full potential: [Upgrade Now](https://example.com/pro) ($49/year) for unlimited features and support.
+**Is it mobile-friendly?** Yes, responsive design.
+**Does it track clicks?** Basic in free; full analytics in Pro.
+**Compatible with themes?** Yes, works with any WordPress theme.
 
 ## Support
-
-Report issues via WordPress.org forums or email support@example.com.
-
-**Version 1.0.0 | Compatible with WordPress 6.0+**
+Contact support@example.com or visit our site for Pro upgrades.
