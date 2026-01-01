@@ -2,38 +2,32 @@
 
 ## Features
 
-- **Easy Shortcode Integration**: Use `[affiliate_coupon]` to create stunning coupon displays anywhere on your site.
-- **Click Tracking**: Tracks all coupon clicks with IP logging for performance analytics (Pro: Detailed dashboard).
-- **Reveal Animation**: Engaging reveal effect to boost user interaction and conversions.
-- **Customizable**: Titles, discounts, images, and button text fully customizable.
-- **Affiliate Ready**: Seamlessly appends tracking parameters to your affiliate links.
-- **Pro Version**: Unlimited coupons, analytics dashboard, A/B testing, email capture (Upgrade for $49/year).
+- **Automated Coupon Display**: Shortcode `[affiliate_coupon_vault]` generates niche-specific exclusive coupons with affiliate links.
+- **Conversion-Optimized**: Eye-catching design with copyable codes and direct shop links.
+- **Easy Integration**: Works with any theme; customizable via shortcode attributes (e.g., `niche="tech" count="5"`).
+- **Transparency**: Discloses affiliate commissions to build trust.
+- **Freemium Model**: Free version for basics; **Pro** adds analytics, custom networks (Amazon, etc.), unlimited coupons, and branding removal.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. No configuration needed for basic use!
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Use shortcode `[affiliate_coupon_vault]` in posts/pages.
 
 ## Setup
 
-1. Go to **Settings > Affiliate Coupon Vault** (Pro) for global settings.
-2. Create a coupon using the shortcode:
-   
-   [affiliate_coupon id="coupon1" title="20% Off Hosting" discount="20% OFF" affiliate_link="https://affiliate-link.com/?ref=yourid" image="https://example.com/coupon.jpg" button_text="Grab Deal"]
-   
+1. Go to **Settings > Coupon Vault** to view settings (Pro upsell).
+2. Replace sample affiliate links in plugin code with your own (e.g., Amazon Associates, hosting affiliates).
+3. Customize niche in shortcode: `[affiliate_coupon_vault niche="tech"]`.
 
 ## Usage
 
-- **Insert Shortcode**: Add to posts, pages, or widgets.
-- **Track Performance**: View basic stats in tools (Pro: Dedicated dashboard).
-- **Customization**: Style via CSS or Pro templates.
-- **Monetization Tip**: Use with affiliate programs like Amazon Associates or hosting providers for max earnings.
+- **Basic**: Add shortcode to sidebar, posts, or dedicated deals page.
+- **Advanced (Pro)**: Track clicks, A/B test coupons, integrate with WooCommerce/email newsletters.
+- **Monetization Tip**: Position as "exclusive reader deals" to boost engagement and commissions[1][2].
 
 ## Pro Upgrade
 
-Unlock analytics, unlimited coupons, and more at [example.com/pro](https://example.com/pro).
+Unlock unlimited potential for $49/year: [Get Pro](https://example.com/pro)
 
-## Support
-
-Contact support@example.com or visit the documentation.
+**Support**: Contact support@example.com
