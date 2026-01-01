@@ -2,51 +2,45 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin interface (Pro: Auto-generate from affiliate APIs)
-- **Trackable Affiliate Links**: Every click is logged for performance insights (Pro: Detailed analytics dashboard)
-- **Beautiful Shortcodes**: Embed coupons anywhere with `[affiliate_coupon]`
-- **Conversion Boost**: Exclusive deals increase reader trust and sales
-- **Lightweight & Self-Contained**: Single PHP file, no dependencies
-- **Freemium Model**: Free core features, premium unlocks advanced tracking and customization
+- **Easy Coupon Management**: Add, edit, and manage exclusive affiliate coupons via intuitive admin dashboard.
+- **Shortcode Integration**: Embed coupons anywhere with `[affiliate_coupon_vault id="1"]`.
+- **Responsive Design**: Mobile-friendly coupon displays with eye-catching styling.
+- **Affiliate Tracking Ready**: Custom links for commissions from networks like Amazon Associates, ShareASale.
+- **Freemium Model**: Free for up to 5 coupons; **Pro** adds unlimited coupons, expiry dates, click analytics, A/B testing, and premium integrations.
 
 ## Installation
 
-1. Download the plugin ZIP
-2. In WordPress admin: Plugins > Add New > Upload Plugin
-3. Activate "Affiliate Coupon Vault"
-4. Go to Settings > Coupon Vault to add your first coupon
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
+4. Use the shortcode `[affiliate_coupon_vault id="1"]` in posts/pages.
 
 ## Setup
 
-1. **Add Coupons**: In Settings > Coupon Vault, enter coupons in format:
-   
-   Coupon Code: SAVE20
-   Affiliate Link: https://your-affiliate-link.com
-   Description: 20% off your first purchase!
-   
-2. **Embed on Site**: Use shortcode `[affiliate_coupon]` in posts/pages
-3. **Customize**: Style via CSS targeting `.acv-coupon` class
+1. In admin: Add coupon details (title, discount, description, affiliate link, CTA, code).
+2. Save and copy the ID.
+3. Insert shortcode on your site.
+4. **Pro Tip**: Place on sidebar, dedicated deals page, or niche posts for max conversions [1][2].
 
 ## Usage
 
-- **Basic Shortcode**: `[affiliate_coupon]` - Shows first coupon
-- **Specific Coupon**: `[affiliate_coupon id="2"]` (line number, starting at 1)
-- **Track Clicks**: All buttons automatically track via AJAX
+- **Shortcode**: `[affiliate_coupon_vault id="X"]` where X is coupon ID.
+- **Customization**: Style via CSS classes like `.acv-coupon-vault`, `.acv-discount`.
+- **Monetization**: Earn commissions via affiliate links + upsell Pro for recurring revenue.
+- **Best Practices**: Use personalized codes for brands, optimize for SEO [2].
 
-### Example Output
+## Pro Version
 
-🎉 Exclusive Deal: SAVE20
-20% off your first purchase!
-[Get Deal Now (Tracked)]
+Upgrade for:
+- Unlimited coupons
+- Usage analytics & tracking
+- Auto-expiry & scheduling
+- Custom branding
+- Priority support
 
+Get Pro: [Upgrade Now]($49/year)
 
-## Pro Version (Coming Soon)
-- Unlimited coupons & auto-generation
-- Click analytics dashboard
-- Custom branding & templates
-- API integrations (Amazon, etc.)
+## Changelog
 
-## Support
-Contact support@example.com | Changelog in plugin files
-
-**Boost your affiliate earnings today!**
+**1.0.0**
+- Initial release with core features.
