@@ -2,29 +2,31 @@
 
 ## Features
 
-- **Generate Unique Coupons**: Create personalized, expiring coupon codes linked to your affiliate offers.[1][2]
-- **Shortcode Display**: Embed coupons anywhere with `[cac_coupon_display id="your-id"]`.
-- **Usage Tracking**: Monitor clicks and redemptions for revenue optimization.
-- **Pro Version**: Unlimited coupons, analytics dashboard, custom branding, email integrations ($49/year).
-- **SEO-Friendly**: Optimized for search engines and reader engagement.[1]
+- **Generate Unique Coupons**: Create custom promo codes linked to your affiliate URLs for exclusive deals.
+- **Usage Tracking**: Monitor coupon redemptions with use counts and limits.
+- **Expiration Management**: Set expiry dates for time-sensitive offers.
+- **Shortcode Integration**: Embed coupons anywhere with `[cac_coupon code="YOURCODE"]`.
+- **Admin Dashboard**: Easy interface to add, view, and manage coupons.
+- **Pro Version**: Unlimited coupons, advanced analytics, email capture, custom designs ($49/year).
 
 ## Installation
 
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+1. Download and upload the plugin ZIP to your WordPress admin > Plugins > Add New.
 2. Activate the plugin.
-3. Go to Settings > Affiliate Coupons to generate your first coupon.
+3. Visit **Coupons** in the admin menu to create your first coupon.
 
 ## Setup
 
-1. In the admin panel (Settings > Affiliate Coupons), enter affiliate link, code, and discount %.
-2. Click Generate to get a shortcode.
-3. Paste the shortcode in posts, pages, or widgets.
+1. Go to **Coupons** > Add new coupon with code, affiliate URL, max uses, and expiry.
+2. Copy the shortcode e.g., `[cac_coupon code="SAVE20"]`.
+3. Paste into any post, page, or widget.
+4. Partner with brands for custom codes to boost uniqueness and conversions.
 
 ## Usage
 
-- **Frontend**: Visitors see styled coupon boxes with redeem buttons. Tracks clicks automatically.
-- **Backend Dashboard**: View all coupons, usage stats, and expiration dates.
-- **Monetization Tips**: Partner with brands for exclusive codes, embed in niche content for higher conversions.[1][2][3]
-- **Pro Upgrade**: Unlock advanced features via the admin notice link.
+- **Frontend**: Visitors see styled coupon box with redeem button; tracks clicks server-side.
+- **Backend**: View stats like uses/max uses in the coupons table.
+- **Tips**: Use for affiliate blogs, niche sites (e.g., software, travel). SEO-optimize coupon pages for traffic.
+- **Pro Upgrade**: Unlock analytics dashboard, A/B testing, and integrations.
 
-**Support**: Contact support@example.com. Freemium model inspired by successful WP monetization strategies.[1][7]
+**Support**: Contact support@example.com | [Pro Demo](https://example.com/demo)
