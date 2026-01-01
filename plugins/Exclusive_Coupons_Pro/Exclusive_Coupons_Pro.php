@@ -6,11 +6,10 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Exclusive Coupons Pro
  * Plugin URI: https://example.com/exclusive-coupons-pro
- * Description: Generate exclusive affiliate coupons with tracking and expiration for higher conversions.
+ * Description: Generate and manage exclusive affiliate coupons to boost conversions and monetize your WordPress site.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: exclusive-coupons-pro
  */
 
 if (!defined('ABSPATH')) {
@@ -26,55 +25,84 @@ class ExclusiveCouponsPro {
     }
 
     public function init() {
-        wp_register_style('ecp-admin-style', plugin_dir_url(__FILE__) . 'style.css');
-        wp_enqueue_style('ecp-admin-style');
+        wp_register_style('ecp-admin-style', plugin_dir_url(__FILE__) . 'admin-style.css');
+        wp_register_script('ecp-admin-script', plugin_dir_url(__FILE__) . 'admin-script.js', array('jquery'), '1.0.0', true);
     }
 
     public function admin_menu() {
-        add_menu_page('Exclusive Coupons', 'Coupons Pro', 'manage_options', 'exclusive-coupons', array($this, 'admin_page'));
+        add_menu_page('Exclusive Coupons', 'Coupons Pro', 'manage_options', 'exclusive-coupons', array($this, 'admin_page'), 'dashicons-tickets-alt');
     }
 
     public function admin_page() {
         if (isset($_POST['submit'])) {
             update_option('ecp_coupons', sanitize_textarea_field($_POST['coupons']));
+            echo '<div class="notice notice-success"><p>Coupons saved!</p></div>';
         }
         $coupons = get_option('ecp_coupons', '');
-        echo '<div class="wrap"><h1>Manage Exclusive Coupons</h1><form method="post"><textarea name="coupons" rows="10" cols="50">' . esc_textarea($coupons) . '</textarea><p>Format: Code|AffiliateLink|Description|Expiry Days</p><p class="submit"><input type="submit" name="submit" class="button-primary" value="Save"></p></form></div>';
+        ?>
+        <div class="wrap">
+            <h1>Manage Exclusive Coupons</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">Coupons (JSON format)</th>
+                        <td><textarea name="coupons" rows="10" cols="50" class="large-text"><?php echo esc_textarea($coupons); ?></textarea></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+            <h2>Shortcode Usage</h2>
+            <p>Use <code>[exclusive_coupon id="1"]</code> to display a coupon. Pro version unlocks click tracking.</p>
+        </div>
+        <?php
     }
 
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array('id' => ''), $atts);
-        $coupons = explode('\n', get_option('ecp_coupons', ''));
-        foreach ($coupons as $coupon) {
-            $parts = explode('|', trim($coupon));
-            if (count($parts) >= 4 && $parts === $atts['id']) {
-                $expiry = strtotime('+' . $parts[3] . ' days');
-                if (time() > $expiry) {
-                    return '<p class="expired-coupon">Coupon expired!</p>';
-                }
-                $clicks = get_option('ecp_clicks_' . $parts, 0) + 1;
-                update_option('ecp_clicks_' . $parts, $clicks);
-                return '<div class="exclusive-coupon"><h3>' . esc_html($parts[2]) . '</h3><p>Code: <strong>' . esc_html($parts) . '</strong></p><a href="' . esc_url($parts[1]) . '" target="_blank" class="coupon-btn">Get Deal (Tracked: ' . $clicks . ')</a></div>';
-            }
+        $atts = shortcode_atts(array('id' => '1'), $atts);
+        $coupons = json_decode(get_option('ecp_coupons', '[]'), true);
+        if (isset($coupons[$atts['id'] - 1])) {
+            $coupon = $coupons[$atts['id'] - 1];
+            $clicks = get_option('ecp_clicks_' . $atts['id'], 0);
+            $track_url = $coupon['url'] . '?ref=ecp-' . $atts['id'] . '&clicks=' . $clicks;
+            return '<div class="ecp-coupon" style="border:2px solid #007cba;padding:20px;background:#f9f9f9;border-radius:5px;"><h3>' . esc_html($coupon['title']) . '</h3><p>Code: <strong>' . esc_html($coupon['code']) . '</strong></p><p><a href="' . esc_url($track_url) . '" target="_blank" class="button button-primary">Get Deal (Tracked)</a></p><p style="font-size:12px;color:#666;">Used by ' . intval($clicks) . ' users</p></div>';
         }
-        return '';
+        return 'Coupon not found.';
     }
 
     public function activate() {
-        flush_rewrite_rules();
+        if (!get_option('ecp_coupons')) {
+            update_option('ecp_coupons', json_encode(array(
+                array('title' => 'Sample 50% Off', 'code' => 'SAMPLE50', 'url' => 'https://example.com'),
+                array('title' => 'Free Trial', 'code' => 'FREETRIAL', 'url' => 'https://example.com/trial')
+            )));
+        }
     }
 }
 
 new ExclusiveCouponsPro();
 
-// Pro upsell notice
-function ecp_pro_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>Upgrade to <strong>Exclusive Coupons Pro</strong> for unlimited coupons, analytics dashboard, and auto-generation! <a href="https://example.com/pro" target="_blank">Get Pro ($49/year)</a></p></div>';
-}
-add_action('admin_notices', 'ecp_pro_notice');
+// Track clicks
+add_action('init', function() {
+    if (isset($_GET['ref']) && preg_match('/^ecp-(\d+)/', $_GET['ref'], $matches)) {
+        $id = intval($matches[1]);
+        $clicks = get_option('ecp_clicks_' . $id, 0) + 1;
+        update_option('ecp_clicks_' . $id, $clicks);
+        wp_redirect(remove_query_arg(array('ref', 'clicks')));
+        exit;
+    }
+});
 
-// Basic CSS
-add_action('wp_head', function() {
-    echo '<style>.exclusive-coupon {border: 2px solid #007cba; padding: 20px; margin: 20px 0; background: #f9f9f9;}.coupon-btn {background: #007cba; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;}.expired-coupon {color: red; font-weight: bold;}</style>';
+// Enqueue styles
+add_action('admin_enqueue_scripts', function($hook) {
+    if ($hook === 'toplevel_page_exclusive-coupons') {
+        wp_enqueue_style('ecp-admin-style');
+        wp_enqueue_script('ecp-admin-script');
+    }
+});
+
+// Pro upsell notice
+add_action('admin_notices', function() {
+    if (get_current_screen()->id === 'toplevel_page_exclusive-coupons') {
+        echo '<div class="notice notice-info"><p><strong>Pro Version:</strong> Unlimited coupons, analytics dashboard, email capture, and integrations. <a href="https://example.com/pro" target="_blank">Upgrade Now ($49/year)</a></p></div>';
+    }
 });
