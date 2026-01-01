@@ -2,48 +2,41 @@
 
 ## Features
 
-- **Easy Coupon Management**: Add unlimited exclusive coupons via simple JSON in admin dashboard (free: up to 5 coupons).
-- **Shortcode Integration**: Display coupons anywhere with `[exclusive_coupons limit="5" category="hosting"]`.
-- **Responsive Design**: Mobile-friendly coupon cards with copyable codes and CTA buttons.
-- **Affiliate Ready**: Track clicks and conversions (Pro feature).
-- **Categories Support**: Filter by niche like hosting, software, eCommerce.
-- **Pro Upgrade**: Unlimited coupons, auto-generation from APIs, analytics dashboard, custom branding ($49/year).
+- **Easy Coupon Management**: Add unlimited exclusive coupons via simple JSON in settings (Pro: truly unlimited with UI builder).
+- **Shortcode Integration**: Use `[exclusive_coupon id="0"]` to display coupons anywhere.
+- **Affiliate-Optimized**: Built-in affiliate link tracking and conversion-boosting designs.
+- **Responsive Design**: Mobile-friendly coupon boxes with hover effects.
+- **Pro Features** (Upgrade for $49/year): Analytics dashboard, auto-expiry, custom branding, A/B testing, email capture.
 
 ## Installation
 
 1. Upload the `exclusive-coupons-pro` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupons Pro** to add your coupons.
-4. Use the shortcode in posts, pages, or widgets.
+3. Go to **Settings > Coupons Pro** to configure your coupons.
 
 ## Setup
 
-1. In admin, paste JSON like:
+1. In **Settings > Coupons Pro**, edit the JSON textarea with your coupons:
    
    [
-     {"title":"50% Off Hosting","description":"Exclusive WP deal","code":"WP50","link":"https://partner.com/?ref=you","category":"hosting"}
+     {"code":"SAVE20","afflink":"https://yourafflink.com","desc":"20% off sitewide"},
+     {"code":"WELCOME10","afflink":"https://yourafflink2.com","desc":"10% off first order"}
    ]
    
-2. Save and embed shortcode.
-3. **Pro Tip**: Negotiate custom codes with brands for higher conversions [1][2].
+2. Save changes.
+3. Use shortcode `[exclusive_coupon id="0"]` for first coupon, `id="1"` for second, etc.
 
 ## Usage
 
-- **Basic**: `[exclusive_coupons]` shows all coupons.
-- **Filtered**: `[exclusive_coupons category="software" limit="3"]`.
-- **Monetization**: Earn via affiliate commissions on clicks. Positions your site as a deals hub [1][2][3].
-- **Track Performance**: View clicks in Pro dashboard.
-
-## Pro Features
-
-| Feature | Free | Pro ($49/yr) |
-|---------|------|--------------|
-| Coupon Limit | 5 | Unlimited |
-| Analytics | No | Yes |
-| API Integration | No | Yes |
-| Custom Designs | No | Yes |
-
-Boost revenue with exclusive deals – perfect for 2026 monetization [1][3][4]!
+- **On Posts/Pages**: Insert shortcode `[exclusive_coupon id="0"]`.
+- **Widgets/Sidebar**: Add via Text widget.
+- **Boost Revenue**: Exclusive codes improve conversions by 20-50% per affiliate benchmarks[1][2].
+- **Pro Tip**: Pair with SEO plugins for coupon pages to rank for deal searches.
 
 ## Support
-Contact support@example.com
+Contact support@example.com. Upgrade to Pro for priority support.
+
+## Changelog
+
+**1.0.0**
+- Initial release with core coupon features.
