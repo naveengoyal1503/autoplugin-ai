@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoLinker
  * Plugin URI: https://example.com/smart-affiliate-autolinker
- * Description: Automatically detects keywords in your WordPress content and converts them into cloaked affiliate links from your dashboard, boosting commissions effortlessly.
+ * Description: Automatically detects keywords in your posts and converts them into affiliate links from Amazon, boosting commissions effortlessly.
  * Version: 1.0.0
  * Author: Your Name
  * Author URI: https://example.com
@@ -15,188 +15,110 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class SmartAffiliateAutoLinker {
-    private static $instance = null;
+    private $keywords = [];
+    private $affiliate_id = '';
 
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_filter('the_content', array($this, 'auto_link_content'));
-        add_action('wp_ajax_sa_save_keywords', array($this, 'save_keywords'));
-        add_action('wp_ajax_sa_delete_keyword', array($this, 'delete_keyword'));
+    public function __construct() {
+        add_action('init', [$this, 'init});
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+        add_action('admin_menu', [$this, 'admin_menu']);
+        add_action('admin_init', [$this, 'admin_init']);
+        add_filter('the_content', [$this, 'auto_link_affiliates']);
+        add_filter('widget_text', [$this, 'auto_link_affiliates']);
+        register_activation_hook(__FILE__, [$this, 'activate']);
+        register_deactivation_hook(__FILE__, [$this, 'deactivate']);
     }
 
     public function init() {
-        if (!session_id()) {
-            session_start();
-        }
+        $this->affiliate_id = get_option('saal_amazon_affiliate_id', 'your-affiliate-id');
+        $this->keywords = get_option('saal_keywords', [
+            'iphone' => 'https://amazon.com/dp/B0ABC123?tag=your-affiliate-id',
+            'laptop' => 'https://amazon.com/dp/B0DEF456?tag=your-affiliate-id',
+        ]);
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sa-frontend', plugin_dir_url(__FILE__) . 'sa-frontend.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_script('saal-script', plugin_dir_url(__FILE__) . 'assets/script.js', ['jquery'], '1.0.0', true);
     }
 
     public function admin_menu() {
-        add_options_page(
-            'Smart Affiliate AutoLinker',
-            'Affiliate AutoLinker',
-            'manage_options',
-            'smart-affiliate-autolinker',
-            array($this, 'settings_page')
-        );
+        add_options_page('Smart Affiliate AutoLinker', 'Affiliate AutoLinker', 'manage_options', 'saal-settings', [$this, 'settings_page']);
+    }
+
+    public function admin_init() {
+        register_setting('saal_settings', 'saal_amazon_affiliate_id');
+        register_setting('saal_settings', 'saal_keywords');
     }
 
     public function settings_page() {
-        if (isset($_POST['sa_submit'])) {
-            check_admin_referer('sa_settings_nonce');
-            $keywords = sanitize_textarea_field($_POST['sa_keywords']);
-            update_option('sa_keywords', $keywords);
-        }
-        $keywords = get_option('sa_keywords', '');
-        $keyword_list = $this->parse_keywords($keywords);
-        include plugin_dir_path(__FILE__) . 'settings.php';
+        ?>
+        <div class="wrap">
+            <h1>Smart Affiliate AutoLinker Settings</h1>
+            <form method="post" action="options.php">
+                <?php settings_fields('saal_settings'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th>Amazon Affiliate ID</th>
+                        <td><input type="text" name="saal_amazon_affiliate_id" value="<?php echo esc_attr(get_option('saal_amazon_affiliate_id')); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Keywords (JSON format: {"keyword":"url"})</th>
+                        <td><textarea name="saal_keywords" rows="10" cols="50"><?php echo esc_textarea(wp_json_encode(get_option('saal_keywords', []))); ?></textarea></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+            <p><strong>Pro Upgrade:</strong> Unlock unlimited keywords, analytics, and more for $49/year!</p>
+        </div>
+        <?php
     }
 
-    private function parse_keywords($keywords_text) {
-        $lines = explode("\n", trim($keywords_text));
-        $list = array();
-        foreach ($lines as $line) {
-            $parts = preg_split('/\s*\|\|\s*/', trim($line), 2);
-            if (count($parts) === 2) {
-                $list[] = array(
-                    'keyword' => sanitize_text_field($parts),
-                    'url' => esc_url_raw($parts[1])
-                );
-            }
-        }
-        return $list;
-    }
-
-    public function save_keywords() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
-        check_ajax_referer('sa_ajax_nonce', 'nonce');
-        $keywords = sanitize_textarea_field($_POST['keywords']);
-        update_option('sa_keywords', $keywords);
-        wp_send_json_success('Keywords saved!');
-    }
-
-    public function delete_keyword() {
-        if (!current_user_can('manage_options')) {
-            wp_die('Unauthorized');
-        }
-        check_ajax_referer('sa_ajax_nonce', 'nonce');
-        $keyword_list = $this->parse_keywords(get_option('sa_keywords', ''));
-        $index = intval($_POST['index']);
-        if (isset($keyword_list[$index])) {
-            unset($keyword_list[$index]);
-            $new_keywords = '';
-            foreach ($keyword_list as $item) {
-                $new_keywords .= $item['keyword'] . ' || ' . $item['url'] . "\n";
-            }
-            update_option('sa_keywords', trim($new_keywords));
-            wp_send_json_success('Keyword deleted!');
-        }
-        wp_send_json_error('Error deleting keyword');
-    }
-
-    public function auto_link_content($content) {
-        if (is_feed() || is_admin()) {
+    public function auto_link_affiliates($content) {
+        if (is_admin() || !is_singular() || empty($this->keywords)) {
             return $content;
         }
-        $keyword_list = $this->parse_keywords(get_option('sa_keywords', ''));
-        if (empty($keyword_list)) {
+        global $post;
+        if (get_post_meta($post->ID, '_saal_disable', true)) {
             return $content;
         }
-
-        foreach ($keyword_list as $item) {
-            $keyword = preg_quote($item['keyword'], '/');
-            $pattern = '/\b(' . $keyword . ')\b/i';
-            if (preg_match_all($pattern, $content, $matches, PREG_OFFSET_CAPTURE)) {
-                $replacements = array();
-                foreach ($matches as $match) {
-                    $offset = $match[1];
-                    if (!isset($replacements[$offset])) {
-                        $link = '<a href="' . esc_url($item['url']) . '" rel="nofollow noopener" target="_blank" class="sa-affiliate-link">' . $match . '</a>';
-                        $content = substr_replace($content, $link, $offset, strlen($match));
-                        // Adjust offsets for subsequent matches
-                        foreach ($matches as $k => $m) {
-                            if ($m[1] > $offset) {
-                                $matches[$k][1] += strlen($link) - strlen($match);
-                            }
-                        }
-                    }
-                }
-            }
+        foreach ($this->keywords as $keyword => $url) {
+            $pattern = '/\b' . preg_quote($keyword, '/') . '\b/i';
+            $link = '<a href="' . esc_url($url) . '" target="_blank" rel="nofollow noopener">' . esc_html($keyword) . '</a>';
+            $content = preg_replace($pattern, $link, $content, 1);
         }
         return $content;
     }
-}
 
-SmartAffiliateAutoLinker::get_instance();
+    public function activate() {
+        add_option('saal_amazon_affiliate_id', 'your-affiliate-id');
+        add_option('saal_keywords', [
+            'iphone' => 'https://amazon.com/dp/B0ABC123?tag=your-affiliate-id',
+            'laptop' => 'https://amazon.com/dp/B0DEF456?tag=your-affiliate-id',
+        ]);
+        flush_rewrite_rules();
+    }
 
-// Pro upgrade notice
-function sa_pro_notice() {
-    if (current_user_can('manage_options')) {
-        echo '<div class="notice notice-info"><p><strong>Smart Affiliate AutoLinker Pro:</strong> Unlock unlimited keywords, click tracking & analytics for $49/year! <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
+    public function deactivate() {
+        flush_rewrite_rules();
     }
 }
-add_action('admin_notices', 'sa_pro_notice');
 
-// Settings page template
-$sa_template = '<?php /* Settings Page */ ?>
-<div class="wrap">
-    <h1>Smart Affiliate AutoLinker Settings</h1>
-    <form method="post" action="">
-        <?php wp_nonce_field("sa_settings_nonce"); ?>
-        <textarea name="sa_keywords" rows="10" cols="80" placeholder="Keyword || Affiliate URL\nexample || https://amazon.com/product?tag=yourid"><?php echo esc_textarea($keywords); ?></textarea>
-        <p class="description">One keyword per line: <code>keyword || https://affiliate-link.com</code></p>
-        <p><input type="submit" name="sa_submit" class="button-primary" value="Save Keywords"></p>
-    </form>
-    <h2>Current Keywords:</h2>
-    <table class="wp-list-table widefat fixed striped">
-        <thead><tr><th>Keyword</th><th>URL</th><th>Action</th></tr></thead>
-        <tbody>';
-foreach ($keyword_list as $index => $item) {
-    $sa_template .= '<tr><td>' . esc_html($item['keyword']) . '</td><td>' . esc_html($item['url']) . '</td><td><button class="button sa-delete" data-index="' . $index . '">Delete</button></td></tr>';
+new SmartAffiliateAutoLinker();
+
+// Pro nag
+function saal_pro_nag() {
+    if (!current_user_can('manage_options')) return;
+    echo '<div class="notice notice-info"><p>Upgrade to <strong>Smart Affiliate AutoLinker Pro</strong> for advanced features! <a href="https://example.com/pro" target="_blank">Get Pro</a></p></div>';
 }
-$sa_template .= '</tbody></table>
-    <script>
-    jQuery(document).ready(function($) {
-        $(".sa-delete").click(function(e) {
-            e.preventDefault();
-            if (confirm("Delete this keyword?")) {
-                var index = $(this).data("index");
-                $.post(ajaxurl, {
-                    action: "sa_delete_keyword",
-                    nonce: "' . wp_create_nonce('sa_ajax_nonce') . '",
-                    index: index
-                }, function(res) {
-                    if (res.success) {
-                        location.reload();
-                    } else {
-                        alert("Error deleting keyword");
-                    }
-                });
-            }
-        });
-    });
-    </script>
-</div>';
+add_action('admin_notices', 'saal_pro_nag');
 
-// Save template to file for dynamic loading
-file_put_contents(plugin_dir_path(__FILE__) . 'settings.php', $sa_template);
-
+// Create assets dir placeholder (in real plugin, include JS file)
+if (!file_exists(plugin_dir_path(__FILE__) . 'assets')) {
+    wp_mkdir_p(plugin_dir_path(__FILE__) . 'assets');
+    file_put_contents(plugin_dir_path(__FILE__) . 'assets/script.js', '// Pro analytics script');
+}
 ?>
