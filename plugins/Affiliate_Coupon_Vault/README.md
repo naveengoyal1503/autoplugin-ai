@@ -1,40 +1,47 @@
 # Affiliate Coupon Vault
 
-A powerful WordPress plugin for affiliate marketers to create, manage, and track exclusive coupon deals directly on your site. Boost conversions with personalized discounts and seamless affiliate link tracking.[1][2]
-
 ## Features
-- **Easy Coupon Management**: Add unlimited coupons (pro) with codes, descriptions, affiliate links, and expiration dates via intuitive admin panel.
-- **Trackable Deals**: Click tracking with premium API integration for conversion analytics and performance reports.[3]
-- **Shortcode Display**: Use `[acv_coupons limit="5"]` to showcase coupons anywhere – sidebar, posts, or pages.
-- **Responsive Design**: Mobile-friendly, attractive coupon cards that encourage clicks and shares.
-- **Freemium Ready**: Free version for basics; upgrade for auto-generation, unlimited slots, white-label, and dashboard stats.
-- **SEO Optimized**: Coupon pages improve dwell time and position your site as a deals hub.[1][2]
+
+- **Easy Coupon Management**: Add unlimited exclusive promo codes via simple JSON admin panel (Pro unlocks unlimited).
+- **Shortcode Integration**: Use `[affiliate_coupon id="coupon1"]` to display coupons anywhere.
+- **Affiliate Tracking**: Embeds nofollow links with affiliate branding for compliance.
+- **Conversion Boost**: Eye-catching designs encourage clicks and sales.
+- **Free Version**: Up to 3 coupons; Pro: Unlimited, analytics, custom CSS, auto-expiry.
+
+**Pro Features**: Advanced analytics, email capture, A/B testing, premium integrations (Amazon, etc.). $49/year.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your first coupons and optional API key.
-4. Insert `[acv_coupons]` shortcode on any page/post.
+
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to add your first coupon.
 
 ## Setup
-1. **Admin Settings**: Navigate to **Settings > Coupon Vault**.
-   - Enter Premium API Key (if upgraded).
-   - Add coupons: Code (e.g., SAVE20), Affiliate Link, Description, Expires (date picker).
-2. **Display**: Use shortcode `[acv_coupons limit="3"]` for custom limits.
-3. **Pro Upgrade**: Unlock via [your site] – $49/year for advanced features like auto-codes and analytics.
+
+1. In admin, enter JSON like:
+   
+   {
+     "coupon1": {
+       "code": "SAVE20",
+       "desc": "20% off all items",
+       "link": "https://your-affiliate-link.com",
+       "affiliate": "Amazon"
+     }
+   }
+   
+2. Save. Free version limits to 3 coupons.
+3. Add shortcode to posts/pages: `[affiliate_coupon id="coupon1"]`.
 
 ## Usage
-- **Frontend**: Visitors see styled coupons; clicks redirect to affiliate links with tracking.
-- **Tracking**: Logs stored; premium sends to your dashboard for ROI insights.
-- **Customization**: Edit CSS via **Appearance > Customize** or pro themes.
-- **Examples**:
-  - Blog sidebar: Exclusive hosting deals.
-  - Deals page: SaaS tools, eCommerce discounts.
 
-## Monetization Potential
-Perfect for niches like tech, shopping, travel. Earn commissions via tracked links while offering unique value.[1][2][3] Pro version generates recurring revenue.
+- **Display Coupons**: Use shortcode in Gutenberg blocks, widgets, or templates.
+- **Customize**: Edit CSS in Pro or via child theme.
+- **Monetize**: Earn commissions from clicks; track via affiliate dashboard.
+- **Upgrade**: Visit [Pro Page](https://example.com/pro) for full features.
 
-## Support
-Report issues on GitHub or contact support@yourdomain.com. Premium users get priority.
+## FAQ
 
-**Version 1.0.0 | Compatible with WordPress 6.0+ | PHP 7.4+**
+**How do I add more coupons?** Upgrade to Pro.
+**Is it GDPR compliant?** Yes, no tracking cookies in free version.
+
+Support: example@domain.com
