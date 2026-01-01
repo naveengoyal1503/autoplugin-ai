@@ -1,46 +1,42 @@
 # Affiliate Coupon Vault
 
+## Description
+**Affiliate Coupon Vault** is a powerful WordPress plugin that automatically fetches, displays, and tracks exclusive affiliate coupons from popular networks. Boost your site's conversions and commissions with eye-catching coupon displays. Perfect for bloggers and affiliate marketers.
+
 ## Features
-
-- **Automated Coupon Display**: Shortcode `[affiliate_coupons limit="3"]` fetches and shows exclusive affiliate coupons.
-- **Click Tracking**: Tracks all coupon clicks with basic analytics (Pro: advanced reporting).
-- **Customizable Design**: Responsive coupons with copy-paste codes and grab buttons.
-- **Easy Integration**: Works with any theme, Gutenberg blocks, or pages.
-- **Freemium Model**: Free for up to 5 coupons; Pro unlocks unlimited APIs, auto-sync, and premium networks.
-
-**Pro Features (Upgrade for $49/year)**:
-- Real-time API integrations (CJ, ShareASale, etc.).
-- Personalized coupon generation.
-- Exportable analytics dashboard.
-- Priority support.
+- **Shortcode Support**: `[affiliate_coupons category="tech" limit="5"]` - Easy embed anywhere.
+- **Click Tracking**: Built-in analytics for affiliate link performance (Pro).
+- **Responsive Design**: Mobile-optimized coupon cards.
+- **Demo Coupons**: Free version includes rotating demo deals.
+- **Admin Dashboard**: Configure networks and API keys.
+- **Pro Features**: Real-time API fetches from Amazon, eBay, Shopify; auto-rotation; advanced analytics; unlimited coupons; custom branding ($49/year).
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to enable.
-4. Use shortcode `[affiliate_coupons]` on any page/post.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to configure networks (e.g., `amazon,ebay`).
+4. Use shortcode `[affiliate_coupons]` in posts/pages/widgets.
 
 ## Setup
-
-1. **Enable Plugin**: Check "Enable Plugin" in settings.
-2. **Add API Key** (Pro): Enter your affiliate network keys.
-3. **Customize**: Edit limit in shortcode or settings.
-4. **Embed**: Add to sidebar via widget or Gutenberg block.
+1. **Free Setup**: Defaults to demo coupons. No API needed.
+2. **Pro Setup**:
+   - Purchase Pro at [example.com/pro](https://example.com/pro).
+   - Enter API keys in settings.
+   - Add affiliate tags to links.
+3. **Customization**: Style via CSS or Pro themes.
 
 ## Usage
+- **Basic**: `[affiliate_coupons limit="3"]` shows 3 coupons.
+- **Categorized**: `[affiliate_coupons category="fashion"]`.
+- **Track Clicks**: Links auto-append UTM params.
+- **Widget Ready**: Add to sidebars via shortcode widget.
 
-- **Shortcode**: `[affiliate_coupons limit="5"]` - Limits displayed coupons.
-- **Track Performance**: View clicks in **Settings > Coupon Vault**.
-- **Monetize**: Earn commissions from tracked affiliate links.
-- **Pro Upgrade**: Visit the plugin dashboard link for full features.
+## Pro Upgrade
+Unlock real APIs, unlimited feeds, A/B testing, and revenue analytics. **$49/year** - [Upgrade Now](https://example.com/pro).
 
-## FAQ
+## Support
+- FAQ: Common issues resolved in dashboard.
+- Contact: support@example.com
 
-**Is it free?** Yes, basic version is free. Pro for advanced use.
-
-**Compatible with?** WordPress 5.0+, any theme.
-
-**Support**: Free users - docs; Pro - email support.
-
-*Boost your affiliate earnings today!*
+## Changelog
+**1.0.0** - Initial release with core features and demo mode.
