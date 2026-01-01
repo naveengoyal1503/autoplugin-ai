@@ -1,33 +1,44 @@
 # Affiliate Coupon Vault
 
-## Features
+## Description
+**Affiliate Coupon Vault** is a powerful WordPress plugin that helps bloggers and affiliate marketers display exclusive, personalized coupons to boost conversions and commissions. Generate unique promo codes automatically and embed them anywhere with a simple shortcode.[1][2]
 
-- **Automated Coupon Display**: Shortcode `[affiliate_coupon_vault]` generates niche-specific exclusive coupons with affiliate links.
-- **Conversion-Optimized**: Eye-catching design with copyable codes and direct shop links.
-- **Easy Integration**: Works with any theme; customizable via shortcode attributes (e.g., `niche="tech" count="5"`).
-- **Transparency**: Discloses affiliate commissions to build trust.
-- **Freemium Model**: Free version for basics; **Pro** adds analytics, custom networks (Amazon, etc.), unlimited coupons, and branding removal.
+## Features
+- **Personalized Coupons**: Auto-generates unique codes per visitor (e.g., SAVE20-abc1).
+- **Easy Shortcode**: `[affiliate_coupon]` displays random rotating coupons.
+- **Admin Dashboard**: Add unlimited coupons (Name|Code|Affiliate Link format).
+- **Conversion-Optimized Design**: Eye-catching coupon boxes with CTA buttons.
+- **Freemium Model**: Free for basics, Pro for analytics, expiration dates, A/B testing ($49/year).[7]
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Use shortcode `[affiliate_coupon_vault]` in posts/pages.
+1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Go to **Coupon Vault** in admin menu to add your coupons.
+4. Use shortcode `[affiliate_coupon]` in posts/pages.
 
 ## Setup
-
-1. Go to **Settings > Coupon Vault** to view settings (Pro upsell).
-2. Replace sample affiliate links in plugin code with your own (e.g., Amazon Associates, hosting affiliates).
-3. Customize niche in shortcode: `[affiliate_coupon_vault niche="tech"]`.
+1. In **Coupon Vault** settings, enter coupons one per line: `Brand|CODE|https://aff.link`.
+2. Example:
+   
+   Amazon|10OFF|https://amazon.link?p=123
+   Shopify|WELCOME20|https://shopify.aff?ref=123
+   
+3. Save and embed shortcode.
 
 ## Usage
+- **Posts/Blogs**: Add shortcode for dynamic coupons to increase clicks.[1][3]
+- **Sidebar/Widgets**: Embed via shortcode widget.
+- **Pro Features**: Track clicks, auto-expire codes, integrate with WooCommerce/Affiliate plugins.[2][4]
 
-- **Basic**: Add shortcode to sidebar, posts, or dedicated deals page.
-- **Advanced (Pro)**: Track clicks, A/B test coupons, integrate with WooCommerce/email newsletters.
-- **Monetization Tip**: Position as "exclusive reader deals" to boost engagement and commissions[1][2].
+## Pro Version
+Unlock:
+- Click analytics & conversion tracking.
+- Custom branding & unlimited coupons.
+- Premium integrations (Amazon, etc.).
+- Priority support.
 
-## Pro Upgrade
+Get Pro: [Upgrade Now](https://example.com/pro)
 
-Unlock unlimited potential for $49/year: [Get Pro](https://example.com/pro)
-
-**Support**: Contact support@example.com
+## Changelog
+**1.0.0**
+- Initial release with core coupon features.
