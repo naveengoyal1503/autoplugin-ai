@@ -1,35 +1,45 @@
 # Affiliate Coupon Vault
 
-A free WordPress plugin for managing affiliate coupons with built-in tracking and shortcodes. Perfect for bloggers monetizing via affiliate marketing and custom deals.[1][2]
+A lightweight, self-contained WordPress plugin for bloggers and affiliate marketers to create, manage, and display exclusive coupons with affiliate tracking.
 
 ## Features
-- **Custom Post Type for Coupons**: Easily create, edit, and manage coupons with title, description, affiliate links, promo codes, and expiration dates.
-- **Shortcode Support**: Use `[affiliate_coupons]` or `[affiliate_coupons category="tech" limit="5"]` to display coupons anywhere.
-- **Affiliate Tracking**: Add tracking IDs per coupon or globally for commission optimization.[3]
-- **Expiration Handling**: Automatically mark expired coupons.
-- **Responsive Design**: Clean, mobile-friendly coupon grids.
-- **Freemium Ready**: Extend with premium features like analytics and imports.
+
+- **Custom Post Type for Coupons**: Easily add coupons with title, description, image, affiliate link, coupon code, and discount percentage.
+- **Shortcode Support**: Use `[acv_coupons limit="10" category="tech"]` to display coupons anywhere.
+- **Widget Integration**: Drag-and-drop widget for sidebars with customizable limits.
+- **Responsive Design**: Clean, mobile-friendly coupon cards with discount badges and CTA buttons.
+- **Admin Settings**: Global disclaimer for affiliate compliance.
+- **SEO-Friendly**: Public post type for indexing coupon pages.
+- **Freemium Ready**: Pro version can add analytics, expiration dates, auto-testing, and API integrations.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Coupons > Add New** to create your first coupon.
-4. Use the shortcode in posts, pages, or widgets.
+
+1. Download the plugin ZIP or copy the PHP code into a file named `affiliate-coupon-vault.php`.
+2. Upload via **Plugins > Add New > Upload Plugin** or FTP to `/wp-content/plugins/affiliate-coupon-vault/`.
+3. Activate the plugin.
+4. Go to **Coupons > Add New** to create your first coupon.
 
 ## Setup
-1. **Create Coupons**: In admin, Coupons > Add New. Fill title, excerpt, featured image, and meta fields (affiliate link, code, expires, tracking ID).
-2. **Global Settings**: Coupons > Settings to set default tracking ID.
-3. **Display**: Add `[affiliate_coupons]` to any page/post. Customize with `category` and `limit` attributes.
-4. **Categories**: Use default categories or create custom taxonomies for organization.
+
+1. **Add Coupons**: In the admin, navigate to **Coupons > Add New**. Fill in details, add affiliate link, code, and discount in the meta box.
+2. **Configure Settings**: Visit **Coupons > Settings** to set a default affiliate disclaimer.
+3. **Display Options**:
+   - Shortcode: `[acv_coupons]` for all recent coupons.
+   - Widget: Add to any sidebar via **Appearance > Widgets**.
+4. **Pro Tip**: Create category pages for SEO, e.g., `/coupons/tech/`.
 
 ## Usage
-- **Frontend**: Coupons display in a grid with deal button linking to affiliates.
-- **Customization**: Edit CSS in the plugin comments or via child theme.
-- **Monetization Tips**: Partner with brands for exclusive codes, track clicks, and promote via SEO-optimized pages.[1][2]
-- **Pro Upgrade**: Unlock analytics, auto-imports, and unlimited coupons (coming soon).
 
-## Changelog
-- 1.0.0: Initial release with core features.
+- **On Pages/Posts**: Insert shortcode for dynamic coupon grids.
+- **Affiliate Tracking**: All links include `rel="nofollow"` and open in new tabs.
+- **Customization**: Edit CSS via **Appearance > Customize > Additional CSS**.
+- **Monetization**: Earn commissions on clicks; upgrade path for premium features like click tracking.
 
-## Support
-Report issues on GitHub or WordPress.org forums.
+## Premium Features (Future)
+
+- Click/conversion analytics
+- Coupon expiration and auto-hide
+- Import from affiliate networks
+- White-label branding
+
+Support: Contact via plugin page. Contributions welcome on GitHub.
