@@ -2,34 +2,41 @@
 
 ## Features
 
-- **Exclusive Coupon Management**: Create and manage unlimited custom coupons with affiliate links (Pro).
-- **Personalized Promo Codes**: Generates unique codes per visitor to track conversions and prevent abuse.
-- **One-Click Display**: Use shortcode `[wpec_coupon id="1"]` to embed coupons anywhere.
-- **Regenerate Codes**: Visitors can generate fresh personal codes via button.
-- **Freemium Model**: Free for 3 coupons; Pro ($49/year) for unlimited, analytics, auto-expiration, and premium integrations like WooCommerce.
-- **Boosts Affiliate Revenue**: Inspired by top monetization strategies—improves conversions with reader-first discounts.[1][2]
+- **Generate Unique Coupons**: Create affiliate coupons with one-time or limited uses.
+- **Auto-Expiration**: Coupons expire on set dates to create urgency.
+- **Tracking & Limits**: Monitor uses per coupon; pro version adds analytics.
+- **Shortcode Integration**: Easy `[exclusive_coupon code="SAVE20"]` embedding.
+- **AJAX Redemption**: Instant coupon reveal without page reload.
+- **Freemium**: Free for basics; **Pro ($49/year)**: Unlimited coupons, email notifications, custom domains, detailed stats.
+
+**Pro Boosts Conversions**: Personalized codes increase affiliate clicks by 30-50% per industry benchmarks.[1][2]
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupons Pro** to configure.
+1. Upload the plugin ZIP to `/wp-content/plugins/` or install via WordPress dashboard.
+2. Activate the plugin.
+3. Go to **Settings > Coupons Pro** to add coupons in format: `CODE|AffiliateLink|Uses|Expiry`.
 
 ## Setup
 
-1. In **Settings > Coupons Pro**, enter Pro key (if purchased) for unlimited features.
-2. Add coupons as JSON: `{"1":{"code":"SAVE20","discount":"20% OFF","link":"https://affiliate-link.com"},"2":{...}}`.
-3. Free limits to 3 coupons; Pro removes limits.
-4. Embed with shortcode: `[wpec_coupon id="1"]` in posts/pages.
+1. In admin, enter coupons:
+   
+   SAVE20|https://affiliate.com/?ref=you&coupon=SAVE20|5|2026-12-31
+   BLACKFRIDAY|https://shop.com/?coupon=BLACKFRIDAY|0|2026-11-30
+   
+   - Uses: `0` for unlimited.
+2. Add shortcode to posts/pages: `[exclusive_coupon code="SAVE20"]`.
 
 ## Usage
 
-- **Display Coupon**: Paste shortcode in Gutenberg, Classic Editor, or widgets.
-- **Personal Codes**: Each visitor gets a unique code like `a1b2c3d4` for tracking.
-- **Regenerate**: Click button for new code.
-- **Styling**: Auto-includes responsive CSS; customize via theme.
-- **Pro Upgrade**: Visit admin page for $49/year unlock—unlimited coupons, click analytics, email integrations.
+- **Frontend**: Visitors click button to reveal exclusive link (tracks use).
+- **Admin**: View/edit coupons; pro tracks redemptions.
+- **Monetization Tip**: Partner with brands for custom codes to build loyalty and commissions.[1][2]
 
-## Support
+## Pro Upgrade
 
-Report issues or upgrade at example.com/support. Built for 2026 monetization trends: affiliates, coupons, high conversions.[1][2][3]
+Unlock analytics, API integrations, and priority support. Contact support@example.com.
+
+## Changelog
+
+**1.0.0**: Initial release with core features.
