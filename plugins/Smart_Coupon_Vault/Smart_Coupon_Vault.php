@@ -6,160 +6,136 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Coupon Vault
  * Plugin URI: https://example.com/smart-coupon-vault
- * Description: Automatically generates, manages, and displays personalized coupon codes and affiliate deals to boost conversions and revenue.
+ * Description: AI-powered coupon aggregator for affiliate marketing.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class SmartCouponVault {
-    public function __construct() {
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('scv_coupon_display', array($this, 'coupon_display_shortcode'));
-        add_action('wp_ajax_scv_generate_coupon', array($this, 'ajax_generate_coupon'));
-        add_action('wp_ajax_nopriv_scv_generate_coupon', array($this, 'ajax_generate_coupon'));
+        add_shortcode('smart_coupon_vault', array($this, 'coupon_shortcode'));
+        add_action('wp_ajax_scv_fetch_coupons', array($this, 'ajax_fetch_coupons'));
+        add_action('wp_ajax_nopriv_scv_fetch_coupons', array($this, 'ajax_fetch_coupons'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        $this->create_table();
-    }
-
-    private function create_table() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'scv_coupons';
-        $charset_collate = $wpdb->get_charset_collate();
-
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            code varchar(50) NOT NULL,
-            affiliate_url varchar(500) DEFAULT '',
-            discount varchar(20) DEFAULT '',
-            brand varchar(100) DEFAULT '',
-            uses int DEFAULT 0,
-            max_uses int DEFAULT 0,
-            expires datetime DEFAULT NULL,
-            active tinyint(1) DEFAULT 1,
-            created datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        if (is_admin()) {
+            add_options_page('Smart Coupon Vault', 'Coupon Vault', 'manage_options', 'smart-coupon-vault', array($this, 'settings_page'));
+            add_action('admin_init', array($this, 'settings_init'));
+        }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('scv-script', plugin_dir_url(__FILE__) . 'scv-script.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('scv-script', 'scv_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+        wp_enqueue_script('scv-frontend', plugin_dir_url(__FILE__) . 'scv.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('scv-frontend', plugin_dir_url(__FILE__) . 'scv.css', array(), '1.0.0');
+        wp_localize_script('scv-frontend', 'scv_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('scv_nonce')));
     }
 
-    public function admin_menu() {
-        add_options_page('Smart Coupon Vault', 'Coupon Vault', 'manage_options', 'scv-settings', array($this, 'settings_page'));
-    }
+    public function coupon_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'category' => 'all',
+            'limit' => 10
+        ), $atts);
 
-    public function settings_page() {
-        if (isset($_POST['scv_add_coupon'])) {
-            $this->add_coupon($_POST);
-        }
-        echo '<div class="wrap"><h1>Smart Coupon Vault</h1><form method="post">';
-        echo '<table class="form-table"><tr><th>Code</th><td><input type="text" name="code" required></td></tr>';
-        echo '<tr><th>Affiliate URL</th><td><input type="url" name="affiliate_url" style="width:400px;"></td></tr>';
-        echo '<tr><th>Discount</th><td><input type="text" name="discount" placeholder="20% off"></td></tr>';
-        echo '<tr><th>Brand</th><td><input type="text" name="brand"></td></tr>';
-        echo '<tr><th>Max Uses</th><td><input type="number" name="max_uses" value="0"></td></tr>';
-        echo '<tr><th>Expires</th><td><input type="datetime-local" name="expires"></td></tr></table>';
-        echo '<p><input type="submit" name="scv_add_coupon" class="button-primary" value="Add Coupon"></p></form>';
-
-        // List coupons
-        global $wpdb;
-        $coupons = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "scv_coupons ORDER BY created DESC");
-        echo '<table class="wp-list-table widefat fixed striped"><thead><tr><th>ID</th><th>Code</th><th>Brand</th><th>Discount</th><th>Uses</th><th>Actions</th></tr></thead><tbody>';
-        foreach ($coupons as $coupon) {
-            echo '<tr><td>' . $coupon->id . '</td><td>' . esc_html($coupon->code) . '</td><td>' . esc_html($coupon->brand) . '</td>';
-            echo '<td>' . esc_html($coupon->discount) . '</td><td>' . $coupon->uses . '/' . $coupon->max_uses . '</td>';
-            echo '<td><a href="?page=scv-settings&delete=' . $coupon->id . '" onclick="return confirm(\'Delete?\')">Delete</a></td></tr>';
-        }
-        echo '</tbody></table></div>';
-
-        if (isset($_GET['delete'])) {
-            $wpdb->delete($wpdb->prefix . 'scv_coupons', array('id' => intval($_GET['delete'])));
-            wp_redirect(admin_url('options-general.php?page=scv-settings'));
-            exit;
-        }
-    }
-
-    private function add_coupon($data) {
-        global $wpdb;
-        $wpdb->insert($wpdb->prefix . 'scv_coupons', array(
-            'code' => sanitize_text_field($data['code']),
-            'affiliate_url' => esc_url_raw($data['affiliate_url']),
-            'discount' => sanitize_text_field($data['discount']),
-            'brand' => sanitize_text_field($data['brand']),
-            'max_uses' => intval($data['max_uses']),
-            'expires' => !empty($data['expires']) ? $data['expires'] : null
-        ));
-    }
-
-    public function coupon_display_shortcode($atts) {
-        $atts = shortcode_atts(array('limit' => 5), $atts);
         ob_start();
-        echo '<div class="scv-coupons">';
-        $this->display_coupons($atts['limit']);
-        echo '</div>';
+        ?>
+        <div id="scv-container" data-category="<?php echo esc_attr($atts['category']); ?>" data-limit="<?php echo esc_attr($atts['limit']); ?>">
+            <div class="scv-loading">Loading coupons...</div>
+            <div class="scv-coupons"></div>
+        </div>
+        <?php
         return ob_get_clean();
     }
 
-    private function display_coupons($limit = 5) {
-        global $wpdb;
-        $coupons = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $wpdb->prefix . "scv_coupons WHERE active = 1 AND (max_uses = 0 OR uses < max_uses) AND (expires IS NULL OR expires > %s) ORDER BY RAND() LIMIT %d", current_time('mysql'), $limit));
-        foreach ($coupons as $coupon) {
-            $style = $coupon->uses >= $coupon->max_uses ? 'style="opacity:0.5;"' : '';
-            echo '<div class="scv-coupon" ' . $style . '>';
-            echo '<h3>' . esc_html($coupon->brand) . ' - ' . esc_html($coupon->discount) . '</h3>';
-            echo '<p>Code: <strong>' . esc_html($coupon->code) . '</strong></p>';
-            if ($coupon->affiliate_url) {
-                echo '<a href="' . esc_url($coupon->affiliate_url) . '" target="_blank" class="button">Get Deal</a> ';
-            }
-            echo '<button class="scv-copy-btn" data-code="' . esc_attr($coupon->code) . '">Copy Code</button>';
-            echo '</div>';
-        }
+    public function ajax_fetch_coupons() {
+        check_ajax_referer('scv_nonce', 'nonce');
+        $category = sanitize_text_field($_POST['category'] ?? 'all');
+        $limit = intval($_POST['limit'] ?? 10);
+
+        // Demo coupons (replace with real API integration in Pro)
+        $coupons = $this->get_demo_coupons($category, $limit);
+
+        wp_send_json_success($coupons);
     }
 
-    public function ajax_generate_coupon() {
-        global $wpdb;
-        $code = wp_generate_password(8, false);
-        $wpdb->insert($wpdb->prefix . 'scv_coupons', array('code' => $code));
-        wp_send_json_success(array('code' => $code));
+    private function get_demo_coupons($category, $limit) {
+        $demo_coupons = array(
+            array('code' => 'SAVE20', 'desc' => '20% off on hosting', 'afflink' => 'https://example.com/aff?code=SAVE20', 'expires' => '2026-12-31'),
+            array('code' => 'WP50', 'desc' => '$50 off WordPress themes', 'afflink' => 'https://example.com/aff?code=WP50', 'expires' => '2026-06-30'),
+            array('code' => 'DEAL10', 'desc' => '10% off plugins', 'afflink' => 'https://example.com/aff?code=DEAL10', 'expires' => '2026-03-31'),
+        );
+
+        if ($category !== 'all') {
+            $demo_coupons = array_filter($demo_coupons, function($c) use ($category) {
+                return stripos($c['desc'], $category) !== false;
+            });
+        }
+
+        return array_slice($demo_coupons, 0, $limit);
+    }
+
+    public function settings_page() {
+        ?>
+        <div class="wrap">
+            <h1>Smart Coupon Vault Settings</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('scv_settings');
+                do_settings_sections('scv_settings');
+                submit_button();
+                ?>
+            </form>
+            <p><strong>Upgrade to Pro</strong> for AI coupon fetching, analytics, and unlimited sources. <a href="https://example.com/pro">Get Pro ($49/year)</a></p>
+        </div>
+        <?php
+    }
+
+    public function settings_init() {
+        register_setting('scv_settings', 'scv_api_key');
+        add_settings_section('scv_section', 'API Settings', null, 'scv_settings');
+        add_settings_field('scv_api_key', 'Affiliate API Key', array($this, 'api_key_field'), 'scv_settings', 'scv_section');
+    }
+
+    public function api_key_field() {
+        $key = get_option('scv_api_key');
+        echo '<input type="text" name="scv_api_key" value="' . esc_attr($key) . '" class="regular-text" />';
+        echo '<p class="description">Enter your affiliate network API key (Pro feature).</p>
+        <p><em>Free version uses demo data. Pro unlocks real-time fetching.</em></p>';
+    }
+
+    public function activate() {
+        flush_rewrite_rules();
     }
 }
 
-new SmartCouponVault();
+SmartCouponVault::get_instance();
 
-// Premium upsell notice
-add_action('admin_notices', function() {
-    if (current_user_can('manage_options')) {
-        echo '<div class="notice notice-info"><p>Upgrade to <strong>Smart Coupon Vault Pro</strong> for analytics, unlimited coupons, and affiliate tracking! <a href="https://example.com/pro">Get Pro</a></p></div>';
-    }
-});
-
-// Basic CSS
+// Inline JS and CSS for single-file
 add_action('wp_head', function() {
-    echo '<style>.scv-coupon {border:1px solid #ddd; padding:15px; margin:10px 0; background:#f9f9f9;}.scv-copy-btn {background:#0073aa; color:white; border:none; padding:5px 10px; cursor:pointer;}</style>';
+    echo '<script>var scvData = []; jQuery(document).ready(function($) { $(".scv-container").each(function() { var $cont = $(this); $.post(scv_ajax.ajax_url, {action: "scv_fetch_coupons", category: $cont.data("category"), limit: $cont.data("limit"), nonce: scv_ajax.nonce}, function(resp) { if(resp.success) { var html = ""; resp.data.forEach(function(c) { html += "<div class=\'scv-coupon\'><strong>" + c.code + "</strong><br>" + c.desc + "<br><a href=\'" + c.afflink + "\' target=\'_blank\' class=\'scv-btn\'>Get Deal</a><small>Expires: " + c.expires + "</small></div>"; }); $cont.find(".scv-coupons").html(html); $cont.find(".scv-loading").hide(); } }); }); });</script>';
+    echo '<style>.scv-container { max-width: 600px; margin: 20px 0; } .scv-coupon { background: #f9f9f9; padding: 15px; margin: 10px 0; border-left: 4px solid #0073aa; } .scv-btn { background: #0073aa; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; } .scv-btn:hover { background: #005a87; }</style>';
 });
 
-// JS for copy functionality
+// Track clicks for analytics (Pro teaser)
 add_action('wp_footer', function() {
-    ?><script>jQuery(document).ready(function($) {
-        $('.scv-copy-btn').click(function() {
-            var code = $(this).data('code');
-            navigator.clipboard.writeText(code).then(function() {
-                $(this).text('Copied!');
-            }.bind(this));
-        });
-    });</script><?php
+    if (current_user_can('manage_options')) {
+        echo '<script>console.log("Smart Coupon Vault: Upgrade to Pro for click tracking & analytics!");</script>';
+    }
 });
