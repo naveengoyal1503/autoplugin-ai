@@ -2,31 +2,46 @@
 
 ## Features
 
-- **Generate Unique Coupons**: Create custom promo codes linked to your affiliate URLs for exclusive deals.
-- **Usage Tracking**: Monitor coupon redemptions with use counts and limits.
-- **Expiration Management**: Set expiry dates for time-sensitive offers.
-- **Shortcode Integration**: Embed coupons anywhere with `[cac_coupon code="YOURCODE"]`.
-- **Admin Dashboard**: Easy interface to add, view, and manage coupons.
-- **Pro Version**: Unlimited coupons, advanced analytics, email capture, custom designs ($49/year).
+- **Generate Unique Coupons**: Create custom coupon codes with affiliate tracking links.
+- **Auto-Expiry**: Coupons expire automatically after set days to create urgency.
+- **Shortcode Integration**: Use `[cac_coupon id="0"]` anywhere on your site.
+- **Admin Dashboard**: Easy management of coupon details (name, link, code, expiry).
+- **Click Tracking**: Basic JS tracking for performance insights (Pro: advanced analytics).
+- **Freemium Model**: Free for 1 coupon; Pro unlocks unlimited + integrations.
+
+**Pro Features (Upgrade for $49/year)**:
+- Unlimited coupons
+- Detailed analytics dashboard
+- Email capture forms
+- WooCommerce integration
+- Custom branding
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your WordPress admin > Plugins > Add New.
-2. Activate the plugin.
-3. Visit **Coupons** in the admin menu to create your first coupon.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Navigate to **Settings > Affiliate Coupons** to configure your first coupon.
 
 ## Setup
 
-1. Go to **Coupons** > Add new coupon with code, affiliate URL, max uses, and expiry.
-2. Copy the shortcode e.g., `[cac_coupon code="SAVE20"]`.
-3. Paste into any post, page, or widget.
-4. Partner with brands for custom codes to boost uniqueness and conversions.
+1. Go to **Settings > Affiliate Coupons**.
+2. Fill in: Coupon Name, Affiliate Link, Code (e.g., SAVE20), Expiry Days.
+3. Save.
+4. Add shortcode `[cac_coupon id="0"]` to any post/page (ID matches admin index).
 
 ## Usage
 
-- **Frontend**: Visitors see styled coupon box with redeem button; tracks clicks server-side.
-- **Backend**: View stats like uses/max uses in the coupons table.
-- **Tips**: Use for affiliate blogs, niche sites (e.g., software, travel). SEO-optimize coupon pages for traffic.
-- **Pro Upgrade**: Unlock analytics dashboard, A/B testing, and integrations.
+- **Display Coupon**: Paste shortcode in Gutenberg, Classic Editor, or widgets.
+- **Customization**: Edit CSS in `wp_head` hook or child theme.
+- **Tracking**: Monitor console logs; upgrade for full stats.
+- **Best Practices**: Use in blog posts, sidebars for affiliate niches like software, eCommerce.[1][2]
 
-**Support**: Contact support@example.com | [Pro Demo](https://example.com/demo)
+## Support
+
+Contact support@example.com. Freemium plugin - upgrade via [link].
+
+## Changelog
+
+**1.0.0**
+- Initial release with core features.
