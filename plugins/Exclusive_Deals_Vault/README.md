@@ -1,50 +1,59 @@
 # Exclusive Deals Vault
 
+**Boost your affiliate earnings with exclusive, trackable coupon deals!**
+
 ## Features
 
-- **Automatic Exclusive Coupons**: Displays rotating deals from top affiliate networks with custom promo codes.
-- **Conversion-Optimized Design**: Eye-catching cards with copy-paste codes, direct links, and expiry dates.
-- **Shortcode Integration**: Easy `[deals_vault limit="5" category="hosting"]` placement in posts/pages.
-- **AJAX Loading**: Fast, dynamic deal refresh without page reloads.
-- **Freemium Model**: Free demo deals; **Pro** adds real API integrations (Amazon, CJ, ShareASale), analytics, custom branding ($49/yr).
-- **SEO-Friendly**: Schema markup for rich snippets on deal pages.
-- **Mobile-Responsive**: Perfect on all devices.
+- **Curated Exclusive Deals**: Display high-converting coupons from top brands like Hostinger, Elementor, SEMrush
+- **Shortcode Ready**: `[edv_deals limit="5" category="all"]` - embed anywhere
+- **Affiliate Tracking**: Auto-appends your ID to links
+- **Mobile-Responsive Grid**: Beautiful card layouts with hover effects
+- **Admin Dashboard**: Configure affiliate ID & premium API key
+- **Freemium Upsell**: Premium unlocks auto-fetching 1000+ deals, analytics ($49/year)
 
 ## Installation
 
-1. Upload the `exclusive-deals-vault` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Use shortcode `[deals_vault]` in any post/page.
-4. Configure in **Settings > Deals Vault** (Pro API key optional).
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`
+2. Activate via **Plugins > Installed Plugins**
+3. Go to **Settings > Deals Vault** to set your affiliate ID
+4. Add shortcode `[edv_deals]` to any post/page/widget
 
 ## Setup
 
-1. Go to **Settings > Deals Vault** to enter your affiliate API key (Pro feature).
-2. Add shortcode to sidebar, posts, or dedicated deals page.
-3. **Pro**: Connect networks for live deals; track clicks/conversions.
+1. **Free Setup**: Enter your affiliate ID in settings (e.g., Amazon Associates, Hostinger ref)
+2. **Premium Setup**: Purchase license, get API key, enable auto-deals
+3. Customize via CSS in `Appearance > Customize > Additional CSS`
 
 ## Usage
 
-- **Basic**: `[deals_vault limit="3"]` shows 3 demo deals.
-- **Categorized**: `[deals_vault category="vpn"]` filters by niche.
-- **Page Builder**: Works with Gutenberg, Elementor, etc.
-- **Monetization**: Earn commissions via affiliate links; Pro tracks performance.
+### Basic Shortcode
 
-## Pro Features
+[edv_deals limit="3"]
 
-| Feature | Free | Pro |
-|---------|------|-----|
-| Demo Deals | ✅ | ✅ |
-| Unlimited Live Deals | ❌ | ✅ |
-| Affiliate Tracking | ❌ | ✅ |
-| Custom Designs | ❌ | ✅ |
-| Priority Support | ❌ | ✅ |
 
-**Upgrade**: [Get Pro Now](https://example.com/pro)
+### Widget/Block
+Add to sidebar via **Appearance > Widgets** or Gutenberg block
+
+### Pro Tips
+- Place on homepage sidebar for max conversions[1][2]
+- Update deals weekly for SEO freshness[1]
+- Track clicks with premium analytics
+
+## Premium Features
+
+| Feature | Free | Pro ($49/yr) |
+|---------|------|--------------|
+| Sample Deals | ✅ | ✅ |
+| Auto 1000+ Deals API | ❌ | ✅ |
+| Click Analytics | ❌ | ✅ |
+| Custom Categories | ❌ | ✅ |
+| Scheduling | ❌ | ✅ |
+| White-label | ❌ | ✅ |
+
+**Upgrade**: Visit dashboard upsell button
 
 ## Support
+Submit tickets at example.com/support
 
-- [Documentation](https://example.com/docs)
-- [Submit Ticket](https://example.com/support)
-
-**Boost your affiliate earnings with exclusive deals your audience loves!**
+## Changelog
+**1.0.0** - Initial release with 5 premium affiliate deals
