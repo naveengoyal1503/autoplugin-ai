@@ -1,39 +1,56 @@
 # AI Content Monetizer
 
-A powerful WordPress plugin to monetize your AI-generated or premium content by locking it behind simple paywalls with one-time micropayments.
+**Automatically generates affiliate-optimized product reviews with exclusive coupon codes to boost conversions and revenue.**
 
 ## Features
-- **Automatic Content Locking**: Automatically locks full post content after a teaser on single posts.
-- **Shortcode Support**: Use `[acm_lock price="1.99"]` to lock any content block.
-- **Daily Unlocks**: Demo mode simulates payments with daily IP-based unlocks (premium integrates Stripe/PayPal).
-- **Admin Settings**: Customize unlock price and enable/disable auto-locking.
-- **Responsive Design**: Clean, mobile-friendly lock overlay.
-- **Freemium Ready**: Free core; upsell premium for payments, analytics, A/B testing.
+
+- **AI-Powered Content Generation**: Create ready-to-publish product reviews with affiliate links and custom coupons in seconds.
+- **Shortcode Integration**: Embed monetized content blocks anywhere on your site.
+- **Exclusive Coupons**: Generate unique promo codes for higher perceived value and partnerships.
+- **Freemium Model**: Free version for testing; Pro unlocks unlimited use, templates, and integrations.
+- **SEO Optimized**: Structured content with rich snippets for better search rankings.
+- **One-Click Setup**: No coding required.
 
 ## Installation
+
 1. Upload the `ai-content-monetizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > AI Content Monetizer** to set your unlock price.
+3. Navigate to **Settings > AI Content Monetizer** to generate your first review.
 
 ## Setup
-1. In **Settings > AI Content Monetizer**, set the default unlock price (e.g., $0.99).
-2. Toggle auto-locking for posts (default: on).
-3. For custom locks, add `[acm_lock price="2.49"]Your premium content here[/acm_lock]` in posts/pages.
+
+1. Go to **Settings > AI Content Monetizer**.
+2. Enter a **Product Name** (e.g., "Wireless Headphones").
+3. Add your **Affiliate Link**.
+4. Click **Generate Review Content** to get a custom shortcode.
 
 ## Usage
-- **Auto-Lock**: Publish posts; teaser shows, full content locks behind paywall.
-- **Manual Lock**: Embed shortcode anywhere for granular control.
-- **Visitor Experience**: Click "Unlock Now" simulates payment (shows message), reveals content for the day.
-- **Demo Mode**: Uses IP + date for free daily unlocks. Premium version processes real payments.
-- **Tracking**: View unlocks in options (premium dashboard coming).
 
-## Freemium Upsell
-Upgrade to Pro for:
-- Real payment gateways (Stripe, PayPal).
-- Usage analytics and earnings reports.
-- Unlimited shortcodes and custom designs.
+- **Insert Shortcode**: Paste the generated shortcode like `[ai_coupon_review product="Wireless Headphones" coupon="HEADPHONES20" link="https://your-affiliate-link.com"]` into any post or page.
+- **Customize**: Edit product details directly in the shortcode.
+- **Display**: Shows a beautiful review block with coupon and buy button.
+
+### Example Output
+
+### Wireless Headphones Deal
+Exclusive: **HEADPHONES20** saves 20%!
+[Claim Deal Button]
+
+
+## Pro Version
+
+Upgrade for:
+- Unlimited content generations.
+- Premium templates and niches (e.g., software, travel).
+- Affiliate network integrations (Amazon, etc.).
+- Analytics tracking for clicks/conversions.
+- Priority support.
+
+**Get Pro: [Upgrade Now](https://example.com/pro) - Only $49/year**
 
 ## Support
-Contact support@example.com or visit plugin URI for help.
 
-**Version 1.0.0 | Compatible with WordPress 6.0+**
+- [Documentation](https://example.com/docs)
+- [Submit a Ticket](https://example.com/support)
+
+**Boost your affiliate earnings today!**
