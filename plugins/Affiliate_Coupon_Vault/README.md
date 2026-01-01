@@ -1,52 +1,53 @@
 # Affiliate Coupon Vault
 
 ## Description
-**Affiliate Coupon Vault** is a powerful WordPress plugin that helps bloggers and site owners monetize their sites by creating and displaying exclusive affiliate coupons with personalized promo codes. Track clicks and conversions effortlessly to boost affiliate revenue.[1][2]
+**Affiliate Coupon Vault** is a powerful WordPress plugin that automatically generates unique, trackable coupon codes for affiliate links. Display exclusive deals on your blog to boost conversions and commissions. Perfect for bloggers and marketers.[1][2]
 
 ## Features
-- **Easy Shortcode Integration**: Use `[affiliate_coupon id="1"]` to display coupons anywhere.
-- **Personalized Promo Codes**: Generates unique codes like `DISCOUNT10-ABCD` for each visitor.
-- **Click Tracking**: Logs affiliate link clicks (Pro: full analytics dashboard).
-- **Admin Settings**: Simple interface to add coupons (Brand|Affiliate Link|Description|Code).
-- **Freemium Model**: Free for up to 5 coupons; Pro unlocks unlimited features.
-- **Mobile-Responsive Design**: Clean, professional coupon displays.
+- **One-click coupon generation**: Creates unique 8-character codes for each visitor.
+- **Customizable affiliate links**: Add your affiliate URLs with {code} placeholder in settings.
+- **Shortcode support**: Use `[affiliate_coupon]` or `[affiliate_coupon brand="BrandName"]` anywhere.
+- **Pro version**: Unlimited coupons, click analytics, email capture, and premium integrations ($49/year).[7]
+- **Mobile-responsive design**: Eye-catching coupon boxes that convert.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to configure your coupons.
-4. Add shortcodes to posts/pages: `[affiliate_coupon id="1"]` (IDs start at 1).
+1. Upload the plugin files to `/wp-content/plugins/affiliate-coupon-vault`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Coupon Vault** to configure your affiliate links.
+4. Add `[affiliate_coupon]` shortcode to any post or page.
 
 ## Setup
-1. In settings, enter coupons in format:
-   
-   Amazon|https://your-amazon-affiliate-link.com|20% Off Electronics|AMAZON20
-   Shopify|https://your-shopify-link.com|Free Trial|SHOPFREE
-   
-2. Save changes.
-3. Test shortcode on a page.
+1. In **Settings > Coupon Vault**:
+   - Enter affiliate links in format: `Brand|https://affiliate.link.com?coupon={code}`
+   - Set default discount (e.g., "10% OFF").
+2. Save settings.
+3. Embed shortcode in content.
+
+**Example affiliates list:**
+
+Amazon|https://amazon.com/?tag=yourtag&coupon={code}
+Shopify|https://shopify.com/?ref=yourref&code={code}
+
 
 ## Usage
-- **Basic**: Paste shortcode in Gutenberg, Classic Editor, or widgets.
-- **Advanced (Pro)**: Auto-insert coupons, A/B testing, conversion reports.
-- **Monetization Tips**: Partner with brands for custom codes, optimize for SEO.[1][2][3]
-- **Track Performance**: Free version logs to error log; Pro has dashboard.
+- **Basic shortcode**: `[affiliate_coupon]` - Shows first matching coupon.
+- **Brand-specific**: `[affiliate_coupon brand="Amazon"]`.
+- **Regenerate button** (Pro): Visitors can generate new codes.
+- **Track performance** in Pro dashboard.
 
-## Pro Upgrade
-- Unlimited coupons
-- Analytics & reports
-- Custom branding
-- Auto-generation
-- Priority support
+## Pro Features
+- Advanced analytics dashboard.
+- Unlimited affiliate programs.
+- Custom coupon expiration.
+- Integration with WooCommerce and email tools.
+- Priority support.
 
-**Price: $49/year** – [Upgrade Now](#) (demo link in admin).
+**Upgrade: [Get Pro Version]($49/year)**
 
 ## FAQ
-**Is it compatible with WooCommerce?** Yes, works seamlessly.[3]
-**How do I get affiliate links?** Sign up for Amazon Associates, ShareASale, etc.[1][3]
+**How do I monetize?** Use with affiliate programs like Amazon Associates. Earn commissions on tracked sales.[1][3]
+
+**Is it free?** Yes, core features are free. Pro unlocks premium tools.[7]
 
 ## Changelog
-**1.0.0** – Initial release.
-
-## Support
-Report issues in WordPress.org forums. Pro users get email support.
+**1.0.0** - Initial release.
