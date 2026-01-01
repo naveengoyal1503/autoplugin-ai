@@ -1,28 +1,45 @@
 # Affiliate Coupon Vault
 
+## Description
+**Affiliate Coupon Vault** is a powerful WordPress plugin for bloggers and affiliate marketers to create, manage, and display exclusive coupon offers. Generate unique promo codes, track clicks, set expiration dates, and embed beautiful coupon blocks anywhere on your site.
+
+Boost conversions with personalized discounts that drive affiliate revenue.[1][2]
+
 ## Features
-- **Easy Coupon Management**: Add, edit, and display custom affiliate coupon codes via admin dashboard.
-- **Shortcode Integration**: Use `[affiliate_coupons limit="5"]` to embed dynamic coupon displays anywhere.
-- **Responsive Design**: Mobile-friendly coupon cards with hover effects.
-- **Randomized Display**: Shuffles coupons for better engagement.
-- **Freemium Model**: Free version limited to 5 coupons; Pro unlocks unlimited, analytics, API integrations, and custom branding.
+- Custom post type for coupons with meta fields (affiliate link, code, expiry, tracking ID)
+- Gutenberg block to display coupons with auto-expiration checks
+- Global tracking ID settings
+- Responsive, styled coupon displays
+- **Pro**: Unlimited coupons, click analytics, custom templates, API integrations ($49/year)
 
 ## Installation
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Coupon Vault** to configure coupons.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`
+2. Activate via **Plugins > Installed Plugins**
+3. Access **Coupons > Add New** to create your first coupon
+4. Add the **Coupon Display** block to any post/page
 
 ## Setup
-1. In the admin panel, add coupon codes, descriptions, and your affiliate links.
-2. Copy the shortcode `[affiliate_coupons]` and paste it into any post, page, or widget.
-3. Customize limit attribute to control number of coupons shown (e.g., `limit="3"`).
+1. Go to **Coupons > Settings** and set your global tracking ID (e.g., your affiliate sub-ID)
+2. Create a coupon:
+   - Title: e.g., "50% Off Hosting"
+   - Affiliate Link: Your tracked affiliate URL
+   - Coupon Code: e.g., "SAVE50"
+   - Expiry: Optional date
+   - Tracking ID: Per-coupon override
+3. Publish and insert the block using the coupon ID
 
 ## Usage
-- **On Posts/Pages**: Insert shortcode for automatic coupon rotation.
-- **Sidebar/Widgets**: Add via Text widget.
-- **Pro Upgrade**: For advanced features like click tracking and premium templates, purchase at example.com/pro.
+- **Embed coupons** in posts, pages, or widgets via Gutenberg block
+- **Track performance** with UTM-style parameters (?ref=ID)
+- **Auto-hide expired** coupons to maintain trust
+- Create a dedicated **/coupons/** archive page for SEO
 
-Boost your affiliate earnings with exclusive deals your audience loves!
+## Pro Upgrade
+Unlock analytics dashboard, email capture forms, A/B testing, and WooCommerce integration.
 
 ## Changelog
-- 1.0.0: Initial release.
+**1.0.0**
+- Initial release
+
+## Support
+Submit tickets at example.com/support
