@@ -2,38 +2,32 @@
 
 ## Features
 
-- **Easy Link Management**: Add affiliate URLs via simple dashboard with name, URL, and custom slug.
-- **Pretty Link Cloaking**: Use `/your-slug/` or `[sal_link id="1"]` shortcodes for clean, trackable links.
-- **Click Tracking**: Real-time click counts per link.
-- **Shortcode Support**: Embed links anywhere: `[sal_link id="1"]Your text[/sal_link]`.
-- **301 Redirects**: SEO-friendly redirects to affiliate destinations.
-- **Freemium Model**: Free core features; Pro adds A/B testing, analytics, API integrations ($49/year).
-
-**Pro Features (Upgrade)**: Advanced dashboard, conversion tracking, link rotation, email reports.
+- **Easy Link Cloaking**: Use shortcode `[sam url="https://affiliate-link.com"]`. Automatically generates trackable cloaked links.
+- **Click Tracking**: Real-time click counts and analytics dashboard[1][3].
+- **Free Version**: Unlimited links, basic stats.
+- **Pro Features** ($49/year): A/B testing, conversion optimization, export reports, WooCommerce integration for sales[2][4].
+- **SEO-Friendly**: Noindex cloaked URLs, canonical to original.
+- **Lightweight**: Single-file plugin, no bloat.
 
 ## Installation
 
-1. Upload the `smart-affiliate-link-manager` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Visit **Affiliate Links** in the admin menu to add your first link.
+1. Download and upload the `.php` file to `/wp-content/plugins/smart-affiliate-manager/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Access settings at **Settings > SAM Links**.
 
 ## Setup
 
-1. Go to **Affiliate Links > Add New**.
-2. Enter **Name** (e.g., "Bluehost Hosting"), **Affiliate URL** (e.g., your affiliate link), **Slug** (e.g., "bluehost").
-3. Save. Use `/bluehost/` or `[sal_link id="1"]` in posts/pages.
+1. Go to **Settings > SAM Links** to view/manage links.
+2. In posts/pages, add: `[sam url="YOUR_AFFILIATE_URL"]`. It auto-cloaks and tracks.
+3. Upgrade to Pro: Enter license key in settings for advanced features.
 
 ## Usage
 
-- **Pretty Links**: `https://yoursite.com/your-slug/` auto-redirects and tracks.
-- **Shortcodes**: `[sal_link id="X"]Click for Deal[/sal_link]` (replace X with link ID).
-- **View Stats**: Dashboard shows clicks per link.
-
-## FAQ
-
-**How do I monetize with this?** Track affiliate performance to optimize high-converting links and scale commissions.
-
-**Pro Upgrade?** Visit the admin notice or [example.com/pro](https://example.com/pro).
+- **Basic**: Insert shortcode anywhere. Clicks redirect and log.
+- **Reports**: View clicks per link in dashboard.
+- **Pro Tips**: Integrate with WooCommerce for affiliate product sales; use A/B for optimization.
 
 ## Support
-Contact support@example.com. Contributions via GitHub welcome.
+Contact support@example.com. Freemium model powers profitability via upgrades[1][2].
+
+**Pro Upgrade**: [Buy Now](https://example.com/pro) for 10x conversions!
