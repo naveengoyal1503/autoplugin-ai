@@ -2,39 +2,49 @@
 
 ## Features
 
-- **Personalized Promo Codes**: Generate unique coupon codes for each visitor (e.g., AFF10-abc1) to track conversions and boost affiliate commissions[1][2].
-- **Easy Shortcode Integration**: Use `[affiliate_coupon id="0"]` to display coupons anywhere.
-- **Admin Dashboard**: Manage unlimited coupons via simple JSON input.
-- **Conversion-Optimized Design**: Eye-catching coupon boxes that encourage clicks.
-- **Freemium Model**: Free for basics; Pro adds analytics, auto-expiration, affiliate network APIs ($49/year).
-- **SEO-Friendly**: Improves site value with exclusive deals for readers[2].
+- **Exclusive Coupon Generation**: Automatically create unique, trackable promo codes for your readers.
+- **Affiliate Link Integration**: Seamlessly add affiliate tracking links to boost commissions.[1][2]
+- **Shortcode Simplicity**: Use `[affiliate_coupon]` anywhere to display stunning coupon boxes.
+- **Customizable Design**: Eye-catching, mobile-responsive coupons with product images and CTAs.
+- **Analytics Ready**: Track clicks and conversions (Pro feature).
+- **SEO Optimized**: Coupon pages rank well for deal-hunting traffic.[2]
+
+**Pro Features** (Upgrade for $49/year):
+- Unlimited coupons and affiliates
+- Advanced analytics dashboard
+- Custom branding and domains
+- API integrations (Amazon, etc.)
+- Priority support
 
 ## Installation
 
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Coupon Vault** to add your coupons in JSON format.
+3. Go to **Settings > Coupon Vault** to configure.
 
 ## Setup
 
-1. In the admin page, enter coupons as JSON array:
+1. **Add Shortcode**: Paste in posts/pages:
    
-   [
-     {"name":"10% Off","code":"AFF10","affiliate_link":"https://affiliate.com/?ref=yourid","description":"Exclusive discount"}
-   ]
+   [affiliate_coupon affiliate="amazon" product="Wireless Headphones" discount="25" link="https://your-affiliate-link.com/?coupon=CODE" image="https://example.com/headphones.jpg"]
    
-2. Save settings.
-3. Add shortcode to posts/pages: `[affiliate_coupon id="0"]`.
+2. **Settings Page**: Enter API keys (Pro) and customize.
+3. **Pro Upgrade**: Visit admin dashboard for upgrade link.
 
 ## Usage
 
-- **Shortcodes**: `[affiliate_coupon id="0"]` for first coupon.
-- **Widgets/Blocks**: Copy shortcode into custom HTML block.
-- **Customization**: Edit CSS in plugin styles or child theme.
-- **Pro Upgrade**: Unlock tracking, A/B testing, and 50+ affiliate integrations.
+- **Generate Coupons**: Click button in shortcode for unique codes.
+- **Track Performance**: Monitor via affiliate dashboard (Pro).
+- **Best Practices**: Use on niche blogs for software, travel, eCommerce.[1][2][3]
+- **Monetization Tip**: Pair with memberships for exclusive deals.[4]
 
-## Why Profitable?
+## FAQ
 
-Affiliate coupons drive higher conversions via exclusivity[1][2]. Target bloggers monetizing via personalized deals[2]. Upsell Pro for recurring revenue.
+**Is it free?** Yes, basic version is free. Pro unlocks full power.
 
-**Support**: yoursupport@example.com | **Pro Demo**: example.com/pro
+**Compatible?** Works with Gutenberg, Classic Editor, any theme.
+
+**Support:** Free users - forums. Pro - email support.
+
+**Changelog**
+- 1.0.0: Initial release with core shortcode and AJAX generation.
