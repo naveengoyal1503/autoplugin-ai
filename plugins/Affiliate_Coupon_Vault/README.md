@@ -1,40 +1,52 @@
 # Affiliate Coupon Vault
 
+A powerful WordPress plugin that generates and displays exclusive affiliate coupon codes to boost your site revenue.
+
 ## Features
 
-- **Easy Coupon Management**: Add unlimited coupons via simple admin dashboard (basic: 5 max, **Pro: unlimited**).
-- **Shortcode Integration**: Embed coupons anywhere with `[affiliate_coupon brand="Amazon" affiliate_url="your-link"]`. [1][2]
-- **Conversion Boost**: Personalized discounts improve affiliate clicks and sales. [1][2]
-- **Responsive Design**: Mobile-friendly coupon displays.
-- **Pro Features**: Click tracking, auto-generation, brand API integrations, analytics dashboard ($49+). [3][7]
+- **Easy Shortcode Integration**: Use `[affiliate_coupon id="1"]` to embed coupons anywhere.
+- **Customizable Coupons**: Add unlimited codes, affiliate links, and descriptions via admin panel.
+- **Conversion-Optimized Design**: Eye-catching coupons encourage clicks and sales.
+- **Freemium Model**: Free for basics, Pro for advanced tracking and analytics.
+- **SEO-Friendly**: Improves user engagement and time-on-site.
+
+## Pro Features (Upgrade for $49/year)
+
+- Click tracking and analytics dashboard.
+- Unlimited coupons.
+- Custom designs and animations.
+- Auto-expiring coupons.
+- Integration with popular affiliate networks.
 
 ## Installation
 
-1. Upload the `affiliate-coupon-vault` folder to `/wp-content/plugins/`.
+1. Upload the plugin files to `/wp-content/plugins/affiliate-coupon-vault`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Coupon Vault** in admin menu to configure coupons.
+3. Go to **Settings > Coupon Vault** to add your coupons.
+4. Use the shortcode `[affiliate_coupon id="1"]` in posts/pages.
 
 ## Setup
 
-1. In **Coupon Vault** dashboard, enter coupons in format: `Brand:CODE|Brand2:CODE2` (e.g., `Amazon:SAVE10|Shopify:WP20`).
-2. Save changes.
-3. Add shortcode to posts/pages: `[affiliate_coupon brand="Amazon" affiliate_url="https://your-affiliate-link.com"]`. [1][2]
+1. In the admin panel, enter coupons in format:
+   
+   Code: SAVE10
+   Affiliate Link: https://yourlink.com/?ref=10
+   Description: 10% off everything
+   
+2. Save and embed shortcodes with `id` matching the coupon number (starts at 1).
 
 ## Usage
 
-- **Basic Shortcode**: Displays exclusive coupon box with your affiliate link.
-- **Examples**:
-  - `[affiliate_coupon brand="Amazon" affiliate_url="#"]`
-  - Customize `brand` to match your saved coupons.
-- **Pro Tips**: Use on niche blogs for software, travel, eCommerce. Track performance with Pro analytics. [2][3]
-
-## Freemium Model
-
-- **Free**: Core shortcodes, basic management.
-- **Pro ($49/year)**: Unlimited coupons, tracking, exports. Ideal for high-traffic sites. [7][8]
+- **Posts/Blogs**: Add coupons to reviews for affiliate commissions [1][2][3].
+- **Sidebar/Widgets**: Embed via shortcode widget.
+- **Track Performance**: Monitor clicks manually or upgrade to Pro for analytics.
 
 ## Support
 
-Report issues via WordPress.org forums. Pro support included with upgrade.
+- Free support via WordPress forums.
+- Pro users get priority email support.
 
-**Boost your affiliate earnings today!** 🚀
+## Changelog
+
+**1.0.0**
+- Initial release.
