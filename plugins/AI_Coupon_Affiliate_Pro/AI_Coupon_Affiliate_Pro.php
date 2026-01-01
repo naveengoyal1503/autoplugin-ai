@@ -6,28 +6,42 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Coupon Affiliate Pro
  * Plugin URI: https://example.com/aicoupon-pro
- * Description: Generate and manage personalized AI-powered coupons with affiliate tracking for bloggers and eCommerce sites.
+ * Description: AI-powered coupon and affiliate manager that generates personalized coupons, tracks clicks, and boosts conversions.
  * Version: 1.0.0
  * Author: Your Name
+ * Author URI: https://example.com
  * License: GPL v2 or later
  * Text Domain: ai-coupon-affiliate-pro
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class AICouponAffiliatePro {
-    public function __construct() {
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('ai_coupon_generator', array($this, 'coupon_shortcode'));
+        add_shortcode('ai_coupon_section', array($this, 'coupon_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        load_plugin_textdomain('ai-coupon-affiliate-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        load_plugin_textdomain('ai-coupon-affiliate-pro', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+        if (is_admin()) {
+            add_action('admin_init', array($this, 'admin_init'));
+        }
     }
 
     public function enqueue_scripts() {
@@ -36,114 +50,116 @@ class AICouponAffiliatePro {
     }
 
     public function admin_menu() {
-        add_options_page('AI Coupon Pro', 'AI Coupon Pro', 'manage_options', 'ai-coupon-pro', array($this, 'admin_page'));
+        add_options_page(
+            'AI Coupon Pro Settings',
+            'AI Coupon Pro',
+            'manage_options',
+            'ai-coupon-pro',
+            array($this, 'settings_page')
+        );
     }
 
-    public function admin_page() {
-        if (isset($_POST['save'])) {
-            update_option('ai_coupon_api_key', sanitize_text_field($_POST['api_key']));
-            update_option('ai_coupon_affiliate_id', sanitize_text_field($_POST['affiliate_id']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
-        }
-        $api_key = get_option('ai_coupon_api_key', '');
-        $affiliate_id = get_option('ai_coupon_affiliate_id', '');
+    public function admin_init() {
+        register_setting('ai_coupon_pro_options', 'ai_coupon_pro_settings');
+        add_settings_section('ai_coupon_main', 'Main Settings', null, 'ai_coupon_pro');
+        add_settings_field('affiliate_links', 'Affiliate Links (JSON)', array($this, 'affiliate_links_field'), 'ai_coupon_pro', 'ai_coupon_main');
+        add_settings_field('pro_upgrade', 'Upgrade to Pro', array($this, 'pro_upgrade_field'), 'ai_coupon_pro', 'ai_coupon_main');
+    }
+
+    public function settings_page() {
         ?>
         <div class="wrap">
-            <h1>AI Coupon Affiliate Pro Settings</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>OpenAI API Key</th>
-                        <td><input type="text" name="api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th>Affiliate ID</th>
-                        <td><input type="text" name="affiliate_id" value="<?php echo esc_attr($affiliate_id); ?>" class="regular-text" /></td>
-                    </tr>
-                </table>
-                <p class="submit"><input type="submit" name="save" class="button-primary" value="Save Settings" /></p>
+            <h1>AI Coupon Affiliate Pro</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('ai_coupon_pro_options');
+                do_settings_sections('ai_coupon_pro');
+                submit_button();
+                ?>
             </form>
-            <h2>Usage</h2>
-            <p>Use shortcode: <code>[ai_coupon_generator niche="fashion"]</code></p>
-            <p><strong>Pro Features:</strong> Unlimited generations, custom domains, analytics. <a href="https://example.com/pro">Upgrade Now</a></p>
+            <div class="pro-notice notice-warning"><p><strong>Pro Features:</strong> Unlimited coupons, analytics, custom AI prompts. <a href="https://example.com/pro" target="_blank">Upgrade Now ($49/year)</a></p></div>
         </div>
         <?php
     }
 
+    public function affiliate_links_field() {
+        $settings = get_option('ai_coupon_pro_settings', array('affiliates' => '[]'));
+        echo '<textarea name="ai_coupon_pro_settings[affiliates]" rows="10" cols="50">' . esc_textarea($settings['affiliates']) . '</textarea><p>Enter JSON array of affiliates: {"name":"Brand","link":"https://aff.link","discount":"10%"}</p>';
+    }
+
+    public function pro_upgrade_field() {
+        echo '<p><a href="https://example.com/pro" class="button button-primary" target="_blank">Upgrade to Pro</a> for advanced features.</p>';
+    }
+
     public function coupon_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'niche' => 'general',
-            'discount' => '20',
-        ), $atts);
+        $atts = shortcode_atts(array('limit' => 5), $atts);
+        $settings = get_option('ai_coupon_pro_settings', array('affiliates' => '[]'));
+        $affiliates = json_decode($settings['affiliates'], true) ?: array();
 
-        $api_key = get_option('ai_coupon_api_key');
-        if (!$api_key) {
-            return '<p><strong>Pro:</strong> Enter OpenAI API key in settings for AI coupons!</p>';
+        // Simple AI-like generation: rotate and personalize coupons
+        $coupons = array();
+        $users = wp_get_current_user();
+        $user_id = $users->ID ?: 'guest';
+        for ($i = 0; $i < min($atts['limit'], count($affiliates)); $i++) {
+            $aff = $affiliates[$i % count($affiliates)];
+            $code = strtoupper(substr(md5($user_id . time() . $i), 0, 8));
+            $coupons[] = array(
+                'name' => $aff['name'],
+                'code' => $code,
+                'discount' => $aff['discount'],
+                'link' => $aff['link'] . '?coupon=' . $code,
+                'clicks' => get_option('ai_coupon_clicks_' . $i, 0)
+            );
         }
-
-        $affiliate_id = get_option('ai_coupon_affiliate_id');
-        $link = $affiliate_id ? 'https://affiliate.com/?id=' . $affiliate_id : 'https://example.com/shop';
-
-        // Mock AI generation (replace with real OpenAI API call in pro)
-        $coupon_code = strtoupper(substr(md5($atts['niche'] . time()), 0, 8));
-        $description = 'AI-Generated: Save ' . $atts['discount'] . '% on ' . ucwords($atts['niche']) . ' items! ' . $this->mock_ai_prompt($atts['niche']);
 
         ob_start();
         ?>
-        <div class="ai-coupon-container">
-            <div class="coupon-code"><?php echo esc_html($coupon_code); ?></div>
-            <p class="coupon-desc"><?php echo esc_html($description); ?></p>
-            <a href="<?php echo esc_url($link); ?>" class="coupon-btn" target="_blank">Redeem Now & Track Affiliate</a>
-            <small>Generated by AI Coupon Pro</small>
+        <div class="ai-coupon-section">
+            <h3>Exclusive AI-Generated Coupons</h3>
+            <?php foreach ($coupons as $coupon): ?>
+            <div class="coupon-item">
+                <h4><?php echo esc_html($coupon['name']); ?> - <?php echo esc_html($coupon['discount']); ?> OFF</h4>
+                <p>Code: <strong><?php echo esc_html($coupon['code']); ?></strong></p>
+                <a href="<?php echo esc_url(add_query_arg('ref', 'wpplugin', $coupon['link'])); ?>" class="coupon-btn" data-coupon-id="<?php echo $i; ?>">Grab Deal & Track</a>
+                <span class="clicks"><?php echo $coupon['clicks']; ?> clicks</span>
+            </div>
+            <?php endforeach; ?>
+            <p><em>Pro: Unlimited + Analytics. <a href="https://example.com/pro" target="_blank">Upgrade</a></em></p>
         </div>
+        <script>
+        jQuery('.coupon-btn').click(function(e) {
+            var id = jQuery(this).data('coupon-id');
+            jQuery.post(ajaxurl, {action: 'track_coupon_click', id: id});
+        });
+        </script>
         <?php
         return ob_get_clean();
     }
 
-    private function mock_ai_prompt($niche) {
-        $prompts = array(
-            'fashion' => 'Perfect for trendy outfits this season. Limited time!',
-            'tech' => 'Upgrade your gadgets with exclusive savings.',
-            'general' => 'Great deals on top products.'
-        );
-        return isset($prompts[$niche]) ? $prompts[$niche] : $prompts['general'];
-    }
-
     public function activate() {
-        add_option('ai_coupon_version', '1.0.0');
+        add_option('ai_coupon_pro_settings', array('affiliates' => json_encode(array(
+            array('name' => 'Sample Brand', 'link' => 'https://example.com/aff', 'discount' => '20%'),
+            array('name' => 'Demo Store', 'link' => 'https://example.com/deal', 'discount' => '15%')
+        ))));
+    }
+
+    public function deactivate() {
+        // Cleanup optional
     }
 }
 
-new AICouponAffiliatePro();
-
-// Inline assets for single-file
-
-function ai_coupon_assets() {
-    ?>
-    <style>
-    .ai-coupon-container { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; max-width: 400px; margin: 20px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-    .coupon-code { font-size: 2.5em; font-weight: bold; letter-spacing: 5px; margin-bottom: 10px; }
-    .coupon-desc { font-size: 1.1em; margin-bottom: 15px; }
-    .coupon-btn { background: #ff6b6b; color: white; padding: 12px 30px; text-decoration: none; border-radius: 25px; font-weight: bold; display: inline-block; transition: all 0.3s; }
-    .coupon-btn:hover { background: #ff5252; transform: translateY(-2px); }
-    </style>
-    <script>
-    jQuery(document).ready(function($) {
-        $('.ai-coupon-container').on('click', '.coupon-btn', function() {
-            gtag('event', 'coupon_click', {'niche': '<?php echo esc_js($atts['niche']); ?>'});
-        });
-    });
-    </script>
-    <?php
+// AJAX handler
+add_action('wp_ajax_track_coupon_click', 'ai_coupon_track_click');
+add_action('wp_ajax_nopriv_track_coupon_click', 'ai_coupon_track_click');
+function ai_coupon_track_click() {
+    $id = intval($_POST['id']);
+    $clicks = get_option('ai_coupon_clicks_' . $id, 0) + 1;
+    update_option('ai_coupon_clicks_' . $id, $clicks);
+    wp_die();
 }
 
-add_action('wp_head', 'ai_coupon_assets');
+AICouponAffiliatePro::get_instance();
 
-// Pro upsell notice
-function ai_coupon_admin_notice() {
-    if (!get_option('ai_coupon_api_key')) {
-        echo '<div class="notice notice-info"><p>🚀 <strong>AI Coupon Pro:</strong> Unlock unlimited AI coupons & analytics. <a href="' . admin_url('options-general.php?page=ai-coupon-pro') . '">Upgrade</a></p></div>';
-    }
-}
-
-add_action('admin_notices', 'ai_coupon_admin_notice');
+// Dummy assets (in real plugin, create folders)
+// Create assets/script.js and assets/style.css manually or via build
+?>
