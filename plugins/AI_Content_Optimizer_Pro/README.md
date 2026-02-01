@@ -2,39 +2,36 @@
 
 ## Features
 
-- **Free Version**: Basic SEO analysis including keyword density checks and simple optimization tips[1][2].
-- **Premium Features** (Subscription $4.99/month): AI-powered content rewriting, bulk post optimization, advanced readability scores, and priority support.
-- Self-contained single-file plugin for easy installation.
-- Admin dashboard for quick content pasting and optimization.
-- Secure AJAX handling with nonces.
+- **Real-time Content Analysis**: Calculates **AI-powered scores** for SEO, readability, and engagement.
+- **One-Click Optimization**: Automatically improves content structure, keywords, and flow (Pro feature).
+- **Frontend Score Display**: Use shortcode `[ai_content_score]` to show scores on posts.
+- **Freemium Model**: Free basic analysis; Pro unlocks unlimited AI optimizations and advanced suggestions.
+- **Lightweight & Self-Contained**: Single-file plugin, no dependencies.
 
 ## Installation
 
-1. Download the plugin ZIP or copy the PHP code into a file named `ai-content-optimizer-pro.php`.
-2. Upload via WordPress Admin > Plugins > Add New > Upload Plugin.
+1. Download the plugin ZIP.
+2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
 3. Activate the plugin.
-4. Access via Settings > AI Optimizer.
+4. Edit any post to see the **AI Content Optimizer** meta box.
 
 ## Setup
 
-- **Free**: Use immediately after activation.
-- **Premium**: Enter your license key in the plugin settings (simulated here; integrate with Freemius or similar for real sales[5]).
-- No API keys needed for basic; premium uses placeholder for OpenAI integration.
+- **Free Version**: Click **Analyze Content** on post edit screen for instant score.
+- **Pro Upgrade**: Purchase Pro ($49/year) at [example.com/upgrade](https://example.com/upgrade) for AI optimization button.
+- Add `[ai_content_score]` shortcode to templates or posts for public display.
 
 ## Usage
 
-1. Go to **Settings > AI Optimizer**.
-2. Paste content into the textarea.
-3. Click **Optimize Content**.
-4. Review suggestions and copy optimized text.
-5. **Upgrade Prompt**: Non-premium users see upsell notice linking to your sales page.
+1. Edit a post/page.
+2. In the sidebar meta box, click **Analyze Content**.
+3. View your **content score** (higher = better SEO/readability).
+4. **Pro Users**: Click **Optimize with AI** for automatic improvements.
+5. Save and publish – scores update automatically.
 
-## Monetization Notes
+### Pro Benefits
+- Unlimited optimizations per site.
+- Advanced readability suggestions.
+- Priority support.
 
-- **Freemium Model**: Drives upgrades via feature gating[1][2][5].
-- Integrate with WooCommerce or Freemius for real payments.
-- Target WordPress.org submission for free version visibility[4].
-
-## Support
-
-Contact support@example.com. Premium users get priority.
+**Target Audience**: Content creators seeking quick SEO wins without complex tools like Rank Math or Yoast add-ons.
