@@ -6,233 +6,120 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoInserter
  * Plugin URI: https://example.com/smart-affiliate-autoinserter
- * Description: Automatically inserts relevant Amazon affiliate links into posts and pages based on keyword matching. Boost your affiliate earnings effortlessly.
+ * Description: Automatically inserts relevant affiliate links into your WordPress posts and pages using keyword matching to boost commissions.
  * Version: 1.0.0
  * Author: Your Name
- * Author URI: https://example.com
  * License: GPL v2 or later
- * Text Domain: smart-affiliate-autoinserter
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class SmartAffiliateAutoInserter {
-    private $options;
+    private $affiliates = [];
 
     public function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-        add_filter('the_content', array($this, 'auto_insert_links'), 99);
-        add_filter('widget_text', array($this, 'auto_insert_links'), 99);
-        register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+        add_action('init', [$this, 'init']);
+        register_activation_hook(__FILE__, [$this, 'activate']);
+        register_deactivation_hook(__FILE__, [$this, 'deactivate']);
     }
 
     public function init() {
-        $this->options = get_option('smart_affiliate_options', array(
-            'affiliate_tag' => '',
-            'keywords' => array(),
-            'products' => array(),
-            'enabled' => true,
-            'max_links' => 3,
-            'pro_version' => false
-        ));
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+        add_action('wp_footer', [$this, 'render_settings']);
+        add_filter('the_content', [$this, 'auto_insert_links'], 99);
+        add_action('admin_menu', [$this, 'admin_menu']);
+        add_action('admin_init', [$this, 'admin_init']);
+        $this->load_settings();
     }
 
-    public function activate() {
-        if (!get_option('smart_affiliate_options')) {
-            add_option('smart_affiliate_options', array(
-                'affiliate_tag' => 'youraffiliatetag-20',
-                'keywords' => array('laptop' => 'https://amazon.com/dp/B08N5WRWNW'),
-                'products' => array(),
-                'enabled' => true,
-                'max_links' => 3,
-                'pro_version' => false
-            ));
-        }
+    private function load_settings() {
+        $this->affiliates = get_option('saa_affiliates', []);
     }
 
-    public function deactivate() {
-        // Cleanup if needed
+    public function enqueue_scripts() {
+        if (is_admin()) return;
+        wp_enqueue_script('saa-frontend', plugin_dir_url(__FILE__) . 'saa.js', ['jquery'], '1.0.0', true);
     }
 
-    public function add_admin_menu() {
-        add_options_page(
-            'Smart Affiliate Settings',
-            'Affiliate AutoInserter',
-            'manage_options',
-            'smart-affiliate',
-            array($this, 'options_page')
-        );
-    }
+    public function auto_insert_links($content) {
+        if (is_admin() || !is_single()) return $content;
 
-    public function settings_init() {
-        register_setting('smart_affiliate', 'smart_affiliate_options');
+        global $post;
+        $words = explode(' ', strip_tags($content));
+        $inserted = 0;
+        $max_inserts = 3;
 
-        add_settings_section(
-            'smart_affiliate_section',
-            'Affiliate Link Settings',
-            null,
-            'smart_affiliate'
-        );
-
-        add_settings_field(
-            'affiliate_tag',
-            'Amazon Affiliate Tag',
-            array($this, 'affiliate_tag_render'),
-            'smart_affiliate',
-            'smart_affiliate_section'
-        );
-
-        add_settings_field(
-            'keywords',
-            'Keywords and Product Links',
-            array($this, 'keywords_render'),
-            'smart_affiliate',
-            'smart_affiliate_section'
-        );
-
-        add_settings_field(
-            'enabled',
-            'Enable Auto-Insertion',
-            array($this, 'enabled_render'),
-            'smart_affiliate',
-            'smart_affiliate_section'
-        );
-
-        add_settings_field(
-            'max_links',
-            'Max Links per Post',
-            array($this, 'max_links_render'),
-            'smart_affiliate',
-            'smart_affiliate_section'
-        );
-    }
-
-    public function affiliate_tag_render() {
-        $options = $this->options;
-        ?>
-        <input type='text' name='smart_affiliate_options[affiliate_tag]' value='<?php echo esc_attr($options['affiliate_tag']); ?>' class='regular-text' placeholder='yourtag-20' />
-        <p class='description'>Your Amazon Associates affiliate tag (e.g., yourtag-20).</p>
-        <?php
-    }
-
-    public function keywords_render() {
-        $options = $this->options;
-        $keywords = isset($options['keywords']) ? $options['keywords'] : array();
-        echo '<div id="keyword-list">';
-        if (!empty($keywords)) {
-            foreach ($keywords as $keyword => $link) {
-                echo '<p><input type="text" name="smart_affiliate_options[keywords][' . esc_attr($keyword) . ']" value="' . esc_attr($link) . '" class="regular-text" placeholder="Product URL" /> <label>for keyword: ' . esc_attr($keyword) . '</label> <button type="button" class="button button-small remove-keyword">Remove</button></p>';
+        foreach ($this->affiliates as $affiliate) {
+            foreach ($words as $i => $word) {
+                if (stripos($word, $affiliate['keyword']) !== false && $inserted < $max_inserts) {
+                    $link = '<a href="' . esc_url($affiliate['url']) . '" target="_blank" rel="nofollow sponsored">' . esc_html($affiliate['keyword']) . '</a>';
+                    $words[$i] = str_replace($affiliate['keyword'], $link, $word);
+                    $inserted++;
+                }
             }
         }
-        echo '</div>';
-        echo '<p><button type="button" id="add-keyword" class="button">Add Keyword</button></p>';
-        echo '<textarea name="smart_affiliate_options[bulk_keywords]" placeholder="Bulk add: keyword1=url1&#10;keyword2=url2" rows="5" cols="50"></textarea>';
-        echo '<p class="description">Add keyword=product_url pairs, one per line in bulk textarea or use Add button.</p>';
+
+        $content = implode(' ', $words);
+        return $content;
+    }
+
+    public function render_settings() {
+        if (!is_user_logged_in()) return;
         ?>
+        <div id="saa-settings" style="display:none;">
+            <h3>Affiliate Settings (Admin Only)</h3>
+            <textarea id="saa-affiliates" placeholder='[{"keyword":"best shoes","url":"https://affiliate-link.com/shoes"}]'></textarea>
+            <button id="saa-save">Save</button>
+        </div>
         <script>
         jQuery(document).ready(function($) {
-            var keywordIndex = <?php echo count($keywords); ?>;
-            $('#add-keyword').click(function() {
-                var keyword = prompt('Enter keyword:');
-                if (keyword) {
-                    var url = prompt('Enter Amazon product URL:');
-                    if (url) {
-                        $('#keyword-list').append('<p><input type="text" name="smart_affiliate_options[keywords][' + keywordIndex + ']" value="' + url + '" class="regular-text" placeholder="Product URL" /> <label>for keyword: ' + keyword + '</label> <button type="button" class="button button-small remove-keyword">Remove</button></p>');
-                        keywordIndex++;
-                    }
-                }
-            });
-            $(document).on('click', '.remove-keyword', function() {
-                $(this).parent().remove();
+            $('#saa-save').click(function() {
+                $.post(ajaxurl, {
+                    action: 'saa_save_affiliates',
+                    affiliates: $('#saa-affiliates').val()
+                }, function() {
+                    location.reload();
+                });
             });
         });
         </script>
         <?php
     }
 
-    public function enabled_render() {
-        $options = $this->options;
-        ?>
-        <input type='checkbox' name='smart_affiliate_options[enabled]' value='1' <?php checked($options['enabled']); ?> />
-        <?php
+    public function admin_menu() {
+        add_options_page('Smart Affiliate AutoInserter', 'Affiliate Inserter', 'manage_options', 'saa-settings', [$this, 'admin_page']);
     }
 
-    public function max_links_render() {
-        $options = $this->options;
-        ?>
-        <input type='number' name='smart_affiliate_options[max_links]' value='<?php echo esc_attr($options['max_links']); ?>' min='1' max='10' />
-        <p class='description'>Maximum affiliate links to insert per post/page.</p>
-        <?php
+    public function admin_init() {
+        add_action('wp_ajax_saa_save_affiliates', [$this, 'ajax_save_affiliates']);
     }
 
-    public function options_page() {
-        ?>
-        <div class="wrap">
-            <h1>Smart Affiliate AutoInserter Settings</h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('smart_affiliate');
-                do_settings_sections('smart_affiliate');
-                submit_button();
-                ?>
-            </form>
-            <?php if (!$this->options['pro_version']) : ?>
-            <div class="notice notice-info">
-                <p><strong>Go Pro</strong> for unlimited sites, analytics, A/B testing & more! <a href="https://example.com/pro" target="_blank">Upgrade Now ($49/year)</a></p>
-            </div>
-            <?php endif; ?>
-        </div>
-        <?php
+    public function ajax_save_affiliates() {
+        if (!current_user_can('manage_options')) wp_die();
+        $affiliates = json_decode(sanitize_text_field($_POST['affiliates']), true);
+        update_option('saa_affiliates', $affiliates);
+        wp_send_json_success();
     }
 
-    public function auto_insert_links($content) {
-        if (!is_single() && !is_page() || !$this->options['enabled'] || empty($this->options['affiliate_tag']) || empty($this->options['keywords'])) {
-            return $content;
-        }
-
-        $max_links = intval($this->options['max_links']);
-        $inserted = 0;
-        $words = explode(' ', $content);
-        $new_words = array();
-
-        foreach ($words as $word) {
-            $new_words[] = $word;
-            foreach ($this->options['keywords'] as $keyword => $product_url) {
-                if (stripos($word, $keyword) !== false && $inserted < $max_links) {
-                    $aff_link = $this->build_amazon_link($product_url, $this->options['affiliate_tag']);
-                    $new_words[] = '<span class="affiliate-link">' . $aff_link . '</span>';
-                    $inserted++;
-                    break;
-                }
-            }
-            if ($inserted >= $max_links) break;
-        }
-
-        $content = implode(' ', $new_words);
-        return $content;
+    public function admin_page() {
+        $affiliates = get_option('saa_affiliates', []);
+        echo '<div class="wrap"><h1>Smart Affiliate AutoInserter Settings</h1>';
+        echo '<p>Add JSON array of affiliates: <code>[{"keyword":"keyword","url":"link"}, ...]</code></p>';
+        echo '<textarea rows="10" cols="80" name="affiliates">' . esc_textarea(json_encode($affiliates)) . '</textarea>';
+        echo '<p><input type="button" class="button-primary" value="Save" id="saa-admin-save"></p>';
+        echo '</div>';
+        echo '<script>jQuery(".button-primary").click(function(){jQuery.post(ajaxurl,{action:"saa_save_affiliates",affiliates:jQuery("textarea[name=affiliates]").val()});});</script>';
     }
 
-    private function build_amazon_link($product_url, $tag) {
-        $parsed = parse_url($product_url);
-        $query = [];
-        parse_str($parsed['query'], $query);
-        $query['tag'] = $tag;
-        $new_query = http_build_query($query);
-        $link = $parsed['scheme'] . '://' . $parsed['host'] . $parsed['path'] . '?' . $new_query;
-        return '<a href="' . esc_url($link) . '" target="_blank" rel="nofollow sponsored">' . esc_html(basename($parsed['path'])) . '</a>';
+    public function activate() {
+        update_option('saa_affiliates', []);
     }
+
+    public function deactivate() {}
 }
 
 new SmartAffiliateAutoInserter();
-
-// Enqueue jQuery for admin
-if (is_admin()) {
-    wp_enqueue_script('jquery');
-}
 
 ?>
