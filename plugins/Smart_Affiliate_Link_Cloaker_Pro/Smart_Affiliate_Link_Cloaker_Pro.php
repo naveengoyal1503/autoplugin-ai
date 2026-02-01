@@ -6,204 +6,188 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Link Cloaker Pro
  * Plugin URI: https://example.com/smart-affiliate-cloaker
- * Description: Cloak, track, and optimize affiliate links with analytics and A/B testing.
+ * Description: Automatically cloaks, tracks, and optimizes affiliate links with click analytics.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: smart-affiliate-cloaker
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class SmartAffiliateCloaker {
-    private static $instance = null;
+// Define plugin constants
+define('SALC_VERSION', '1.0.0');
+define('SALC_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('SALC_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
+// Free features flag
+$premium_key = get_option('salc_premium_key', '');
+$is_premium = !empty($premium_key) && strlen($premium_key) > 10;
 
-    private function __construct() {
+class SmartAffiliateLinkCloaker {
+    public function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_sac_save_link', array($this, 'ajax_save_link'));
-        add_action('wp_ajax_sac_delete_link', array($this, 'ajax_delete_link'));
-        add_shortcode('sac_link', array($this, 'shortcode_link'));
-        add_filter('widget_text', 'shortcode_unautop');
-        add_filter('the_content', 'shortcode_unautop');
+        add_action('wp_ajax_salc_track_click', array($this, 'track_click'));
+        add_shortcode('salc_link', array($this, 'shortcode_link'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        if (get_option('sac_pro_version')) {
-            // Premium features loaded
+        // Auto-cloak affiliate links (free feature)
+        if (get_option('salc_auto_cloak', 1)) {
+            add_filter('the_content', array($this, 'auto_cloak_links'));
         }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sac-js', plugin_dir_url(__FILE__) . 'sac-script.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('sac-css', plugin_dir_url(__FILE__) . 'sac-style.css', array(), '1.0.0');
-        wp_localize_script('sac-js', 'sac_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sac_nonce')));
+        wp_enqueue_script('salc-js', SALC_PLUGIN_URL . 'salc.js', array('jquery'), SALC_VERSION, true);
+        wp_localize_script('salc-js', 'salc_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
+    }
+
+    public function auto_cloak_links($content) {
+        $patterns = array(
+            '/https?:\/\/(?:www\.)?(amazon|clickbank|shareasale|cj\.com)\/[^\s<>"\']+/i',
+            '/\b(?:aff|ref|tag)=[a-z0-9]+/i'
+        );
+        foreach ($patterns as $pattern) {
+            preg_match_all($pattern, $content, $matches);
+            foreach ($matches as $match) {
+                $shortcode = $this->generate_shortcode($match);
+                $content = str_replace($match, $shortcode, $content);
+            }
+        }
+        return $content;
+    }
+
+    public function generate_shortcode($url) {
+        $id = uniqid('salc_');
+        $hash = md5($url);
+        return '[salc_link id="' . $id . '" url="' . urlencode($url) . '" hash="' . $hash . '"]';
+    }
+
+    public function shortcode_link($atts) {
+        $atts = shortcode_atts(array('id' => '', 'url' => '', 'hash' => ''), $atts);
+        $url = urldecode($atts['url']);
+        $link_text = get_option('salc_link_text', 'Click Here');
+        ob_start();
+        ?>
+        <a href="#" class="salc-link" data-url="<?php echo esc_url($url); ?>" data-id="<?php echo esc_attr($atts['id']); ?>" data-hash="<?php echo esc_attr($atts['hash']); ?>"><?php echo esc_html($link_text); ?></a>
+        <?php
+        return ob_get_clean();
+    }
+
+    public function track_click() {
+        if (!wp_verify_nonce($_POST['nonce'], 'salc_nonce')) {
+            wp_die('Security check failed');
+        }
+        $id = sanitize_text_field($_POST['id']);
+        $url = esc_url_raw($_POST['url']);
+        $hash = sanitize_text_field($_POST['hash']);
+        
+        // Log click (free feature)
+        $clicks = get_option('salc_clicks', array());
+        $clicks[$id] = isset($clicks[$id]) ? $clicks[$id] + 1 : 1;
+        update_option('salc_clicks', $clicks);
+        
+        // Premium: A/B testing
+        if ($is_premium && get_option('salc_ab_testing', 0)) {
+            $variants = get_option('salc_ab_variants', array($url));
+            $variant_index = rand(0, count($variants) - 1);
+            $url = $variants[$variant_index];
+        }
+        
+        wp_redirect($url);
+        exit;
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate Cloaker', 'Affiliate Cloaker', 'manage_options', 'sac-settings', array($this, 'settings_page'));
+        add_options_page('Smart Affiliate Cloaker', 'Affiliate Cloaker', 'manage_options', 'salc-settings', array($this, 'settings_page'));
     }
 
     public function settings_page() {
-        if (isset($_POST['sac_submit'])) {
-            update_option('sac_links', sanitize_text_field($_POST['sac_links']));
+        if (isset($_POST['submit'])) {
+            update_option('salc_auto_cloak', isset($_POST['auto_cloak']) ? 1 : 0);
+            update_option('salc_link_text', sanitize_text_field($_POST['link_text']));
+            if (isset($_POST['premium_key'])) {
+                update_option('salc_premium_key', sanitize_text_field($_POST['premium_key']));
+            }
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        $links = get_option('sac_links', '[]');
+        $is_premium_local = $is_premium;
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate Cloaker Settings</h1>
+            <h1>Smart Affiliate Link Cloaker Settings</h1>
             <form method="post">
-                <textarea name="sac_links" rows="10" cols="80" placeholder='[{"name":"Amazon Link","url":"https://amazon.com/aff?id=123","description":"Test link"}]'><?php echo esc_textarea($links); ?></textarea>
-                <p class="description">JSON array of links: {"name":"Name","url":"Affiliate URL","description":"Desc"}</p>
-                <p><input type="submit" name="sac_submit" class="button-primary" value="Save Links"></p>
+                <?php wp_nonce_field('salc_settings'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th>Auto-cloak affiliate links</th>
+                        <td><input type="checkbox" name="auto_cloak" value="1" <?php checked(get_option('salc_auto_cloak', 1)); ?>></td>
+                    </tr>
+                    <tr>
+                        <th>Link text</th>
+                        <td><input type="text" name="link_text" value="<?php echo esc_attr(get_option('salc_link_text', 'Click Here')); ?>" class="regular-text"></td>
+                    </tr>
+                    <?php if (!$is_premium_local) : ?>
+                    <tr>
+                        <th>Enter Premium Key</th>
+                        <td><input type="text" name="premium_key" placeholder="Unlock premium features" class="regular-text"><br>
+                        <em>Upgrade to premium for A/B testing, analytics dashboard, and more!</em></td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php if ($is_premium_local) : ?>
+                    <tr>
+                        <th>A/B Testing</th>
+                        <td><input type="checkbox" name="ab_testing" value="1" <?php checked(get_option('salc_ab_testing', 0)); ?>></td>
+                    </tr>
+                    <?php endif; ?>
+                </table>
+                <?php submit_button(); ?>
             </form>
-            <h2>Usage</h2>
-            <p>Use shortcode: [sac_link id="0"] or [sac_link name="Amazon Link"]</p>
-            <?php if (!get_option('sac_pro_version')) { ?>
-            <div class="notice notice-info"><p><strong>Go Pro</strong> for analytics, A/B testing & unlimited links! <a href="#">Upgrade Now</a></p></div>
-            <?php } ?>
+            <h2>Click Stats (<?php echo count(get_option('salc_clicks', array())); ?> links tracked)</h2>
+            <ul>
+                <?php foreach (get_option('salc_clicks', array()) as $id => $count) : ?>
+                <li><?php echo esc_html($id); ?>: <?php echo (int)$count; ?> clicks</li>
+                <?php endforeach; ?>
+            </ul>
         </div>
         <?php
     }
 
-    public function ajax_save_link() {
-        check_ajax_referer('sac_nonce', 'nonce');
-        if (current_user_can('manage_options')) {
-            $links = get_option('sac_links', '[]');
-            $links_array = json_decode($links, true);
-            $new_link = array(
-                'name' => sanitize_text_field($_POST['name']),
-                'url' => esc_url_raw($_POST['url']),
-                'description' => sanitize_text_field($_POST['description'])
-            );
-            $links_array[] = $new_link;
-            update_option('sac_links', json_encode($links_array));
-            wp_send_json_success('Link saved');
-        }
-        wp_send_json_error('Unauthorized');
-    }
-
-    public function ajax_delete_link() {
-        check_ajax_referer('sac_nonce', 'nonce');
-        if (current_user_can('manage_options')) {
-            $index = intval($_POST['index']);
-            $links = get_option('sac_links', '[]');
-            $links_array = json_decode($links, true);
-            if (isset($links_array[$index])) {
-                array_splice($links_array, $index, 1);
-                update_option('sac_links', json_encode($links_array));
-                wp_send_json_success('Link deleted');
-            }
-        }
-        wp_send_json_error('Error');
-    }
-
-    public function shortcode_link($atts) {
-        $atts = shortcode_atts(array('id' => '', 'name' => ''), $atts);
-        $links = get_option('sac_links', '[]');
-        $links_array = json_decode($links, true);
-        $link = null;
-        if (!empty($atts['id']) && isset($links_array[$atts['id']])) {
-            $link = $links_array[$atts['id']];
-        } elseif (!empty($atts['name'])) {
-            foreach ($links_array as $l) {
-                if ($l['name'] === $atts['name']) {
-                    $link = $l;
-                    break;
-                }
-            }
-        }
-        if (!$link) return 'Link not found.';
-
-        $slug = sanitize_title($link['name']);
-        $track_id = uniqid();
-        $cloaked_url = home_url('/go/' . $slug . '/' . $track_id . '/');
-
-        // Track click (basic)
-        $click_data = array(
-            'url' => $link['url'],
-            'timestamp' => current_time('mysql'),
-            'ip' => $_SERVER['REMOTE_ADDR'],
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
-        );
-        $clicks = get_option('sac_clicks', array());
-        $clicks[$track_id] = $click_data;
-        if (count($clicks) > 1000 || get_option('sac_pro_version')) { // Pro unlimited
-            update_option('sac_clicks', $clicks);
-        }
-
-        return '<a href="' . $cloaked_url . '" target="_blank" rel="nofollow noopener">' . esc_html($link['name']) . '</a> ' . esc_html($link['description']);
-    }
-
     public function activate() {
-        if (!get_option('sac_links')) {
-            update_option('sac_links', '[]');
-        }
-        if (!get_option('sac_clicks')) {
-            update_option('sac_clicks', array());
-        }
+        add_option('salc_auto_cloak', 1);
+        add_option('salc_link_text', 'Click Here');
     }
 }
 
-// Rewrite rules for cloaked links
-add_action('init', function() {
-    add_rewrite_rule('^go/([^/]+)/([^/]+)/?$', 'index.php?sac_go=$matches[1]&sac_id=$matches[2]', 'top');
-});
-add_filter('query_vars', function($vars) {
-    $vars[] = 'sac_go';
-    $vars[] = 'sac_id';
-    return $vars;
-});
-add_action('template_redirect', function() {
-    $go = get_query_var('sac_go');
-    $id = get_query_var('sac_id');
-    if ($go && $id) {
-        $links = get_option('sac_links', '[]');
-        $links_array = json_decode($links, true);
-        foreach ($links_array as $link) {
-            if (sanitize_title($link['name']) === $go) {
-                wp_redirect($link['url'], 301);
-                exit;
-            }
-        }
-    }
-    flush_rewrite_rules();
-});
+new SmartAffiliateLinkCloaker();
 
-SmartAffiliateCloaker::get_instance();
-
-// Assets (inline for single file)
-add_action('wp_head', function() { ?>
-<style>
-.sac-admin { background: #f1f1f1; padding: 20px; }
-.sac-notice { border-left: 4px solid #00a0d2; }
-</style>
-<script>
-jQuery(document).ready(function($) {
-    // Basic analytics display (pro tease)
-    $('.sac-link').on('click', function() {
-        if (!<?php echo get_option('sac_pro_version') ? 'true' : 'false'; ?>) {
-            alert('Upgrade to Pro for full tracking!');
-        }
+// Inline JS for simplicity (self-contained)
+function salc_inline_js() {
+    ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.salc-link').on('click', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            var data = {
+                action: 'salc_track_click',
+                id: $this.data('id'),
+                url: $this.data('url'),
+                hash: $this.data('hash'),
+                nonce: '<?php echo wp_create_nonce('salc_nonce'); ?>'
+            };
+            $.post(salc_ajax.ajaxurl, data, function() {
+                window.location = $this.data('url');
+            });
+        });
     });
-});
-</script>
-<?php });
-
-// Freemium check
-function sac_is_pro() {
-    return get_option('sac_pro_version') === '1.0';
+    </script>
+    <?php
 }
+add_action('wp_footer', 'salc_inline_js');
 
 ?>
