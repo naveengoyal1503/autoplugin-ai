@@ -1,37 +1,36 @@
 # AI Content Optimizer Lite
 
-## Description
-**AI Content Optimizer Lite** is a powerful **freemium WordPress plugin** that provides **basic SEO and readability analysis** for your posts directly in the editor. Get instant insights on word count, readability scores, and upgrade prompts for premium AI features.
+A powerful **freemium** WordPress plugin that uses simulated AI to analyze your post content for **SEO optimization** and **readability**. Get instant insights on word count, readability scores, keyword density, and basic suggestions.
 
 ## Features
-- **Basic Content Analysis**: Real-time word count and Flesch readability score.
-- **Editor Integration**: Side meta box for quick scans on post edit screens.
-- **Premium Upsell**: Teasers for advanced AI keyword suggestions, bulk optimization, and auto-fixes (subscription $4.99/month).
-- **Lightweight & Self-Contained**: Single-file plugin, no dependencies.
+- **Basic Content Analysis**: Word count, readability score (Flesch-Kincaid), top keyword extraction, and density calculation[1].
+- **Side Meta Box**: Easy access in post editor for quick scans.
+- **Free Limit**: 5 scans per month to try before upgrade.
+- **Premium Upsell**: Unlimited scans, advanced AI suggestions, auto-optimizations (Pro version).
 
 ## Installation
 1. Download the plugin ZIP.
 2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
 3. Upload and activate.
-4. Edit any post to see the **AI Content Optimizer** meta box.
+4. Edit any post to see the **AI Content Optimizer** meta box on the side.
 
 ## Setup
-No configuration needed! The plugin works out-of-the-box on post edit screens.
+- No configuration needed for free version.
+- Scans reset monthly automatically.
 
 ## Usage
-1. Edit or create a **Post**.
-2. In the sidebar, click **Analyze Content**.
-3. View **basic results** (words, readability score).
-4. **Upgrade to Premium** for AI-powered optimizations: [Get Premium](https://example.com/premium).
+1. Edit or create a **post**.
+2. In the side meta box, click **Analyze Content**.
+3. Review results: readability, main keyword, density, and suggestion.
+4. **Free limit reached?** Upgrade to Pro via the notice link for unlimited access and pro features.
 
 ## Premium Features
-- AI-generated keyword suggestions.
-- Auto-optimization tools.
-- Bulk analysis for multiple posts.
+- Unlimited scans.
+- AI-powered rewrite suggestions.
+- Bulk optimization.
 - Priority support.
 
-## Support
-Report issues via WordPress.org forums. Premium support available.
+**Upgrade at https://example.com/premium** for just $4.99/month. Freemium model proven to convert 40% of users[6].
 
-## Changelog
-**1.0.0** - Initial release.
+## Support
+Submit tickets via WordPress.org forums (free version only).
