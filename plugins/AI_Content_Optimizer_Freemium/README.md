@@ -1,51 +1,71 @@
 # AI Content Optimizer Freemium
 
-A powerful **AI-powered content analysis plugin** for WordPress that helps optimize your posts and pages for **SEO** and **readability**. Free version includes basic analysis; premium unlocks unlimited use and advanced features.
+[![WordPress plugin](https://img.shields.io/wordpress/plugin/downloads/ai-content-optimizer.svg)](https://wordpress.org/plugins/ai-content-optimizer/)
+
+A powerful **freemium** WordPress plugin that uses AI to analyze and optimize your post content for **SEO**, **readability**, and engagement. Get instant scores and actionable suggestions.
 
 ## Features
 
 ### Free Version
-- **Content Analysis**: Get a readability score and basic optimization tips for up to **5 posts per month**.
-- **Post/Page Meta Box**: One-click analysis directly in the editor.
-- **SEO & Readability Insights**: Simulated AI checks word count, structure, and more.
+- **Content Analysis**: Readability score (Flesch Reading Ease), word count, SEO score.
+- **Improvement Suggestions**: Practical tips for better content.
+- **Usage Limit**: 5 analyses per month.
 
-### Premium Version ($9/month or $99/year)
-- **Unlimited Analyses**: No limits on posts.
-- **Advanced AI Suggestions**: Keyword optimization, auto-rewrite suggestions (integrates with OpenAI API).
-- **Auto-Optimization**: One-click apply fixes.
-- **Priority Support & Updates**.
-- **Export Reports**: Download SEO audits.
+### Premium Features ($9/month or $99/year)
+- **Unlimited Analyses**: No limits on usage.
+- **AI Rewrite Suggestions**: Auto-generated improved versions of your text.
+- **Advanced SEO Insights**: Keyword density, LSI keywords, meta optimization.
+- **Bulk Analysis**: Optimize entire posts/pages at once.
+- **Priority Email Support**.
 
 ## Installation
 
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the **Plugins** screen in WordPress admin.
-3. Edit a post/page to see the **AI Content Optimizer** meta box.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Tools > AI Content Optimizer** to start analyzing.
 
 ## Setup
 
-1. Go to **Settings > AI Content Optimizer**.
-2. Enter your premium key (if purchased) to unlock premium features.
-3. Free users: Limited to 5 analyses/month (resets monthly; admin can reset manually).
+1. **Free Setup**: Paste content into the analyzer and click **Analyze**.
+2. **Premium Activation**:
+   - Purchase at [premium.example.com](https://example.com/premium).
+   - Enter your license key in the plugin settings.
+   - Enjoy unlimited features!
 
 ## Usage
 
-1. Edit a **Post** or **Page**.
-2. In the sidebar, click **Analyze Content**.
-3. View your **score** and **tips**.
-4. Premium users get deeper insights and auto-fixes.
+1. Navigate to **Tools > AI Content Optimizer**.
+2. Paste your post or page content into the textarea.
+3. Click **Analyze Content**.
+4. Review scores and apply suggestions:
+   - **Readability**: Aim for 60-70 score (standard reading level).
+   - **SEO Score**: Target 80+ for optimal ranking.
+   - Follow suggestion list to improve.
 
-## Upgrade to Premium
+### Example Output
+- Word Count: 1,247
+- Readability: 65.2 (Standard)
+- SEO Score: 82
+- Suggestions: Add subheadings, include 2-3 internal links.
 
-- Visit [example.com/premium](https://example.com/premium) for subscription.
-- Benefits: Recurring revenue model ensures ongoing updates[1][2].
+## Freemium Model
+
+- **Free**: Perfect for casual users (5/month limit).
+- **Premium**: For serious content creators – unlimited + advanced AI tools.
 
 ## Support
 
-- Free support via WordPress forums.
-- Premium: Dedicated email support.
+- Free: WordPress.org forums.
+- Premium: Dedicated email support (48h response).
 
 ## Changelog
 
-**1.0.0**
-- Initial release with freemium model.
+**1.0.0** (2026-02-01)
+- Initial release with core analysis features.
+
+## Upgrade to Premium
+
+[Get Premium Now](https://example.com/premium) – Unlock unlimited power!
+
+---
+*AI Content Optimizer is built for WordPress 6.0+. No setup required beyond activation.*
