@@ -1,42 +1,41 @@
 # AI Content Optimizer Pro
 
-## Description
-AI Content Optimizer Pro is a powerful WordPress plugin that analyzes your posts for **readability** and **SEO scores** using AI-driven insights. The free version provides basic scoring; premium unlocks AI content rewriting, bulk processing, and advanced metrics.
-
 ## Features
-- **Free:** Real-time readability and SEO scoring in post editor.
-- **Premium:**
-  - AI-powered content rewriting for better engagement.
-  - Bulk optimization for multiple posts/pages.
-  - Advanced analytics dashboard.
-  - Priority email support.
-  - Remove branding and unlock unlimited usage.
+
+**Free Version:**
+- Real-time content analysis for word count, readability (Flesch score), and basic SEO score.
+- Side meta box in post editor for instant insights.
+
+**Premium Version ($9/mo or $99/yr):**
+- **AI-powered keyword suggestions** based on content.
+- **AI content rewriting** for improved engagement.
+- Unlimited analyses and advanced SEO metrics.
+- Priority support and regular updates.
 
 ## Installation
+
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin via **Plugins > Installed Plugins**.
-3. Edit any post to see the optimizer meta box.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Edit any post to see the **AI Content Optimizer** meta box on the side.
 
 ## Setup
-1. Go to **Settings > AI Optimizer**.
-2. Enter your premium license key (free users skip this).
-3. Premium key auto-activates advanced features.
+
+- No configuration needed for free features.
+- For premium demo: Enter `demo-premium-key` when prompted.
+- Upgrade at [AI Content Optimizer Pro](https://example.com/premium-upgrade).
 
 ## Usage
-1. Edit a **Post** or **Page**.
-2. In the sidebar **AI Content Optimizer** box, view scores.
-3. Premium users: Click **AI Rewrite Content** for suggestions.
-4. Save post to update scores.
 
-## Premium Upgrade
-- **Pricing:** $9/month or $99/year.
-- **Get it:** Visit [example.com/premium](https://example.com/premium).
-- Benefits: Recurring value with updates + 65% higher retention vs one-time[6].
-
-## Support
-- Free: WordPress.org forums.
-- Premium: Dedicated support ticket system.
+1. Open a post in the editor.
+2. Click **Analyze Content** in the meta box.
+3. View scores: **SEO Score**, word count, readability.
+4. Premium users get AI keywords and rewritten content.
 
 ## Changelog
+
 **1.0.0**
-- Initial release with freemium scoring.
+- Initial release with freemium model.
+
+## Support
+
+Free support via WordPress forums. Premium: Email support@example.com.
