@@ -1,37 +1,41 @@
 # AI Content Optimizer
 
-A **freemium** WordPress plugin that analyzes post content for **SEO** and readability, with premium AI-powered rewriting.[1][2]
+## Description
+AI Content Optimizer is a powerful **freemium** WordPress plugin that provides **AI-powered analysis** for your posts and pages. Get instant **readability scores**, **keyword density**, and premium **AI suggestions** to boost SEO and engagement.
+
+**Free version:** Basic readability and keyword analysis.
+**Premium ($49/year):** AI suggestions, auto-optimization, bulk processing, priority support.
 
 ## Features
-
-### Free Version
-- Content analysis: Word count, readability score (Flesch-Kincaid).
-- Basic optimization suggestions.
-- One-click post meta box.
-
-### Premium ($4.99/month)
-- **AI rewriting** for improved SEO and engagement.
-- Bulk optimization.
-- Unlimited usage.
-- Priority support.[5][6]
+- **Readability Score:** Flesch-based score for content clarity.
+- **Keyword Density:** Top keywords extraction.
+- **Premium AI Suggestions:** Actionable improvements (e.g., shorten sentences, add CTAs).
+- **Bulk Optimization:** Process multiple posts (Premium).
+- **Seamless Integration:** Side meta box in post editor.
 
 ## Installation
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin via **Plugins > Installed Plugins**.
-3. Access via **Settings > AI Content Optimizer** or post editor meta box.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Edit any post/page – find the optimizer in the side panel.
 
 ## Setup
-- No API keys needed for free version.
-- Premium: Enter license key in plugin settings (integrate Freemius in production).
+- No configuration needed for free version.
+- Premium: Enter license key in **Settings > AI Content Optimizer** (via Freemius).
 
 ## Usage
-1. Go to **Settings > AI Content Optimizer** or use post meta box.
-2. Select/paste content and click **Optimize Content**.
-3. Review suggestions and updated post.
-4. **Upgrade** for AI features: Visit [premium link](https://example.com/premium).
+1. Open a post/page editor.
+2. Click **Analyze Content** in the AI Content Optimizer box.
+3. Review free scores or upgrade for AI suggestions.
+4. Apply suggestions manually or auto-fix (Premium).
+
+## Premium Upgrade
+Unlock full potential:
+- [Get Premium](https://example.com/premium) – One-time setup via Freemius.
 
 ## Changelog
-- **1.0.0**: Initial release.
+**1.0.0**
+- Initial release.
 
 ## Support
-Free support via WordPress.org. Premium: Email support@yourdomain.com.
+- Free: WordPress.org forums.
+- Premium: Dedicated support ticket.
