@@ -1,35 +1,30 @@
 # AI Content Optimizer
 
-## Description
-A powerful **freemium WordPress plugin** that analyzes your post content for **SEO** and **readability**, providing instant optimization suggestions. Premium version includes AI-powered rewriting and bulk processing for professional results.
-
 ## Features
-- **Free:** Basic SEO score, word count, readability analysis on any post.
-- **Premium ($4.99/month):** AI content rewriting, bulk optimization, export reports, priority support.
-- One-click optimization from post editor or dedicated dashboard.
-- Lightweight and self-contained—no external dependencies.
+
+- **Free Version**: Real-time content analysis for word count, readability (Flesch score), basic SEO score, and optimization suggestions.
+- **Premium Features** (Subscription $9.99/month): AI-powered content rewriting, advanced keyword research, meta tag optimization, and priority support.[1][2]
+- Side meta box in post editor for instant analysis.
+- No external API calls in free version – fully self-contained.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate **AI Content Optimizer**.
-4. Access via **Settings > AI Optimizer**.
+
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Edit any post – find the **AI Content Optimizer** meta box on the side.
 
 ## Setup
-1. After activation, visit **Settings > AI Optimizer**.
-2. Select a post and click **Optimize** for free analysis.
-3. For premium: Enter your key (purchase at example.com/premium) to unlock AI features.
+
+- No setup required for free features.
+- For premium: Purchase at [example.com/premium](https://example.com/premium), enter license key in plugin settings (added in future updates).
 
 ## Usage
-1. **Free Analysis:** Select any post in the dashboard and click Optimize—get instant SEO/readability scores.
-2. **Post Editor:** Use the side meta box for quick access.
-3. **Premium AI Rewrite:** After activation, optimizations include simulated AI enhancements (full AI in production via API).
-4. **Upsell Notice:** Non-premium users see upgrade prompts to convert.
 
-## Monetization
-Freemium model: Free hooks users; premium subscription via license key (integrate Stripe/PayPal in production). Expected 40% free-to-premium conversion based on industry stats.
+1. Write or edit a post.
+2. Click **Analyze Content** in the meta box.
+3. Review scores and suggestions.
+4. Upgrade to premium for AI rewriting: Automatically improves content for SEO and engagement.
 
-## Support
-Report issues via WordPress.org forums or premium support ticket.
+## Monetization Potential
 
-**Upgrade to Premium today for AI-powered content mastery!**
+Freemium model drives upgrades: Basic hooks users, premium delivers high-value AI features for recurring revenue.[1][2][6]
