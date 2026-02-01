@@ -1,37 +1,38 @@
 # AI Content Optimizer Pro
 
-## Description
-**AI Content Optimizer Pro** is a powerful WordPress plugin that uses AI to analyze your post and page content for **SEO**, **readability**, and **engagement**. The free version provides basic analysis, while premium unlocks AI-powered rewriting, keyword research, and more.
-
 ## Features
-- **Free:** Instant content scoring (SEO, readability), rule-based suggestions, meta box integration.
-- **Premium ($9/mo or $79/yr):** AI content rewriting, advanced keyword suggestions, bulk optimization, priority support, remove nag.
-- One-click analysis from post editor.
-- Tracks optimization history.
-- Lightweight and compatible with Gutenberg, Classic Editor.
+
+- **Free Version**:
+  - Instant SEO score calculation (keywords, length, headings)[1].
+  - Basic optimization suggestions.
+
+- **Premium Features** ($4.99/month subscription)[2][5]:
+  - AI-powered content rewriting for better SEO.
+  - Bulk post/page optimization.
+  - Advanced keyword analysis and integration.
+  - Priority support and regular updates.
+
+**Monetization Ready**: Upsell via in-plugin prompts. Integrate with Stripe for subscriptions[1][6].
 
 ## Installation
+
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit any post/page – find the **AI Content Optimizer** sidebar.
+3. Navigate to **AI Optimizer** in the admin menu.
 
 ## Setup
-- **Free:** Ready immediately – click **Analyze Now**.
-- **Premium:** [Purchase here](https://example.com/premium), enter license key in plugin settings (added via upsell link).
+
+- Free version works immediately.
+- For premium: Enter license key after purchase (future update) or simulate activation.
 
 ## Usage
-1. Edit a post or page.
-2. In the sidebar, paste or auto-load content, click **Analyze Now**.
-3. View **SEO Score** and suggestions.
-4. **Premium users:** Click **AI Rewrite** for optimized version.
-5. Save post to store results.
 
-## Screenshots
-*(Imagine: Meta box with score gauge, suggestions list, upgrade button)*
+1. Go to **AI Optimizer** in your WordPress dashboard.
+2. Paste content into the textarea.
+3. Click **Optimize Content**.
+4. View SEO score, suggestions, and premium rewrite.
 
-## Changelog
-**1.0.0**
-- Initial release with freemium model.
+**Upgrade Prompt**: Non-premium users see upsell links. Track conversions for profitability[4][5].
 
 ## Support
-Free: WordPress forums. Premium: Dedicated email support.
+Contact support@example.com. Premium users get priority.
