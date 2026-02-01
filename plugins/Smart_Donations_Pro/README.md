@@ -1,42 +1,41 @@
 # Smart Donations Pro
 
-## Features
+A simple, powerful WordPress plugin to monetize your site with customizable donation buttons powered by PayPal. Track progress towards goals and encourage one-time or custom amount donations.
 
-- **Easy Donation Widget**: Add a customizable donation form via shortcode `[smart_donations]` with preset tiers (e.g., $5, $10, $25).
-- **Custom Amounts**: Users can enter any donation amount.
-- **PayPal Integration**: One-click PayPal payments (set your email in settings).
-- **Donation Logging**: Tracks all donations with amounts, dates, and IPs for analytics (view in Tools > Site Health > Debug).
-- **Mobile-Responsive**: Clean, modern design works on all devices.
-- **Freemium Ready**: Premium unlocks recurring donations, email receipts, and advanced stats.
+## Features
+- **Easy Shortcode Integration**: Use `[smart_donation amount="10" currency="USD"]` anywhere.
+- **Progress Bar**: Visual goal tracker that updates dynamically.
+- **PayPal Integration**: Secure payments via official PayPal donate form.
+- **Admin Dashboard**: Set PayPal email, button text, and goal amount.
+- **Analytics**: Tracks total donations raised.
+- **Mobile Responsive**: Works perfectly on all devices.
+- **Lightweight**: Single-file, no bloat, fast loading.
 
 ## Installation
-
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Donations Pro** to enter your PayPal email.
-4. Add `[smart_donations tiers="5,10,25,50,100" title="Buy Me a Coffee"]` to any page or post.
+3. Go to **Settings > Donations** to configure PayPal email and goal.
+4. Add the shortcode to any post, page, or widget.
 
 ## Setup
-
-1. **PayPal Account**: Verify your PayPal business email in plugin settings.
-2. **Shortcode Options**:
-   - `tiers`: Comma-separated amounts (default: "5,10,25,50,100").
-   - `title`: Widget heading (default: "Support Us").
-3. Test: Visit the page, select amount, and donate.
+1. In admin: Enter your PayPal business email (e.g., donations@yoursite.com).
+2. Set a fundraising goal (e.g., $1000).
+3. Customize button text (default: "Donate Now").
+4. Save settings.
 
 ## Usage
+- **Basic**: `[smart_donation]` – Uses default $10 USD.
+- **Custom Amount**: `[smart_donation amount="25" currency="EUR"]`.
+- Embed in sidebar via widgets or Gutenberg block (Text block with shortcode).
+- Donations update progress bar on success.
 
-- Embed on sidebar, footer, or blog posts for passive income.
-- **Analytics**: Donations logged automatically. Premium version adds dashboard charts.
-- **Upsell Tip**: Offer tiers with perks like "Supporter Badge" to boost conversions.
-- **Monetization**: Sell premium version ($29) with recurring subs via WooCommerce.
+## Premium Features (Coming Soon)
+- Recurring donations.
+- Multiple goals.
+- Custom themes.
+- Export analytics.
 
-## FAQ
+## Support
+Report issues on WordPress.org forums. Premium support via upgrade.
 
-**How do I view donations?** Check `sdp_donations_log` option in database or enable premium dashboard.
-
-**PayPal not working?** Ensure email is correct and PayPal account is verified.
-
-**Support**: Contact via plugin page.
-
-*Version 1.0.0 | Compatible with WordPress 6.0+ | PHP 7.4+*
+**Monetize effortlessly – start with donations today!**
