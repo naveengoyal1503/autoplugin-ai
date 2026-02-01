@@ -1,39 +1,31 @@
 # Smart Donation Booster
 
 ## Features
-- **Non-intrusive donation prompts** with customizable timing and positioning to avoid annoying users.
-- **Progress bar visualization** showing real-time donation goals to encourage contributions.
-- **One-click PayPal integration** for seamless payments (supports donations, tips, 'buy me a coffee').
-- **Shortcode support**: `[sdb_donate_button]` for inline buttons anywhere.
-- **Admin dashboard** for easy setup of goals, messages, and PayPal email.
-- **Freemium model**: Free version for basics; Pro adds A/B testing, analytics, unlimited campaigns, geo-targeting.
-
-**Pro Stats Potential**: Subscription models retain 65% more users[5]; donation boosts via progress bars increase conversions by up to 40% with freemium strategies[5].
+- **Customizable donation buttons** with shortcodes `[sdb_donate amount="10"]`
+- **Progress bars** for fundraising goals with real-time tracking
+- **One-click PayPal integration** for instant payments
+- **Analytics dashboard** showing total donations and progress
+- **Mobile-responsive design** for all devices
+- **Freemium-ready**: Core free; premium for recurring/Stripe
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Donation Booster** to configure PayPal email, goal, and message.
-4. Replace `YOUR_PAYPAL_BUTTON_ID` in code with your PayPal button ID (create at paypal.com/buttons).
+1. Upload the `smart-donation-booster` folder to `/wp-content/plugins/`
+2. Activate via **Plugins > Installed Plugins**
+3. Configure in **Settings > Donation Booster**: Add your PayPal email and goal
+4. Add shortcode `[sdb_donate]` to any post/page/sidebar
 
 ## Setup
-1. **PayPal Account**: Get a business account and create a donation button at [PayPal](https://www.paypal.com/buttons).
-2. **Configure Settings**:
-   - Enter your PayPal email.
-   - Set monthly goal (e.g., $1000).
-   - Customize message (e.g., "Support independent content!");
-   - Enable display options.
-3. **Test**: Visit frontend; widget appears after 10s (dismissible).
+1. Go to **Settings > Donation Booster**
+2. Enter **PayPal email** (business account recommended)
+3. Set **goal amount** (e.g., 1000) for progress bar
+4. Customize **button text** (e.g., "Buy Me Coffee")
+5. Save and test with shortcode
 
 ## Usage
-- **Automatic Widget**: Appears in bottom-right after 10 seconds on all pages.
-- **Shortcodes**:
-  - `[sdb_donate_button]` - Inline button.
-- **Track Progress**: Simulated total updates via AJAX (Pro: real analytics).
-- **Customization**: Edit CSS in plugin or theme.
+- **Shortcode**: `[sdb_donate amount="5" currency="USD"]` – Custom amounts
+- **Widget**: Drag to sidebar or use in Gutenberg block
+- **Track donations**: Simulated via AJAX; real payments via PayPal
+- **Monetize**: Upsell premium features like subscriptions[1][3]
 
-## Pro Upgrade
-Unlock advanced features for $29/year: analytics, targeting, A/B tests. Contact support@example.com.
-
-## Changelog
-- 1.0.0: Initial release with core donation features.
+## Support
+Contact support@example.com. Premium: recurring donations, Stripe, exports.
