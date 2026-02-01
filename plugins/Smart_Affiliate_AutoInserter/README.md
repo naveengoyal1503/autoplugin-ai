@@ -1,52 +1,57 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into your content using smart keyword matching.**
+**Automatically boosts your WordPress site's affiliate earnings by inserting relevant links into content.**
 
 ## Features
 
-- **Auto-Insert Links**: Scans posts and pages for keywords and inserts Amazon affiliate links seamlessly.
-- **Custom Keywords**: Define keywords and matching products for precise targeting.
-- **Configurable Limits**: Set max links per post to avoid over-optimization.
-- **Mobile-Responsive**: Links work perfectly on all devices.
-- **Freemium Model**: Free core features; **Pro** adds AI suggestions, ASIN direct links, A/B testing, analytics, and multi-site support.
-- **Easy Setup**: No coding required – works out of the box.
+- **Auto-Link Insertion**: Automatically adds affiliate links to matching keywords in posts and pages.
+- **Easy Keyword Management**: Add keywords and links via simple admin dashboard (5 free slots).
+- **SEO-Friendly**: Uses `nofollow`, `sponsored` attributes, and opens in new tabs.
+- **Content-Safe**: Limits to one replacement per keyword per post to avoid spamming.
+- **Freemium Upsell**: Pro version unlocks AI detection, unlimited links, analytics, and more.
+
+**Pro Features (Upgrade for $49/year)**:
+- AI-powered keyword suggestion and auto-detection.
+- Unlimited keywords and links.
+- Detailed click analytics and A/B testing.
+- Integrations with Amazon Associates, ShareASale, etc.
+- Priority support.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Configure in **Settings > Affiliate AutoInserter**.
+1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' screen in WordPress admin.
+3. Go to **Settings > Affiliate Inserter** to configure keywords and links.
 
 ## Setup
 
-1. Enter your **Amazon Associates Tag** (get one at [affiliate-program.amazon.com](https://affiliate-program.amazon.com)).
-2. Add **Keywords** (e.g., "laptop") and **Product Details** (name, optional ASIN for Pro).
-3. Enable auto-insertion and set max links.
-4. Save settings – links appear instantly on new/existing posts!
+1. In the admin page, enter **keywords** (e.g., "best laptop") and corresponding **affiliate links** (e.g., your Amazon link).
+2. Enable "Auto-Insertion" checkbox.
+3. Save settings. Links will now auto-appear in published posts/pages.
 
-**Pro Tip**: Test on a staging site. Use 3-5 keywords initially for best results.
+**Example**:
+- Keyword: `WordPress hosting`
+- Link: `https://your-affiliate-link.com`
 
 ## Usage
 
-- Write content with natural keywords.
-- Plugin auto-replaces matches with affiliate links (e.g., "best laptop" → Amazon link).
-- Track earnings in your Amazon dashboard.
-- **Pro Users**: Access dashboard analytics and A/B test link placements.
+- Write content with keywords naturally.
+- Plugin scans and links them on frontend display.
+- Test on a staging site first.
+- Monitor earnings via your affiliate dashboard.
+- Upgrade to Pro for advanced automation and insights.
 
-## Pro Upgrade
+## FAQ
 
-Unlock full potential:
-- AI-powered keyword discovery.
-- Direct ASIN/product links.
-- Performance analytics.
-- Unlimited sites.
+**Does it slow down my site?** No, lightweight regex processing only on single posts.
 
-[Get Pro Now](https://example.com/pro) – $49/year.
+**Safe for SEO?** Yes, proper rel attributes included.
+
+**Pro Trial?** 14-day money-back guarantee.
 
 ## Support
 
-- [Documentation](https://example.com/docs)
-- [Submit Ticket](https://example.com/support)
+- Free version: WordPress.org forums.
+- Pro: Dedicated email support.
 
-**Boost your passive income today!**
+**Start earning passively today!** [Get Pro](https://example.com/pro)
