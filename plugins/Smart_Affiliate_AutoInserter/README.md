@@ -1,52 +1,31 @@
 # Smart Affiliate AutoInserter
 
-**Automatically insert relevant affiliate links into your WordPress posts and pages to boost passive income.**
+**Automatically insert Amazon affiliate links into your content for passive income.**
 
 ## Features
-
-- **Smart Auto-Insertion**: Scans content and inserts affiliate links on matching keywords without manual editing.
-- **Customizable Limits**: Set max links per post to avoid over-optimization.
-- **Easy Setup**: Add keywords and affiliate URLs via simple settings page.
-- **SEO-Friendly**: Adds `nofollow` and `noopener` attributes automatically.
-- **Mobile-Responsive**: Works seamlessly on all devices.
-- **Free Core**: Fully functional for basic use.
-
-**Pro Add-ons (coming soon)**:
-- AI-powered keyword relevance scoring.
-- Click analytics dashboard.
-- WooCommerce product integration.
-- Bulk import/export of links.
+- **Keyword-based auto-insertion**: Matches keywords in posts/pages to Amazon products.
+- **Customizable**: Add your affiliate tag, keywords, and ASINs via simple JSON.
+- **Limits control**: Set max links per post to avoid over-insertion.
+- **SEO-friendly**: Adds `nofollow sponsored` attributes.
+- **Freemium**: Free core; Pro adds AI product suggestions, analytics, WooCommerce integration.
 
 ## Installation
-
-1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
 3. Go to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
-
-1. In **Settings > Affiliate Inserter**, enter your links in the format:
-   
-   WordPress|https://youraffiliate.link/wp
-   Plugin|https://youraffiliate.link/plugin
-   Hosting|https://youraffiliate.link/hosting
-   
-2. Set **Max Links per Post** (default: 2).
-3. Save changes. Links auto-appear in new and existing posts!
+1. Enter your **Amazon Affiliate Tag** (e.g., `yourid-20`).
+2. Add keywords and ASINs in JSON format: `{"phone":"B08N5WRWNW","laptop":"B09G9FPGT6"}`.
+3. Set **Max links per post** (default: 3).
+4. Save and test on a post.
 
 ## Usage
+- Write content with keywords (e.g., "best phone").
+- Plugin auto-links on frontend (single posts only).
+- Example output: `Check this <a href="...">phone</a><sup>*</sup>`.
 
-- Links insert only on public single posts/pages (not admin, archives, or widgets unless enabled).
-- Test on a staging site first.
-- Monitor performance; upgrade to Pro for advanced analytics.
+**Pro Features**: AI keyword analysis, performance dashboard, unlimited products ($49/year).
 
 ## Support
-
-- [Documentation](https://example.com/docs)
-- [Submit a Ticket](https://example.com/support)
-
-## Upgrade to Pro
-
-Unlock AI optimization and more for $49/year. [Get Pro Now](https://example.com/pro)
-
-**Built for affiliate marketers. Start earning passively today!**
+Report issues at [support@example.com](mailto:support@example.com).
