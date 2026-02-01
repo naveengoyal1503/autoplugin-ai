@@ -1,50 +1,48 @@
 # AI Content Optimizer Pro
 
-A powerful **AI-powered SEO optimization plugin** for WordPress. Analyzes your content for readability, keyword density, and provides actionable suggestions to boost search rankings.
+A powerful **freemium** WordPress plugin that uses AI to analyze and optimize your post content for better **SEO** and engagement.
 
 ## Features
 
 ### Free Version
-- Analyze up to **5 posts per month**.
-- Basic readability score and keyword density check.
+- Basic SEO score calculation (word count, keyword presence).
+- Up to **3 analyses per day**.
 - Simple optimization suggestions.
 
-### Premium Version ($9.99/mo or $99/yr)
-- **Unlimited post optimizations**.
-- AI-generated **auto-rewrite suggestions**.
-- Advanced keyword research integration.
-- One-click **auto-optimization**.
-- **Priority email support**.
-- Export reports for agencies.
+### Premium Version ($9.99/month or $99/year)
+- **Unlimited** analyses.
+- Advanced AI-powered rewrite suggestions (OpenAI integration).
+- Competitor analysis.
+- Readability scores and auto-improvements.
+- Priority email support.
+- Export reports.
 
 ## Installation
 
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the **Plugins** menu in WordPress.
-3. Navigate to **AI Optimizer** in your admin dashboard.
+2. Activate the plugin through the **Plugins** screen in WordPress admin.
+3. The optimizer meta box appears in Post/Page editors.
 
 ## Setup
 
-1. **Free Usage**: Select a post and click **Analyze & Optimize** (limited to 5/month).
-2. **Premium Activation**:
-   - Click **Activate Premium (Demo)** link for testing.
-   - For live premium, purchase at [example.com/premium-upgrade](https://example.com/premium-upgrade) and enter license key (future updates).
+1. Go to **Settings > AI Optimizer** to configure (optional).
+2. For premium: Enter license key or subscribe at [premium site](#).
 
 ## Usage
 
-1. Go to **AI Optimizer** in the admin menu.
-2. Select a published post from the dropdown.
-3. Click **Analyze & Optimize**.
-4. Review results: readability score, suggestions, and preview.
-5. Premium users: Content auto-updates with optimizations.
+1. Edit a **Post** or **Page**.
+2. Click **Analyze Content** in the sidebar meta box.
+3. Review **SEO Score** and suggestions.
+4. Apply changes and republish.
+
+**Pro Tip**: Target 80%+ score for top search rankings!
 
 ## Support
+
 - Free: WordPress.org forums.
-- Premium: Submit ticket at example.com/support.
+- Premium: Dedicated support portal.
 
 ## Changelog
 
 **1.0.0**
 - Initial release with freemium model.
-
-**Upgrade to Premium** for unlimited power: [Get Premium](https://example.com/premium-upgrade)
