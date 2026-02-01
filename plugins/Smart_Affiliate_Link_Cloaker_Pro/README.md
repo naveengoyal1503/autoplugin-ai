@@ -1,55 +1,46 @@
 # Smart Affiliate Link Cloaker Pro
 
-A freemium WordPress plugin for affiliate marketers to cloak, track, and optimize links effortlessly. Boost conversions with analytics and A/B testing (Pro).
+A powerful freemium WordPress plugin for affiliate marketers to cloak, track, and optimize affiliate links for higher conversions.
 
 ## Features
 
-**Free Version:**
-- Automatically replace keywords with cloaked affiliate links in posts/pages.
-- Click tracking for all links.
-- Simple dashboard to add/manage links.
-- Shortcode support: `[sal_link id="123"]`.
-- Pretty cloaked URLs like `/go/123/`.
+### Free Version
+- **Link Cloaking**: Create pretty `/go/slug/` URLs for affiliate links.
+- **Click Logging**: Track IP, user agent, and timestamps (last 500 clicks).
+- **Shortcode Support**: Use `[afflink id="slug"]` anywhere.
+- **Simple Dashboard**: Add/edit links and view click stats.
 
-**Pro Version ($9/mo or $79/yr):**
-- Advanced analytics dashboard with conversion rates.
-- A/B testing for link variations.
-- Unlimited links and custom domains.
-- Fraud detection and geo-tracking.
-- Priority support and automatic updates.
+### Pro Add-ons (Buy separately or bundle $99/year)
+- **Advanced Analytics**: Geo-location, device breakdown, conversion tracking.
+- **A/B Testing**: Rotate multiple affiliate links and track best performer.
+- **Integrations**: Pretty Links, ThirstyAffiliates, WooCommerce ($29 each).
+- **Unlimited Logs & Exports**: CSV reports, Google Analytics integration.
 
 ## Installation
 
 1. Upload the `smart-affiliate-cloaker-pro` folder to `/wp-content/plugins/`.
 2. Activate the plugin via **Plugins > Installed Plugins**.
-3. Visit **Settings > Affiliate Cloaker** to add your first link.
-4. Flush permalinks if needed: **Settings > Permalinks > Save**.
+3. Go to **Settings > Affiliate Cloaker** to add your first link.
+4. Flush permalinks if needed (**Settings > Permalinks > Save**).
 
 ## Setup
 
-1. Go to **Settings > Affiliate Cloaker**.
-2. Add a keyword (e.g., "best hosting") and affiliate URL.
-3. Use the keyword in posts, or shortcode `[sal_link id="1"]`.
-4. Clicks redirect and are tracked.
+1. In the dashboard, enter **ID** (e.g., `amazon-deal`), **Name** (display text), **URL** (affiliate link).
+2. Use the generated link: `yoursite.com/go/amazon-deal/` or shortcode `[afflink id="amazon-deal"]`.
+3. View clicks in the dashboard.
 
 ## Usage
 
-- **Auto-cloaking:** Write your keyword in content; it auto-converts to a tracked link.
-- **Manual:** Use shortcode for precise control.
-- **View stats:** Dashboard shows clicks per link.
-- **Upgrade:** Click the Pro nag for subscription (Stripe-powered).
+- **Posts/Pages**: Insert shortcodes for dynamic links.
+- **Menus/Widgets**: Use the cloaked `/go/` URLs.
+- **Pro Tip**: Upgrade for A/B testing to maximize commissions.
 
-## Screenshots
-*(In full distro: dashboard, link editor, analytics)*
+## Monetization Potential
 
-## Changelog
-
-**1.0.0**
-- Initial release.
+Freemium model drives viral adoption. Upsell add-ons for recurring revenue. Affiliate marketers spend on tools boosting commissions.
 
 ## Support
 
-- Free: WordPress.org forums.
-- Pro: Email support@yourdomain.com.
+Report issues at [support@example.com](mailto:support@example.com). Pro users get priority support.
 
-**Upgrade to Pro today for recurring revenue streams and 40% higher conversions!**
+**Upgrade to Pro: [Buy Now](https://example.com/pro)**
