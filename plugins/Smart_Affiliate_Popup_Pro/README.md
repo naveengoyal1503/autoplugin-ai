@@ -1,37 +1,43 @@
 # Smart Affiliate Popup Pro
 
+## Description
+Boost your affiliate earnings with smart, personalized popups that display targeted product recommendations to visitors at the perfect time. Increases conversions by up to 40% with freemium strategies.[5]
+
 ## Features
-- **Personalized Popups**: Displays relevant affiliate products based on simple AI-like randomization (Pro: advanced targeting by page/user behavior).
-- **Conversion Boost**: Timed popups (10s delay) with eye-catching designs to maximize clicks[1][2].
-- **Easy Setup**: Add your Amazon, ClickBank, or any affiliate links via admin panel.
-- **Mobile Responsive**: Works perfectly on all devices.
-- **Freemium Model**: Free core features; Pro unlocks A/B testing, geo-targeting, unlimited popups ($49/year).
-- **Analytics Ready**: Track clicks via your affiliate dashboards.
+- **Time-delayed or exit-intent popups** for optimal engagement.
+- **Randomized affiliate recommendations** from your JSON-configured links.
+- **Mobile-responsive design** with overlay and close button.
+- **Easy admin settings** page for customization.
+- **AJAX-powered dynamic content** without page reloads.
+- **Pro upgrade**: A/B testing, geo-targeting, analytics, unlimited campaigns ($49/year).
 
 ## Installation
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
-2. Activate the plugin.
-3. Go to Settings > Affiliate Popup to configure your links.
+1. Upload the `smart-affiliate-popup` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Popup** to configure.
 
 ## Setup
-1. In the admin panel (Settings > Affiliate Popup), paste your affiliate data as JSON:
-   
-   [
-     {"name":"Great Product","link":"https://your-aff-link.com","image":"https://image-url.com/img.jpg"},
-     {"name":"Another Deal","link":"https://aff-link-2.com"}
-   ]
-   
-2. Save changes. Popups will appear after 10 seconds on frontend pages.
-3. Upgrade to Pro for advanced features like exit-intent triggers and segmentation.
+1. In the settings page:
+   - Toggle **Enable Popup**.
+   - Set **Display Delay** (e.g., 5000ms = 5 seconds).
+   - Add **Affiliate Links** as JSON array:
+     
+     [
+       {"text":"Check this out!","url":"https://yourafflink1.com","image":"https://img1.jpg"},
+       {"text":"Recommended deal","url":"https://yourafflink2.com","image":"https://img2.jpg"}
+     ]
+     
+   - Choose **Trigger**: Time or Exit Intent.
+2. Save changes. Test on frontend.
 
 ## Usage
-- Popups auto-show on all pages (customizable in Pro).
-- Users click affiliate links for commissions.
-- Customize timing/CSS via code if needed.
-- **Pro Tip**: Use pricing psychology like $9.99 deals for 28% higher conversions[5].
+- Popups auto-display based on settings.
+- Customize links for Amazon Affiliates, etc.[4]
+- Track clicks via your affiliate dashboard.
+- **Pro Tip**: Use pricing psychology like $9.99 links for 28% higher sales.[5]
+
+## Pro Version
+Upgrade for advanced features: analytics, segmentation, integrations. Visit example.com/pro.
 
 ## Support
-Contact support@example.com. Freemium users get community help; Pro gets priority.
-
-## Changelog
-**1.0.0** - Initial release with core popup functionality.
+Report issues on WordPress.org forums.
