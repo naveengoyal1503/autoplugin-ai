@@ -1,67 +1,35 @@
 # AI Content Optimizer Pro
 
-[![Contributors](https://img.shields.io/badge/contributors-welcome-brightgreen.svg?style=flat)](https://github.com/example/ai-content-optimizer)
+## Description
+**AI Content Optimizer Pro** is a powerful WordPress plugin that analyzes your posts and pages for readability, SEO, and engagement. The free version provides basic scoring and tips, while premium unlocks AI-powered rewriting, bulk optimization, and advanced analytics[1][2].
 
-**AI-powered WordPress plugin that optimizes your content for SEO, readability, and engagement in seconds.** Free version provides smart suggestions; **Pro ($49/year)** auto-rewrites with premium AI.
+## Features
+- **Basic Analysis (Free)**: Readability score, word count, basic SEO tips.
+- **Premium Features**:
+  - AI content rewriting for better engagement.
+  - Bulk optimize multiple posts.
+  - Advanced metrics: Flesch score, keyword density.
+  - Priority support and automatic updates.
+- Meta box in post editor for instant analysis.
+- Frontend shortcode for displaying scores.
 
-## 🚀 Features
+## Installation
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Edit any post/page to see the optimizer sidebar.
 
-### Free Version
-- **AI Content Analysis**: Real-time suggestions on word count, sentence length, links, and keywords.
-- **Post Editor Integration**: Side metabox for one-click optimization checks.
-- **SEO & Readability Scores**: Heuristic-based scoring powered by advanced algorithms.
-- **Liteweight & Fast**: No bloat, works on any theme.
+## Setup
+- No configuration needed for free version.
+- For premium: Purchase at [example.com/premium](https://example.com/premium), enter license key in **Settings > AI Optimizer** (premium only).
 
-### Pro Version (Upsell)
-- **Full Auto-Optimization**: AI rewrites content instantly (GPT-4o integration).
-- **Bulk Processing**: Optimize entire site/posts in bulk.
-- **Advanced Analytics**: Track improvements in rankings & engagement.
-- **Premium Templates**: 50+ optimized structures for blogs, products, pages.
-- **API Integrations**: OpenAI, Anthropic, custom endpoints.
-- **Priority Support**: 24h email + chat.
+## Usage
+1. Edit a post or page.
+2. In the sidebar, click **Analyze Content** for instant score and tips.
+3. Premium users: Click **AI Rewrite** to optimize automatically.
+4. Use shortcode `[ai_optimizer]` on any page to show live scores.
 
-## 📈 Why Profitable?
+## Freemium Model
+Free version hooks users with core value; upgrade for pro features via nag notices and upsell links[1][5].
 
-- **High Demand**: SEO tools like Yoast/Rank Math dominate[1][3][5]; AI twist is 2026 trend.
-- **Freemium Model**: Hook with free, convert 10-20% to Pro.
-- **Low Competition**: Unique AI focus differentiates from static analyzers.
-- **Recurring Revenue**: Annual subs + add-ons (e.g., eCommerce pack $29).
-
-## 🛠️ Installation
-
-1. Download & upload ZIP to `/wp-content/plugins/`.
-2. Activate in **Plugins > Installed Plugins**.
-3. Edit any post/page – see **AI Content Optimizer** metabox.
-4. Check **Settings > AI Optimizer** for Pro upgrade.
-
-## ⚙️ Setup
-
-1. **Free**: No setup needed – enable in post editor.
-2. **Pro**: Enter API key in settings (get from [pro site](https://example.com/pro)).
-3. Optional: Add `<?php do_action('ai_optimizer_analyze'); ?>` to themes for custom triggers.
-
-## 📖 Usage
-
-1. **Edit Post/Page** → Check **Optimize with AI**.
-2. Save → View suggestions in metabox.
-3. **Pro**: Click **Auto-Optimize** for rewritten content.
-4. Monitor via dashboard analytics (Pro).
-
-**Example Suggestion**: "Add more content (aim for 300+ words for better SEO). Shorten sentences. Add links."
-
-## 🤝 Support
-
-- Free: WordPress.org forums.
-- Pro: [support@example.com](mailto:support@example.com) or premium chat.
-
-## 📄 Changelog
-
-**1.0.0** (2026-02-01)
-- Initial release with free AI suggestions & Pro framework.
-
-## 💰 Upgrade to Pro
-
-**[Get Pro Now](https://example.com/pro)** – Unlock full AI power for $49/year. 30-day money-back.
-
----
-*Built for WordPress 6.6+. PHP 8.0+. GPLv2.*
+## Support
+Free: WordPress.org forums. Premium: Dedicated email support.
