@@ -1,29 +1,41 @@
 # Smart Donation Booster
 
 ## Features
-- **Donation Progress Bars**: Visual bars showing goal progress with customizable labels and amounts.
-- **One-Click PayPal Integration**: Accept payments via official PayPal donate buttons.
-- **Shortcode Support**: Use `[donation_goal goal="1000" current="250" label="Help us!"]` anywhere.
-- **Admin Settings**: Easy setup for PayPal email and button ID.
-- **Mobile Responsive**: Clean, modern design works on all devices.
-- **Freemium Upsell**: Prompt for Pro version with advanced features like multiple goals and analytics.
+
+- **Visual Progress Bars**: Track monthly donation goals with animated, colorful progress bars.
+- **Easy Shortcode**: Use `[donation_goal]` anywhere to display the widget.
+- **PayPal Integration**: One-click donation buttons via your PayPal email.
+- **Gamified Goals**: Motivates donors by showing real-time progress (stored in DB).
+- **Custom Amounts**: Visitors can input their own donation amount.
+- **Mobile Responsive**: Works perfectly on all devices.
+- **Freemium Ready**: Pro version adds Stripe, analytics, recurring donations, premium themes.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Donation Booster** to enter your PayPal email and Button ID (create at [paypal.com/buttons](https://www.paypal.com/buttons)).
+
+1. Upload the `smart-donation-booster` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Donation Booster** to set your PayPal email and monthly goal.
+4. Add `[donation_goal]` shortcode to any post, page, or widget.
 
 ## Setup
-1. Create a PayPal donate button at [PayPal Buttons](https://www.paypal.com/buttons) and copy the Button ID.
-2. Paste your PayPal email and Button ID in plugin settings.
-3. Save changes.
+
+1. In **Settings > Donation Booster**:
+   - Enter your PayPal business email.
+   - Set a monthly goal (e.g., 1000).
+2. Donations are logged monthly; progress resets automatically.
+3. For production PayPal, replace `YOUR_BUTTON_ID` in code with your hosted button ID (free setup at paypal.com).
 
 ## Usage
-- Add shortcode to any post/page: `[donation_goal goal="5000" current="1200"]`.
-- Customize `current` manually or track via Pro analytics.
-- Embed in widgets or templates via `do_shortcode`.
 
-**Pro Upgrade**: Unlock unlimited goals, email capture, Stripe support, and stats for $29/year.
+- **Basic**: `[donation_goal]` shows progress bar + $5 PayPal button.
+- **Custom ID**: `[donation_goal id="goal1"]` for multiple goals.
+- **Styling**: Fully customizable via CSS classes like `.sdb-bar`.
+- **Demo Donations**: AJAX handles custom amounts (logs to DB, shows alert).
+
+## Pro Upgrade
+
+Unlock Stripe, email receipts, donor analytics, recurring subs ($29/year). Contact support@example.com.
 
 ## Support
-Contact support@example.com or visit our site.
+
+Report issues on WordPress.org forums. Pro support included with upgrade.
