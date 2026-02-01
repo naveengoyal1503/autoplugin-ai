@@ -6,147 +6,153 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoLinker Pro
  * Plugin URI: https://example.com/smart-affiliate-autolinker
- * Description: Automatically detects content keywords and inserts relevant affiliate links from Amazon, boosting commissions without manual work.
+ * Description: Automatically detects keywords in your content and converts them into high-converting affiliate links from your program, boosting commissions effortlessly.
  * Version: 1.0.0
  * Author: Your Name
  * Author URI: https://example.com
  * License: GPL v2 or later
  * Text Domain: smart-affiliate-autolinker
+ * Requires at least: 5.0
+ * Tested up to: 6.6
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
+define('SAAL_VERSION', '1.0.0');
+define('SAAL_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('SAAL_PRO', false); // Set to true for pro features or check license
+
 class SmartAffiliateAutoLinker {
-    private $keywords = [];
-    private $affiliate_id = '';
 
     public function __construct() {
-        add_action('init', [$this, 'init']);
-        add_action('admin_menu', [$this, 'add_admin_menu']);
-        add_action('admin_init', [$this, 'settings_init']);
-        add_filter('the_content', [$this, 'auto_link_affiliates']);
-        add_filter('wp_insert_post_data', [$this, 'save_post_data'], 10, 2);
+        add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_init', array($this, 'admin_init'));
+        add_filter('the_content', array($this, 'auto_link_affiliates'));
+        add_filter('widget_text', array($this, 'auto_link_affiliates'));
     }
 
     public function init() {
-        $this->affiliate_id = get_option('saal_amazon_affiliate_id', '');
-        $this->keywords = get_option('saal_keywords', [
-            'laptop' => 'https://amazon.com/dp/B08N5WRWNW?tag=YOURAFFID',
-            'phone' => 'https://amazon.com/dp/B0C7C4L2S6?tag=YOURAFFID',
-            'book' => 'https://amazon.com/dp/1234567890?tag=YOURAFFID'
-        ]);
+        load_plugin_textdomain('smart-affiliate-autolinker', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
-    public function add_admin_menu() {
+    public function enqueue_scripts() {
+        wp_enqueue_script('saal-frontend', plugin_dir_url(__FILE__) . 'assets/frontend.js', array('jquery'), SAAL_VERSION, true);
+    }
+
+    public function admin_menu() {
         add_options_page(
-            'Smart Affiliate AutoLinker Settings',
+            'Smart Affiliate AutoLinker',
             'Affiliate AutoLinker',
             'manage_options',
             'smart-affiliate-autolinker',
-            [$this, 'options_page']
+            array($this, 'settings_page')
         );
     }
 
-    public function settings_init() {
-        register_setting('saal_plugin_page', 'saal_amazon_affiliate_id');
-        register_setting('saal_plugin_page', 'saal_keywords');
-
-        add_settings_section(
-            'saal_plugin_page_section',
-            'Affiliate Settings',
-            [$this, 'settings_section_callback'],
-            'saal_plugin_page'
-        );
-
-        add_settings_field(
-            'saal_affiliate_id',
-            'Amazon Affiliate ID',
-            [$this, 'affiliate_id_render'],
-            'saal_plugin_page',
-            'saal_plugin_page_section'
-        );
-
-        add_settings_field(
-            'saal_keywords',
-            'Keywords and Links',
-            [$this, 'keywords_render'],
-            'saal_plugin_page',
-            'saal_plugin_page_section'
-        );
+    public function admin_init() {
+        register_setting('saal_settings', 'saal_keywords');
+        register_setting('saal_settings', 'saal_affiliate_base_url');
     }
 
-    public function settings_section_callback() {
-        echo '<p>Configure your affiliate links here. Free version supports 3 keywords; upgrade to Pro for unlimited.</p>';
-    }
-
-    public function affiliate_id_render() {
-        $affiliate_id = get_option('saal_amazon_affiliate_id');
-        echo '<input type="text" name="saal_amazon_affiliate_id" value="' . esc_attr($affiliate_id) . '" size="50" />';
-    }
-
-    public function keywords_render() {
-        $keywords = get_option('saal_keywords', []);
-        echo '<textarea name="saal_keywords" rows="10" cols="100">' . esc_textarea(json_encode($keywords, JSON_PRETTY_PRINT)) . '</textarea>';
-        echo '<p class="description">JSON format: {"keyword":"amazon-link-url"}</p>';
-        echo '<p><strong>Pro Feature:</strong> Unlimited keywords, A/B testing, analytics. <a href="#" onclick="alert(\'Upgrade to Pro for $49/year!\')">Upgrade Now</a></p>';
-    }
-
-    public function options_page() {
+    public function settings_page() {
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate AutoLinker Pro</h1>
+            <h1><?php _e('Smart Affiliate AutoLinker Settings', 'smart-affiliate-autolinker'); ?></h1>
             <form method="post" action="options.php">
-                <?php
-                settings_fields('saal_plugin_page');
-                do_settings_sections('saal_plugin_page');
-                submit_button();
-                ?>
+                <?php settings_fields('saal_settings'); ?>
+                <?php do_settings_sections('saal_settings'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th><?php _e('Affiliate Base URL', 'smart-affiliate-autolinker'); ?></th>
+                        <td>
+                            <input type="url" name="saal_affiliate_base_url" value="<?php echo esc_attr(get_option('saal_affiliate_base_url')); ?>" class="regular-text" />
+                            <p class="description"><?php _e('Your affiliate tracking URL (e.g., https://youraffiliate.com/ref/?ref={keyword})', 'smart-affiliate-autolinker'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?php _e('Keywords', 'smart-affiliate-autolinker'); ?></th>
+                        <td>
+                            <textarea name="saal_keywords" rows="10" cols="50" class="large-text code"><?php echo esc_textarea(get_option('saal_keywords')); ?></textarea>
+                            <p class="description"><?php _e('One keyword per line: keyword|affiliate_id (Free: up to 5 keywords. Pro: Unlimited)', 'smart-affiliate-autolinker'); ?></p>
+                            <?php if (!SAAL_PRO) : ?>
+                                <p class="notice notice-warning"><strong><?php _e('Upgrade to Pro for unlimited keywords, analytics, and A/B testing!', 'smart-affiliate-autolinker'); ?></strong></p>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
             </form>
+            <?php if (!SAAL_PRO) : ?>
+                <div class="notice notice-info">
+                    <p><strong><?php _e('Go Pro for advanced features like click tracking, A/B link testing, and integrations with AffiliateWP!', 'smart-affiliate-autolinker'); ?></strong></p>
+                </div>
+            <?php endif; ?>
         </div>
         <?php
     }
 
     public function auto_link_affiliates($content) {
-        if (is_admin() || !is_single()) return $content;
+        if (is_admin() || !is_singular() || (function_exists('is_shop') && is_shop())) {
+            return $content;
+        }
 
-        global $post;
-        if (get_post_meta($post->ID, '_saal_disable', true)) return $content;
+        $keywords = get_option('saal_keywords', '');
+        if (empty($keywords)) {
+            return $content;
+        }
 
-        foreach ($this->keywords as $keyword => $link) {
-            if (stripos($content, $keyword) !== false && stripos($content, 'saal-linked') === false) {
-                $link_html = '<a href="' . esc_url($link) . '" target="_blank" rel="nofollow sponsored" class="saal-link">' . esc_html($keyword) . '</a>';
-                $content = preg_replace('/\b' . preg_quote($keyword, '/') . '\b/i', $link_html . '<span class="saal-linked"></span>', $content, 1);
+        $keyword_array = explode("\n", trim($keywords));
+        $free_limit = 5;
+        if (!SAAL_PRO && count($keyword_array) > $free_limit) {
+            $keyword_array = array_slice($keyword_array, 0, $free_limit);
+        }
+
+        $base_url = get_option('saal_affiliate_base_url', '');
+        if (empty($base_url)) {
+            return $content;
+        }
+
+        foreach ($keyword_array as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+            list($keyword, $aff_id) = explode('|', $line, 2);
+            $keyword = trim($keyword);
+            $aff_id = trim($aff_id);
+
+            $link = str_replace('{keyword}', urlencode($keyword), $base_url);
+            if (!empty($aff_id)) {
+                $link .= '&aff_id=' . urlencode($aff_id);
+            }
+
+            $regex = '/\b' . preg_quote($keyword, '/') . '\b/i';
+            if (preg_match($regex, $content) && strpos($content, 'href=') === false) { // Avoid linking existing links
+                $content = preg_replace($regex, '<a href="' . esc_url($link) . '" target="_blank" rel="nofollow noopener">$0</a>', $content, 1);
             }
         }
-        return $content;
-    }
 
-    public function save_post_data($data, $postarr) {
-        if (isset($_POST['saal_disable'])) {
-            update_post_meta($postarr['ID'], '_saal_disable', '1');
-        }
-        return $data;
+        return $content;
     }
 }
 
 new SmartAffiliateAutoLinker();
 
-// Pro teaser notice
-function saal_pro_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p><strong>Smart Affiliate AutoLinker Pro:</strong> Unlock unlimited keywords, analytics & more for $49/year! <a href="https://example.com/pro">Upgrade Now</a></p></div>';
+// Pro upsell notice
+function saal_pro_upsell() {
+    if (!SAAL_PRO && current_user_can('manage_options')) {
+        echo '<div class="notice notice-success is-dismissible"><p>' . sprintf(__('Unlock unlimited keywords and pro features with <a href="https://example.com/pro" target="_blank">Smart Affiliate AutoLinker Pro</a>! %s/month recurring revenue booster!', 'smart-affiliate-autolinker'), '$49/year') . '</p></div>';
+    }
 }
-add_action('admin_notices', 'saal_pro_notice');
+add_action('admin_notices', 'saal_pro_upsell');
 
-// Add post meta box to disable per post
-function saal_add_meta_box() {
-    add_meta_box('saal-disable', 'Affiliate AutoLinker', 'saal_meta_box_callback', 'post', 'side');
-}
-add_action('add_meta_boxes', 'saal_add_meta_box');
-
-function saal_meta_box_callback($post) {
-    $disable = get_post_meta($post->ID, '_saal_disable', true);
-    echo '<label><input type="checkbox" name="saal_disable" ' . checked($disable, '1', false) . '> Disable auto-linking on this post</label>';
-}
+// Create assets dir placeholder
+register_activation_hook(__FILE__, function() {
+    $assets_dir = plugin_dir_path(__FILE__) . 'assets/';
+    if (!file_exists($assets_dir)) {
+        wp_mkdir_p($assets_dir);
+    }
+    file_put_contents($assets_dir . 'frontend.js', '// Pro JS features here');
+});
