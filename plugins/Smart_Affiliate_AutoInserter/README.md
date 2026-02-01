@@ -1,43 +1,59 @@
 # Smart Affiliate AutoInserter
 
-**Automatically insert affiliate links into your WordPress content to boost revenue without manual editing.**
+**Automatically boosts your Amazon affiliate earnings by inserting relevant product links into posts based on smart keyword matching.**
 
 ## Features
 
-- **Auto-Insertion**: Scans posts for keywords and inserts affiliate links intelligently.
-- **Link Cloaking**: Optional cloaking for better conversions and compliance.
-- **Limits Control**: Set max links per post (free: up to 3).
-- **Shortcode Support**: Use `[afflink url="https://aff.link" text="Buy Now"]` for manual placement.
-- **Admin Dashboard**: Easy management of keywords and links.
-- **Mobile-Responsive**: Links styled for all devices.
-
-**Pro Add-ons (coming soon)**: Unlimited links, AI optimization, analytics dashboard, A/B testing ($49/year).
+- **Keyword-Based Auto-Insertion**: Define keywords and matching Amazon ASINs; plugin auto-links them in content.
+- **Customizable Limits**: Control max links per post (1-5 in free version).
+- **Performance Optimized**: Lightweight, no external API calls, instant linking.
+- **Mobile-Responsive Links**: Clean, sponsored affiliate links with nofollow.
+- **Easy Setup**: Single-file plugin, no database bloat.
+- **Freemium Upsell**: Premium adds analytics, A/B testing, unlimited links ($29/year).
 
 ## Installation
 
-1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Inserter** to configure.
+1. Download the plugin ZIP.
+2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Go to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
 
-1. In the settings page, toggle **Enable Auto-Insertion** to 'Yes'.
-2. Set **Max Links per Post** (default: 3).
-3. Add affiliates: Enter **Keyword** (e.g., "best laptop"), **Affiliate URL** (e.g., Amazon link), optional **Cloaked URL**.
-4. Click **Add Affiliate** for more rows.
-5. Save changes.
+1. **Get Amazon Associates Account**: Sign up at [affiliate-program.amazon.com](https://affiliate-program.amazon.com) for your affiliate tag (e.g., `yourtag-20`).
+2. **Optional API Key**: For future product data (not required for basic use).
+3. **Add Keywords**: In settings, enter `keyword:ASIN` pairs, one per line. Example:
+   
+   wireless headphones:B08FC6MR62
+   laptop stand:B07W1N4D8S
+   
+4. Set **Max Links per Post** (default: 2).
+5. Enable **Auto-Insert** and save.
 
 ## Usage
 
-- **Automatic**: Links insert on publish/update of posts/pages.
-- **Manual**: Add `[afflink url="YOUR_LINK" text="Your Text"]` anywhere.
-- **Test**: View a post frontend; links appear as blue underlined text.
+- Write posts with your keywords naturally.
+- Plugin scans and replaces first occurrence of each keyword with affiliate link.
+- View links in published posts (e.g., "wireless headphones" becomes a linked product).
+- **Test**: Create a test post with keywords and preview.
+- **Earnings Tracking**: Use Amazon Associates dashboard for clicks/commissions.
 
-## FAQ
+## Premium Features
 
-**Does it work with Gutenberg/Classic Editor?** Yes, filters `the_content`.
-**SEO Safe?** Yes, uses `nofollow` and proper escaping. 
-**Free Limits?** 3 links/post; upgrade for unlimited.
+Upgrade for:
+- Unlimited keywords/links.
+- Click analytics dashboard.
+- A/B link testing.
+- Custom link styles and placements.
+
+Purchase at [example.com/pro](https://example.com/pro).
 
 ## Support
-Contact support@example.com or visit example.com/support.
+
+- WordPress.org forums.
+- Email: support@example.com.
+
+## Changelog
+
+**1.0.0**
+- Initial release.
