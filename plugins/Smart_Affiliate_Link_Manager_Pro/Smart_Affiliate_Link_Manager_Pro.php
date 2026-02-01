@@ -6,104 +6,128 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Link Manager Pro
  * Plugin URI: https://example.com/smart-affiliate
- * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics.
+ * Description: Automate affiliate link management, cloaking, tracking, and performance analytics.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: smart-affiliate
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class SmartAffiliateManager {
     private static $instance = null;
-    
+
     public static function get_instance() {
-        if (null == self::$instance) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
-    
+
     private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_filter('the_content', array($this, 'cloak_links'));
-        add_shortcode('afflink', array($this, 'afflink_shortcode'));
+        add_action('wp_head', array($this, 'inject_tracking'));
+        add_filter('the_content', array($this, 'cloak_links'), 99);
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
-    
+
     public function init() {
-        if (get_option('smart_affiliate_pro') !== 'activated') {
+        if (get_option('sam_pro_version') !== '1.0') {
             add_action('admin_notices', array($this, 'pro_notice'));
         }
     }
-    
+
     public function enqueue_scripts() {
-        wp_enqueue_script('smart-affiliate', plugin_dir_url(__FILE__) . 'assets/tracker.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_script('sam-tracker', plugin_dir_url(__FILE__) . 'tracker.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sam-tracker', 'sam_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sam_nonce')));
     }
-    
+
+    public function admin_menu() {
+        add_options_page('Smart Affiliate Manager', 'Affiliate Manager', 'manage_options', 'smart-affiliate', array($this, 'admin_page'));
+    }
+
+    public function admin_page() {
+        if (isset($_POST['sam_save'])) {
+            update_option('sam_affiliate_links', sanitize_text_field($_POST['links']));
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+        }
+        $links = get_option('sam_affiliate_links', 'https://example.com/ref=123|Affiliate Link 1;https://example.com/ref=456|Affiliate Link 2');
+        ?>
+        <div class="wrap">
+            <h1>Smart Affiliate Manager</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Affiliate Links (format: url|keyword;)</th>
+                        <td><textarea name="links" rows="10" cols="50"><?php echo esc_textarea($links); ?></textarea></td>
+                    </tr>
+                </table>
+                <p class="submit"><input type="submit" name="sam_save" class="button-primary" value="Save Settings"></p>
+            </form>
+            <h2>Stats (Pro Feature)</h2>
+            <p><em>Upgrade to Pro for click tracking and analytics.</em></p>
+        </div>
+        <?php
+    }
+
     public function cloak_links($content) {
-        if (!is_single()) return $content;
-        $links = array();
-        preg_match_all('/href=["\']([^\"\']*aff\.[^\"\']*|[^\"\']*\?ref[^\"\']*|[^\"\']*affiliate[^\"\']*)["\']/i', $content, $matches);
-        foreach ($matches[1] as $url) {
-            $shortcode = '[afflink url="' . esc_attr($url) . '"]';
-            $content = str_replace('href="' . $url . '"', 'href="' . $shortcode . '"', $content);
+        $links = get_option('sam_affiliate_links', '');
+        if (empty($links)) return $content;
+        $link_pairs = explode(';', $links);
+        foreach ($link_pairs as $pair) {
+            $parts = explode('|', trim($pair));
+            if (count($parts) === 2) {
+                $keyword = $parts;
+                $url = $parts[1];
+                $content = str_replace($keyword, '<a href="' . esc_url($url) . '" class="sam-cloaked" data-sam-original="' . esc_url($url) . '">' . esc_html($keyword) . '</a>', $content);
+            }
         }
         return $content;
     }
-    
-    public function afflink_shortcode($atts) {
-        $atts = shortcode_atts(array('url' => ''), $atts);
-        $id = uniqid('aff_');
-        $click_url = admin_url('admin-post.php?action=track_affiliate&id=' . $id . '&url=' . urlencode($atts['url']));
-        return '<a href="' . esc_url($click_url) . '" class="smart-aff-link" data-real-url="' . esc_attr($atts['url']) . '" data-id="' . $id . '">Click Here</a>';
+
+    public function inject_tracking() {
+        echo '<script>console.log("Smart Affiliate Manager loaded");</script>';
     }
-    
-    public function admin_menu() {
-        add_options_page('Smart Affiliate Settings', 'Affiliate Manager', 'manage_options', 'smart-affiliate', array($this, 'settings_page'));
-    }
-    
-    public function settings_page() {
-        if (isset($_POST['save'])) {
-            update_option('smart_affiliate_links', sanitize_textarea_field($_POST['links']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
-        }
-        $links = get_option('smart_affiliate_links', '');
-        echo '<div class="wrap"><h1>Affiliate Manager</h1><form method="post"><textarea name="links" rows="10" cols="50">' . esc_textarea($links) . '</textarea><br><input type="submit" name="save" value="Save" class="button-primary"></form><p><strong>Pro Upgrade:</strong> Unlock A/B testing, analytics & unlimited links for $49/year! <a href="https://example.com/pro">Get Pro</a></p></div>';
-    }
-    
-    public function activate() {
-        update_option('smart_affiliate_pro', 'free');
-    }
-    
+
     public function pro_notice() {
-        echo '<div class="notice notice-info"><p>Upgrade to <strong>Smart Affiliate Pro</strong> for advanced features! <a href="https://example.com/pro">Learn More</a></p></div>';
+        echo '<div class="notice notice-info"><p>Upgrade to <strong>Smart Affiliate Manager Pro</strong> for advanced tracking and A/B testing! <a href="https://example.com/pro">Get Pro</a></p></div>';
     }
+
+    public function activate() {
+        add_option('sam_version', '1.0.0');
+    }
+
+    public function deactivate() {}
 }
 
-SmartAffiliateManager::get_instance();
-
-add_action('admin_post_track_affiliate', function() {
-    $url = isset($_GET['url']) ? esc_url_raw(urldecode($_GET['url'])) : '';
-    $id = sanitize_text_field($_GET['id']);
-    // Log click (free version: basic log)
-    $logs = get_option('affiliate_logs', array());
-    $logs[] = array('time' => current_time('mysql'), 'id' => $id, 'url' => $url);
-    update_option('affiliate_logs', $logs);
-    if (get_option('smart_affiliate_pro') === 'activated') {
-        // Pro: advanced tracking
-    }
-    wp_redirect($url);
-    exit;
+// Tracker JS inline for single file
+add_action('wp_footer', function() {
+    if (is_admin()) return;
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        $('.sam-cloaked').on('click', function(e) {
+            var original = $(this).data('sam-original');
+            $.post(sam_ajax.ajax_url, {
+                action: 'sam_track_click',
+                nonce: sam_ajax.nonce,
+                url: original
+            });
+            window.location.href = original;
+        });
+    });
+    </script>
+    <?php
 });
 
-// Pro teaser
-if (!wp_doing_ajax()) {
-    add_action('wp_footer', function() {
-        echo '<script>console.log("Smart Affiliate Pro: Track ' . (get_option('smart_affiliate_pro') === 'activated' ? 'Pro' : 'FREE') . ' clicks!");</script>';
-    });
-}
-?>
+add_action('wp_ajax_sam_track_click', function() {
+    // Pro feature stub
+    wp_die('Tracked!');
+});
+
+SmartAffiliateManager::get_instance();
