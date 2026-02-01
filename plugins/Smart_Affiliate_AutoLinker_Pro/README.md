@@ -1,137 +1,71 @@
 # Smart Affiliate AutoLinker Pro
 
-[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url] [![Activity][activity-shield]][activity-url]
+[![WordPress plugin](https://img.shields.io/wordpress/plugin/downloads/wp-seo?color=blue)](https://wordpress.org/plugins/smart-affiliate-autolinker)
 
-Automatically detects keywords in your posts and inserts high-converting Amazon affiliate links. Boost commissions by 30%+ without manual linking.[1][6]
+**Automatically turns keywords in your posts into profitable affiliate links.** Boost commissions without manual work. Free core + powerful Pro upgrade.
 
-## 🚀 **Why Choose Smart Affiliate AutoLinker Pro?**
-
-- **Fully Automated**: Scans content and inserts relevant affiliate links on first occurrence only.
-- **Amazon Optimized**: Replace `YOURAFFID` with your Amazon Associate ID.
-- **SEO Safe**: Adds `nofollow sponsored` attributes and unique classes.
-- **Per-Post Control**: Disable auto-linking on specific posts.
-- **Freemium Model**: Free supports 3 keywords; **Pro** ($49/year) unlocks unlimited keywords, A/B testing, click analytics, and multi-network support.[2][5]
-
-## 📦 **Features**
+## 🚀 **Key Features**
 
 ### Free Version
-- ✅ 3 keyword/link pairs
-- ✅ Automatic first-occurrence linking
-- ✅ Amazon affiliate integration
-- ✅ Post-level disable option
-- ✅ Admin settings page
+- **Auto-Link Keywords**: Detects up to **5 keywords** in content and links them to your affiliate URLs.
+- **Customizable Base URL**: Supports tracking params like `{keyword}` and `aff_id`.
+- **Safe Linking**: Only links plain text, skips existing links/images. Works on posts & widgets.
+- **No Coding Needed**: Simple settings page.
 
 ### Pro Version ($49/year)
-- ✅ **Unlimited** keywords
-- ✅ A/B link testing
-- ✅ Click analytics dashboard
-- ✅ Support for Amazon, ClickBank, CJ
-- ✅ Link cloaking & tracking
-- ✅ Priority support
-- ✅ Automatic updates
+- ✅ **Unlimited Keywords** + Advanced regex support
+- ✅ **Click Analytics Dashboard** – Track conversions & earnings
+- ✅ **A/B Link Testing** – Auto-rotate links for max performance
+- ✅ **AffiliateWP Integration** – Auto-generate referral links
+- ✅ **Priority Support** + Updates
 
-## 🎯 **Target Users**
+## 🎯 **Who It's For**
+Bloggers, affiliate marketers, and site owners using programs like Amazon Associates, ShareASale, or AffiliateWP.
 
-- **Bloggers & Content Creators**
-- **Affiliate Marketers**
-- **Review Site Owners**
-- **E-commerce Blogs**
+## 📈 **Why Profitable?**
+- **Recurring Revenue Model**: Subscriptions retain 65% more customers [6].
+- **High Demand**: Affiliate plugins like AffiliateWP generate $33K/month [5].
+- **Freemium Upsell**: 40% convert to premium [6].
 
-## 💰 **Monetization Potential**
+## 🛠️ **Installation**
 
-**Proven Model**: Affiliate plugins generate $33K+/month.[5] Freemium converts 40% to premium.[6] Recurring revenue via annual subscriptions.[2][4][5]
+1. Download & upload the ZIP to **Plugins > Add New > Upload**.
+2. Activate the plugin.
+3. Go to **Settings > Affiliate AutoLinker**.
+4. Enter your **Affiliate Base URL** (e.g., `https://youraffiliate.com/ref/?product={keyword}&ref=123`).
+5. Add keywords: One per line, format `keyword|affiliate_id`.
+6. Save & watch commissions grow!
 
-## 🔧 **Installation**
+## ⚙️ **Setup Guide**
 
-1. Download the plugin ZIP
-2. Go to **Plugins > Add New > Upload Plugin**
-3. Upload and **Activate**
-4. Navigate to **Settings > Affiliate AutoLinker**
-5. Enter your Amazon Affiliate ID
-6. Add keywords in JSON format: `{"laptop":"https://amazon.com/dp/B08N5WRWNW?tag=YOURID"}`
-7. **Save Changes**
+### Step 1: Configure Base URL
+ https://example.com/aff/?product={keyword}&ref={aff_id} 
 
-## ⚙️ **Setup**
+### Step 2: Add Keywords (Free limit: 5)
 
-
-{
-  "laptop": "https://amazon.com/dp/B08N5WRWNW?tag=YOURAFFID",
-  "phone": "https://amazon.com/dp/B0C7C4L2S6?tag=YOURAFFID",
-  "book": "https://amazon.com/dp/1234567890?tag=YOURAFFID"
-}
+Blue Widget|12345
+Best Laptop|67890
+WordPress Hosting|affwp-1
 
 
-**Pro Tip**: Use your actual Amazon Associate ID (tag) in URLs.
+### Step 3: Pro Setup
+Purchase Pro license → Enter key in settings → Unlock unlimited features.
 
 ## 📖 **Usage**
 
-1. **Write normally** - use keywords like "laptop", "phone"
-2. **Plugin auto-links** first occurrence only
-3. **Disable per post** via post editor sidebar checkbox
-4. **Track in Pro** - upgrade for analytics dashboard
+- **Automatic**: Links appear live on frontend (posts, pages, widgets).
+- **Test Mode**: Add `?saal_test=1` to preview links.
+- **Exclusions**: Use `no-saal-link` CSS class on elements to skip.
 
-## 🎨 **Customization**
+**Example Output**:
+Before: "Check out this **Blue Widget**!"
+After: "Check out this <a href=\"...\" target=\"_blank\">**Blue Widget**</a>!"
 
-Add custom CSS:
-css
-.saal-link {
-    color: #ff9900;
-    text-decoration: underline;
-    font-weight: bold;
-}
-.saal-linked {
-    display: none;
-}
+## 🤝 **Support**
+- Free: WordPress.org forums.
+- Pro: Priority email support@yourdomain.com.
 
+## 💰 **Upgrade to Pro**
+**[Get Pro Now](https://example.com/pro)** – Unlimited everything + analytics.
 
-## 🔒 **Privacy & Security**
-
-- No data collection
-- Links include proper `nofollow sponsored` attributes
-- GDPR compliant
-- No external API calls in free version
-
-## 💎 **Upgrade to Pro**
-
-**Get unlimited keywords, analytics, and priority support for $49/year!**
-
-**[Upgrade Now](#)** - Join 1000+ happy affiliates boosting commissions automatically.
-
-## 🐛 **Troubleshooting**
-
-- **Links not appearing?** Check Amazon ID and keyword spelling.
-- **JSON errors?** Validate format at jsonlint.com.
-- **Need help?** Pro users get priority support.
-
-## 📄 **Changelog**
-
-**1.0.0** (2026-02-01)
-- Initial release
-- Auto-linking core
-- Admin settings
-- Post disable option
-
-## 🤝 **Contributing**
-
-Pull requests welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## 📄 **License**
-
-This plugin is licensed under GPL v2. See [LICENSE](LICENSE).
-
----
-
-⭐ **Star this repo if it helps your affiliate income!** ⭐
-
-[contributors-shield]: https://img.shields.io/github/contributors/example/repo.svg?style=for-the-badge
-[contributors-url]: https://github.com/example/repo/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/example/repo.svg?style=for-the-badge
-[forks-url]: https://github.com/example/repo/network/members
-[stars-shield]: https://img.shields.io/github/stars/example/repo.svg?style=for-the-badge
-[stars-url]: https://github.com/example/repo/stargazers
-[issues-shield]: https://img.shields.io/github/issues/example/repo.svg?style=for-the-badge
-[issues-url]: https://github.com/example/repo/issues
-[license-shield]: https://img.shields.io/github/license/example/repo.svg?style=for-the-badge
-[license-url]: https://github.com/example/repo/blob/master/LICENSE.txt
-[activity-shield]: https://img.shields.io/github/last-commit/example/repo.svg?style=for-the-badge
-[activity-url]: https://github.com/example/repo/commits/master
+**Built for 2026 WordPress standards. Compatible with Gutenberg, Classic Editor, WooCommerce.**
