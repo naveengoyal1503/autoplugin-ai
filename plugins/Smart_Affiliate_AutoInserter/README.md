@@ -1,51 +1,58 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into your WordPress content using smart keyword matching.**
+**Automatically monetize your WordPress site by inserting relevant Amazon affiliate links into content using smart keyword matching.**
 
 ## Features
 
-- **Automatic Link Insertion**: Scans posts and pages for keywords and wraps them in Amazon affiliate links.
-- **Customizable Keywords**: Add your own keywords and optional custom affiliate links.
-- **Amazon Associate Integration**: Enter your tag to auto-generate search links.
-- **Limits & Control**: Set max links per post to avoid over-optimization.
-- **Freemium Ready**: Free core features; Pro unlocks AI matching and analytics.
-- **Mobile-Responsive**: Links work perfectly on all devices.
-
-**Pro Features (Upgrade for $49/year)**:
-- AI-powered keyword detection.
-- Click analytics dashboard.
-- Unlimited keywords and sites.
-- Priority support.
+- **Automatic Link Insertion**: Scans posts and pages for keywords and replaces them with your Amazon affiliate links.
+- **Customizable Keywords & Products**: Define your own keywords and corresponding Amazon product URLs.
+- **Safe & Compliant**: Adds `nofollow` and `sponsored` attributes for full disclosure.
+- **Limits Links**: Max 3 links per post to avoid spamming.
+- **Easy Admin Panel**: Configure everything from WordPress Settings > Affiliate Inserter.
+- **Freemium Ready**: Pro version unlocks AI-powered context analysis, performance analytics, A/B testing, and premium support.
 
 ## Installation
 
 1. Download the plugin ZIP.
-2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
 3. Upload and activate.
-4. Go to **Settings > Affiliate Inserter** to configure.
+4. Go to **Settings > Affiliate Inserter** to configure your Amazon Affiliate ID, keywords, and product links.
 
 ## Setup
 
-1. **Enter Amazon Tag**: Get your Associate ID from [Amazon Associates](https://affiliate-program.amazon.com/) and paste it in settings.
-2. **Add Keywords**: Input keywords like "laptop", "phone". Optional: Add direct affiliate links.
-3. **Enable & Adjust**: Turn on auto-insertion and set max links (e.g., 3 per post).
-4. **Save & Test**: Publish a post with your keywords to see links appear.
+1. Sign up for [Amazon Associates](https://affiliate-program.amazon.com/) and get your affiliate tag (e.g., `yourid-20`).
+2. In the plugin settings:
+   - Enter your **Affiliate ID**.
+   - Add **Keywords** (comma-separated, e.g., `laptop,phone,book`).
+   - Define **Products** as JSON: `{"laptop":"https://amazon.com/dp/B08N5WRWNW?tag=yourid-20","phone":"https://amazon.com/dp/B0C7V4L2NH?tag=yourid-20"}`.
+3. Save settings. Links will auto-insert on published content.
 
 ## Usage
 
-- Links auto-insert in posts, pages, and excerpts (not drafts/private).
-- Uses `rel="nofollow sponsored"` for compliance.
-- Edit keywords anytime in settings.
-- **Tip**: Use tiered pricing psychology like $9.99 links for higher conversions[5].
+- Write content with your keywords naturally.
+- The plugin scans and inserts links automatically (e.g., "I love my new **laptop**" becomes a linked affiliate term).
+- Test on a staging site first.
+- Monitor earnings in your Amazon Associates dashboard.
+
+## Pro Version
+
+Upgrade for:
+- AI semantic matching (beyond keywords).
+- Link click analytics & heatmaps.
+- Custom link styles & positions.
+- WooCommerce integration.
+- Priority support.
+
+**Pricing: $49/year single site, $99/year bundle (unlimited sites).**
 
 ## FAQ
 
-**Does it slow my site?** No, lightweight and efficient.
+**Does it work with Gutenberg/Classic Editor?** Yes, filters `the_content`.
 
-**Safe for Amazon TOS?** Yes, uses nofollow/sponsored and keyword-based insertion.
+**Safe for SEO?** Yes, proper rel attributes and limited insertions.
 
-**Pro Upgrade?** Visit [example.com/pro](https://example.com/pro).
+**Support?** Free version: GitHub issues. Pro: Email support.
 
-## Support
+## Changelog
 
-Report issues on WordPress.org forums or email support@example.com.
+**1.0.0** - Initial release.
