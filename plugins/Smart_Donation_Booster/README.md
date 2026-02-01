@@ -1,40 +1,44 @@
 # Smart Donation Booster
 
 ## Description
-A lightweight WordPress plugin to boost donations with customizable progress bars, real-time updates, and seamless PayPal integration. Perfect for bloggers, non-profits, and creators.[1][3]
+**Smart Donation Booster** is a lightweight, self-contained WordPress plugin that helps you monetize your site through easy donation collection. Add customizable donation buttons and progress bars anywhere using shortcodes. Integrates seamlessly with PayPal for instant payments.
+
+Perfect for bloggers, creators, and non-profits seeking passive income.[1][3]
 
 ## Features
-- **Visual Progress Bar**: Shows donation goal progress with smooth animations.
-- **One-Click Donations**: Enter amount and donate via PayPal.
-- **Admin Dashboard**: Set goal and current amounts easily.
-- **Shortcode Support**: Use `[donation_goal paypal_email="your@email.com"]` anywhere.
-- **Gamified Experience**: Encourages more donations as users see progress.[6]
-- **Mobile Responsive**: Works on all devices.
-
-**Pro Features (Coming Soon)**: Recurring donations, analytics, multiple gateways, custom goals.
+- **One-click PayPal donations** with preset amounts ($5, $10, $25, $50, $100)
+- **Donation goal tracker** with visual progress bar
+- **Shortcodes**: `[sdb_donate]` for buttons, `[sdb_goal]` for progress
+- **Customizable** via WordPress admin: set PayPal email, goal amount, button text
+- **Mobile-responsive** design
+- **No database bloat**: Tracks total donated simply
+- **Freemium-ready**: Upsell pro features like analytics
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Donation Booster** to configure goal and current amount.
-4. Add shortcode `[donation_goal]` to any page/post, or set `paypal_email` attribute.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Configure in **Settings > Donation Booster** (set PayPal email and goal).
 
 ## Setup
-1. In settings, enter your **PayPal email** (optional via shortcode).
-2. Set **Goal Amount** (e.g., 1000) and **Current Amount** (starts at 0).
-3. Donations update the current amount in real-time via AJAX.
+1. Go to **Settings > Donation Booster**.
+2. Enter your **PayPal email** (business account recommended).
+3. Set **donation goal** (e.g., 500).
+4. Customize **button text** (e.g., "Buy Me a Coffee").
+5. Save changes.
 
 ## Usage
-- Place `[donation_goal]` in sidebars, posts, or pages.
-- Example: `[donation_goal paypal_email="donate@example.com"]`.
-- Test donations: Amount updates progress; redirects to PayPal (sandbox for testing).
-- Track progress in admin settings.
+- Add `[sdb_donate]` to any post/page for donation buttons.
+- Add `[sdb_goal]` to show progress toward your goal.
+- Example: Place in sidebar widget, footer, or content.
+
+**Pro Tip**: Use tiered goals and promote via popups for 40% higher conversions with freemium strategies.[5]
 
 ## Screenshots
-*(Imagine: Progress bar at 65%, donate form)*
+*(Imagine: Clean blue buttons, green progress bar)*
 
 ## Changelog
 **1.0.0** - Initial release.
 
 ## Support
-Report issues on WordPress.org forums.
+Report issues in WordPress forums. Premium support coming soon.
