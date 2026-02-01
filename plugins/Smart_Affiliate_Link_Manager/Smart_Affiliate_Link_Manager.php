@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Link Manager
  * Plugin URI: https://example.com/smart-affiliate
- * Description: Automatically cloaks, tracks, and optimizes affiliate links with A/B testing and performance analytics.
+ * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics and A/B testing.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -31,111 +31,142 @@ class SmartAffiliateManager {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_init', array($this, 'admin_init'));
-        add_filter('the_content', array($this, 'cloak_links'));
+        add_filter('wp_loaded', array($this, 'rewrite_rules'));
+        add_action('template_redirect', array($this, 'handle_redirect'));
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        load_plugin_textdomain('smart-affiliate', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+        load_plugin_textdomain('smart-affiliate', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        flush_rewrite_rules();
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sam-ajax', plugin_dir_url(__FILE__) . 'sam-ajax.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sam-ajax', 'sam_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sam_nonce')));
+        wp_enqueue_script('smart-affiliate-frontend', plugin_dir_url(__FILE__) . 'assets/frontend.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('smart-affiliate-frontend', plugin_dir_url(__FILE__) . 'assets/frontend.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_options_page('Smart Affiliate Manager', 'Affiliate Manager', 'manage_options', 'smart-affiliate', array($this, 'admin_page'));
+        add_options_page(
+            'Smart Affiliate Settings',
+            'Affiliate Manager',
+            'manage_options',
+            'smart-affiliate',
+            array($this, 'settings_page')
+        );
     }
 
-    public function admin_init() {
-        register_setting('sam_options', 'sam_settings');
-        add_settings_section('sam_main', 'Main Settings', null, 'sam');
-        add_settings_field('sam_api_key', 'Analytics API Key (Premium)', array($this, 'api_key_field'), 'sam', 'sam_main');
-        add_settings_field('sam_links', 'Affiliate Links', array($this, 'links_field'), 'sam', 'sam_main');
-    }
-
-    public function api_key_field() {
-        $settings = get_option('sam_settings', array());
-        echo '<input type="text" name="sam_settings[api_key]" value="' . esc_attr($settings['api_key'] ?? '') . '" class="regular-text" />';
-        echo '<p class="description">Enter premium API key for advanced features. <a href="https://example.com/premium" target="_blank">Upgrade Now</a></p>';
-    }
-
-    public function links_field() {
-        $settings = get_option('sam_settings', array('links' => array()));
-        $links = $settings['links'] ?? array();
-        echo '<textarea name="sam_settings[links]" rows="10" cols="50">' . esc_textarea(json_encode($links, JSON_PRETTY_PRINT)) . '</textarea>';
-        echo '<p class="description">JSON array: {"keyword":"affiliate_url", ...}</p>';
-    }
-
-    public function admin_page() {
+    public function settings_page() {
+        if (isset($_POST['submit'])) {
+            update_option('smart_affiliate_links', sanitize_textarea_field($_POST['links']));
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+        }
+        $links = get_option('smart_affiliate_links', '');
         ?>
         <div class="wrap">
             <h1>Smart Affiliate Link Manager</h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('sam_options');
-                do_settings_sections('sam');
-                submit_button();
-                ?>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Affiliate Links (Keyword|Affiliate URL)</th>
+                        <td><textarea name="links" rows="10" cols="50"><?php echo esc_textarea($links); ?></textarea><br>
+                        <small>One per line: keyword|https://affiliate-url.com</small></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
             </form>
-            <h2>Stats (Free Version)</h2>
-            <div id="sam-stats">Loading...</div>
+            <h2>Usage</h2>
+            <p>Use <code>[smartlink keyword="yourkeyword"]</code> or auto-replace keywords in posts.</p>
+            <p><strong>Pro Features:</strong> Analytics, A/B Testing - <a href="https://example.com/pro">Upgrade Now</a></p>
         </div>
         <?php
     }
 
-    public function cloak_links($content) {
-        $settings = get_option('sam_settings', array());
-        $links = json_decode($settings['links'] ?? '[]', true);
-        if (empty($links)) return $content;
-
-        foreach ($links as $keyword => $url) {
-            $cloak_url = add_query_arg(array(
-                'sam' => urlencode(base64_encode($url)),
-                'ref' => wp_generate_uuid4()
-            ), home_url('/'));
-            $content = str_ireplace($keyword, '<a href="' . esc_url($cloak_url) . '" target="_blank" rel="nofollow">' . $keyword . '</a>', $content);
-        }
-        return $content;
+    public function rewrite_rules() {
+        add_rewrite_rule('^go/([^/]+)/?', 'index.php?smart_affiliate=1&link=$matches[1]', 'top');
     }
 
-    public function track_click() {
-        if (!wp_verify_nonce($_POST['nonce'], 'sam_nonce')) wp_die('Security check failed');
-        $url = base64_decode(sanitize_url($_POST['url']));
-        // Log click (free version: simple count)
-        $stats = get_transient('sam_stats') ?: array('clicks' => 0);
-        $stats['clicks']++;
-        set_transient('sam_stats', $stats, HOUR_IN_SECONDS);
-        wp_redirect(esc_url_raw($url), 301);
-        exit;
+    public function handle_redirect() {
+        if (get_query_var('smart_affiliate')) {
+            $link_key = get_query_var('link');
+            $links = explode("\n", get_option('smart_affiliate_links', ''));
+            foreach ($links as $line) {
+                $parts = explode('|', trim($line));
+                if (isset($parts[1]) && $parts === $link_key) {
+                    wp_redirect(esc_url_raw($parts[1]), 301);
+                    exit;
+                }
+            }
+            wp_die('Link not found.');
+        }
     }
 
     public function activate() {
-        if (!wp_next_scheduled('sam_stats_cron')) {
-            wp_schedule_event(time(), 'hourly', 'sam_stats_cron');
-        }
+        flush_rewrite_rules();
     }
 
     public function deactivate() {
-        wp_clear_scheduled_hook('sam_stats_cron');
+        flush_rewrite_rules();
     }
 }
 
 SmartAffiliateManager::get_instance();
 
-add_action('wp_ajax_sam_track', 'SmartAffiliateManager::track_click');
-
-// Simple JS file content (embed as inline for single file)
-function sam_inline_js() {
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('#sam-stats').load('<?php echo admin_url('admin-ajax.php'); ?>?action=sam_stats');
-    });
-    </script>
-    <?php
+// Shortcode
+function smart_affiliate_shortcode($atts) {
+    $atts = shortcode_atts(array('keyword' => ''), $atts);
+    return '<a href="' . home_url('/go/' . esc_attr($atts['keyword']) . '/') . '" class="smart-affiliate-link">' . esc_html($atts['keyword']) . '</a>';
 }
-add_action('admin_footer', 'sam_inline_js');
+add_shortcode('smartlink', 'smart_affiliate_shortcode');
+
+// Auto-link keywords in content
+function smart_affiliate_content($content) {
+    if (is_single()) {
+        $links = explode("\n", get_option('smart_affiliate_links', ''));
+        foreach ($links as $line) {
+            $parts = explode('|', trim($line));
+            if (isset($parts[1])) {
+                $keyword = preg_quote($parts, '/');
+                $content = preg_replace("/\b({$keyword})\b/i", '<a href="' . home_url('/go/' . esc_attr($parts) . '/') . '" class="smart-affiliate-link">$1</a>', $content, -1, $count);
+            }
+        }
+    }
+    return $content;
+}
+add_filter('the_content', 'smart_affiliate_content');
+
+// Basic tracking
+add_action('wp_ajax_track_click', 'track_affiliate_click');
+add_action('wp_ajax_nopriv_track_click', 'track_affiliate_click');
+function track_affiliate_click() {
+    if (isset($_POST['link_key'])) {
+        $clicks = get_option('smart_affiliate_clicks', array());
+        $link_key = sanitize_text_field($_POST['link_key']);
+        $clicks[$link_key] = isset($clicks[$link_key]) ? $clicks[$link_key] + 1 : 1;
+        update_option('smart_affiliate_clicks', $clicks);
+    }
+    wp_die();
+}
+
+// Frontend JS placeholder
+/*
+assets/frontend.js content:
+jQuery(document).ready(function($) {
+    $('.smart-affiliate-link').on('click', function(e) {
+        $.post(ajaxurl, {action: 'track_click', link_key: $(this).data('key')});
+    });
+});
+*/
+
+// CSS placeholder
+/*
+assets/frontend.css content:
+.smart-affiliate-link {
+    color: #0073aa;
+    text-decoration: none;
+}
+.smart-affiliate-link:hover {
+    text-decoration: underline;
+}
+*/
