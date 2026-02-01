@@ -1,34 +1,35 @@
 # Smart Donation Pro
 
+A lightweight, self-contained WordPress plugin to easily collect donations via customizable buttons and progress trackers. Perfect for creators and non-profits.[1][3][6]
+
 ## Features
-- **Customizable donation buttons** with amounts, labels, and currency.
-- **Progress bars** showing donation goals and current total.
-- **PayPal integration** for one-time donations (recurring in premium).
-- **Shortcode support**: `[smart_donation]` for easy embedding.
-- **Admin dashboard** to set PayPal email and track totals.
-- **Mobile responsive** design.
-- **Freemium**: Free core; premium for analytics, themes, subscriptions ($29/year).
+- **Customizable donation buttons** with amount input and success messages.
+- **Real-time goal progress bars** tracking total donations raised.
+- Shortcodes: `[sdp_donate]` for buttons, `[sdp_goal]` for trackers.
+- **Admin settings** for goal amount and messages (via WordPress options).
+- Fully responsive, mobile-friendly design.
+- Simulates donations (extend for PayPal/Stripe in premium).[2][3]
+- No database tables needed; uses WordPress options.
 
 ## Installation
-1. Upload the plugin files to `/wp-content/plugins/smart-donation-pro/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Donation Pro** to enter your PayPal email.
+1. Download and upload the single PHP file to `/wp-content/plugins/smart-donation-pro/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Use shortcodes in posts/pages or widgets.
 
 ## Setup
-1. Configure your PayPal email in the settings page.
-2. Use the shortcode in any post/page: `[smart_donation amount="10" goal="1000" label="Support Us" currency="$"]`.
-3. Donations update the progress bar automatically (simulated total).
+- Go to **Settings > General** (or add custom admin page in future updates).
+- Set `sdp_goal_amount` (default: $1000) and `sdp_donation_message` via wp_options or code.
+- Test donations: Amount updates current total and progress bar instantly.
 
 ## Usage
-- Embed shortcode anywhere: posts, pages, widgets, sidebars.
-- Customize via attributes: `amount`, `goal`, `label`, `currency`, `paypal_email`.
-- Visitors enter amount/email and are redirected to PayPal.
-- Track total donations in settings (premium: detailed analytics).
+- **Donation Button**: `[sdp_donate amount="25" button_text="Buy Me Coffee" message="Support my blog!"]`
+- **Goal Tracker**: `[sdp_goal]` - Auto-updates on donations.
+- Donations accumulate; reset via `delete_option('sdp_current_amount')`.
 
-## Premium Features
+## Premium Roadmap
+- Stripe/PayPal integration.
 - Recurring donations.
-- Custom themes and animations.
-- Email notifications and donor management.
-- Advanced stats dashboard.
+- Email receipts and analytics.
 
-Support: Contact support@example.com
+## Support
+Report issues on WordPress.org forums. Free core; premium at $29/year.
