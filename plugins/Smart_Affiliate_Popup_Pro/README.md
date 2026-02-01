@@ -2,49 +2,40 @@
 
 ## Features
 
-- **Personalized Popups**: Automatically detects page keywords and shows relevant affiliate links.
-- **Smart Triggers**: Time delay or 50% scroll activation to maximize engagement.
-- **Conversion Optimized**: Mobile-responsive design with close button and one-time show per user.
-- **Easy Setup**: JSON-based link management, no coding required.
-- **Freemium Model**: Free core features; Pro unlocks A/B testing, analytics, geo-targeting, and unlimited links ($49/year).
-
-**Pro Features (Upgrade Today)**:
-- Advanced analytics dashboard.
-- A/B testing for popup variants.
-- Geo and device targeting.
-- Email capture integration.
+- **Personalized Popups**: Automatically display affiliate offers via exit-intent, timed delays, or shortcodes.
+- **Click Tracking**: Built-in analytics to track popup performance and affiliate clicks.
+- **Mobile-Responsive**: Works seamlessly on all devices.
+- **Easy Setup**: No coding required; uses shortcodes like `[sap_popup id="1"]`.
+- **Freemium Model**: Free core features; Pro unlocks A/B testing, geo-targeting, unlimited campaigns ($49/year).
+- **Boost Conversions**: Inspired by OptinMonster-style lead gen with affiliate monetization[2].
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Go to **Settings > Affiliate Popup** to configure.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Add New**.
+3. Popups auto-trigger after 5 seconds or on exit-intent.
+4. Customize via **Tools > Affiliate Popup** (Pro settings available).
 
 ## Setup
 
-1. Navigate to **Settings > Affiliate Popup**.
-2. Enable the popup.
-3. Add your affiliate links in JSON format:
+1. After activation, a sample popup is added to the database.
+2. Edit via phpMyAdmin or upgrade to Pro for UI editor:
+   sql
+   UPDATE wp_sap_affiliates SET affiliate_url = 'YOUR_AFFILIATE_LINK', title = 'Your Offer Title' WHERE id = 1;
    
-   [
-     {"keyword": "wordpress", "link": "https://youraff.link/wp", "text": "Best WP Hosting"},
-     {"keyword": "plugin", "link": "https://youraff.link/plugin", "text": "Top Plugins"}
-   ]
-   
-4. Choose trigger (time/scroll) and set delay.
-5. Save changes. Popups appear on frontend.
+3. Add `[sap_popup id="1"]` to any page/post for manual trigger.
+4. Pro users: Enable via admin dashboard for advanced triggers.
 
 ## Usage
 
-- Popups trigger based on settings and match page content to keywords for relevance.
-- Users see popup once per session (localStorage).
-- Customize CSS in plugin settings for branding.
-- **Pro Tip**: Use tiered affiliate programs for higher commissions. Track performance and upgrade to Pro for full analytics.
+- **Automatic**: Popups show site-wide after delay/exit-intent.
+- **Manual**: Use shortcode in posts/pages.
+- **Track Performance**: Clicks logged in `wp_sap_affiliates` table.
+- **Monetize**: Replace sample affiliate link with Amazon, etc.[4][5].
+- **Pro Upgrade**: A/B tests, email integrations, priority support.
 
-## Support
+**Upgrade to Pro**: [Get Pro](https://example.com/pro) for 40% higher conversions[6].
 
-- [Documentation](https://example.com/docs)
-- [Pro Upgrade](https://example.com/pro) | [Contact](mailto:support@example.com)
+## Changelog
 
-Boost your affiliate earnings today!
+- **1.0.0**: Initial release with core popup and tracking.
