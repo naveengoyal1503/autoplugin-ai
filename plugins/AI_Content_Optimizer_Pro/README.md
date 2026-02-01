@@ -1,45 +1,35 @@
 # AI Content Optimizer Pro
 
+## Description
+**AI Content Optimizer Pro** is a powerful WordPress plugin that uses simulated AI to analyze and optimize your post content for SEO. Get instant SEO scores, suggestions, and premium advanced features like sentiment analysis.
+
 ## Features
-
-- **Free Version**:
-  - Automatic SEO keyword extraction from post content.
-  - Adds JSON-LD schema markup to posts.
-  - Real-time SEO score analysis in post editor.
-  - Toggle per-post optimization.
-
-- **Premium Version ($9/month)**:
-  - AI-powered content rewriting and improvement.
-  - Bulk optimization for multiple posts/pages.
-  - Advanced analytics dashboard with traffic insights.
-  - Priority support and new features.
+- **Basic (Free):** SEO score, keyword suggestions, readability checks
+- **Premium ($4.99/month):** Advanced AI sentiment analysis, named entity recognition, unlimited optimizations, priority support
+- Meta box integration in post editor
+- Shortcode `[ai_seo_score]` to display score on frontend
+- Easy premium activation
 
 ## Installation
-
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. For premium, enter license key in plugin settings (coming soon).
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Edit any post to see the optimizer meta box
 
 ## Setup
-
-1. Go to any post editor.
-2. Check the **AI Content Optimizer** meta box in the sidebar.
-3. Enable **Auto-optimize this post** for schema and keywords.
-4. View analysis results.
-5. [Upgrade to Pro](https://example.com/premium) for AI rewriting.
+1. Go to **Settings > AI Optimizer** to activate premium (optional)
+2. Enter your premium key from example.com/premium
 
 ## Usage
+1. Edit a post
+2. In the sidebar, click **Optimize Now** for instant AI analysis
+3. View SEO score and suggestions
+4. Use `[ai_seo_score]` shortcode in posts/pages to show score publicly
+5. Premium users get enhanced analysis on each run
 
-- Edit posts and toggle optimization.
-- Published posts get auto-enhanced content (view source for schema).
-- Premium users: AI rewrites content on save/publish.
-- Monitor via post meta or upgrade for dashboard.
-
-## Support
-
-Free support via WordPress forums. Premium: email support@yourdomain.com.
+## Premium Benefits
+- Recurring revenue model with easy license verification
+- Upsell from free users via in-plugin prompts
+- Submit to WordPress.org for free version visibility
 
 ## Changelog
-
-**1.0.0**
-- Initial release with free core features.
+- 1.0.0: Initial release
