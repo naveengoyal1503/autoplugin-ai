@@ -1,32 +1,30 @@
 # AI Content Optimizer Lite
 
-A freemium WordPress plugin that instantly analyzes your post content for **readability** and **SEO keywords**, helping you create better content faster.
+## Description
+AI Content Optimizer Lite is a powerful **freemium WordPress plugin** that helps you analyze and optimize your post content for better **SEO** and **readability**. Get instant metrics like word count, Flesch Reading Ease score, and top keywords. Free version provides basic analysis and simple suggestions; upgrade to Premium for AI-driven optimizations, bulk processing, and more.
 
 ## Features
-- **Free:** Real-time readability score (Flesch-Kincaid), top keyword extraction, instant feedback.
-- **Premium Upsell:** AI-powered rewriting, full SEO analysis, bulk optimization for multiple posts ($49/year).
-- Lightweight, no external APIs in lite version.
-- Works on posts sidebar for quick access.
+- **Free Basic Analysis**: Word count, readability score, top keywords extraction.
+- **One-Click Optimization Suggestions**: Actionable tips to improve content.
+- **Seamless Integration**: Works in post editor sidebar.
+- **Premium Upsell**: AI suggestions, bulk optimization, export reports (via upgrade link).
 
 ## Installation
-1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload**.
-2. Activate the plugin.
-3. Edit any post – see the **AI Content Optimizer** box in the sidebar.
+1. Upload the `ai-content-optimizer-lite` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress admin.
+3. Edit any post to see the optimizer sidebar.
 
 ## Setup
-No setup required! Open a post editor, paste content into the box (or it auto-pulls), and click **Analyze Content**.
+No setup required! The plugin auto-adds a meta box to post edit screens. For Premium features, visit the upgrade link in the dashboard.
 
 ## Usage
-1. Write or paste content in the post editor.
-2. Click **Analyze** in the sidebar box.
-3. View **readability score** (aim for 60+) and **top keywords** for SEO ideas.
-4. **Upgrade to Premium** for AI rewrites: [Get Premium](https://example.com/premium).
+1. Edit or create a **post**.
+2. In the sidebar, view **real-time metrics** (word count, readability, keywords).
+3. Click **"Analyze & Optimize (Free)"** for suggestions.
+4. Apply tips manually or **upgrade to Premium** for advanced AI features.
 
-## Screenshots
-*(Imagine: Sidebar with score 75/100, keywords: 'wordpress, plugin, ai')*
+## Premium Upgrade
+Unlock full potential: [Upgrade to Premium](https://example.com/premium-upgrade). Includes AI content rewriting, SEO keyword recommendations, and priority support.
 
 ## Support
-Free version: WordPress.org forums. Premium: Priority email support.
-
-## Changelog
-**1.0.0** - Initial release.
+Report issues via WordPress.org forums. Premium users get dedicated support.
