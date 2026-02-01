@@ -1,33 +1,28 @@
 # AI Content Optimizer Pro
 
-## Description
-AI Content Optimizer Pro is a powerful WordPress plugin that leverages AI to analyze and improve your post content for better **SEO**, **readability**, and **user engagement**. The free version provides essential metrics, while premium unlocks advanced AI-driven suggestions and optimizations.
-
 ## Features
-- **Free:** Readability score, keyword density analysis, word count.
-- **Premium ($9.99/month):** AI-powered SEO suggestions, engagement scoring, bulk content optimization, optimized content generation.
-- Real-time analysis in WordPress admin.
-- Secure, self-contained—no external dependencies in free version.
+- **Free Version**: Analyzes post readability, SEO score, and provides basic optimization tips.
+- **Premium Features** (Subscription $9.99/month): AI-powered content rewriting, advanced keyword suggestions, bulk optimization, priority support.[1][2]
+- Real-time analysis in post editor.
+- Feature gating encourages upgrades.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Access via **Settings > AI Optimizer**.
+1. Upload the plugin files to `/wp-content/plugins/ai-content-optimizer`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Edit any post to see the **AI Content Optimizer** meta box.
 
 ## Setup
-1. Navigate to **Settings > AI Optimizer**.
-2. For premium features, [upgrade here](https://example.com/pricing) and enter your license key.
-3. Paste content into the textarea and click **Optimize Content**.
+- No configuration needed for free version.
+- Premium: Enter license key in **Settings > AI Content Optimizer** after purchase.
 
 ## Usage
-- Use on any post or page content.
-- Free users get basic scores.
-- Premium users receive actionable AI suggestions and auto-optimized versions.
-- Example: Input raw draft → Get SEO tweaks like adding headers or shortening sentences.
+1. Edit a post.
+2. Click **Analyze Content** in the sidebar meta box.
+3. View score and tips.
+4. Upgrade for AI rewriting: Generates optimized versions instantly.
 
-## Premium Upgrade
-Unlock full AI potential with subscription. Steady revenue via recurring payments. Contact support@example.com for issues.
+## Monetization
+Freemium model with upsell nags and premium-only AJAX calls. Integrate with your payment system (e.g., Stripe) for licenses.[1][2][4]
 
-## Changelog
-**1.0.0** - Initial release.
+## Support
+Free: Forums. Premium: Priority email support.
