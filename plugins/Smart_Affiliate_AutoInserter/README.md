@@ -1,52 +1,50 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into posts using smart keyword matching.**
+**Automatically monetize your WordPress site by inserting relevant Amazon affiliate links into posts and pages using smart keyword matching.**
 
 ## Features
-
-- **AI-Powered Keyword Matching**: Scans content for product-related keywords and inserts Amazon affiliate links automatically.
-- **Freemium Model**: Free version limits to 2 links per post; Pro unlocks unlimited links, analytics, A/B testing, and multi-network support.
+- **Auto-Insert Links**: Scans content for keywords and replaces them with your Amazon affiliate links.
+- **Easy Setup**: Add keyword:ASIN pairs in settings (e.g., `laptop:B08N5WRWNW`).
+- **Performance Limits**: Free version limits to 3 links per post; **Pro: Unlimited**.
 - **Mobile-Responsive**: Links work perfectly on all devices.
-- **Easy Setup**: Enter your Amazon API key and affiliate tag – done!
-- **SEO-Friendly**: Uses `nofollow sponsored` attributes for compliance.
-- **Performance Optimized**: Lightweight with no bloat.
-
-**Pro Features (Upgrade for $29/year)**:
-- Unlimited links per post
-- Detailed click analytics dashboard
-- Support for other networks (e.g., ShareASale)
-- Custom link templates and positioning
-- A/B testing for higher conversions
+- **Pro Features** (Upgrade for $49/year):
+  - Unlimited links per post.
+  - Click tracking and analytics dashboard.
+  - A/B testing for link styles.
+  - Support for other networks (e.g., custom URLs).
+  - Priority support.
 
 ## Installation
-
-1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload Plugin**.
-2. Activate the plugin.
-3. Go to **Settings > Affiliate Inserter** to enter your Amazon Associates API key and affiliate tag (e.g., `yourid-20`).
-4. Save settings – links will auto-insert on new and existing posts!
+1. Download the plugin ZIP.
+2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Go to **Settings > Affiliate AutoInserter** to configure.
 
 ## Setup
-
-1. Sign up for [Amazon Associates](https://affiliate-program.amazon.com/) if you haven't.
-2. Get your Product Advertising API key from Amazon.
-3. Input credentials in plugin settings.
-4. Adjust free limit (default: 2 links/post) or upgrade to Pro.
+1. **Get Amazon Associates ID**: Sign up at [affiliate-program.amazon.com](https://affiliate-program.amazon.com) and note your tag (e.g., `yourid-20`).
+2. **Add Link Rules**: In settings, enter keywords and ASINs:
+   
+laptop:B08N5WRWNW
+phone:B07RF1XD5K
+shoes:B01M0L9V2Q
+   
+3. Set **Max Links** (default: 3).
+4. Save. Links auto-appear in new/existing posts!
 
 ## Usage
-
-- **Automatic**: Links insert on publish/update. Targets singular posts/pages.
-- **Test It**: Create a post with words like "laptop", "coffee", or "book" to see demo links.
-- **Customize**: Pro users can set positions (e.g., after first paragraph) and exclude pages.
-- **Track Earnings**: Monitor Amazon Associates dashboard for commissions.
+- Write content with keywords like "laptop".
+- Plugin auto-replaces with affiliate link: `<a href="https://amazon.com/dp/B08N5WRWNW?tag=yourid-20">Laptop</a>`.
+- Earn commissions on clicks/sales.
+- Test on a staging site first.
+- **Pro Tip**: Use high-volume keywords from your analytics for max revenue.
 
 ## FAQ
+**Does it slow my site?** No, lightweight and uses WordPress filters.
+**Safe for Amazon ToS?** Yes, uses standard affiliate links with `nofollow sponsored`.
+**Upgrade?** Visit [example.com/pro](https://example.com/pro) for Pro.
 
-**Does it slow my site?** No, it's lightweight and uses efficient regex matching.
+## Support
+- Free support via WordPress forums.
+- Pro: Email support@yourdomain.com.
 
-**Compliant with Amazon TOS?** Yes, uses proper tagging and nofollow.
-
-**Production API**: Demo uses mock data; replace `search_amazon_product()` with real Amazon PA-API calls.
-
-**Support**: Free users – forums. Pro – priority email support.
-
-**Upgrade**: [Get Pro Now](https://example.com/pro) for max earnings!
+*Boost your affiliate earnings today!*
