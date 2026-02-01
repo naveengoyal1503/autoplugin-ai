@@ -1,49 +1,54 @@
 # Smart Affiliate Link Optimizer
 
+## Description
+
+**Smart Affiliate Link Optimizer** is an AI-powered WordPress plugin that automatically detects, cloaks, tracks, and optimizes your affiliate links for higher conversions. Perfect for bloggers and marketers.
+
 ## Features
 
-- **Automatic Link Cloaking**: Detects affiliate links in posts and pages, cloaks them for better tracking and branding.
-- **Click Tracking**: Monitors clicks on cloaked links with basic dashboard stats (premium: advanced analytics).
-- **Premium Features**: A/B testing, conversion suggestions, unlimited links, API integration for external tracking.
-- **Easy Setup**: No coding required; works out-of-the-box.
-- **SEO-Friendly**: 301 redirects preserve link juice.
+### Free Version
+- **Automatic Link Cloaking**: Replace keywords with cloaked affiliate links.
+- **Click Tracking**: Basic analytics dashboard.
+- **SEO-Friendly**: Pretty URLs like `/go/product/`.
 
-**Free vs Premium**:
-
-| Feature | Free | Premium ($9/mo) |
-|---------|------|------------------|
-| Link Cloaking | ✓ | ✓ |
-| Basic Tracking | ✓ | ✓ |
-| Advanced Analytics | ✗ | ✓ |
-| A/B Testing | ✗ | ✓ |
-| Auto-Suggestions | ✗ | ✓ |
+### Premium Features (Upgrade for $9/month)
+- **A/B Testing**: Test multiple affiliate offers automatically.
+- **AI Optimization**: Auto-select best-performing links.
+- **Advanced Analytics**: Conversion tracking, heatmaps.
+- **Bulk Import**: CSV upload for links.
+- **Priority Support**.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your `/wp-content/plugins/` directory.
+1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-optimizer`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Flush permalinks (Settings > Permalinks > Save).
-4. Add affiliate links to your content; they auto-cloak.
+3. Go to **Settings > Affiliate Optimizer** to configure.
 
 ## Setup
 
-1. Go to **Settings > Affiliate Optimizer**.
-2. Enter your Premium API key (if upgraded).
-3. Enable premium features checkbox.
-4. View click stats in the dashboard.
+1. In the settings page, add your affiliate links in the format:
+   
+   Buy Now|https://affiliate.com/product
+   Best Tool|https://example.com/ref123
+   
+2. Save settings. Links will auto-cloak in posts/pages.
+3. View basic analytics in the dashboard.
 
 ## Usage
 
-- Write posts with raw affiliate links (e.g., `https://amazon.com/product?tag=yourtag`).
-- Links automatically become `/go/[hash]/` on frontend.
-- Track performance in settings page; upgrade for pro insights.
-- Premium users get email reports and optimization tips.
+- Write posts with keywords like "Buy Now".
+- Plugin auto-converts to cloaked tracked links.
+- **Pro Tip**: Upgrade for AI-driven A/B testing to boost commissions up to 300%.
+
+## Upgrade to Pro
+
+[Get Premium](https://example.com/premium) - Unlock AI features, unlimited links, and support.
 
 ## Support
 
-- Free support via WordPress forums.
-- Premium: Dedicated email support.
+Free support via WordPress forums. Premium users get 24/7 email support.
 
-## Upgrade
+## Changelog
 
-Visit [premium.example.com](https://premium.example.com) for subscription.
+**1.0.0**
+- Initial release.
