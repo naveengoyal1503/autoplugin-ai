@@ -5,128 +5,133 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart Affiliate Link Manager Pro
- * Plugin URI: https://example.com/smart-affiliate-manager
- * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics and A/B testing.
+ * Plugin URI: https://example.com/smart-affiliate
+ * Description: Automatically cloak, track, and optimize affiliate links for maximum conversions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
 class SmartAffiliateManager {
     private static $instance = null;
+    public $is_pro = false;
 
     public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
+        if (null == self::$instance) {
+            self::$instance = new self;
         }
         return self::$instance;
     }
 
     private function __construct() {
+        $this->is_pro = get_option('sam_pro_activated', false);
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('wp_ajax_sam_track_click', array($this, 'track_click'));
         add_filter('the_content', array($this, 'cloak_links'));
-        add_shortcode('sam_link', array($this, 'shortcode_link'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        // Create DB table for tracking
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'sam_links';
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            original_url varchar(500) NOT NULL,
-            cloaked_url varchar(500) NOT NULL,
-            clicks int DEFAULT 0,
-            created datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        if (get_option('sam_api_key')) {
+            // Pro check
+        }
     }
 
     public function enqueue_scripts() {
         wp_enqueue_script('sam-script', plugin_dir_url(__FILE__) . 'sam.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('sam-style', plugin_dir_url(__FILE__) . 'sam.css', array(), '1.0.0');
+        wp_localize_script('sam-script', 'sam_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 
     public function cloak_links($content) {
         if (is_admin()) return $content;
-        $pattern = '/https?:\/\/([^\s<>"\[]*?(?:aff|amazon|clickbank|commission|ref|tracking)[^\s<>"\[]*)/i';
-        return preg_replace_callback($pattern, array($this, 'replace_link'), $content);
+        $patterns = '/\b(https?:\/\/(?:[^\s]+\.)?(amazon|clickbank|shareasale|commissionjunction)[^\s]+)\b/i';
+        $content = preg_replace_callback($patterns, array($this, 'replace_link'), $content);
+        return $content;
     }
 
     private function replace_link($matches) {
-        global $wpdb;
-        $original = $matches;
-        $table_name = $wpdb->prefix . 'sam_links';
-        $cloaked = $wpdb->get_var($wpdb->prepare("SELECT cloaked_url FROM $table_name WHERE original_url = %s", $original));
-        if (!$cloaked) {
-            $cloaked = site_url('/?sam=' . md5($original));
-            $wpdb->insert($table_name, array('original_url' => $original, 'cloaked_url' => $cloaked));
-        }
-        return $cloaked;
-    }
-
-    public function shortcode_link($atts) {
-        $atts = shortcode_atts(array('url' => ''), $atts);
-        if (!$atts['url']) return '';
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'sam_links';
-        $cloaked = $wpdb->get_var($wpdb->prepare("SELECT cloaked_url FROM $table_name WHERE original_url = %s", $atts['url']));
-        if (!$cloaked) {
-            $cloaked = site_url('/?sam=' . md5($atts['url']));
-            $wpdb->insert($table_name, array('original_url' => $atts['url'], 'cloaked_url' => $cloaked));
-        }
-        return '<a href="' . $cloaked . '" target="_blank" rel="nofollow">' . ($atts['text'] ?? 'Click Here') . '</a>';
+        $shortcode = '[sam_link url="' . esc_attr($matches) . '"]';
+        return do_shortcode($shortcode);
     }
 
     public function admin_menu() {
-        add_options_page('SAM Settings', 'SAM Pro', 'manage_options', 'sam-pro', array($this, 'settings_page'));
+        add_options_page('Smart Affiliate Manager', 'SAM Pro', 'manage_options', 'sam-pro', array($this, 'settings_page'));
     }
 
     public function settings_page() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'sam_links';
-        $links = $wpdb->get_results("SELECT * FROM $table_name ORDER BY clicks DESC");
-        echo '<div class="wrap"><h1>Smart Affiliate Manager - Analytics</h1><table class="wp-list-table widefat fixed striped"><thead><tr><th>ID</th><th>Original URL</th><th>Cloaked URL</th><th>Clicks</th></tr></thead><tbody>';
-        foreach ($links as $link) {
-            echo '<tr><td>' . $link->id . '</td><td>' . esc_html($link->original_url) . '</td><td>' . esc_html($link->cloaked_url) . '</td><td>' . $link->clicks . '</td></tr>';
+        if (isset($_POST['sam_api_key'])) {
+            update_option('sam_api_key', sanitize_text_field($_POST['sam_api_key']));
+            $this->is_pro = true;
+            echo '<div class="notice notice-success"><p>Pro activated!</p></div>';
         }
-        echo '</tbody></table><p><strong>Pro Features:</strong> A/B Testing, Woo Integration, Export CSV - <a href="https://example.com/pro">Upgrade Now</a></p></div>';
+        ?>
+        <div class="wrap">
+            <h1>Smart Affiliate Manager Pro</h1>
+            <form method="post">
+                <p><label>Pro License Key: <input type="text" name="sam_api_key" value="<?php echo get_option('sam_api_key'); ?>" /></label></p>
+                <p class="description"><?php if (!$this->is_pro) echo 'Enter key to unlock Pro features.'; ?></p>
+                <?php if (!$this->is_pro): ?><p><a href="https://example.com/buy-pro" target="_blank">Buy Pro ($49/year)</a></p><?php endif; ?>
+                <p><input type="submit" class="button-primary" value="Save" /></p>
+            </form>
+            <h2>Stats</h2>
+            <div id="sam-stats">Loading...</div>
+        </div>
+        <?php
+    }
+
+    public function track_click() {
+        $url = sanitize_url($_POST['url']);
+        error_log('SAM Click: ' . $url);
+        wp_redirect($url);
+        exit;
     }
 
     public function activate() {
-        $this->init();
+        add_option('sam_pro_activated', false);
     }
 }
 
-// Track clicks
-add_action('init', function() {
-    if (isset($_GET['sam'])) {
-        global $wpdb;
-        $hash = sanitize_text_field($_GET['sam']);
-        $table_name = $wpdb->prefix . 'sam_links';
-        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE cloaked_url LIKE %s OR cloaked_url = %s", '%sam=' . $hash, site_url('/?sam=' . $hash)));
-        if ($link) {
-            $wpdb->update($table_name, array('clicks' => $link->clicks + 1), array('id' => $link->id));
-            wp_redirect($link->original_url, 301);
-            exit;
+// Shortcode
+function sam_link_shortcode($atts) {
+    $atts = shortcode_atts(array('url' => ''), $atts);
+    $slug = 'sam-' . md5($atts['url']);
+    ob_start();
+    ?>
+    <a href="<?php echo admin_url('admin-ajax.php?action=sam_track_click&url=' . urlencode($atts['url'])); ?>" class="sam-link" data-slug="<?php echo $slug; ?>" rel="nofollow">Click here for offer</a>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('sam_link', 'sam_link_shortcode');
+
+// JS for analytics (Pro feature)
+function sam_js() {
+    if (!wp_script_is('sam-script', 'enqueued')) return;
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        $('.sam-link').on('click', function(e) {
+            $.post(sam_ajax.ajaxurl, {action: 'sam_track_click', url: $(this).data('url')});
+        });
+        if (sam_pro) {
+            // Load analytics chart
+            $('#sam-stats').load('?page=sam-pro #stats-data');
         }
-    }
-});
+    });
+    </script>
+    <?php
+}
+add_action('wp_footer', 'sam_js');
 
 SmartAffiliateManager::get_instance();
 
-// Minimal JS/CSS placeholders (in real plugin, use actual files)
-add_action('wp_head', function() {
-    echo '<style>.sam-cloaked { color: #0073aa; }</style>';
-    echo '<script>console.log("SAM Pro loaded - Upgrade for analytics!");</script>';
-});
+// Pro upsell notice
+function sam_upsell_notice() {
+    if (!get_option('sam_pro_activated')) {
+        echo '<div class="notice notice-info"><p>Unlock Pro features like A/B testing and analytics: <a href="' . admin_url('options-general.php?page=sam-pro') . '">Upgrade Now</a></p></div>;
+    }
+}
+add_action('admin_notices', 'sam_upsell_notice');
