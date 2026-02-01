@@ -1,70 +1,52 @@
 # AI Content Optimizer Lite
 
-[![WordPress plugin](https://img.shields.io/wordpress/plugin/downloads/ai-content-optimizer.svg)](https://wordpress.org/plugins/ai-content-optimizer/) [![Tested up to WP 6.6](https://img.shields.io/wordpress/v/ai-content-optimizer.svg)](https://wordpress.org/plugins/ai-content-optimizer/)
+## Description
 
-**AI Content Optimizer Lite** is a powerful **freemium WordPress plugin** that uses AI-driven analysis to optimize your post and page content for **SEO**, **readability**, and **engagement**. Get instant insights on word count, Flesch reading score, SEO score, and actionable suggestions.
+**AI Content Optimizer Lite** is a powerful WordPress plugin that analyzes your post content in real-time, providing **SEO scores, readability analysis, and optimization tips** right in the editor sidebar. Perfect for bloggers and site owners looking to improve content quality without leaving WordPress.
 
-## 🚀 Features
+Free version includes:
+- Word count
+- Readability score
+- Top keyword detection
+- Basic optimization tips
 
-### Free Version
-- **Content Analysis**: Paste content for instant word count, readability (Flesch score), and SEO score.
-- **Smart Suggestions**: Tips to improve structure, length, and readability (e.g., add H2s, shorten sentences).
-- **Admin Dashboard**: Easy-to-use optimization tool in WordPress admin.
-- **Gutenberg Ready**: Integrates with block editor.
+## Features
 
-### Premium Version ($4.99/mo or $49/yr)
-- **Unlimited Scans**: No limits on content analysis.
-- **Auto-Optimization**: AI rewrites content for better SEO.
-- **Keyword Integration**: Suggests and inserts focus keywords.
-- **Bulk Optimization**: Optimize entire posts/pages.
-- **Priority Support** & regular updates.
+- **Real-time Analysis**: Get instant feedback as you write.
+- **SEO Insights**: Detect key terms and content length.
+- **Readability Scoring**: Ensure your content is engaging.
+- **Lite Tips**: Actionable advice to improve posts.
+- **Premium Upsell**: Seamless upgrade path for advanced AI features.
 
-## 🎯 Target Users
-Bloggers, marketers, small businesses, and agencies needing quick content improvements.
+## Installation
 
-## 💰 Monetization
-**Freemium**: Core features free on WordPress.org. Upsell premium via [official site](https://example.com/premium).
+1. Upload the plugin files to `/wp-content/plugins/ai-content-optimizer`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Edit any post or page to see the optimizer in action!
 
-## 📦 Installation
+## Setup
 
-1. Download from [WordPress.org](https://wordpress.org/plugins/ai-content-optimizer/) or upload ZIP.
-2. Go to **Plugins > Add New > Upload** and activate.
-3. Access via **Settings > AI Content Optimizer**.
+No setup required! The meta box appears automatically in the sidebar of Posts and Pages.
 
-## ⚙️ Setup
+## Usage
 
-1. Activate the plugin.
-2. Navigate to **Settings > AI Content Optimizer**.
-3. Paste content and click **Optimize Content**.
+1. Create or edit a **Post** or **Page**.
+2. Scroll to the **AI Content Optimizer** sidebar box.
+3. View your **word count, readability score, keywords**, and **tips**.
+4. Follow suggestions to optimize.
+5. **Upgrade to Premium** for AI-generated content improvements and unlimited analysis.
 
-No API keys needed for free version.
+## Premium Features
 
-## 📖 Usage
+- AI-powered keyword research
+- Content rewrite suggestions
+- Competitor analysis integration
+- Bulk post optimization
+- Priority support
 
-1. **Manual Optimization**:
-   - Go to admin page.
-   - Paste text.
-   - View scores & suggestions.
+Visit [Premium Upgrade](https://example.com/premium) for details.
 
-2. **In-Editor** (Premium): Button in Gutenberg/Classic editor.
+## Changelog
 
-3. **Example Output**:
-   - Word Count: 450
-   - Readability: 65.2
-   - SEO Score: 82%
-   - Suggestions: Add more subheadings.
-
-## 🤝 Support
-- Free: WordPress.org forums.
-- Premium: Dedicated support ticket.
-
-## 📈 Why Profitable?
-- **High Demand**: Content optimization is essential for SEO.
-- **Freemium Upsell**: 40% conversion potential[6].
-- **Recurring Revenue**: Subscription model retains 65% more users[6].
-- **Low Churn**: Continuous AI updates add value.
-
-**Upgrade to Pro: [Get Premium](https://example.com/premium)**
-
----
-*© 2026 AI Content Optimizer. GPL v2+ Licensed.*
+**1.0.0**
+- Initial release with core analysis features.
