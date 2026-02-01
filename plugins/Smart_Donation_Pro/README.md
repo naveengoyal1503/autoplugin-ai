@@ -1,41 +1,38 @@
 # Smart Donation Pro
 
-A lightweight WordPress plugin to monetize your site with non-intrusive, smart donation prompts. Earn via one-time PayPal tips triggered by scroll depth or time on page. Perfect for bloggers and creators.
+A lightweight, self-contained WordPress plugin to monetize your site with customizable donation buttons and progress bars. Perfect for bloggers, creators, and non-profits.
 
 ## Features
-- **Smart Triggers**: Show prompts after X% scroll or delay (customizable).
-- **Suggested Amounts**: Quick buttons for $5, $10, etc. (editable).
-- **PayPal Integration**: Instant one-click donations.
-- **Non-Intrusive**: LocalStorage prevents spam; dismissible.
-- **Settings Page**: Easy admin dashboard for all options.
-- **Mobile-Responsive**: Works on all devices.
-- **Freemium Ready**: Pro version unlocks analytics, geo-targeting, A/B tests.
+- **Easy Donation Buttons**: Use shortcode `[sdp_donate_button amount="10" label="Buy Me a Coffee"]` for PayPal-powered buttons.
+- **Progress Bars**: Track goals with `[sdp_progress_bar goal="1000" current="250" label="Fundraiser Goal"]`.
+- **Admin Dashboard**: View total donations, donor count, and configure PayPal email.
+- **Mobile-Responsive**: Clean, modern design works on all devices.
+- **Freemium Ready**: Free core; premium unlocks Stripe, recurring donations, analytics.
+- **Lightweight**: Single-file, no bloat, GDPR-friendly (no tracking cookies).
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Donation Pro** to configure.
+1. Download the plugin ZIP.
+2. In WordPress Admin > Plugins > Add New > Upload Plugin.
+3. Activate "Smart Donation Pro".
+4. Go to Settings > Donation Pro to set your PayPal email.
 
 ## Setup
-1. Enter your PayPal email.
-2. Customize message, amounts (e.g., `5,10,25,100`), scroll % (default 70%), delay (default 30s).
-3. Enable the plugin.
-4. Test on frontend: Scroll or wait to see prompt.
+1. **Configure PayPal**: Enter your PayPal business email in the settings page.
+2. **Add to Posts/Pages**: Use shortcodes anywhere.
+   - Donation: `[sdp_donate_button amount="5" label="Support Us"]`
+   - Progress: `[sdp_progress_bar goal="5000" current="1200" label="New Server Fund"]`
+3. View stats in the settings page.
 
 ## Usage
-- Prompts appear automatically based on settings.
-- Visitors select amount and donate via PayPal (new tab).
-- No accounts needed; works for tips, coffee money, support.
-- **Pro Tip**: Use on high-traffic pages for best results.
+- Place shortcodes in Gutenberg blocks, widgets, or theme files.
+- Customize amounts/labels per button.
+- Donations log in database; track revenue growth.
+- **Pro Tip**: Combine with membership sites for hybrid monetization (subscriptions + tips).[1]
 
-## Pro Version
-Upgrade for:
-- Conversion analytics.
-- Exit-intent triggers.
-- Custom CSS/animations.
-- Multi-payment gateways.
+## Premium Features (Coming Soon)
+- Stripe integration for cards.
+- Recurring donations.
+- Detailed analytics dashboard.
+- Custom themes and A/B testing.
 
-Visit [example.com/pro](https://example.com/pro) for $29/year.
-
-## Support
-Report issues on WordPress.org forums. Pro users get priority email support.
+Support: Contact via WordPress.org forums. License: GPL v2+.
