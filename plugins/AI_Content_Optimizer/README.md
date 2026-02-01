@@ -1,31 +1,32 @@
 # AI Content Optimizer
 
 ## Description
-AI Content Optimizer is a powerful WordPress plugin that uses simulated AI to analyze your post content for **word count**, **readability**, and **SEO score**. The free version provides essential analysis, while premium unlocks advanced AI rewriting, keyword suggestions, and unlimited scans.
+AI Content Optimizer is a powerful WordPress plugin that provides **AI-powered analysis** for post readability and SEO scores directly in the post editor. Free version offers basic scoring; premium unlocks advanced optimization suggestions.
 
 ## Features
-- **Free:** Instant content analysis (word count, readability score, basic SEO score)
-- **Premium ($9/month):** AI-powered content rewriting, smart keyword suggestions, bulk optimization, priority support
-- Side metabox for easy access in post editor
-- Freemium upsell with clear upgrade prompts
+- **Real-time Readability Score**: Flesch-Kincaid based analysis (free).
+- **SEO Score Calculation**: Checks content length, headings, images, alt tags, and title length (free).
+- **Premium AI Optimization**: One-click content improvements, bulk processing, and advanced suggestions ($9/month).
+- **Meta Box Integration**: Scores displayed in post sidebar.
+- **Settings Page**: Configure API key for premium features.
 
 ## Installation
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Edit any post/page to see the AI Content Optimizer metabox
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Visit **Settings > AI Optimizer** to configure.
 
 ## Setup
-- No configuration required for free version
-- **Premium:** Visit [example.com/premium](https://example.com/premium) and enter your license key in plugin settings (demo key: premium123 for testing)
+1. For free use: No setup required—scores auto-calculate on save.
+2. For premium: Enter your API key in settings and upgrade at [example.com/premium](https://example.com/premium).
 
 ## Usage
-1. Edit a post or page
-2. In the sidebar, click **Analyze Content**
-3. View results: words, readability %, SEO score
-4. **Upgrade to Premium** for AI enhancements via the link in the metabox
-
-## Screenshots
-*(Imagine: Metabox showing analysis results and upgrade prompt)*
+1. Edit any **post**—see the **AI Content Optimizer** sidebar.
+2. Save post to trigger analysis.
+3. Premium users: Click **Optimize Content** for AI enhancements.
 
 ## Changelog
-**1.0.0** - Initial release with freemium model
+**1.0.0**
+- Initial release with free core features.
+
+## Upgrade to Premium
+Unlock AI rewriting, bulk optimization, and support: [Get Premium](https://example.com/premium)
