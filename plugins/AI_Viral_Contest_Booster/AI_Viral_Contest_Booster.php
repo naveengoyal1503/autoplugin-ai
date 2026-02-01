@@ -5,17 +5,17 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: AI Viral Contest Booster
- * Plugin URI: https://example.com/ai-viral-contest-booster
+ * Plugin URI: https://example.com/aiviral-contest
  * Description: AI-powered viral contests to grow your email list and traffic.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: ai-viral-contest-booster
+ * Text Domain: ai-viral-contest
  */
 
 if (!defined('ABSPATH')) exit;
 
-class AI_Viral_Contest_Booster {
+class AIViralContestBooster {
     public function __construct() {
         add_action('init', [$this, 'init']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
@@ -25,14 +25,19 @@ class AI_Viral_Contest_Booster {
     }
 
     public function init() {
-        if (is_admin()) {
-            add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
-        }
+        wp_register_style('aicb-style', plugin_dir_url(__FILE__) . 'style.css');
+        wp_register_script('aicb-script', plugin_dir_url(__FILE__) . 'script.js', ['jquery'], '1.0', true);
+        wp_localize_script('aicb-script', 'aicb_ajax', ['ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('aicb_nonce')]);
+
+        add_action('wp_ajax_aicb_submit_entry', [$this, 'handle_entry']);
+        add_action('wp_ajax_nopriv_aicb_submit_entry', [$this, 'handle_entry']);
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_style('ai-contest-css', plugin_dir_url(__FILE__) . 'style.css', [], '1.0');
-        wp_enqueue_script('ai-contest-js', plugin_dir_url(__FILE__) . 'script.js', ['jquery'], '1.0', true);
+        if (is_page() || is_single()) {
+            wp_enqueue_style('aicb-style');
+            wp_enqueue_script('aicb-script');
+        }
     }
 
     public function admin_menu() {
@@ -40,133 +45,116 @@ class AI_Viral_Contest_Booster {
     }
 
     public function settings_page() {
-        if (isset($_POST['submit'])) {
-            update_option('ai_contest_settings', $_POST['settings']);
+        if (isset($_POST['aicb_settings'])) {
+            update_option('aicb_email_list', sanitize_email($_POST['email_list']));
+            update_option('aicb_pro_key', sanitize_text_field($_POST['pro_key']));
             echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        $settings = get_option('ai_contest_settings', []);
+        $email_list = get_option('aicb_email_list', '');
+        $pro_key = get_option('aicb_pro_key', '');
+        $is_pro = !empty($pro_key) && $pro_key === 'pro2026'; // Simple demo key
         ?>
         <div class="wrap">
             <h1>AI Viral Contest Booster Settings</h1>
             <form method="post">
-                <?php wp_nonce_field('ai_contest_save'); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Prize Text</th>
-                        <td><input type="text" name="settings[prize]" value="<?php echo esc_attr($settings['prize'] ?? 'iPhone 15'); ?>" class="regular-text" /></td>
+                        <th>Email List URL</th>
+                        <td><input type="url" name="email_list" value="<?php echo esc_attr($email_list); ?>" class="regular-text" placeholder="https://your-email-service.com/subscribe"></td>
                     </tr>
                     <tr>
-                        <th>Email Placeholder</th>
-                        <td><input type="text" name="settings[email_placeholder]" value="<?php echo esc_attr($settings['email_placeholder'] ?? 'Enter your email'); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th>Max Entries (Free)</th>
-                        <td><input type="number" name="settings[max_entries]" value="<?php echo esc_attr($settings['max_entries'] ?? 100); ?>" /></td>
+                        <th>Pro License Key</th>
+                        <td><input type="text" name="pro_key" value="<?php echo esc_attr($pro_key); ?>" class="regular-text"> <?php if($is_pro) echo '<span style="color:green;">(Pro Active)</span>'; ?></td>
                     </tr>
                 </table>
-                <p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Settings" /></p>
+                <?php submit_button(); ?>
             </form>
+            <p><strong>Pro Features:</strong> AI contest generation, unlimited entries, analytics. <a href="#" onclick="alert('Upgrade at example.com/pro')">Upgrade Now</a></p>
         </div>
         <?php
+    }
+
+    public function activate() {
+        if (!get_option('aicb_entries')) update_option('aicb_entries', []);
     }
 
     public function contest_shortcode($atts) {
         $atts = shortcode_atts(['id' => 'default'], $atts);
-        $settings = get_option('ai_contest_settings', []);
-        $entries = get_option('ai_contest_entries_' . $atts['id'], []);
-        $count = count($entries);
+        $is_pro = get_option('aicb_pro_key') === 'pro2026';
+        $max_entries = $is_pro ? 999 : 5;
+        $entries = count(get_option('aicb_entries', []));
 
         ob_start();
         ?>
-        <div id="ai-contest-<?php echo esc_attr($atts['id']); ?>" class="ai-contest-container" data-id="<?php echo esc_attr($atts['id']); ?>">
-            <div class="contest-header">
-                <h2>🚀 Win <?php echo esc_html($settings['prize'] ?? 'Amazing Prize'); ?>!</h2>
-                <p>Enter now for a chance to win. <?php echo $count; ?> entries so far!</p>
-            </div>
-            <form class="contest-form">
-                <input type="email" placeholder="<?php echo esc_attr($settings['email_placeholder'] ?? 'Enter your email'); ?>" required>
-                <button type="submit" class="contest-submit">Enter Now 🎉</button>
+        <div id="aicb-contest" class="aicb-container" data-max="<?php echo $max_entries; ?>">
+            <h2>🎉 Win a Free Prize! Enter Now 🎁</h2>
+            <p>Share this contest on social media to enter. <?php if(!$is_pro) echo 'Free: ' . (5 - $entries) . ' entries left!'; ?></p>
+            <form id="aicb-form">
+                <input type="email" id="aicb-email" placeholder="Your Email" required>
+                <input type="text" id="aicb-share-proof" placeholder="Social Share Link (e.g., Twitter URL)" required>
+                <button type="submit" id="aicb-submit">Enter Contest</button>
             </form>
-            <div class="contest-actions">
-                <button class="share-facebook">Share on Facebook</button>
-                <button class="share-twitter">Tweet</button>
-            </div>
-            <div class="contest-stats">Viral Score: <span class="viral-score">0</span></div>
+            <div id="aicb-message"></div>
+            <?php if(!$is_pro) { ?>
+            <p><a href="<?php echo admin_url('options-general.php?page=ai-viral-contest'); ?>">Upgrade to Pro for Unlimited + AI</a></p>
+            <?php } else { echo '<p>🚀 Pro Mode Active - AI Generated Contests!</p>'; } ?>
         </div>
+        <style>
+        .aicb-container { max-width: 400px; margin: 20px auto; padding: 20px; border: 2px solid #007cba; border-radius: 10px; text-align: center; background: #f9f9f9; }
+        .aicb-container input { width: 100%; margin: 10px 0; padding: 10px; }
+        .aicb-container button { background: #007cba; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; }
+        .aicb-container button:hover { background: #005a87; }
+        #aicb-message { margin-top: 10px; font-weight: bold; }
+        </style>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#aicb-form').submit(function(e) {
+                e.preventDefault();
+                var data = { action: 'aicb_submit_entry', email: $('#aicb-email').val(), share: $('#aicb-share-proof').val(), nonce: aicb_ajax.nonce };
+                $.post(aicb_ajax.ajax_url, data, function(resp) {
+                    $('#aicb-message').html(resp);
+                });
+            });
+        });
+        </script>
         <?php
         return ob_get_clean();
     }
 
-    public function activate() {
-        flush_rewrite_rules();
+    public function handle_entry() {
+        check_ajax_referer('aicb_nonce', 'nonce');
+        $email = sanitize_email($_POST['email']);
+        $share = esc_url_raw($_POST['share']);
+        $entries = get_option('aicb_entries', []);
+        $is_pro = get_option('aicb_pro_key') === 'pro2026';
+        $max = $is_pro ? 999 : 5;
+
+        if (count($entries) >= $max) {
+            wp_send_json_error('Contest full! Upgrade to Pro for unlimited.');
+        }
+        if (!is_email($email)) {
+            wp_send_json_error('Invalid email.');
+        }
+
+        $entries[] = ['email' => $email, 'share' => $share, 'time' => current_time('mysql')];
+        update_option('aicb_entries', $entries);
+
+        // Simulate email list add (Pro integrates with real services)
+        $email_list = get_option('aicb_email_list');
+        if ($email_list && $is_pro) {
+            wp_remote_post($email_list, ['body' => ['email' => $email]]);
+        }
+
+        wp_send_json_success('Entry added! Share more to increase chances. Total entries: ' . count($entries));
     }
 }
 
-new AI_Viral_Contest_Booster();
+new AIViralContestBooster();
 
-// Pro check (simulate freemium)
-function is_pro_version() {
-    return false; // Change to true for pro
-}
-
-// AJAX handler
-add_action('wp_ajax_ai_contest_entry', 'ai_contest_ajax_entry');
-add_action('wp_ajax_nopriv_ai_contest_entry', 'ai_contest_ajax_entry');
-
-function ai_contest_ajax_entry() {
-    check_ajax_referer('ai_contest_nonce', 'nonce');
-    $id = sanitize_text_field($_POST['id']);
-    $email = sanitize_email($_POST['email']);
-    if (!$email) wp_die('Invalid email');
-
-    $entries = get_option('ai_contest_entries_' . $id, []);
-    $max = get_option('ai_contest_settings', [])['max_entries'] ?? 100;
-    if (count($entries) >= $max && !is_pro_version()) {
-        wp_send_json_error('Free limit reached. Upgrade to Pro!');
+// Freemium upsell notice
+function aicb_admin_notice() {
+    if (!get_option('aicb_pro_key')) {
+        echo '<div class="notice notice-info"><p>Unlock <strong>AI Viral Contest Booster Pro</strong> for AI generation & unlimited entries! <a href="' . admin_url('options-general.php?page=ai-viral-contest') . '">Upgrade</a></p></div>';
     }
-
-    $entries[] = $email;
-    update_option('ai_contest_entries_' . $id, $entries);
-    wp_send_json_success(['count' => count($entries)]);
 }
-
-// Minimal CSS (inline for single file)
-add_action('wp_head', function() { ?>
-<style>
-.ai-contest-container { max-width: 400px; margin: 20px auto; padding: 20px; border: 2px solid #007cba; border-radius: 10px; background: #f9f9f9; font-family: Arial; }
-.contest-header h2 { color: #007cba; margin: 0 0 10px; }
-.contest-form input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-.contest-submit { width: 100%; padding: 12px; background: #007cba; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
-.contest-submit:hover { background: #005a87; }
-.contest-actions { margin: 15px 0; }
-.contest-actions button { display: block; width: 100%; margin: 5px 0; padding: 8px; background: #4267b2; color: white; border: none; border-radius: 5px; cursor: pointer; }
-.share-twitter { background: #1da1f2; }
-.viral-score { font-weight: bold; color: #28a745; }
-</style>
-<?php });
-
-// Minimal JS (inline)
-add_action('wp_footer', function() { ?>
-<script>jQuery(document).ready(function($) {
-    $('.contest-form').on('submit', function(e) {
-        e.preventDefault();
-        var $form = $(this), $container = $form.closest('.ai-contest-container');
-        $.post(ajaxurl, {
-            action: 'ai_contest_entry',
-            nonce: '<?php echo wp_create_nonce("ai_contest_nonce"); ?>',
-            id: $container.data('id'),
-            email: $form.find('input[type="email"]').val()
-        }, function(res) {
-            if (res.success) {
-                $container.find('.contest-stats span').text(res.data.count * 2); // Fake viral boost
-                $form.html('<p style="color: green;">Entry added! Share to boost chances! 🎉</p>');
-            } else {
-                alert(res.data);
-            }
-        });
-    });
-    $('.share-facebook, .share-twitter').on('click', function() {
-        alert('Sharing enabled in Pro version!');
-    });
-});</script>
-<?php });
+add_action('admin_notices', 'aicb_admin_notice');
