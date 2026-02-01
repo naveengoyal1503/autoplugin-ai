@@ -1,3 +1,7 @@
+/*
+Author: Auto Plugin Factory
+Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin=AI_Content_Optimizer_Pro.php
+*/
 <?php
 /**
  * Plugin Name: AI Content Optimizer Pro
