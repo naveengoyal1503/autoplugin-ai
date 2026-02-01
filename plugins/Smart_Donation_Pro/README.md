@@ -1,40 +1,30 @@
 # Smart Donation Pro
 
-## Description
-Smart Donation Pro is a lightweight, self-contained WordPress plugin that helps you monetize your site through customizable donation buttons with progress tracking. Ideal for bloggers, creators, and non-profits. Freemium model with premium upgrades for advanced features.
-
 ## Features
-- **Customizable donation buttons** with progress bars showing goal progress.
-- **Shortcode support**: `[smart_donation]` for easy placement anywhere.
-- **Admin settings** for goal amount, default donation, and button text.
-- **Real-time donation tracking** (simulated for demo; integrates with PayPal/Stripe in premium).
-- **Mobile-responsive** design.
-- **Analytics dashboard** showing total raised.
-- Premium: Recurring donations, PayPal integration, custom themes, export reports.
+- **Easy Donation Buttons**: Add [sdp_donate] shortcode with custom amounts and labels.
+- **Fundraising Goals**: Track progress with [sdp_goal target="1000"] shortcode and visual progress bars.
+- **PayPal Integration**: One-click PayPal payments (configure in settings).
+- **Donation Logging**: Database tracks all donations for analytics.
+- **Mobile Responsive**: Clean, modern design works on all devices.
+- **Freemium Ready**: Premium unlocks Stripe, recurring payments, and reports.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin** and upload the ZIP.
-3. Activate the plugin.
-4. Go to **Settings > Donation Settings** to configure.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
+2. Activate the plugin.
+3. Go to Settings > Donation Pro to set your PayPal email.
 
 ## Setup
-1. Set your **donation goal** (e.g., $1000).
-2. Choose a **default amount** (e.g., $5).
-3. Customize **button text** (e.g., "Buy me a coffee!").
-4. Save settings.
+1. Configure PayPal email in Settings > Donation Pro.
+2. Add shortcodes to posts/pages:
+   - `[sdp_donate amount="25" label="Buy Me a Coffee"]`
+   - `[sdp_goal target="5000" label="Help Reach Our Goal!`]"
+3. Donations are logged automatically.
 
 ## Usage
-- Place `[smart_donation]` in any post, page, or widget.
-- Visitors enter an amount and click **Donate Now** (demo mode logs donations).
-- Progress bar updates automatically.
-- View total raised in settings page.
-
-## Premium Features
-Upgrade for $29/year:
-- Live payment processing (PayPal, Stripe).
-- Recurring subscriptions.
-- Advanced analytics and reports.
+- Place shortcodes anywhere: posts, pages, sidebars, widgets.
+- Customize amounts/goals per shortcode.
+- View donations in database or upgrade for dashboard.
+- Supports one-time tips, goal tracking for campaigns.
 
 ## Support
-Contact support@example.com or visit the plugin page.
+Contact support@example.com. Premium support available.
