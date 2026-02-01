@@ -1,34 +1,33 @@
 # AI Content Optimizer Pro
 
-## Features
+## Description
+AI-powered WordPress plugin that instantly analyzes your post content for **readability**, **SEO score**, and **word count**. Free version provides essential insights; premium unlocks AI rewriting, keyword generation, and more.
 
-- **Free Version**: Instant content score, word count, and basic readability analysis directly in post editor.
-- **Premium ($9.99/month)**: AI-powered suggestions, auto-optimization, keyword integration, unlimited scans, and priority support.
-- SEO-focused metrics to boost rankings and engagement.
-- Lightweight and compatible with Gutenberg, Classic Editor.
+**Why profitable?** Freemium model drives upgrades via in-plugin teasers. Target high-demand SEO/content niche.
+
+## Features
+- **Free:** Real-time content analysis (Flesch readability, SEO mock-score, suggestions).
+- **Premium ($9.99/mo):** AI auto-rewrite, keyword research, plagiarism check, bulk optimization.
+- Side metabox in post editor for seamless use.
+- Upsell notices on dashboard.
 
 ## Installation
-
-1. Upload `ai-content-optimizer-pro.php` to `/wp-content/plugins/`.
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Edit any post/page; find the **AI Content Optimizer** meta box in the sidebar.
+3. Edit any post to see the **AI Content Optimizer** metabox.
 
 ## Setup
-
-- **Free**: Click **Analyze Content** for instant basic insights.
-- **Premium**: [Upgrade here](https://example.com/upgrade) (enter license key in plugin settings after purchase).
+- No configuration needed for free version.
+- Premium: Purchase at [example.com/premium](https://example.com/premium), enter license key in **Settings > AI Optimizer** (future update).
 
 ## Usage
-
 1. Open a post/page editor.
-2. Click **Analyze Content**.
-3. View score and tips in the meta box.
-4. **Pro**: Apply AI suggestions with one click.
+2. In the **AI Content Optimizer** sidebar, paste or edit content.
+3. Click **Analyze Free** for instant results.
+4. Upgrade for AI-powered enhancements!
+
+## Screenshots
+*(Imagine: Metabox with analysis results and upgrade button)*
 
 ## Changelog
-
-- 1.0.0: Initial release with freemium model.
-
-## Support
-
-Free support via WordPress.org. Premium: Email support@yourdomain.com.
+**1.0.0** - Initial release with free analysis.
