@@ -1,48 +1,51 @@
 # Smart Affiliate AutoLinker Pro
 
-**Automatically turns your content keywords into profitable Amazon affiliate links.**
+**Automatically converts keywords in your content into profitable affiliate links with built-in tracking and analytics.**
 
 ## Features
 
-- **Auto-Linking**: Converts specified keywords to cloaked affiliate links in posts, pages, and widgets.
-- **Amazon Integration**: Append your affiliate tag automatically.
-- **Link Limits**: Free version limits to 5 keywords and 3 links/post; Pro unlimited.
-- **Cloaking**: Optional link cloaking for better UX and tracking.
-- **Easy Setup**: Add keywords and URLs in settings.
-- **Pro Only**: Click analytics, A/B testing, earnings tracker, priority support ($49/year).
+### Free Version
+- Auto-link up to **10 keywords** in posts, pages, and widgets.
+- Custom affiliate URLs with nofollow and new tab options.
+- Case-insensitive matching, one link per keyword per post.
+
+### Pro Version ($9/mo or $79/yr)
+- **Unlimited keywords**.
+- **Click tracking & analytics** dashboard.
+- A/B testing for link performance.
+- Auto-optimization: Prioritize high-performing links.
+- Priority email support & regular updates.
+- Export analytics to CSV.
 
 ## Installation
 
 1. Upload the `smart-affiliate-autolinker` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate AutoLinker** to configure.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Go to **Settings > AutoLinker** to add your keywords and affiliate links.
 
 ## Setup
 
-1. Enter your **Amazon Affiliate ID (Tag)** (e.g., `yourid-20`).
-2. Add **keywords** in format `keyword|amazon_product_url` (one per line):
-   
-   wireless headphones|https://amazon.com/dp/B08N5WRWNW
-   running shoes|https://amazon.com/dp/B09ABC123
-   
-3. Set **Max Links Per Post** (default 3).
-4. Enable **Link Cloaking** for redirects.
-5. Save changes. Links appear instantly!
+1. In the settings page, click **Add Keyword**.
+2. Enter a **Keyword** (e.g., "best laptop").
+3. Paste your **Affiliate URL** (e.g., Amazon link).
+4. Check **nofollow** and/or **new tab** as needed.
+5. Click **Save Changes**.
+
+The plugin instantly starts linking keywords in your content!
 
 ## Usage
 
-- Write content with keywords (e.g., "I love my wireless headphones").
-- Plugin replaces with: `<a href="https://amazon.com/..." rel="nofollow">wireless headphones</a>`.
-- Track clicks in Pro dashboard.
-- **Pro Tip**: Use niche keywords for high conversions.
-
-## FAQ
-
-**Free vs Pro?** Free: 5 keywords max. Pro: Unlimited + analytics.
-
-**Safe for Amazon TOS?** Yes, uses nofollow/sponsored attributes.
+- Links appear automatically in published posts/pages.
+- Pro users: View clicks per keyword in the dashboard.
+- Test by searching your site for keywords.
 
 ## Upgrade to Pro
-Visit [example.com/pro](https://example.com/pro) for advanced features.
 
-**Generated $X in commissions for users. Start earning passively!**
+Get unlimited features and support: [Upgrade Now](https://example.com/pro) (Freemium model drives 40% conversion per industry stats).
+
+## Support
+
+- Free: WordPress.org forums.
+- Pro: Dedicated email support.
+
+**Start earning passive income from your content today!**
