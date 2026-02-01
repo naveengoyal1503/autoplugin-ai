@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Link Cloaker Pro
  * Plugin URI: https://example.com/smart-affiliate-cloaker
- * Description: Automatically cloaks, tracks, and optimizes affiliate links with click analytics, A/B testing, and conversion reporting.
+ * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics and A/B testing.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -14,14 +14,14 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class SmartAffiliateCloakerPro {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null === self::$instance) {
+        if (null == self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -31,131 +31,149 @@ class SmartAffiliateCloakerPro {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_sac_save_link', array($this, 'ajax_save_link'));
-        add_action('wp_ajax_sac_get_stats', array($this, 'ajax_get_stats'));
-        add_shortcode('sac_link', array($this, 'shortcode_link'));
+        add_action('wp_ajax_sal_save_link', array($this, 'ajax_save_link'));
+        add_action('wp_ajax_sal_delete_link', array($this, 'ajax_delete_link'));
+        add_filter('the_content', array($this, 'cloak_links'), 20);
+        add_shortcode('sal_link', array($this, 'shortcode_link'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        if (get_option('sac_pro_version')) {
-            // Premium features flag
+        if (get_option('sal_pro_activated')) {
+            // Premium features check
         }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sac-admin-js', plugin_dir_url(__FILE__) . 'sac-admin.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sac-admin-js', 'sac_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
+        wp_enqueue_script('sal-admin-js', plugin_dir_url(__FILE__) . 'sal-admin.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_style('sal-admin-css', plugin_dir_url(__FILE__) . 'sal-admin.css', array(), '1.0.0');
+        wp_localize_script('sal-admin-js', 'sal_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate Cloaker', 'Affiliate Cloaker', 'manage_options', 'sac-pro', array($this, 'admin_page'));
+        add_options_page('Smart Affiliate Cloaker', 'Affiliate Cloaker', 'manage_options', 'sal-pro', array($this, 'admin_page'));
     }
 
     public function admin_page() {
-        if (isset($_POST['sac_submit'])) {
-            update_option('sac_links', sanitize_text_field($_POST['sac_links']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
-        }
-        $links = get_option('sac_links', '[]');
-        include plugin_dir_path(__FILE__) . 'admin-page.php';
+        $links = get_option('sal_links', array());
+        ?>
+        <div class="wrap">
+            <h1>Smart Affiliate Cloaker Pro</h1>
+            <p>Manage your affiliate links. <strong>Upgrade to Pro for A/B testing & analytics ($9/mo).</strong></p>
+            <table class="wp-list-table widefat fixed striped">
+                <thead><tr><th>ID</th><th>Keyword</th><th>Affiliate URL</th><th>Cloaked URL</th><th>Actions</th></tr></thead>
+                <tbody>
+        <?php foreach ($links as $id => $link): ?>
+                    <tr>
+                        <td><?php echo esc_html($id); ?></td>
+                        <td><?php echo esc_html($link['keyword']); ?></td>
+                        <td><?php echo esc_html($link['url']); ?></td>
+                        <td><?php echo esc_url(home_url('/go/' . $id)); ?></td>
+                        <td><button class="button sal-delete" data-id="<?php echo $id; ?>">Delete</button></td>
+                    </tr>
+        <?php endforeach; ?>
+                </tbody>
+            </table>
+            <h2>Add New Link</h2>
+            <form id="sal-form">
+                <p><label>Keyword: <input type="text" name="keyword" required></label></p>
+                <p><label>Affiliate URL: <input type="url" name="url" required style="width: 400px;"></label></p>
+                <p><input type="submit" class="button-primary" value="Add Link"></p>
+            </form>
+        </div>
+        <?php
     }
 
     public function ajax_save_link() {
         if (!current_user_can('manage_options')) wp_die();
-        $links = json_decode(stripslashes($_POST['links']), true);
-        update_option('sac_links', $links);
+        $links = get_option('sal_links', array());
+        $id = time();
+        $links[$id] = array(
+            'keyword' => sanitize_text_field($_POST['keyword']),
+            'url' => esc_url_raw($_POST['url']),
+            'clicks' => 0
+        );
+        update_option('sal_links', $links);
+        wp_send_json_success(array('id' => $id, 'cloaked' => home_url('/go/' . $id)));
+    }
+
+    public function ajax_delete_link() {
+        if (!current_user_can('manage_options')) wp_die();
+        $links = get_option('sal_links', array());
+        unset($links[$_POST['id']]);
+        update_option('sal_links', $links);
         wp_send_json_success();
     }
 
-    public function ajax_get_stats() {
-        if (!current_user_can('manage_options')) wp_die();
-        global $wpdb;
-        $stats = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sac_clicks ORDER BY time DESC LIMIT 50");
-        wp_send_json_success($stats);
+    public function cloak_links($content) {
+        $links = get_option('sal_links', array());
+        foreach ($links as $id => $link) {
+            $keyword = $link['keyword'];
+            $cloaked = '<a href="' . home_url('/go/' . $id) . '" target="_blank" rel="nofollow">' . $keyword . '</a>';
+            $content = str_replace($keyword, $cloaked, $content);
+        }
+        return $content;
     }
 
     public function shortcode_link($atts) {
-        $atts = shortcode_atts(array('id' => 0), $atts);
-        $links = json_decode(get_option('sac_links', '[]'), true);
+        $atts = shortcode_atts(array('id' => ''), $atts);
+        $links = get_option('sal_links', array());
         if (isset($links[$atts['id']])) {
-            $link = $links[$atts['id']]['url'];
-            $id = $atts['id'];
-            $slug = 'sac-' . $id;
-            add_rewrite_rule("^$slug/?$", 'index.php?sac_id=' . $id, 'top');
-            global $wp_rewrite;
-            $wp_rewrite->flush_rules();
-            return "<a href='/" . $slug . "' data-sac-id='" . $id . "'>" . $links[$atts['id']]['name'] . "</a>";
+            $link = $links[$atts['id']];
+            $links[$atts['id']]['clicks']++;
+            update_option('sal_links', $links);
+            return '<a href="' . home_url('/go/' . $atts['id']) . '" target="_blank" rel="nofollow">' . esc_html($link['keyword']) . '</a>';
         }
         return '';
     }
 
     public function activate() {
-        global $wpdb;
-        $table = $wpdb->prefix . 'sac_clicks';
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            link_id varchar(20) NOT NULL,
-            ip varchar(45) NOT NULL,
-            time datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        add_rewrite_rule('go/([^/]+)/?', 'index.php?sal_go=$matches[1]', 'top');
         flush_rewrite_rules();
+        update_option('sal_pro_activated', true);
     }
 }
 
-// Track clicks
-add_action('init', function() {
-    if (isset($_GET['sac_id'])) {
-        $id = intval($_GET['sac_id']);
-        $links = json_decode(get_option('sac_links', '[]'), true);
+add_action('init', 'sal_rewrite_init');
+function sal_rewrite_init() {
+    add_rewrite_tag('%sal_go%', '([^&]+)');
+    add_rewrite_rule('go/([^/]+)/?', 'index.php?sal_go=$matches[1]', 'top');
+}
+
+add_filter('query_vars', 'sal_query_vars');
+function sal_query_vars($vars) {
+    $vars[] = 'sal_go';
+    return $vars;
+}
+
+add_action('template_redirect', 'sal_template_redirect');
+function sal_template_redirect() {
+    $go = get_query_var('sal_go');
+    if ($go) {
+        $links = get_option('sal_links', array());
+        $id = sanitize_text_field($go);
         if (isset($links[$id])) {
-            global $wpdb;
-            $wpdb->insert($wpdb->prefix . 'sac_clicks', array(
-                'link_id' => $id,
-                'ip' => $_SERVER['REMOTE_ADDR']
-            ));
-            wp_redirect($links[$id]['url']);
+            $links[$id]['clicks']++;
+            update_option('sal_links', $links);
+            wp_redirect($links[$id]['url'], 301);
             exit;
         }
     }
-});
+}
 
 SmartAffiliateCloakerPro::get_instance();
 
-// Inline admin page and JS to keep single file
-function sac_admin_page_content() {
-    $links = get_option('sac_links', '[]');
-    ?>
-    <div class="wrap">
-        <h1>Smart Affiliate Cloaker Pro</h1>
-        <form method="post">
-            <table class="form-table">
-                <tr>
-                    <th>Links (JSON)</th>
-                    <td><textarea name="sac_links" rows="10" cols="50"><?php echo esc_textarea($links); ?></textarea></td>
-                </tr>
-            </table>
-            <?php submit_button('Save Links', 'primary', 'sac_submit'); ?>
-        </form>
-        <h2>Recent Clicks</h2>
-        <div id="sac-stats"></div>
-        <script>
-        jQuery(document).ready(function($) {
-            $('#sac-stats').load('<?php echo admin_url('admin-ajax.php?action=sac_get_stats'); ?>', function() {
-                $(this).html('<table class="wp-list-table widefat"><tr><th>ID</th><th>Link ID</th><th>IP</th><th>Time</th></tr>' + $(this).text().split('},{').map(row => row.replace(/[{}]/g,'')).join('</tr><tr>') + '</table>');
-            });
-        });
-        </script>
-        <p><strong>Upgrade to Pro:</strong> Unlimited links, A/B testing, conversion tracking. <a href="#pro">Buy now $49/year</a></p>
-    </div>
-    <?php
+// Pro upgrade nag
+function sal_pro_nag() {
+    if (!get_option('sal_pro_key')) {
+        echo '<div class="notice notice-info"><p><strong>Smart Affiliate Cloaker Pro:</strong> Unlock A/B testing, detailed analytics, and unlimited links. <a href="https://example.com/pro" target="_blank">Upgrade now for $9/mo</a></p></div>';
+    }
 }
-function sac_admin_page() {
-    echo '<div class="wrap">';
-    sac_admin_page_content();
-    echo '</div>';
+add_action('admin_notices', 'sal_pro_nag');
+
+// Enqueue dummy JS/CSS files (base64 or inline in real distro)
+function sal_enqueue_dummy_assets() {
+    wp_add_inline_script('jquery', 'jQuery(document).ready(function($){ $("#sal-form").on("submit",function(e){e.preventDefault();$.post(sal_ajax.ajaxurl,{action:"sal_save_link",keyword:$("[name=keyword]",this).val(),url:$("[name=url]",this).val()},function(r){if(r.success){alert("Link added: "+r.data.cloaked);location.reload();}})}); $(".sal-delete").on("click",function(){$.post(sal_ajax.ajaxurl,{action:"sal_delete_link",id:$(this).data("id")},function(){location.reload();});});});');
+    wp_add_inline_style('buttons', '.sal-delete{color:red;}');
 }
+add_action('admin_enqueue_scripts', 'sal_enqueue_dummy_assets');
