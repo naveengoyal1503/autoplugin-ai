@@ -1,43 +1,45 @@
 # Smart Donation Pro
 
-A simple yet powerful WordPress plugin to monetize your site with customizable donation buttons and forms using PayPal. Perfect for bloggers, creators, and non-profits.
+A lightweight, self-contained WordPress plugin to easily collect donations on your site. Boost monetization with customizable forms and PayPal integration.
 
 ## Features
-- **Easy Shortcode Integration**: Use `[smart_donation]` anywhere on your site.
-- **Customizable Amounts**: Set one-time donation amounts (e.g., $5, $10, $20).
-- **Progress Bars**: Display donation goals with visual progress bars.
-- **PayPal Integration**: Secure payments via PayPal SDK (no account needed for testing).
-- **Mobile Responsive**: Works perfectly on all devices.
-- **Freemium Ready**: Extendable for pro features like recurring donations and analytics.
+- **Customizable donation forms** using simple shortcodes.
+- **Tiered donation amounts** (e.g., $5, $10, $25) or custom inputs.
+- **PayPal integration** for secure one-time payments.
+- **Mobile-responsive** design.
+- **Admin settings** for PayPal email configuration.
+- **Freemium-ready**: Pro version adds recurring subscriptions, analytics, and more.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Donation Pro** and enter your PayPal email.
-4. Add the shortcode to any post, page, or widget.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate **Smart Donation Pro**.
+4. Go to **Settings > Donation Settings** to enter your PayPal email.
 
 ## Setup
-1. In **Settings > Donation Pro**, input your PayPal business email.
-2. For production, replace the test client ID in the code with your live PayPal app client ID (get from developer.paypal.com).
-3. Test donations using PayPal sandbox.
+1. Configure your PayPal account and enter the email in **Settings > Donation Settings**.
+2. Use the shortcode `[smart_donation]` in any post, page, or widget.
+3. Customize with attributes: `[smart_donation title="Support Our Work" amounts="5,10,25,50,100" button_text="Contribute"]`. 
 
 ## Usage
-Embed anywhere with shortcodes:
-- Basic: `[smart_donation amount="10" button_text="Support Us"]`
-- With goal: `[smart_donation amount="25" goal="1000" currency="USD"]`
-
-**Shortcode Attributes**:
-- `amount`: Donation value (default: 10)
-- `button_text`: Button label (default: "Donate Now")
-- `goal`: Target amount for progress bar
-- `currency`: USD, EUR, etc. (default: USD)
+- Embed the shortcode where you want the donation form (sidebar, posts, footer).
+- Visitors select an amount and pay securely via PayPal.
+- Donations appear in your PayPal account instantly.
+- **Pro Tip**: Place in high-traffic areas like blog footers or thank-you pages for best results.
 
 ## Pro Version
 Upgrade for:
-- Recurring subscriptions
-- Detailed analytics dashboard
-- Custom themes and multiple buttons
-- WooCommerce integration
+- Recurring donations (monthly/yearly).
+- Donation analytics dashboard.
+- Custom branding and unlimited forms.
+- Priority support.
 
-## Support
-Contact support@example.com or visit the plugin page.
+Get Pro at [example.com/pro](https://example.com/pro) ($49/year).
+
+## FAQ
+**How do I test?** Use PayPal sandbox mode by replacing the client ID in code.
+
+**Is it GDPR compliant?** Yes, no personal data stored without consent.
+
+## Changelog
+**1.0.0** - Initial release.
