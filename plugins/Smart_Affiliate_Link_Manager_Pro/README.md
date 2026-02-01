@@ -1,45 +1,34 @@
 # Smart Affiliate Link Manager Pro
 
+## Description
+Boost your affiliate earnings with **automatic link cloaking**, click **tracking**, and **A/B testing** (Pro). Detects affiliate links in posts and replaces them with branded, trackable versions.
+
 ## Features
-
-- **Automatic Link Cloaking**: Replace keywords with cloaked affiliate links automatically in posts and pages.
-- **Click Tracking**: Monitor clicks and performance (Pro).
-- **Easy Setup**: Add links via simple format: `url|keyword;`.
-- **Performance Analytics**: View stats dashboard (Pro).
-- **A/B Testing**: Test multiple links for best conversions (Pro).
-- **Conversion Optimization**: AI suggestions for better keywords (Pro).
-
-**Free Version**: Basic cloaking and setup.
-**Pro Version**: Full tracking, analytics, integrations with WooCommerce/Amazon ($49/year).
+- **Auto-detect & cloak** affiliate links (Amazon, etc.).
+- **Click tracking** with analytics dashboard (Pro).
+- **A/B testing** for link variations (Pro).
+- **Custom cloaking domain** (e.g., go.yoursite.com).
+- **Free core** + **Pro upgrade** for advanced features.
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress Admin: Plugins > Add New > Upload Plugin.
-3. Activate the plugin.
-4. Go to Settings > Affiliate Manager to configure.
+1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-link-manager/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Links** to configure.
 
 ## Setup
-
-1. In the admin page, enter affiliate links in format:
-   
-   https://amazon.com/product?ref=123|Buy Now
-   https://example.com/offer|Special Deal;
-   
-2. Save settings.
-3. Use keywords like "Buy Now" or "Special Deal" in your content – they auto-convert to cloaked links.
+1. Set **Cloak Base** (e.g., `go` for go.yoursite.com).
+2. Flush permalinks: **Settings > Permalinks > Save**.
+3. Add affiliate links to posts; they auto-cloak.
+4. **Pro**: Enter license key in settings for analytics.
 
 ## Usage
+- Write posts with raw affiliate links.
+- Plugin auto-converts: `https://amzn.to/xxx` → `https://yoursite.com/go/abc123/`.
+- Clicks redirect + track.
+- **Pro Dashboard**: View clicks, optimize top performers.
 
-- Write posts with keywords matching your setup.
-- Links cloak automatically and track clicks (Pro).
-- View dashboard for stats: clicks, conversions, top performers.
-- **Pro Tip**: Integrate with email lists for higher affiliate revenue.
+## Pro Upgrade
+$49/year: Unlimited links, A/B tests, export reports. [Buy Pro](https://example.com/pro)
 
-## Upgrade to Pro
-
-Unlock analytics, A/B testing, and more: [Get Pro Now](https://example.com/pro)
-
-## Support
-
-Contact support@example.com for help.
+## Changelog
+**1.0.0** - Initial release.
