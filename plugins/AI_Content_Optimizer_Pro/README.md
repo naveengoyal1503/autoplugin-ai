@@ -1,45 +1,29 @@
 # AI Content Optimizer Pro
 
+A powerful **freemium** WordPress plugin that uses AI to analyze and optimize your content for **SEO** and **readability**.
+
 ## Features
-
-- **Free Version**: Basic content analysis (word count, readability score, SEO hints) with 5 scans per week.
-- **Premium Features** (Subscription $4.99/mo):
-  - AI-powered content rewriting and optimization.
-  - Advanced SEO suggestions (meta tags, keyword density).
-  - Unlimited scans and priority support.
-  - Integration-ready for future AI APIs (OpenAI, etc.).
-
-**Key Benefits**:
-- Improves post engagement by 30-50% via readability scores.
-- Boosts SEO rankings with smart keyword analysis.
-- Freemium model drives upgrades (40% conversion potential).
+- **Free:** Basic content analysis (word count, readability score, SEO tips).
+- **Premium ($4.99/mo):** AI-powered rewrites, bulk optimization, advanced SEO scoring, priority support[1][2][5].
+- Real-time analysis in post editor.
+- Upsell prompts for premium upgrades.
 
 ## Installation
-
-1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit any post to see the sidebar meta box.
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Edit a post to see the sidebar optimizer.
 
 ## Setup
-
-- **Free Use**: Click 'Analyze' up to 5 times/week.
-- **Upgrade to Pro**: Click 'Upgrade to Pro' in the meta box (demo simulates payment; integrate Stripe for production).
-- No API keys needed initially; premium extends to real AI services.
+- No configuration needed for free version.
+- Premium: Enter license key in **Settings > AI Optimizer** (after purchase).
 
 ## Usage
-
-1. Edit a post/page.
-2. In the 'AI Content Optimizer' sidebar, click **Analyze**.
-3. View results: word count, readability, SEO score.
-4. **Pro Users**: Get AI rewrites and advanced tips.
-5. Apply suggestions manually or via future auto-apply.
-
-## Support
-
-- Free: WordPress.org forums.
-- Pro: Email support@yourdomain.com.
+1. Edit any post/page.
+2. Click **Analyze Content** in the sidebar meta box.
+3. Review suggestions and apply manually (premium: auto-apply).
+4. Upgrade for AI magic: Visit [premium link] for subscription.
 
 ## Changelog
+- 1.0.0: Initial release.
 
-**1.0.0**
-- Initial release with freemium analysis.
+**Support:** Free users - forums. Premium - priority email.
