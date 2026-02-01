@@ -1,34 +1,43 @@
 # AI Content Optimizer Pro
 
-## Features
+## Description
+**AI Content Optimizer Pro** integrates AI-powered analysis into your WordPress editor to improve SEO, readability, and keyword usage. Get instant scores and suggestions to rank higher on search engines.
 
-- **Free Version**: Basic SEO optimization (auto-add headings, keyword suggestions).
-- **Pro Version** ($9/month): AI-powered readability analysis, bulk optimization, advanced keyword research, and auto-publishing scheduler.
-- One-click optimization from post editor.
-- Frontend live previews for Pro users.
-- Upsell integration for seamless monetization.
+## Features
+- **Free Version:**
+  - Real-time SEO score (0-100)
+  - Word count, readability (Flesch score), top keywords
+  - 3 free scans per site
+- **Pro Version ($9/month):**
+  - Unlimited scans
+  - Advanced AI keyword suggestions
+  - Competitor analysis integration
+  - Export reports
+  - Priority support
+  - Automatic content optimizations
 
 ## Installation
-
-1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' screen in WordPress admin.
-3. Go to post editor to see the optimizer metabox.
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Edit any Post or Page – the optimizer appears in the sidebar
 
 ## Setup
-
-1. **Free Setup**: No configuration needed; optimize posts instantly.
-2. **Pro Upgrade**: Visit the 'Go Pro' link in plugin settings. Enter license key in Settings > AI Optimizer Pro.
-3. Customize options: Enable/disable auto-optimize on save.
+- No setup required for free version
+- **Pro:** Enter license key in Settings > AI Content Optimizer
 
 ## Usage
+1. Open a Post/Page editor
+2. Click **Analyze Content** in the sidebar
+3. Review **SEO Score**, word count, readability, and keywords
+4. Optimize based on insights (e.g., aim for 60+ readability, 500+ words)
+5. Re-analyze after edits
 
-1. Edit any post/page.
-2. Check 'Auto-optimize' in the sidebar metabox.
-3. Save/publish: Content auto-optimizes (basic free or full Pro).
-4. Pro users: Bulk optimize via Tools > AI Optimizer.
-
-**Upgrade Now**: Unlock AI features for better SEO rankings and traffic!
+## Screenshots
+*(Imagine: Sidebar with progress bar score, stats list, and upgrade button)*
 
 ## Changelog
+**1.0.0**
+- Initial release with core analysis features
 
-- 1.0.0: Initial release.
+## Upgrade to Pro
+[Get Pro Now](https://example.com/premium) for unlimited power!
