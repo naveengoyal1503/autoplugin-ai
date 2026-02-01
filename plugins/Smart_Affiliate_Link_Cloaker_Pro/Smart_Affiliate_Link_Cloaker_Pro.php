@@ -6,20 +6,20 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Link Cloaker Pro
  * Plugin URI: https://example.com/smart-affiliate-cloaker
- * Description: Cloak affiliate links, track clicks, and optimize conversions. Free version with premium upgrades.
+ * Description: Cloak affiliate links, track clicks, and boost earnings. Free version with Pro upgrade.
  * Version: 1.0.0
  * Author: Your Name
+ * Author URI: https://example.com
  * License: GPL v2 or later
  * Text Domain: smart-affiliate-cloaker
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
-class SmartAffiliateCloakerPro {
+class SmartAffiliateCloaker {
     private static $instance = null;
-    public $is_premium = false;
 
     public static function get_instance() {
         if (null === self::$instance) {
@@ -28,137 +28,164 @@ class SmartAffiliateCloakerPro {
         return self::$instance;
     }
 
-    public function __construct() {
-        $this->is_premium = get_option('sacp_license_key') !== false;
+    private function __construct() {
         add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_sacp_track_click', array($this, 'track_click'));
-        add_shortcode('sacp_link', array($this, 'shortcode_link'));
+        add_shortcode('sac_link', array($this, 'cloak_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        load_plugin_textdomain('smart-affiliate-cloaker', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        if (is_admin()) {
+            add_action('admin_menu', array($this, 'admin_menu'));
+            add_action('admin_init', array($this, 'admin_init'));
+        }
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_sac_track_click', array($this, 'track_click'));
+        add_action('wp_ajax_nopriv_sac_track_click', array($this, 'track_click'));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sacp-tracker', plugin_dir_url(__FILE__) . 'tracker.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sacp-tracker', 'sacp_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sacp_nonce')));
+        wp_enqueue_script('sac-tracker', plugin_dir_url(__FILE__) . 'tracker.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sac-tracker', 'sac_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sac_nonce')));
     }
 
-    public function shortcode_link($atts) {
+    public function cloak_shortcode($atts) {
         $atts = shortcode_atts(array(
             'url' => '',
             'text' => 'Click Here',
-            'id' => 'default'
+            'id' => uniqid('sac_'),
         ), $atts);
 
-        if (empty($atts['url'])) return '';
+        if (empty($atts['url'])) {
+            return 'Invalid link';
+        }
 
-        $id = sanitize_text_field($atts['id']);
-        $slug = sanitize_title($id);
+        $pretty_url = add_query_arg('sac', $atts['id'], home_url('/go/'));
 
-        // Store link mapping
-        $links = get_option('sacp_links', array());
-        $links[$slug] = esc_url_raw($atts['url']);
-        update_option('sacp_links', $links);
-
-        $href = $this->is_premium ? home_url("/sacp/{$slug}/") : $atts['url'];
-
-        return '<a href="' . $href . '" class="sacp-link" data-id="' . $slug . '" data-nonce="' . wp_create_nonce('sacp_nonce') . '">' . esc_html($atts['text']) . '</a>';
+        return '<a href="' . esc_url($pretty_url) . '" class="sac-link" data-url="' . esc_url($atts['url']) . '" data-id="' . esc_attr($atts['id']) . '">' . esc_html($atts['text']) . '</a>';
     }
 
     public function track_click() {
-        check_ajax_referer('sacp_nonce', 'nonce');
-        $id = sanitize_text_field($_POST['id']);
+        check_ajax_referer('sac_nonce', 'nonce');
+        $link_id = sanitize_text_field($_POST['id']);
+        $url = esc_url_raw($_POST['url']);
         $ip = $_SERVER['REMOTE_ADDR'];
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
-        $stats = get_option('sacp_stats', array());
-        $stats[$id]['clicks'][] = array(
+        $log = get_option('sac_clicks', array());
+        $log[] = array(
+            'id' => $link_id,
+            'url' => $url,
             'ip' => $ip,
             'ua' => substr($user_agent, 0, 100),
-            'time' => current_time('mysql')
+            'time' => current_time('mysql'),
         );
-        update_option('sacp_stats', $stats);
+        update_option('sac_clicks', $log);
 
-        $links = get_option('sacp_links', array());
-        if (isset($links[$id])) {
-            if ($this->is_premium) {
-                wp_send_json_success(array('redirect' => $links[$id]));
-            } else {
-                wp_redirect($links[$id]);
-                exit;
-            }
-        }
-        wp_die();
+        wp_redirect($url);
+        exit;
     }
 
     public function admin_menu() {
         add_options_page(
-            'Smart Affiliate Cloaker Pro',
+            'Smart Affiliate Cloaker',
             'Affiliate Cloaker',
             'manage_options',
-            'sacp-pro',
+            'sac-pro',
             array($this, 'admin_page')
         );
     }
 
+    public function admin_init() {
+        register_setting('sac_options', 'sac_clicks');
+        if (isset($_POST['sac_clear_logs'])) {
+            update_option('sac_clicks', array());
+        }
+    }
+
     public function admin_page() {
-        if (isset($_POST['sacp_license'])) {
-            update_option('sacp_license_key', sanitize_text_field($_POST['sacp_license']));
-            $this->is_premium = true;
-            echo '<div class="notice notice-success"><p>Premium activated!</p></div>';
-        }
-        if (isset($_POST['sacp_upgrade'])) {
-            echo '<div class="notice notice-info"><p>Upgrade to premium for A/B testing, geo-targeting & more: <strong>$49/year</strong></p></div>';
-        }
+        $logs = get_option('sac_clicks', array());
+        $is_pro = false; // Check for pro license in real version
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate Cloaker Pro</h1>
-            <?php if (!$this->is_premium): ?>
-            <form method="post">
-                <p><label>Enter Premium License Key:</label> <input type="text" name="sacp_license" placeholder="Enter key to unlock premium"></p>
-                <p><input type="submit" class="button-primary" value="Activate Premium"></p>
-            </form>
-            <form method="post"><input type="submit" name="sacp_upgrade" class="button" value="Learn More About Premium"></form>
-            <?php else: ?>
-            <p><strong>Premium Active!</strong></p>
+            <h1>Smart Affiliate Cloaker Dashboard</h1>
+            <?php if (!$is_pro): ?>
+                <div class="notice notice-warning"><p><strong>Upgrade to Pro</strong> for advanced analytics, conversion tracking, A/B testing & more! <a href="https://example.com/pro">Get Pro Now ($49/year)</a></p></div>
             <?php endif; ?>
-            <h2>Links</h2>
+            <p><strong>Usage:</strong> Use shortcode <code>[sac_link url="https://affiliate.com/?ref=123" text="Buy Now"]</code></p>
+            <h2>Click Logs (<?php echo count($logs); ?> total)</h2>
+            <form method="post">
+                <?php submit_button('Clear Logs', 'secondary', 'sac_clear_logs'); ?>
+            </form>
             <table class="wp-list-table widefat fixed striped">
-                <thead><tr><th>ID</th><th>URL</th><th>Clicks</th></tr></thead>
+                <thead><tr><th>ID</th><th>URL</th><th>IP</th><th>Time</th></tr></thead>
                 <tbody>
-                <?php
-                $links = get_option('sacp_links', array());
-                $stats = get_option('sacp_stats', array());
-                foreach ($links as $id => $url) {
-                    $clicks = isset($stats[$id]) ? count($stats[$id]['clicks']) : 0;
-                    echo "<tr><td>{$id}</td><td>{$url}</td><td>{$clicks}</td></tr>
-                    ";
-                }
-                ?>
+                <?php foreach (array_slice(array_reverse($logs), 0, 50) as $log): ?>
+                    <tr>
+                        <td><?php echo esc_html($log['id']); ?></td>
+                        <td><a href="<?php echo esc_url($log['url']); ?>" target="_blank"><?php echo esc_html($log['url']); ?></a></td>
+                        <td><?php echo esc_html($log['ip']); ?></td>
+                        <td><?php echo esc_html($log['time']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
                 </tbody>
             </table>
-            <h2>Usage</h2>
-            <p>Use shortcode: <code>[sacp_link url="https://affiliate.com" text="Buy Now" id="unique1"]</code></p>
-            <?php if ($this->is_premium): ?>
-            <p>Premium features: A/B testing, geo-targeting unlocked.</p>
-            <?php endif; ?>
         </div>
         <?php
     }
 
     public function activate() {
-        add_rewrite_rule('^sacp/([^/]+)/?', 'index.php?sacp=$matches[1]', 'top');
+        if (!get_option('sac_clicks')) {
+            add_option('sac_clicks', array());
+        }
+        // Add rewrite rule for pretty URLs
+        flush_rewrite_rules();
+    }
+
+    public function deactivate() {
         flush_rewrite_rules();
     }
 }
 
-// Tracker JS inline
-add_action('wp_head', function() {
-    echo '<script>jQuery(document).ready(function($) { $(".sacp-link").click(function(e) { e.preventDefault(); var id = $(this).data("id"); var nonce = $(this).data("nonce"); $.post(sacp_ajax.ajax_url, {action: "sacp_track_click", id: id, nonce: nonce}, function(res) { if (res.success) { window.location = res.data.redirect; } }); }); });</script>';
+// Init tracker JS (inline for single file)
+function sac_inline_tracker() {
+    ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.sac-link').on('click', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            var url = $this.data('url');
+            var id = $this.data('id');
+            $.post(sac_ajax.ajax_url, {
+                action: 'sac_track_click',
+                nonce: sac_ajax.nonce,
+                id: id,
+                url: url
+            }, function() {
+                window.location.href = url;
+            });
+        });
+    });
+    </script>
+    <?php
+}
+add_action('wp_footer', 'sac_inline_tracker');
+
+// Pretty URL rewrite
+add_rewrite_rule('^go/?$', 'index.php?sac_go=1', 'top');
+add_filter('query_vars', function($vars) {
+    $vars[] = 'sac_go';
+    return $vars;
 });
 
-SmartAffiliateCloakerPro::get_instance();
+SmartAffiliateCloaker::get_instance();
+
+// Pro upsell notice
+add_action('admin_notices', function() {
+    if (!current_user_can('manage_options')) return;
+    $screen = get_current_screen();
+    if ($screen->id !== 'settings_page_sac-pro') return;
+    echo '<div class="notice notice-success"><p>Unlock Pro features: Detailed analytics, conversion tracking, link rotation, and more! <a href="https://example.com/pro">Upgrade Now</a></p></div>';
+});
