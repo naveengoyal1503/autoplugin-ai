@@ -1,64 +1,46 @@
 # Smart Affiliate Link Cloaker Pro
 
-A powerful WordPress plugin to cloak ugly affiliate links, track clicks with real-time analytics, and boost conversions using A/B testing (Pro feature).
-
 ## Features
 
 **Free Version:**
-- Cloak unlimited affiliate links with custom slugs (e.g., yoursite.com/go/amazon-deal)
-- Basic click tracking and daily stats
-- Shortcode support: `[sac id="123"]`
-- Custom post type for easy link management
-- Widget for sidebar placement
-- Mobile-responsive redirects
+- Automatically cloak affiliate links using keywords.
+- Shortcode support: `[sac_link keyword="amazon"]`. 
+- Simple admin dashboard to add links (keyword|affiliate_url).
+- Secure AJAX redirects for tracking prevention.
 
-**Pro Version ($9.99/mo or $99/yr):**
-- **A/B Testing:** Test multiple affiliate links automatically
-- Advanced analytics: IP tracking, geographic data, conversion reports
-- Unlimited links with white-label branding
-- Priority email support
-- Exportable CSV reports
-- Feature gating for premium affiliates
+**Pro Version ($9/month):** [1][2]
+- **Click analytics** with reports and export.
+- **A/B testing** for link variations.
+- **Auto-optimization** based on performance.
+- **Priority support** and unlimited links.
+- Remove nag and unlock advanced features.
 
 ## Installation
 
-1. Upload the `smart-affiliate-cloaker-pro` folder to `/wp-content/plugins/`
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Visit **Affiliate Links** in your admin menu to create your first cloaked link
-4. Flush permalinks if needed (Settings > Permalinks > Save)
+1. Upload the `smart-affiliate-cloaker` folder to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Go to **Settings > Affiliate Cloaker** to configure links.
 
 ## Setup
 
-1. **Create a Link:**
-   - Go to **Affiliate Links > Add New**
-   - Enter a title (e.g., "Best Wireless Mouse Deal")
-   - Paste your affiliate URL in **Target URL**
-   - Publish! Slug auto-generates (edit in Permalink)
-
-2. **Use the Link:**
-   - Cloaked URL: `yoursite.com/go/best-wireless-mouse`
-   - Shortcode: `[sac id="123"]` (replace 123 with post ID)
-   - Add to widget or posts/pages
-
-3. **View Analytics:**
-   - **Affiliate Links > Analytics** for clicks and trends
-
-4. **Upgrade to Pro:**
-   - Visit **Affiliate Links > Go Pro** for subscription
+1. In the settings page, add links in format:
+   
+   amazon|https://amazon.com/affiliate-link
+   course|https://udemy.com/affiliate-link
+   
+2. Use shortcode in posts: `[sac_link keyword="amazon"]`.
+3. Links auto-cloak on frontend.
 
 ## Usage
 
-- **Tracking:** Every click is logged with date and IP
-- **Shortcodes:** Embed anywhere: `[sac id="LINK_ID"] "Custom Text"]`
-- **A/B Testing (Pro):** Add JSON variants in meta box, e.g., `[{ "name": "A", "url": "https://amazon1", "weight": 1 }, { "name": "B", "url": "https://amazon2", "weight": 1 }]`
-- **Monetization Ready:** Perfect for Amazon, ClickBank, CJ Affiliate – disguise links, track performance, optimize earnings
+- **Basic:** Insert shortcodes anywhere.
+- **Global:** Use `the_content` filter or theme hooks for auto-replacement.
+- **Pro Analytics:** View clicks in dashboard (Pro only).
 
-## FAQ
+## Upgrade to Pro
 
-**Is it secure?** Yes, uses WordPress nonces and sanitization.
-**Performance impact?** Minimal – lightweight redirects.
-**Pro Trial?** 14-day money-back guarantee.
+Unlock full power: <https://example.com/pro>
 
-**Support:** Free users - forums; Pro - priority email.
+## Support
 
-**Upgrade today for 40% higher conversions!** [Get Pro](https://example.com/pro)
+Contact support@example.com
