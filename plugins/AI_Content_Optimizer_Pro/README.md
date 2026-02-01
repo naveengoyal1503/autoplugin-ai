@@ -2,32 +2,36 @@
 
 ## Features
 
-- **Free Version**: Instant readability score, word count analysis, sentence length checks, and optimization recommendations on post edit screen.
-- **Premium ($9.99/mo)**: AI-powered content rewriting, advanced keyword suggestions, SEO score, plagiarism check, unlimited analyses[1][5].
-- Lightweight, no external dependencies.
-- Works on posts (extendable to pages/custom post types).
+- **AI-Powered Analysis**: Automatically scores content (0-100) based on SEO, readability, word count, and engagement potential.
+- **Smart Suggestions**: Provides actionable tips to improve your posts and pages.
+- **Meta Box Integration**: Optimize directly from the post editor.
+- **Frontend Display**: Shows AI score badge on published content.
+- **Free Tier**: 5 optimizations per day.
+- **Pro Features**: Unlimited optimizations, OpenAI integration, auto-optimization on save, advanced analytics, export reports.
 
 ## Installation
 
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress admin.
-3. Edit any post to see the AI Content Optimizer meta box.
+1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. (Pro) Enter your OpenAI API key in Settings > AI Optimizer.
 
 ## Setup
 
-No configuration needed for free features. Premium unlocks via subscription at [example.com/premium](https://example.com/premium).
+- **Free Version**: Ready to use immediately. Limited to 5 optimizations/day.
+- **Upgrade to Pro**: Visit [example.com/pro](https://example.com/pro) for unlimited access ($49/year).
+- Optional: Enable auto-optimization in settings (Pro only).
 
 ## Usage
 
-1. Edit a post.
-2. In the sidebar meta box, click **Analyze Content**.
-3. View score and recommendations.
-4. **Pro Tip**: Aim for 80%+ score for better engagement.
+1. Edit any post or page.
+2. In the sidebar meta box, click **Optimize Now**.
+3. Review the AI score and suggestions.
+4. Update your content based on recommendations.
+5. Publish – the score badge appears on the frontend.
 
-## Freemium Upsell
-
-Upgrade for AI magic: Rewrite weak sections automatically. Perfect for scaling content production[1].
+**Pro Tip**: Aim for 80+ scores to boost SEO and reader engagement. Integrates seamlessly with Rank Math or Yoast[2][5].
 
 ## Support
 
-Report issues on WordPress.org forums (free) or premium support included.
+- Free support via WordPress forums.
+- Pro users: Priority email support included.
