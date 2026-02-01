@@ -1,44 +1,49 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant links into posts based on keywords.**
+**Boost your affiliate earnings automatically!** This plugin scans your content and inserts relevant affiliate links seamlessly.
 
 ## Features
 
-- **Keyword-based Auto-Insertion**: Matches keywords in content to affiliate links automatically.
-- **Customizable Link Text**: Set display text for each affiliate link.
-- **Link Limits**: Free version limits to 2 links per post; Pro unlimited.
-- **No Follow & Target Blank**: Links include proper SEO attributes.
-- **Easy Admin Panel**: Add, edit, remove affiliates via simple interface.
-- **Freemium Model**: Upgrade for AI keyword suggestions, A/B testing, analytics, and more.
+- **Automatic Link Insertion**: Parses content and adds affiliate links based on keywords.
+- **Customizable Density**: Control how often links appear (1-20% of paragraphs).
+- **Multiple Platforms**: Supports Amazon, ClickBank, and custom links.
+- **No Follow & Sponsored**: Links include proper rel attributes for compliance.
+- **Free Core**: Fully functional out-of-the-box.
+- **Pro Upgrade**: AI keyword matching, performance analytics, A/B testing, unlimited sites ($49/year).
 
 ## Installation
 
 1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Inserter** to configure.
+3. Go to **Settings > Affiliate Inserter** to configure your links.
 
 ## Setup
 
-1. In the admin panel, add affiliate links:
-   - **Keyword**: Word/phrase to match (e.g., "best laptop").
-   - **Link Text**: What the link shows (e.g., "Check Amazon").
-   - **Affiliate URL**: Your affiliate link.
-2. Set max links per post (free: max 2).
-3. Save settings. Links auto-insert on single posts.
+1. In the settings page, add your affiliate links in this format:
+   
+   amazon:https://amazon.com:weight loss,fitness:YOUR_AMAZON_AFFILIATE_LINK
+   clickbank:https://clickbank.net:make money:YOUR_CLICKBANK_LINK
+   
+2. Set insertion density (e.g., 5% means links in ~5% of paragraphs).
+3. Save settings. Links auto-appear in posts!
 
 ## Usage
 
-- Write posts with natural keywords matching your affiliates.
-- View inserted links on frontend (class: `smart-aff-link` for CSS styling).
-- **Pro Features** (upgrade for $29/year):
-  - Unlimited links.
-  - Analytics dashboard.
-  - A/B testing.
-  - AI-powered keyword discovery.
+- Works on single posts automatically.
+- Edit links anytime in settings.
+- Test on a staging site first.
+- **Pro Tip**: Use high-traffic posts for best results.
+
+## Pro Features
+
+- AI-powered keyword relevance scoring.
+- Earnings dashboard & click tracking.
+- Bulk import/export links.
+- Priority support.
 
 ## Support
 
-Contact support@example.com or visit example.com/support.
+Report issues on our site. Pro users get email support.
 
 ## Changelog
 
