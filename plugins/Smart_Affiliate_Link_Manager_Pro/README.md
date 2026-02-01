@@ -1,41 +1,58 @@
 # Smart Affiliate Link Manager Pro
 
 ## Description
-**Smart Affiliate Link Manager Pro** is a powerful freemium WordPress plugin that automatically detects, cloaks, tracks, and optimizes your affiliate links. Boost conversions with click tracking, analytics dashboard, and shortcode support. Premium add-ons unlock A/B testing and advanced reporting.
+
+**Smart Affiliate Link Manager Pro** is a powerful WordPress plugin designed to supercharge your affiliate marketing efforts. It automatically detects and cloaks affiliate links in your content, tracks clicks with detailed analytics, and offers A/B testing in the Pro version to optimize conversions and maximize earnings.
+
+Perfect for bloggers, marketers, and site owners looking to monetize traffic without ugly raw affiliate URLs.
 
 ## Features
-- **Auto-Link Cloaking**: Automatically replaces affiliate URLs (Amazon, ClickBank, etc.) in posts with tracked, pretty links.
-- **Click Tracking**: Logs IP, user agent, and timestamps for every click.
-- **Shortcode Support**: Use `[sa_link url="https://affiliate-link.com"]Your Text[/sa_link]` for manual links.
-- **Admin Dashboard**: View recent clicks and basic stats.
-- **Premium Add-ons**:
-  - Advanced Analytics ($49/year): Conversion rates, top links, geo-data.
-  - A/B Testing Bundle ($99/year): Test link variations automatically.
-  - White-label Reports ($199/year): Branded PDF exports and API access.
+
+### Free Version
+- **Auto Link Cloaking**: Automatically replaces common affiliate links (Amazon, ClickBank, etc.) with clean shortcodes.
+- **Click Tracking**: Logs clicks and redirects to real URLs (basic logging).
+- **Customizable Link Text**: Replace raw links with branded "Click Here for Offer" buttons.
+- **Settings Page**: Easy admin dashboard to toggle tracking.
+
+### Pro Add-ons (Coming Soon)
+- **A/B Testing** ($49/year): Test multiple link texts/URLs and auto-select winners.
+- **Advanced Analytics** ($29/year): Dashboard with conversion rates, top links, and exportable reports.
+- **White-label Bundle** ($99/year): Remove branding, API integrations, unlimited sites.
 
 ## Installation
-1. Download and upload the plugin ZIP to your WordPress admin → Plugins → Add New → Upload Plugin.
-2. Activate the plugin.
-3. Visit **Settings → Smart Affiliate** for your dashboard.
+
+1. Download the plugin ZIP from [example.com](https://example.com).
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Visit **Settings > SAM Pro** to configure.
 
 ## Setup
-1. No configuration needed for auto-cloaking—works out of the box on posts/pages.
-2. For manual links, use the `[sa_link]` shortcode.
-3. Premium: Purchase add-ons at [example.com/premium](https://example.com/premium) and enter license key in dashboard.
+
+1. Activate the plugin.
+2. Go to **Settings > SAM Pro**.
+3. Enable "Track Clicks".
+4. Add your Pro API key if upgraded.
+5. Write posts with affiliate links – they auto-cloak!
 
 ## Usage
-- **Automatic**: Add affiliate links to posts; they auto-cloak and track.
-- **Manual**: Insert shortcode anywhere: `[sa_link url="https://amazon.com/dp/B123"]Buy Now[/sa_link]`.
-- **Dashboard**: Go to **Settings → Smart Affiliate** to view clicks.
-- **Tracking**: All clicks redirect via your site for full analytics.
 
-## Freemium Model
-Free core for unlimited sites. Upgrade to add-ons for pro features. Recurring revenue via annual licenses.
+- **Automatic Cloaking**: Add affiliate links to posts; plugin converts them to `[sam_link]` shortcodes.
+- **Manual Shortcode**: Use `[sam_link url="https://amazon.com/aff-link"]Your Link Text[/sam_link]`.
+- **View Stats**: Check server logs or upgrade to Pro for dashboard.
+
+## Upgrade to Pro
+
+Unlock full potential:
+- [Buy A/B Testing Add-on](https://example.com/ab-testing)
+- [Buy Analytics Add-on](https://example.com/analytics)
+- [Get Full Bundle](https://example.com/bundle)
 
 ## Support
-- Free: WordPress.org forums.
-- Pro: Priority email support with add-ons.
+
+- [Documentation](https://example.com/docs)
+- [Support Forum](https://example.com/support)
 
 ## Changelog
+
 **1.0.0**
-- Initial release with core tracking and cloaking.
+- Initial release with core cloaking and tracking.
