@@ -1,59 +1,80 @@
 # Smart Affiliate AutoLinker Pro
 
-[![Contributors](https://img.shields.io/badge/contributors-welcome-brightgreen.svg)](https://github.com/example/smart-affiliate-autolinker)
+[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url] [![Activity][activity-shield]][activity-url]
 
-Automatically turns keywords in your posts into profitable affiliate links with click tracking and smart features.
+Automatically scans your WordPress content for keywords and replaces them with your affiliate links. Boost conversions with smart A/B testing and performance tracking.
 
-## Features
+## 🚀 **Key Features**
 
-### Free Version
-- **Auto-linking**: Automatically replaces up to 3 keywords per post with affiliate links.
-- **Simple setup**: Add keywords and URLs via admin settings.
-- **Click protection**: JavaScript-based tracking prevents direct link access.
+- **Automatic Keyword Linking**: Instantly turn keywords into affiliate links in posts and pages.
+- **Link Limits & NoFollow**: Control max links per post, add rel="nofollow" automatically.
+- **Easy Dashboard**: Add/edit keywords and affiliate URLs via simple admin interface.
+- **Mobile-Responsive**: Links work perfectly on all devices.
+- **Free Version**: Up to 5 keywords, basic auto-linking.
 
-### Pro Version ($49/year)
-- **Unlimited keywords** and links per post.
-- **Link rotation**: Rotate multiple affiliate URLs for the same keyword to maximize conversions.
-- **Click analytics**: Detailed dashboard with clicks per keyword, IP tracking, and performance reports.
-- **Link cloaking**: Pretty, SEO-friendly short links.
-- **Priority support** and regular updates.
+## 💎 **Pro Version Features** (Upgrade for $49/year)
 
-## Installation
+- ✅ **Unlimited Keywords**: No limits on keyword/link pairs.
+- ✅ **Click Tracking Dashboard**: See which links perform best.
+- ✅ **A/B Testing**: Rotate links and track conversion rates.
+- ✅ **Premium Integrations**: Amazon, ClickBank, ShareASale auto-import.
+- ✅ **Analytics Export**: CSV reports for tax season.
+- ✅ **Priority Support**: 24-hour email response.
 
-1. Upload the `smart-affiliate-autolinker` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate AutoLinker** to configure keywords.
+## 📦 **Installation**
 
-## Setup
+1. Download the plugin ZIP from [WordPress.org](https://wordpress.org/plugins/smart-affiliate-autolinker/).
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate the plugin.
+4. Go to **Settings > Affiliate AutoLinker** to configure keywords.
 
-1. In the settings page, add keywords (e.g., "best laptop") and their affiliate URLs (e.g., Amazon link).
-2. Save changes. Links will automatically appear in new and existing posts.
-3. **Pro users**: Enable analytics and rotation in pro settings.
+## ⚙️ **Setup**
 
-## Usage
+1. **Add Keywords**: Enter a keyword (e.g., "best laptop") and your affiliate URL.
+2. **Set Max Links**: Limit to 1-10 links per post to avoid spam.
+3. **Save & Test**: Links appear automatically in new/existing content.
 
-- Write content naturally using your keywords.
-- The plugin scans and links them on frontend display.
-- Monitor clicks in **Pro dashboard** (Tools > Affiliate Analytics).
+**Pro Tip**: Use specific long-tail keywords for higher conversions!
+
+## 📖 **Usage**
+
+- Links are added to **posts and pages only** (not menus/widgets).
+- **Target Blank**: Opens in new tab by default.
+- **NoFollow**: SEO-safe with automatic rel attributes.
+- **Free Limit**: 5 keywords max. Upgrade for unlimited.
 
 ### Example
 
-**Content**: "Looking for the best laptop?"
+**Before**: "I recommend the best laptop for gaming."
 
-**Becomes**: "Looking for the <a href="#" class="sa-link" data-url="https://amazon.com/laptop-aff-link">best laptop</a>?"
+**After**: "I recommend the <a href="https://amazon.com/game-laptop" class="saal-link">best laptop for gaming</a>."
 
-Clicks redirect via tracker to your affiliate URL.
+## 🤝 **Monetization Model**
 
-## Pro Upgrade
+**Freemium** - Core free plugin hooks users, Pro upgrade unlocks full potential.
 
-Unlock unlimited potential: [Get Pro Now](https://example.com/pro)
+- **Single Site**: $49/year
+- **5 Sites**: $99/year
+- **Unlimited**: $199/year
 
-## Support
+## 🆘 **Support**
 
-- [Documentation](https://example.com/docs)
-- [Submit Ticket](https://example.com/support)
+- **Free**: WordPress.org forums
+- **Pro**: Email support@smartaffiliateautolinker.com
 
-## Changelog
+## 📈 **Why It's Profitable**
 
-**1.0.0**
-- Initial release with core auto-linking and free tier.
+Affiliate marketing plugins like AffiliateWP generate $30K+/month[5]. This automates the tedious keyword hunting, perfect for bloggers earning passive income.
+
+[contributors-shield]: https://img.shields.io/github/contributors/example/repo.svg?style=for-the-badge
+[contributors-url]: https://github.com/example/repo/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/example/repo.svg?style=for-the-badge
+[forks-url]: https://github.com/example/repo/network/members
+[stars-shield]: https://img.shields.io/github/stars/example/repo.svg?style=for-the-badge
+[stars-url]: https://github.com/example/repo/stargazers
+[issues-shield]: https://img.shields.io/github/issues/example/repo.svg?style=for-the-badge
+[issues-url]: https://github.com/example/repo/issues
+[license-shield]: https://img.shields.io/github/license/example/repo.svg?style=for-the-badge
+[license-url]: https://github.com/example/repo/blob/master/LICENSE.txt
+[activity-shield]: https://img.shields.io/github/last-commit/example/repo.svg?style=for-the-badge
+[activity-url]: https://github.com/example/repo/commits/master
