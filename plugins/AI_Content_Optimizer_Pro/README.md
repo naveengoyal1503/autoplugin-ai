@@ -1,29 +1,40 @@
 # AI Content Optimizer Pro
 
-A powerful **freemium** WordPress plugin that uses AI to analyze and optimize your content for **SEO** and **readability**.
+## Description
+AI-powered WordPress plugin that analyzes and optimizes your content for **SEO**, readability, and engagement. Boost rankings with one click.
 
 ## Features
-- **Free:** Basic content analysis (word count, readability score, SEO tips).
-- **Premium ($4.99/mo):** AI-powered rewrites, bulk optimization, advanced SEO scoring, priority support[1][2][5].
-- Real-time analysis in post editor.
-- Upsell prompts for premium upgrades.
+- **AI SEO Analysis**: Instant scores for keywords, readability, and structure.
+- **Auto-Optimization**: Rewrite suggestions for headings, meta, and content (Pro).
+- **Content Insights**: Detect weak areas like keyword density and sentence length.
+- **Frontend Optimization**: Live tweaks to published content.
+- **Integration Ready**: Works with Elementor, Gutenberg, and classic editor.
+- **Pro Only**: Unlimited sites, advanced AI (OpenAI compatible), auto-publish, analytics dashboard.
 
 ## Installation
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Edit a post to see the sidebar optimizer.
+3. Go to **Settings > AI Optimizer** to enter your AI API key (optional for free).
+4. Edit any post to see the optimizer meta box.
 
 ## Setup
-- No configuration needed for free version.
-- Premium: Enter license key in **Settings > AI Optimizer** (after purchase).
+- **Free Version**: Basic analysis in post editor.
+- **Pro Setup**: Purchase license, enter key in settings. Enable auto-optimize.
+- Recommended: Pair with Rank Math or Yoast for full SEO suite.
 
 ## Usage
-1. Edit any post/page.
-2. Click **Analyze Content** in the sidebar meta box.
-3. Review suggestions and apply manually (premium: auto-apply).
-4. Upgrade for AI magic: Visit [premium link] for subscription.
+1. Edit a post/page.
+2. Check **AI Content Optimizer** sidebar for score.
+3. Click **Optimize Now** (Pro) for AI suggestions.
+4. Save and publish – content auto-improves on frontend.
+
+## FAQ
+**Is it compatible with Gutenberg?** Yes, full support.
+**What AI does it use?** OpenAI-compatible API (Pro requires key).
+**Free vs Pro?** Free: Manual analysis. Pro: Auto-apply, unlimited, support.
 
 ## Changelog
-- 1.0.0: Initial release.
+**1.0.0**: Initial release with core optimization engine.
 
-**Support:** Free users - forums. Premium - priority email.
+## Upgrade to Pro
+[Get Pro](https://example.com/pro) – $49/year for unlimited sites and AI power.
