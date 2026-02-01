@@ -6,186 +6,189 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer Lite
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: Analyzes and optimizes your post content for SEO with AI-powered suggestions. Freemium model.
+ * Description: Analyzes and optimizes your post content for SEO and readability using AI-powered insights. Freemium model with premium upgrades.
  * Version: 1.0.0
  * Author: Your Name
+ * Author URI: https://example.com
  * License: GPL v2 or later
+ * Text Domain: ai-content-optimizer
+ * Domain Path: /languages
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
-class AIContentOptimizerLite {
-    private static $instance = null;
-    public $is_premium = false;
-    public $usage_count = 0;
+// Define plugin constants
+define('AICONTENTOPTIMIZER_VERSION', '1.0.0');
+define('AICONTENTOPTIMIZER_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('AICONTENTOPTIMIZER_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
+// Premium check function
+function aicontentoptimizer_is_premium() {
+    // Simulate premium check (replace with actual license validation)
+    return false; // Free version
+}
+
+// Admin menu
+add_action('admin_menu', 'aicontentoptimizer_admin_menu');
+function aicontentoptimizer_admin_menu() {
+    add_options_page(
+        'AI Content Optimizer',
+        'AI Content Optimizer',
+        'manage_options',
+        'ai-content-optimizer',
+        'aicontentoptimizer_admin_page'
+    );
+}
+
+// Admin page
+function aicontentoptimizer_admin_page() {
+    if (!current_user_can('manage_options')) {
+        return;
     }
-
-    private function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_ajax_aco_optimize_content', array($this, 'handle_optimize_ajax'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-    }
-
-    public function init() {
-        $this->load_textdomain('ai-content-optimizer-lite');
-        $this->is_premium = get_option('aco_premium_active', false);
-        $this->usage_count = get_option('aco_usage_count', 0);
-    }
-
-    public function activate() {
-        add_option('aco_usage_count', 0);
-    }
-
-    public function deactivate() {}
-
-    public function add_admin_menu() {
-        add_posts_page(
-            'AI Content Optimizer',
-            'AI Optimizer',
-            'edit_posts',
-            'ai-content-optimizer',
-            array($this, 'admin_page')
-        );
-    }
-
-    public function enqueue_scripts($hook) {
-        if ('post.php' !== $hook && 'post-new.php' !== $hook && 'edit.php' !== $hook) return;
-        wp_enqueue_script('aco-admin-js', plugin_dir_url(__FILE__) . 'aco-admin.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('aco-admin-js', 'aco_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('aco_nonce'),
-            'is_premium' => $this->is_premium,
-            'usage_count' => $this->usage_count,
-            'max_free' => 5
-        ));
-    }
-
-    public function admin_page() {
-        $usage_left = max(0, 5 - $this->usage_count);
-        ?>
-        <div class="wrap">
-            <h1>AI Content Optimizer Lite</h1>
-            <p>Free uses left: <strong><?php echo $usage_left; ?></strong>/5 per month.</p>
-            <?php if (!$this->is_premium && $this->usage_count >= 5) : ?>
-                <div class="notice notice-warning">
-                    <p>Upgrade to premium for unlimited optimizations! <a href="https://example.com/premium" target="_blank">Get Premium</a></p>
-                </div>
-            <?php endif; ?>
-            <p>Paste your content below or edit a post to optimize.</p>
-            <textarea id="aco_content" rows="10" cols="80" placeholder="Paste your content here..."></textarea>
-            <button id="aco_optimize_btn" class="button button-primary">Optimize Content</button>
-            <div id="aco_results"></div>
+    ?>
+    <div class="wrap">
+        <h1>AI Content Optimizer Lite</h1>
+        <p>Optimize your content for better SEO and engagement!</p>
+        <?php if (!aicontentoptimizer_is_premium()): ?>
+        <div class="notice notice-info">
+            <p><strong>Go Premium</strong> for unlimited scans, advanced AI suggestions, and auto-optimization. <a href="https://example.com/premium" target="_blank">Upgrade Now</a></p>
         </div>
+        <?php endif; ?>
+        <form method="post" action="">
+            <?php wp_nonce_field('aicontentoptimizer_optimize', 'aicontentoptimizer_nonce'); ?>
+            <textarea name="content" rows="10" cols="80" placeholder="Paste your content here..."><?php echo isset($_POST['content']) ? esc_textarea($_POST['content']) : ''; ?></textarea><br>
+            <input type="submit" name="optimize_content" class="button-primary" value="Optimize Content">
+        </form>
         <?php
-    }
-
-    public function handle_optimize_ajax() {
-        check_ajax_referer('aco_nonce', 'nonce');
-
-        if (!$this->is_premium && $this->usage_count >= 5) {
-            wp_send_json_error('Free limit reached. Upgrade to premium!');
-        }
-
-        $content = sanitize_textarea_field($_POST['content']);
-        if (empty($content)) {
-            wp_send_json_error('No content provided.');
-        }
-
-        // Simulate AI analysis (in real plugin, integrate OpenAI API or similar)
-        $suggestions = $this->generate_suggestions($content);
-
-        if (!$this->is_premium) {
-            $this->usage_count++;
-            update_option('aco_usage_count', $this->usage_count);
-        }
-
-        wp_send_json_success(array(
-            'optimized_content' => $suggestions['optimized'],
-            'suggestions' => $suggestions['tips'],
-            'usage_count' => $this->usage_count
-        ));
-    }
-
-    private function generate_suggestions($content) {
-        // Basic heuristic analysis for demo (replace with real AI in premium)
-        $word_count = str_word_count($content);
-        $has_headings = preg_match('/<h[1-6]/', $content);
-        $tips = array();
-
-        if ($word_count < 300) {
-            $tips[] = 'Add more content: Aim for 300+ words for better SEO.';
-        }
-        if (!$has_headings) {
-            $tips[] = 'Use H2/H3 headings to structure your content.';
-        }
-        $tips[] = 'Include keywords naturally in the first paragraph.';
-        $tips[] = 'Add internal/external links for authority.';
-
-        $optimized = $content;
-        if (!$has_headings) {
-            $optimized = '<h2>Introduction</h2>' . $content;
-        }
-
-        if ($this->is_premium) {
-            // Premium: Advanced rewrite
-            $optimized .= '<p><em>Premium AI Rewrite: Optimized for readability and SEO score 85/100.</em></p>';
-            $tips[] = 'Premium feature: Full AI rewrite applied!';
-        }
-
-        return array(
-            'optimized' => $optimized . '<ul><li>' . implode('</li><li>', $tips) . '</li></ul>',
-            'tips' => $tips
-        );
-    }
-}
-
-AIContentOptimizerLite::get_instance();
-
-// Premium check (simulate)
-if (isset($_GET['premium_key']) && $_GET['premium_key'] === 'demo123') {
-    update_option('aco_premium_active', true);
-}
-
-// Reset usage monthly
-if (!wp_next_scheduled('aco_reset_usage')) {
-    wp_schedule_event(strtotime('first day of next month 00:00:00'), 'monthly', 'aco_reset_usage');
-}
-add_action('aco_reset_usage', function() {
-    update_option('aco_usage_count', 0);
-});
-
-// JS file would be separate, but for single-file, inline it
-?><script>
-// Inline JS for single-file plugin
-document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('aco_optimize_btn');
-    const content = document.getElementById('aco_content');
-    const results = document.getElementById('aco_results');
-
-    btn.addEventListener('click', function() {
-        jQuery.post(aco_ajax.ajax_url, {
-            action: 'aco_optimize_content',
-            nonce: aco_ajax.nonce,
-            content: content.value
-        }, function(response) {
-            if (response.success) {
-                results.innerHTML = '<h3>Optimized Content:</h3><div>' + response.data.optimized_content + '</div>';
-                if (!aco_ajax.is_premium) {
-                    results.innerHTML += '<p>Uses remaining: ' + (5 - response.data.usage_count) + '</p>';
-                }
-            } else {
-                results.innerHTML = '<p style="color:red;">' + response.data + '</p>';
+        if (isset($_POST['optimize_content']) && wp_verify_nonce($_POST['aicontentoptimizer_nonce'], 'aicontentoptimizer_optimize')) {
+            $content = sanitize_textarea_field($_POST['content']);
+            if (!empty($content)) {
+                echo '<h3>Optimization Results:</h3>';
+                echo aicontentoptimizer_analyze_content($content);
             }
-        });
-    });
-});
-</script>
+        }
+        ?>
+    </div>
+    <?php
+}
+
+// Analyze content function
+function aicontentoptimizer_analyze_content($content) {
+    $word_count = str_word_count(strip_tags($content));
+    $readability = aicontentoptimizer_calculate_flesch($content);
+    $seo_score = min(100, (int)($word_count / 10 + $readability));
+
+    $output = '<div class="card">';
+    $output .= '<p><strong>Word Count:</strong> ' . $word_count . '</p>';
+    $output .= '<p><strong>Readability Score (Flesch):</strong> ' . round($readability, 2) . ' <small>(Higher is better)</small></p>';
+    $output .= '<p><strong>SEO Score:</strong> ' . $seo_score . '%</p>';
+
+    $suggestions = [];
+    if ($word_count < 300) {
+        $suggestions[] = 'Add more content to reach at least 300 words for better SEO.';
+    }
+    if ($readability < 60) {
+        $suggestions[] = 'Improve readability by using shorter sentences and simpler words.';
+    }
+    if (!preg_match('/<h2/i', $content)) {
+        $suggestions[] = 'Add H2 headings to improve structure.';
+    }
+
+    if (!empty($suggestions)) {
+        $output .= '<h4>Suggestions:</h4><ul>';
+        foreach ($suggestions as $sugg) {
+            $output .= '<li>' . esc_html($sugg) . '</li>';
+        }
+        $output .= '</ul>';
+    }
+
+    $output .= '</div>';
+
+    if (aicontentoptimizer_is_premium()) {
+        // Premium: Auto-optimized content
+        $optimized = aicontentoptimizer_optimize_content($content);
+        $output .= '<h4>Optimized Content:</h4><div class="optimized-content">' . $optimized . '</div>';
+    } else {
+        $output .= '<p><em>Premium feature: Auto-optimization available in Pro version.</em></p>';
+    }
+
+    return $output;
+}
+
+// Simple Flesch Reading Ease calculation
+function aicontentoptimizer_calculate_flesch($text) {
+    $text = strip_tags($text);
+    $sentences = preg_split('/[.!?]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+    $sentence_count = count($sentences);
+    $words = preg_split('/\s+/', trim($text));
+    $word_count = count($words);
+    $syllables = 0;
+    foreach ($words as $word) {
+        $syllables += aicontentoptimizer_count_syllables($word);
+    }
+    if ($sentence_count == 0 || $word_count == 0) return 0;
+    $asl = $word_count / $sentence_count;
+    $asw = $syllables / $word_count;
+    return 206.835 - 1.015 * $asl - 84.6 * $asw;
+}
+
+// Simple syllable counter
+function aicontentoptimizer_count_syllables($word) {
+    $word = strtolower($word);
+    $count = 0;
+    $vowels = '[aeiouy]';
+    if (preg_match('/^$vowels/', $word)) $count++;
+    preg_match_all('/$vowels+/', $word, $matches);
+    $count += count($matches);
+    if (ends_with($word, 'e')) $count--;
+    return max(1, $count);
+}
+
+function aicontentoptimizer_optimize_content($content) {
+    // Premium placeholder: Return enhanced content
+    return wpautop($content . '<p>Premium optimized version here.</p>');
+}
+
+// Gutenberg block integration
+add_action('enqueue_block_editor_assets', 'aicontentoptimizer_block_assets');
+function aicontentoptimizer_block_assets() {
+    wp_enqueue_script(
+        'aicontentoptimizer-block',
+        AICONTENTOPTIMIZER_PLUGIN_URL . 'block.js',
+        ['wp-blocks', 'wp-element', 'wp-editor'],
+        AICONTENTOPTIMIZER_VERSION
+    );
+}
+
+// Enqueue styles
+add_action('admin_enqueue_scripts', 'aicontentoptimizer_styles');
+function aicontentoptimizer_styles($hook) {
+    if ('settings_page_ai-content-optimizer' !== $hook) return;
+    wp_enqueue_style('aicontentoptimizer-admin', AICONTENTOPTIMIZER_PLUGIN_URL . 'admin.css', [], AICONTENTOPTIMIZER_VERSION);
+}
+
+// Add admin CSS
+add_action('admin_head', 'aicontentoptimizer_admin_css');
+function aicontentoptimizer_admin_css() {
+    echo '<style>.card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; background: #f9f9f9; }.optimized-content { background: white; padding: 15px; border: 1px solid #ccc; white-space: pre-wrap; }</style>';
+}
+
+// Activation hook
+register_activation_hook(__FILE__, 'aicontentoptimizer_activate');
+function aicontentoptimizer_activate() {
+    add_option('aicontentoptimizer_version', AICONTENTOPTIMIZER_VERSION);
+}
+
+// Plugin row meta
+add_filter('plugin_row_meta', 'aicontentoptimizer_row_meta', 10, 2);
+function aicontentoptimizer_row_meta($links, $file) {
+    if (strpos($file, '/ai-content-optimizer.php') !== false) {
+        $links[] = '<a href="https://example.com/premium" target="_blank">Go Premium</a>';
+        $links[] = '<a href="https://example.com/docs" target="_blank">Docs</a>';
+    }
+    return $links;
+}
+
+?>
