@@ -6,16 +6,15 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoLinker
  * Plugin URI: https://example.com/smart-affiliate-autolinker
- * Description: Automatically detects keywords in your content and converts them into trackable affiliate links from Amazon, boosting commissions without manual work.
+ * Description: Automatically inserts relevant affiliate links into your WordPress content using keyword matching to boost revenue.
  * Version: 1.0.0
  * Author: Your Name
- * Author URI: https://example.com
  * License: GPL v2 or later
  * Text Domain: smart-affiliate-autolinker
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class SmartAffiliateAutoLinker {
@@ -23,164 +22,191 @@ class SmartAffiliateAutoLinker {
 
     public function __construct() {
         add_action('init', array($this, 'init'));
+        add_action('wp_loaded', array($this, 'load_textdomain'));
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
         $this->options = get_option('saal_options', array(
-            'amazon_tag' => '',
+            'enabled' => 1,
             'keywords' => array(
-                array('keyword' => 'WordPress', 'url' => ''),
+                array('keyword' => 'WordPress', 'url' => 'https://example.com/aff/wp', 'text' => 'WordPress hosting'),
+                array('keyword' => 'plugin', 'url' => 'https://example.com/aff/plugin', 'text' => 'best plugin')
             ),
-            'pro' => false,
-            'max_links' => 3
+            'max_links' => 3,
+            'pro' => false
         ));
 
-        if (is_admin()) {
-            add_action('admin_menu', array($this, 'admin_menu'));
-            add_action('admin_init', array($this, 'admin_init'));
-        } else {
+        if ($this->options['enabled']) {
             add_filter('the_content', array($this, 'auto_link_content'));
+            add_filter('the_excerpt', array($this, 'auto_link_content'));
         }
+
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
+        add_action('wp_ajax_saal_save_options', array($this, 'save_options'));
+        add_action('wp_ajax_saal_add_keyword', array($this, 'add_keyword'));
+    }
+
+    public function load_textdomain() {
+        load_plugin_textdomain('smart-affiliate-autolinker', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function activate() {
         if (!get_option('saal_options')) {
-            update_option('saal_options', array(
-                'amazon_tag' => '',
-                'keywords' => array(),
-                'pro' => false,
-                'max_links' => 3
-            ));
+            add_option('saal_options', array('enabled' => 1, 'keywords' => array(), 'max_links' => 3, 'pro' => false));
         }
     }
 
     public function deactivate() {
-        // Cleanup if needed
+        // Cleanup optional
+    }
+
+    public function auto_link_content($content) {
+        if (is_feed() || is_preview() || $this->options['pro']) {
+            return $content; // Skip in feeds, previews; pro handles advanced
+        }
+
+        $links_inserted = 0;
+        $max_links = intval($this->options['max_links']);
+
+        foreach ($this->options['keywords'] as $kw) {
+            if ($links_inserted >= $max_links) break;
+
+            $pattern = '/\b' . preg_quote($kw['keyword'], '/') . '\b/i';
+            if (preg_match_all($pattern, $content, $matches, PREG_OFFSET_CAPTURE)) {
+                foreach ($matches as $match) {
+                    if ($links_inserted >= $max_links) break;
+                    $pos = $match[1];
+                    $link_text = !empty($kw['text']) ? $kw['text'] : $kw['keyword'];
+                    $link = '<a href="' . esc_url($kw['url']) . '" target="_blank" rel="nofollow noopener">' . $link_text . '</a>';
+                    $content = substr_replace($content, $link, $pos, strlen($match));
+                    $links_inserted++;
+                    // Adjust position for next match
+                }
+            }
+        }
+        return $content;
     }
 
     public function admin_menu() {
         add_options_page(
             'Smart Affiliate AutoLinker',
-            'Affiliate AutoLinker',
+            'Affiliate Linker',
             'manage_options',
             'smart-affiliate-autolinker',
-            array($this, 'settings_page')
+            array($this, 'admin_page')
         );
     }
 
-    public function admin_init() {
-        register_setting('saal_options_group', 'saal_options', array($this, 'sanitize_options'));
+    public function admin_scripts($hook) {
+        if ($hook !== 'settings_page_smart-affiliate-autolinker') return;
+        wp_enqueue_script('saal-admin', plugin_dir_url(__FILE__) . 'admin.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('saal-admin', 'saal_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('saal_nonce')));
+        wp_enqueue_style('saal-admin', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.0.0');
     }
 
-    public function sanitize_options($input) {
-        $input['amazon_tag'] = sanitize_text_field($input['amazon_tag']);
-        $input['keywords'] = isset($input['keywords']) ? array_map(function($k) {
-            return array(
-                'keyword' => sanitize_text_field($k['keyword']),
-                'url' => esc_url_raw($k['url'])
-            );
-        }, $input['keywords']) : array();
-        $input['max_links'] = intval($input['max_links']);
-        $input['pro'] = isset($input['pro']);
-        return $input;
-    }
-
-    public function settings_page() {
+    public function admin_page() {
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate AutoLinker Settings</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('saal_options_group'); ?>
-                <?php do_settings_sections('saal_options_group'); ?>
+            <h1><?php _e('Smart Affiliate AutoLinker', 'smart-affiliate-autolinker'); ?></h1>
+            <form id="saal-form">
+                <?php wp_nonce_field('saal_options'); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Amazon Affiliate Tag</th>
-                        <td><input type="text" name="saal_options[amazon_tag]" value="<?php echo esc_attr($this->options['amazon_tag']); ?>" class="regular-text" placeholder="yourtag-20"></td>
-                    </tr>
-                    <tr>
-                        <th>Max Links per Post (Free: 3)</th>
-                        <td><input type="number" name="saal_options[max_links]" value="<?php echo esc_attr($this->options['max_links']); ?>" min="1" max="10"></td>
-                    </tr>
-                    <tr>
-                        <th>Keywords</th>
+                        <th><?php _e('Enable Auto-Linking', 'smart-affiliate-autolinker'); ?></th>
                         <td>
-                            <?php foreach ($this->options['keywords'] as $i => $kw): ?>
-                            <div style="border:1px solid #ccc; margin:5px; padding:10px;">
-                                Keyword: <input type="text" name="saal_options[keywords][<?php echo $i; ?>][keyword]" value="<?php echo esc_attr($kw['keyword']); ?>"><br>
-                                Affiliate URL: <input type="url" name="saal_options[keywords][<?php echo $i; ?>][url]" value="<?php echo esc_attr($kw['url']); ?>" style="width:300px;"><br>
-                                <small>Leave URL empty to auto-generate Amazon link</small>
-                                <a href="#" onclick="jQuery(this).parent().remove(); return false;">Remove</a>
-                            </div>
-                            <?php endforeach; ?>
-                            <button type="button" id="add-keyword">Add Keyword</button>
-                            <script>
-                            jQuery(document).ready(function($) {
-                                var i = <?php echo count($this->options['keywords']); ?>;
-                                $('#add-keyword').click(function() {
-                                    $(this).before('<div style="border:1px solid #ccc; margin:5px; padding:10px;">
-                                        Keyword: <input type="text" name="saal_options[keywords][" + i + "][keyword]" value=""><br>
-                                        Affiliate URL: <input type="url" name="saal_options[keywords][" + i + "][url]" value="" style="width:300px;"><br>
-                                        <small>Leave URL empty to auto-generate Amazon link</small>
-                                        <a href="#" onclick="jQuery(this).parent().remove(); return false;">Remove</a>
-                                    </div>');
-                                    i++;
-                                });
-                            });
-                            </script>
+                            <input type="checkbox" name="enabled" value="1" <?php checked($this->options['enabled']); ?>>
                         </td>
                     </tr>
                     <tr>
-                        <th>Pro Version</th>
-                        <td><label><input type="checkbox" name="saal_options[pro]" <?php checked($this->options['pro']); ?>> Enable Pro Features (Upgrade for unlimited)</label><br><small><a href="https://example.com/pro" target="_blank">Upgrade to Pro</a></small></td>
+                        <th><?php _e('Max Links per Post', 'smart-affiliate-autolinker'); ?></th>
+                        <td>
+                            <input type="number" name="max_links" value="<?php echo esc_attr($this->options['max_links']); ?>" min="1" max="10">
+                        </td>
                     </tr>
                 </table>
+                <h2><?php _e('Keywords', 'smart-affiliate-autolinker'); ?></h2>
+                <div id="keywords-list">
+                    <?php foreach ($this->options['keywords'] as $i => $kw): ?>
+                    <div class="keyword-row">
+                        <input type="text" placeholder="Keyword" value="<?php echo esc_attr($kw['keyword']); ?>">
+                        <input type="url" placeholder="Affiliate URL" value="<?php echo esc_url($kw['url']); ?>">
+                        <input type="text" placeholder="Link Text (optional)" value="<?php echo esc_attr($kw['text']); ?>">
+                        <button type="button" class="remove-kw">Remove</button>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <button type="button" id="add-keyword"><?php _e('Add Keyword', 'smart-affiliate-autolinker'); ?></button>
+                <p class="description">Free version limits to 5 keywords. <strong>Upgrade to Pro</strong> for unlimited, AI matching & analytics! <a href="https://example.com/pro" target="_blank">Get Pro</a></p>
                 <?php submit_button(); ?>
             </form>
-            <p><strong>Pro Features:</strong> Unlimited keywords, analytics dashboard, multiple affiliate networks, A/B testing, priority support. <a href="https://example.com/pro" target="_blank">Get Pro Now</a></p>
         </div>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#add-keyword').click(function() {
+                $('#keywords-list').append('<div class="keyword-row"><input type="text" placeholder="Keyword"><input type="url" placeholder="Affiliate URL"><input type="text" placeholder="Link Text (optional)"><button type="button" class="remove-kw">Remove</button></div>');
+            });
+            $(document).on('click', '.remove-kw', function() {
+                $(this).parent().remove();
+            });
+        });
+        </script>
+        <style>
+        .keyword-row { margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; }
+        .keyword-row input { margin-right: 10px; }
+        </style>
         <?php
     }
 
-    public function auto_link_content($content) {
-        if (is_feed() || is_admin() || empty($this->options['keywords'])) {
-            return $content;
+    public function save_options() {
+        check_ajax_referer('saal_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_die();
+
+        $options = array(
+            'enabled' => isset($_POST['enabled']) ? 1 : 0,
+            'max_links' => intval($_POST['max_links']),
+            'keywords' => array(),
+            'pro' => false
+        );
+
+        parse_str($_POST['form_data'], $form_data);
+        foreach ($form_data as $key => $val) {
+            if (strpos($key, 'keyword_') === 0) {
+                $i = str_replace('keyword_', '', $key);
+                if (!empty($val) && isset($form_data['url_' . $i])) {
+                    $options['keywords'][] = array(
+                        'keyword' => sanitize_text_field($val),
+                        'url' => esc_url_raw($form_data['url_' . $i]),
+                        'text' => sanitize_text_field($form_data['text_' . $i] ?? '')
+                    );
+                }
+            }
         }
 
-        $max_links = $this->options['pro'] ? 10 : min(3, $this->options['max_links']);
-        $links_added = 0;
-
-        foreach ($this->options['keywords'] as $keyword) {
-            if ($links_added >= $max_links) break;
-
-            if (empty($keyword['keyword']) || stripos($content, $keyword['keyword']) === false) continue;
-
-            $url = !empty($keyword['url']) ? $keyword['url'] : $this->generate_amazon_url($keyword['keyword']);
-            if (empty($url)) continue;
-
-            $link = '<a href="' . esc_url($url) . '" target="_blank" rel="nofollow sponsored">' . esc_html($keyword['keyword']) . '</a>';
-            $content = preg_replace('/\b' . preg_quote($keyword['keyword'], '/') . '\b/i', $link, $content, 1);
-            $links_added++;
+        if (count($options['keywords']) > 5 && !$options['pro']) {
+            wp_send_json_error('Free version limited to 5 keywords. Upgrade to Pro!');
         }
 
-        return $content;
+        update_option('saal_options', $options);
+        wp_send_json_success('Settings saved!');
     }
 
-    private function generate_amazon_url($keyword) {
-        if (empty($this->options['amazon_tag'])) return '';
-
-        $keyword = urlencode($keyword);
-        return "https://amazon.com/s?k={$keyword}&tag={$this->options['amazon_tag']}";
+    public function add_keyword() {
+        // AJAX handler if needed
     }
 }
 
 new SmartAffiliateAutoLinker();
 
-// Freemium nag
-add_action('admin_notices', function() {
-    $options = get_option('saal_options', array());
-    if (!isset($options['pro']) || !$options['pro']) {
-        echo '<div class="notice notice-info"><p>Unlock <strong>Smart Affiliate AutoLinker Pro</strong> for unlimited keywords & analytics! <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
+// Pro upsell notice
+function saal_pro_notice() {
+    if (!current_user_can('manage_options')) return;
+    $screen = get_current_screen();
+    if ($screen->id === 'settings_page_smart-affiliate-autolinker') {
+        echo '<div class="notice notice-info"><p><strong>Go Pro!</strong> Unlock unlimited keywords, AI-powered matching, detailed analytics, and more. <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
     }
-});
+}
+add_action('admin_notices', 'saal_pro_notice');
+?>
