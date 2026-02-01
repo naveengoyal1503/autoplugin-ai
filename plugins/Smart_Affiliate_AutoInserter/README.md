@@ -1,47 +1,49 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant links into posts based on keywords.**
+**Automatically monetize your WordPress site by inserting Amazon affiliate links into posts and pages based on keywords.**
 
 ## Features
 
-- **AI-like Keyword Matching**: Automatically detects keywords in your content and replaces them with affiliate links.
-- **Customizable Limits**: Set max links per post to avoid over-optimization.
-- **Easy Setup**: Configure keywords and links via simple admin panel.
-- **SEO-Friendly**: Adds `rel="nofollow sponsored"` and opens in new tab.
-- **Freemium Model**: Free for basics; Pro unlocks unlimited features, analytics, A/B testing.
+- **Automatic Link Insertion**: Scans content for keywords and replaces them with your Amazon affiliate links.
+- **Easy Setup**: Configure your Amazon Associate ID and keyword-product pairs via simple admin panel.
+- **SEO-Friendly**: Links include `nofollow` and `noopener` for best practices.
+- **Freemium Model**: Free core features; Pro unlocks AI suggestions, click tracking, A/B testing, and premium support.
+- **Mobile-Responsive**: Links work perfectly on all devices.
 
 ## Installation
 
 1. Download the plugin ZIP.
 2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Go to **Settings > Affiliate Inserter** to configure.
+3. Upload and activate **Smart Affiliate AutoInserter**.
+4. Go to **Settings > Affiliate AutoInserter** to configure.
 
 ## Setup
 
-1. **Enable** the plugin in settings.
-2. Add **Keywords** (one per line, e.g., `best laptop`, `WordPress hosting`).
-3. Add **Affiliate Links** (format: `keyword=https://aff.link`, one per line).
-4. Set **Max Links per Post** (default: 3).
-5. Save and test on a post.
+1. **Get Amazon Affiliate ID**: Sign up at [Amazon Associates](https://affiliate-program.amazon.com/) and note your tag (e.g., `yourid-20`).
+2. **Prepare Keywords**: Create JSON like `{"laptop":"https://amazon.com/dp/B08N5WRWNW","headphones":"https://amazon.com/dp/B09ABC123"}`.
+3. Enter your Affiliate ID and Keywords JSON in the plugin settings.
+4. Save changes. Links auto-appear in new and existing posts/pages.
 
 ## Usage
 
-- Write content with target keywords naturally.
-- Plugin auto-inserts links on frontend.
-- Works on posts only (extendable via hooks).
-- **Pro Tip**: Use high-converting affiliates like Amazon Associates or high-ticket offers.
+- Write content with keywords (e.g., "best laptop").
+- Plugin auto-converts to affiliate link: `<a href="product-url?tag=yourid-20">best laptop</a>`.
+- Track earnings in your Amazon Associates dashboard.
+- **Pro Tip**: Use 3-5 keywords per post to avoid over-optimization.
 
-## Pro Upgrade
+## Pro Version
 
-- Unlimited keywords & advanced networks.
-- Click analytics dashboard.
-- A/B testing for link placements.
+Upgrade for:
+- AI-powered keyword suggestions based on content.
+- Click analytics and performance reports.
+- Unlimited keywords and A/B link testing.
 - Priority support.
 
-**Upgrade for $49/year** – [Get Pro](#).
+[Get Pro Now ($29/year)](https://example.com/pro)
 
-## Changelog
+## Support
 
-**1.0.0**
-- Initial release.
+- [Documentation](https://example.com/docs)
+- [Submit Ticket](https://example.com/support)
+
+**Boost your affiliate revenue today!**
