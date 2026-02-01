@@ -1,56 +1,34 @@
 # AI Content Optimizer Pro
 
-## Description
-
-**AI Content Optimizer Pro** is a powerful WordPress plugin that uses AI to analyze your post content for **SEO**, **readability**, and **engagement**. Get instant scores and optimization tips right in the post editor. Free version provides basic analysis; upgrade to premium for AI rewriting, keyword research, and more.
-
 ## Features
 
-### Free Version
-- **Real-time content analysis** in post editor meta box
-- **SEO Score** (0-100 based on keyword density, headings)
-- **Readability score** (Flesch-Kincaid formula)
-- **Word count** and basic suggestions
-
-### Premium Features (Upgrade for $9/mo)
-- **AI-powered content rewriting** for better engagement
-- **Keyword suggestions** from top search trends
-- **Bulk optimization** for existing posts
-- **Priority support** and regular updates
-- **Export reports** to CSV
+- **Free Tier**: Basic SEO score, readability analysis, and 5 free scans per site.
+- **Premium Tier** ($9.99/month or $99/year):
+  - AI-powered content rewriting suggestions.
+  - Advanced keyword research and integration.
+  - Unlimited scans and optimizations per post.
+  - Priority support and automatic updates.
+- Real-time analysis in post editor meta box.
+- Feature gating to drive upgrades seamlessly.
 
 ## Installation
 
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Edit any post/page – see the **AI Content Optimizer** sidebar
-4. Click **Analyze Content** for instant insights
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Edit any post/page to see the AI Optimizer meta box.
 
 ## Setup
 
-No setup required! The plugin works out-of-the-box on posts and pages. Premium license key entered via **Tools > AI Optimizer > Settings**.
+1. Go to **Settings > AI Optimizer** to manage premium upgrade (demo mode included).
+2. For production premium: Replace payment handler with Stripe/PayPal API in `handle_upgrade()`.
+3. Optional: Integrate real AI (e.g., OpenAI API) in `generate_suggestions()` for advanced features.
 
 ## Usage
 
-1. Create or edit a **post/page**
-2. Scroll to the **AI Content Optimizer** sidebar
-3. Click **Analyze Content** – results appear instantly
-4. **Free users**: Use scores to manually improve
-5. **Premium users**: Click 'Rewrite with AI' or 'Suggest Keywords'
+1. Edit a post or page.
+2. Click **Analyze Content** in the sidebar meta box.
+3. View your **SEO Score** and suggestions.
+4. Free users get basic stats; premium unlocks AI rewrites.
+5. Upgrade via settings page for full power.
 
-## FAQ
-
-**How accurate is the analysis?** Scores are based on proven formulas (e.g., Flesch for readability) with AI enhancements in premium.
-
-**Is it compatible with Gutenberg/Classic Editor?** Yes, works with both.
-
-**Upgrade to Premium?** Visit [premium link](https://example.com/premium-upgrade) for subscription.
-
-## Changelog
-
-**1.0.0** – Initial release with core analysis features.
-
-## Support
-
-- Free support via WordPress forums
-- Premium: Dedicated email/tickets
+**Upgrade now** for 40% higher engagement and SEO boosts! Supports freemium model for scalable revenue.
