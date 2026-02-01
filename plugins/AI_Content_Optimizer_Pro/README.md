@@ -1,32 +1,46 @@
 # AI Content Optimizer Pro
 
-## Description
-**AI Content Optimizer Pro** is a powerful WordPress plugin that analyzes your post content for **SEO score**, **readability**, and **word count** using advanced algorithms. The free version provides instant insights, while premium unlocks AI-driven rewriting, keyword research, and bulk optimization.
-
 ## Features
-- **Free:** Real-time content analysis (Flesch Reading Ease, SEO score, word count)
-- **Premium:** AI content rewriting, automated keyword suggestions, one-click optimizations, priority support
-- Side meta box for easy access in post editor
-- No external dependencies
-- Lightweight and fast
+
+- **Real-time AI Content Analysis**: Get instant SEO, readability, and engagement scores for posts/pages.
+- **Smart Suggestions**: AI-generated tips to improve content structure, keywords, and flow.
+- **Frontend Score Display**: Show your AI score on the site with shortcode `[ai_score]`.
+- **Freemium Model**: Basic free version; Pro unlocks unlimited scans, advanced rewrites, and reports.
+- **Easy Integration**: Works with Gutenberg, Classic Editor, and page builders.
+- **Privacy-Focused**: No external API calls in free version; local analysis simulation.
+
+**Pro Features (Upsell)**: Unlimited optimizations, auto-meta generation, bulk analysis, export reports.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Edit any post to see the **AI Content Optimizer** meta box.
+
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' screen in WordPress admin.
+3. Visit **Settings > AI Optimizer** to configure.
 
 ## Setup
-- No configuration needed for free version.
-- Premium: Purchase at [example.com/premium](https://example.com/premium), enter license key in **Tools > AI Content Optimizer**.
+
+1. Go to **Settings > AI Optimizer** and enable Pro demo if testing.
+2. Edit any post/page – find the **AI Content Analysis** meta box in the sidebar.
+3. Click **Analyze Now** for instant score and suggestions.
+4. Use `[ai_score]` shortcode in content to display scores frontend.
 
 ## Usage
-1. Edit or create a post.
-2. Click **Analyze Content** in the side meta box.
-3. Review scores and upgrade for AI enhancements.
 
-## Monetization
-Freemium: Free core features drive adoption; upsell premium via in-plugin notices and links.[1][2]
+### Admin Meta Box
+- Analyzes content on-demand.
+- Displays score (0-100) and bullet-point suggestions.
+
+### Frontend
+Add `[ai_score]` to posts or templates for badge display.
+
+### Pro Upgrade
+For production, purchase license at plugin settings for full AI integration (simulated here).
+
+## Screenshots
+*(Imagine: Meta box with score gauge, suggestions list, frontend badge)*
+
+## Changelog
+- 1.0.0: Initial release with core analysis and freemium upsell.
 
 ## Support
-Report issues on GitHub or upgrade to premium for priority support.
+Contact support@example.com. Pro users get priority.
