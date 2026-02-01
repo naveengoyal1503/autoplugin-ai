@@ -1,47 +1,44 @@
 # Smart Affiliate Link Cloaker Pro
 
-A powerful WordPress plugin that cloaks affiliate links, tracks clicks, and optimizes conversions. Boost your affiliate earnings with professional tools.
+**Boost your affiliate earnings with automatic link cloaking, click tracking, and premium optimization tools.**
 
 ## Features
 
-- **Link Cloaking**: Automatically generates pretty, trackable URLs like `yoursite.com/go/amazon-deal/abc123/`
-- **Click Tracking**: Logs IP, timestamp, and user agent for each click (unlimited in Pro)
-- **Shortcode Support**: Easy embedding with `[sac_link id="0"]` or `[sac_link name="Amazon Link"]`
-- **Admin Dashboard**: Manage links via simple JSON interface
-- **Pro Features** (Premium Upgrade):
-  - A/B Testing for link variants
-  - Detailed analytics dashboard
-  - Conversion tracking
-  - Unlimited links and clicks
-  - WooCommerce integration
+### Free Version
+- **Auto-cloak affiliate links**: Automatically detects and replaces Amazon, ClickBank, ShareASale, and other affiliate links in posts/pages.
+- **Click tracking**: Monitors clicks on cloaked links with basic stats dashboard.
+- **Customizable link text**: Set your preferred display text like "Check it out" or "Learn more".
+
+### Premium Features (Subscription Required)
+- **A/B testing**: Test multiple affiliate links automatically to find the highest converting variant.
+- **Advanced analytics**: Detailed reports on clicks, conversion estimates, and link performance.
+- **Link shortening**: Integrates with popular shorteners for cleaner URLs.
+- **Priority support & updates**: Ongoing improvements and dedicated help.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Visit **Settings > Affiliate Cloaker** to add your first links
-4. Flush permalinks (Settings > Permalinks > Save)
+1. Upload the `smart-affiliate-link-cloaker-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Cloaker** to configure options.
 
 ## Setup
 
-1. In the settings page, add links in JSON format:
-   
-   [
-     {"name":"Amazon Deal","url":"https://amazon.com/aff?id=123","description":"Check this out!"}
-   ]
-   
-2. Save changes
-3. Embed in posts: `[sac_link name="Amazon Deal"]`
+1. **Enable auto-cloaking** (free): Toggle on in settings to automatically convert affiliate links in content.
+2. **Set link text**: Customize how cloaked links appear (e.g., "Grab the Deal").
+3. **Manual shortcode**: Use `[salc_link url="https://your-affiliate-link.com"]Your Text[/salc_link]` anywhere.
+4. **Upgrade to Premium**: Enter your license key from [your purchase page](https://example.com/premium) to unlock pro features.
 
 ## Usage
 
-- **Basic**: Use shortcodes in posts, pages, or widgets
-- **Analytics**: View basic click data in Pro dashboard
-- **Monetization**: Earn commissions through cloaked, SEO-friendly links
-- **Upgrade**: Purchase Pro license for advanced features ($49/year)
+- **Automatic**: Write posts with raw affiliate links; they're cloaked on publish.
+- **Manual**: Insert shortcodes for precise control.
+- **Stats**: View click counts in the settings page.
+- **Premium A/B**: Add variant URLs in pro settings; the plugin rotates them randomly.
 
-## Support
+## Monetization & Support
 
-Contact support@example.com for help. Pro users get priority support.
+- **Free**: Core cloaking & tracking.
+- **Pro**: $9/month or $79/year via subscription.
+- Support: Free users - forums; Pro - email/tickets.
 
-**Boost your affiliate revenue today!**
+**Start earning more from affiliates today!**
