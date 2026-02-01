@@ -6,11 +6,10 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoInserter
  * Plugin URI: https://example.com/smart-affiliate-autoinserter
- * Description: Automatically inserts relevant Amazon affiliate links into your posts and pages for easy monetization.
+ * Description: Automatically inserts relevant affiliate links into your content to boost earnings.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: smart-affiliate-autoinserter
  */
 
 if (!defined('ABSPATH')) {
@@ -18,160 +17,114 @@ if (!defined('ABSPATH')) {
 }
 
 class SmartAffiliateAutoInserter {
-    private $affiliate_id = '';
     private $api_key = '';
+    private $affiliates = [];
     private $max_links = 3;
 
     public function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('admin_init', array($this, 'settings_init'));
-        add_filter('the_content', array($this, 'insert_affiliate_links'), 99);
-        add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'settings_link'));
+        add_action('init', [$this, 'init']);
+        register_activation_hook(__FILE__, [$this, 'activate']);
+        register_deactivation_hook(__FILE__, [$this, 'deactivate']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+        add_action('admin_menu', [$this, 'admin_menu']);
+        add_filter('the_content', [$this, 'insert_affiliate_links'], 99);
+        add_action('admin_init', [$this, 'admin_init']);
     }
 
     public function init() {
-        $this->affiliate_id = get_option('saa_affiliate_id', '');
-        $this->api_key = get_option('saa_api_key', '');
-        $this->max_links = get_option('saa_max_links', 3);
+        $this->api_key = get_option('saai_api_key', '');
+        $this->affiliates = get_option('saai_affiliates', []);
+        $this->max_links = get_option('saai_max_links', 3);
+
+        if (empty($this->affiliates)) {
+            $this->affiliates = [
+                'amazon' => ['keyword' => 'amazon', 'url' => 'https://amazon.com/', 'id' => 'amazon'],
+                'clickbank' => ['keyword' => 'clickbank', 'url' => 'https://clickbank.com/', 'id' => 'clickbank']
+            ];
+            update_option('saai_affiliates', $this->affiliates);
+        }
     }
 
-    public function add_admin_menu() {
-        add_options_page(
-            'Smart Affiliate Settings',
-            'Affiliate AutoInserter',
-            'manage_options',
-            'smart-affiliate-autoinserter',
-            array($this, 'options_page')
-        );
+    public function activate() {
+        flush_rewrite_rules();
     }
 
-    public function settings_init() {
-        register_setting('saa_plugin_page', 'saa_affiliate_id');
-        register_setting('saa_plugin_page', 'saa_api_key');
-        register_setting('saa_plugin_page', 'saa_max_links');
-
-        add_settings_section(
-            'saa_plugin_page_section',
-            'API & Settings',
-            null,
-            'saa_plugin_page'
-        );
-
-        add_settings_field(
-            'saa_affiliate_id',
-            'Amazon Affiliate ID (tag)',
-            array($this, 'affiliate_id_callback'),
-            'saa_plugin_page',
-            'saa_plugin_page_section'
-        );
-
-        add_settings_field(
-            'saa_api_key',
-            'Amazon Product Advertising API Key',
-            array($this, 'api_key_callback'),
-            'saa_plugin_page',
-            'saa_plugin_page_section'
-        );
-
-        add_settings_field(
-            'saa_max_links',
-            'Max Links per Post',
-            array($this, 'max_links_callback'),
-            'saa_plugin_page',
-            'saa_plugin_page_section'
-        );
+    public function deactivate() {
+        flush_rewrite_rules();
     }
 
-    public function affiliate_id_callback() {
-        $value = get_option('saa_affiliate_id', '');
-        echo '<input type="text" name="saa_affiliate_id" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">Your Amazon Associates tag (e.g., yourid-20)</p>';
+    public function enqueue_scripts() {
+        if (is_admin()) return;
+        wp_enqueue_script('saai-script', plugin_dir_url(__FILE__) . 'assets/script.js', ['jquery'], '1.0.0', true);
     }
 
-    public function api_key_callback() {
-        $value = get_option('saa_api_key', '');
-        echo '<input type="text" name="saa_api_key" value="' . esc_attr($value) . '" class="regular-text" />';
-        echo '<p class="description">Optional: Amazon PA-API key for better product matching. Free basic matching works without it.</p>';
+    public function admin_menu() {
+        add_options_page('Smart Affiliate Settings', 'Affiliate Inserter', 'manage_options', 'saai-settings', [$this, 'settings_page']);
     }
 
-    public function max_links_callback() {
-        $value = get_option('saa_max_links', 3);
-        echo '<input type="number" name="saa_max_links" value="' . esc_attr($value) . '" min="1" max="10" />';
+    public function admin_init() {
+        register_setting('saai_settings', 'saai_api_key');
+        register_setting('saai_settings', 'saai_affiliates');
+        register_setting('saai_settings', 'saai_max_links');
     }
 
-    public function options_page() {
+    public function settings_page() {
         ?>
         <div class="wrap">
             <h1>Smart Affiliate AutoInserter Settings</h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields('saa_plugin_page');
-                do_settings_sections('saa_plugin_page');
-                submit_button();
-                ?>
+            <form method="post" action="options.php">
+                <?php settings_fields('saai_settings'); ?>
+                <table class="form-table">
+                    <tr>
+                        <th>API Key (Premium)</th>
+                        <td><input type="text" name="saai_api_key" value="<?php echo esc_attr(get_option('saai_api_key')); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Affiliate Links (JSON)</th>
+                        <td><textarea name="saai_affiliates" rows="10" cols="50"><?php echo esc_textarea(json_encode(get_option('saai_affiliates', []))); ?></textarea><br><small>Enter JSON array of affiliates: {"keyword":"url"}</small></td>
+                    </tr>
+                    <tr>
+                        <th>Max Links per Post (Free: max 3)</th>
+                        <td><input type="number" name="saai_max_links" value="<?php echo esc_attr(get_option('saai_max_links', 3)); ?>" max="10" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
             </form>
-            <p><strong>Pro Upgrade:</strong> Unlock unlimited links, analytics, A/B testing, and more networks for $49/year. <a href="#" onclick="alert('Pro features coming soon!')">Upgrade Now</a></p>
+            <p><strong>Upgrade to Premium:</strong> Unlimited links, AI keyword matching, analytics. <a href="https://example.com/premium">Get Premium</a></p>
         </div>
         <?php
     }
 
-    public function settings_link($links) {
-        $settings_link = '<a href="options-general.php?page=smart-affiliate-autoinserter">Settings</a>';
-        array_unshift($links, $settings_link);
-        return $links;
-    }
-
     public function insert_affiliate_links($content) {
-        if (is_admin() || empty($this->affiliate_id)) {
-            return $content;
-        }
+        if (is_admin() || empty($this->affiliates)) return $content;
 
-        // Skip if no content or short content
-        if (strlen(strip_tags($content)) < 500) {
-            return $content;
-        }
-
-        // Extract keywords (simple: nouns from first sentences)
-        preg_match_all('/\b[a-zA-Z]{4,}\b/', substr(strip_tags($content), 0, 1000), $matches);
-        $keywords = array_slice(array_unique($matches), 0, 5);
-
+        $words = explode(' ', $content);
         $inserted = 0;
-        foreach ($keywords as $keyword) {
-            if ($inserted >= $this->max_links) break;
+        $new_content = [];
 
-            $product_link = $this->get_amazon_link($keyword);
-            if ($product_link) {
-                // Find insertion point: after a paragraph
-                $content = preg_replace(
-                    '/(<p[^>]*>.*?)(</p>)/is',
-                    '$1 <p><a href="$product_link" target="_blank" rel="nofollow sponsored">Check $keyword on Amazon</a></p>$2',
-                    $content,
-                    1,
-                    $count
-                );
-                if ($count > 0) {
+        foreach ($words as $word) {
+            $new_content[] = $word;
+            if ($inserted >= $this->max_links) continue;
+
+            foreach ($this->affiliates as $aff) {
+                if (stripos($word, $aff['keyword']) !== false) {
+                    $link = '<a href="' . esc_url($aff['url']) . '" target="_blank" rel="nofollow sponsored">' . $word . '</a> ';
+                    $new_content[count($new_content) - 1] = $link;
                     $inserted++;
+                    break;
                 }
             }
         }
 
-        return $content;
-    }
-
-    private function get_amazon_link($keyword) {
-        // Mock Amazon search (in Pro: real PA-API call)
-        // For demo, generate mock affiliate link
-        $search_term = urlencode($keyword);
-        return "https://www.amazon.com/s?k={$search_term}&tag={$this->affiliate_id}&ref=sr_st_ext_pro_s_ii";
+        return implode(' ', $new_content);
     }
 }
 
 new SmartAffiliateAutoInserter();
 
-// Pro nag
+// Premium teaser
 add_action('admin_notices', function() {
-    if (!get_option('saa_pro_activated') && current_user_can('manage_options')) {
-        echo '<div class="notice notice-info"><p>Upgrade to <strong>Smart Affiliate AutoInserter Pro</strong> for unlimited links and analytics! <a href="#" onclick="alert(\'Pro: $49/year\')">Learn More</a></p></div>';
+    if (!get_option('saai_api_key')) {
+        echo '<div class="notice notice-info"><p>Unlock unlimited features with <a href="options-general.php?page=saai-settings">Smart Affiliate Premium</a>!</p></div>';
     }
 });
