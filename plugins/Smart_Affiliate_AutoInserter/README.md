@@ -1,55 +1,54 @@
 # Smart Affiliate AutoInserter
 
-**Automatically monetize your WordPress content by inserting relevant Amazon affiliate links based on keywords.**
+**Automatically boosts your WordPress site's affiliate revenue by inserting relevant Amazon affiliate links into posts and pages using smart keyword matching.**
 
 ## Features
 
-- **Smart Keyword Matching**: Automatically detects keywords in posts/pages and inserts matching affiliate links.
+- **Automatic Link Insertion**: Scans content for predefined keywords and replaces them with your Amazon affiliate links.
 - **Customizable Limits**: Set max links per post to avoid over-optimization.
-- **Easy Setup**: Configure your Amazon Affiliate tag and keyword-ASIN pairs in seconds.
-- **Mobile-Responsive**: Links render perfectly on all devices.
-- **Freemium Model**: Free version for basics; **Pro** adds API integration, click tracking, A/B testing, and analytics dashboard.
-- **SEO-Friendly**: Uses `nofollow` and `noopener` for compliance.
+- **Easy Keyword Management**: Add, edit, or remove keyword-link pairs via intuitive admin interface.
+- **SEO-Friendly**: Links include `nofollow` and `sponsored` attributes for compliance.
+- **Mobile-Responsive**: Works seamlessly on all devices.
+- **Performance Tracking Ready**: Pro version includes click analytics.
 
 **Pro Features (Upgrade for $49/year)**:
-- Real Amazon Product API lookups for dynamic titles/images.
-- Performance analytics and revenue tracking.
-- Advanced targeting (page-specific, post-type filters).
-- Unlimited keyword pairs and A/B link testing.
+- Auto-keyword discovery from post content.
+- A/B testing for link placements.
+- Detailed analytics dashboard.
+- Unlimited sites and advanced targeting.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Affiliate Inserter** to configure.
+1. Download the plugin ZIP file.
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate the plugin.
+4. Navigate to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
 
-1. **Get Amazon Affiliate Tag**: Sign up at [Amazon Associates](https://affiliate-program.amazon.com/) and grab your tag (e.g., `yourid-20`).
-2. **Add Keywords & ASINs**: In settings, enter pairs like `earbuds -> B08N5WRWNW`.
-3. **Set Max Links**: Default 3 per post.
-4. **Save & Test**: Publish a post with keywords to see links auto-insert.
+1. Go to **Settings > Affiliate Inserter**.
+2. Enable auto-insertion.
+3. Add keywords (e.g., "laptop") and your Amazon affiliate links (e.g., `https://amazon.com/.../tag=yourid-20`).
+4. Set max links per post (default: 3).
+5. Save changes. Links will auto-insert on frontend content.
 
-**Example**:
-- Keyword: `smartwatch`
-- ASIN: `B07RF1XD36`
-- Generates: `<a href="https://amazon.com/dp/B07RF1XD36?tag=yourid-20">Smartwatch</a>`
+**Tip**: Use pricing psychology like $9.99 links for higher conversions[5].
 
 ## Usage
 
-- Write content naturally with target keywords.
-- Links insert automatically in `the_content`.
-- **Pro Tip**: Use tiered pricing psychology like $9.99 links for higher conversions.
-- Monitor earnings in Amazon Associates dashboard.
+- Links automatically appear in posts, pages, and widgets matching your keywords.
+- Test on a staging site first.
+- Monitor earnings via Amazon Associates dashboard.
+- Upgrade to Pro for passive income optimization with analytics.
 
-## FAQ
+## Support
 
-**Does it slow my site?** No, lightweight with no external calls in free version.
-**Works with Gutenberg/Classic?** Yes, filters `the_content` universally.
-**Support?** Free users: WordPress.org forums. Pro: Priority email support.
+- [Submit a ticket](https://example.com/support)
+- WordPress.org forums for free version.
 
 ## Changelog
 
-**1.0.0** - Initial release.
+**1.0.0**
+- Initial release with core auto-insertion features.
 
-**Upgrade to Pro today for 40% higher conversions with dynamic content!**
+**Pro Demo**: See [live demo](https://example.com/demo).
