@@ -6,21 +6,22 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Popup Pro
  * Plugin URI: https://example.com/smart-affiliate-popup
- * Description: AI-powered popup plugin that displays personalized affiliate links and products to boost conversions and automate WordPress monetization.
+ * Description: AI-powered popup plugin that displays personalized affiliate product recommendations to boost conversions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: smart-affiliate-popup
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
-class SmartAffiliatePopupPro {
+class SmartAffiliatePopup {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null == self::$instance) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -29,123 +30,163 @@ class SmartAffiliatePopupPro {
     private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_sap_show_popup', array($this, 'handle_ajax_popup'));
-        add_action('wp_ajax_nopriv_sap_show_popup', array($this, 'handle_ajax_popup'));
+        add_action('wp_footer', array($this, 'render_popup'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_init', array($this, 'admin_init'));
         register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        if (get_option('sap_pro_version') !== '1.0') {
-            add_action('admin_menu', array($this, 'admin_menu'));
-            add_action('admin_init', array($this, 'admin_init'));
-        }
+        load_plugin_textdomain('smart-affiliate-popup', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function enqueue_scripts() {
-        if (!is_admin()) {
-            wp_enqueue_script('jquery');
-            wp_add_inline_script('jquery', $this->get_popup_js());
-            wp_localize_script('jquery', 'sap_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
-        }
+        wp_enqueue_script('jquery');
+        wp_enqueue_style('smart-affiliate-popup-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+        wp_enqueue_script('smart-affiliate-popup-script', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('smart-affiliate-popup-script', 'sap_settings', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('sap_nonce'),
+            'is_pro' => false
+        ));
     }
 
-    private function get_popup_js() {
-        return "
-        jQuery(document).ready(function($) {
-            setTimeout(function() {
-                $.post(sap_ajax.ajax_url, {action: 'sap_show_popup'}, function(data) {
-                    if (data.success && data.html) {
-                        $('body').append(data.html);
-                        $('.sap-popup-overlay').fadeIn();
-                    }
-                });
-            }, 10000); // Show after 10 seconds
-
-            $(document).on('click', '.sap-popup-close, .sap-popup-overlay', function() {
-                $('.sap-popup-overlay').fadeOut();
-            });
-        });
-        ";
-    }
-
-    public function handle_ajax_popup() {
-        $affiliates = get_option('sap_affiliates', array(
-            array('name' => 'Sample Product', 'link' => 'https://example.com/aff-link-1', 'image' => ''),
-            array('name' => 'Another Deal', 'link' => 'https://example.com/aff-link-2', 'image' => '')
+    public function render_popup() {
+        $settings = get_option('sap_settings', array(
+            'enabled' => true,
+            'delay' => 5000,
+            'affiliate_links' => json_encode(array(
+                array('text' => 'Check out this amazing product!', 'url' => '#', 'image' => ''),
+                array('text' => 'Recommended for you!', 'url' => '#', 'image' => '')            )),
+            'trigger' => 'time'
         ));
 
-        if (empty($affiliates)) {
-            wp_send_json_error('No affiliates configured');
-        }
-
-        // Simple 'AI' personalization: random for demo
-        $rand = array_rand($affiliates);
-        $aff = $affiliates[$rand];
-
-        $html = '<div class="sap-popup-overlay">
-            <div class="sap-popup">
-                <span class="sap-popup-close">&times;</span>
-                <h3>Recommended for You: ' . esc_html($aff['name']) . '</h3>
-                ' . ($aff['image'] ? '<img src="' . esc_url($aff['image']) . '" alt="Product">' : '') . '
-                <p>Check out this great deal!</p>
-                <a href="' . esc_url($aff['link']) . '" target="_blank" class="sap-button">Get It Now (Affiliate Link)</a>
-            </div>
-        </div>';
-
-        wp_send_json_success(array('html' => $html));
+        if (!$settings['enabled']) return;
+?>
+<div id="sap-popup" class="sap-popup" style="display:none;">
+    <div class="sap-overlay"></div>
+    <div class="sap-content">
+        <div class="sap-close">&times;</div>
+        <div class="sap-message">Loading recommendation...</div>
+        <div class="sap-affiliate"></div>
+        <button class="sap-btn">Get It Now</button>
+    </div>
+</div>
+<?php
     }
 
     public function admin_menu() {
-        add_options_page('Smart Affiliate Popup', 'Affiliate Popup', 'manage_options', 'sap-pro', array($this, 'admin_page'));
+        add_options_page('Smart Affiliate Popup', 'Affiliate Popup', 'manage_options', 'smart-affiliate-popup', array($this, 'admin_page'));
     }
 
     public function admin_init() {
-        register_setting('sap_options', 'sap_affiliates');
-        register_setting('sap_options', 'sap_pro_version');
+        register_setting('sap_settings_group', 'sap_settings');
     }
 
     public function admin_page() {
-        if (isset($_POST['submit'])) {
-            update_option('sap_affiliates', sanitize_text_field_deep($_POST['sap_affiliates']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
-        }
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate Popup Pro Settings</h1>
-            <form method="post" action="">
-                <h2>Add Affiliate Links</h2>
+            <h1>Smart Affiliate Popup Settings</h1>
+            <form method="post" action="options.php">
+                <?php settings_fields('sap_settings_group'); do_settings_sections('sap_settings_group'); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Affiliates (JSON array: [{"name":"Product","link":"url","image":"url"}])</th>
-                        <td><textarea name="sap_affiliates" rows="10" cols="50"><?php echo esc_textarea(json_encode(get_option('sap_affiliates', array()))); ?></textarea></td>
+                        <th>Enable Popup</th>
+                        <td><input type="checkbox" name="sap_settings[enabled]" value="1" <?php checked(get_option('sap_settings')['enabled'] ?? true); ?> /></td>
+                    </tr>
+                    <tr>
+                        <th>Display Delay (ms)</th>
+                        <td><input type="number" name="sap_settings[delay]" value="<?php echo esc_attr(get_option('sap_settings')['delay'] ?? 5000); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Affiliate Links (JSON)</th>
+                        <td><textarea name="sap_settings[affiliate_links]" rows="10" cols="50"><?php echo esc_textarea(get_option('sap_settings')['affiliate_links'] ?? ''); ?></textarea><br><small>Enter JSON array of objects: {"text":"msg","url":"link","image":"url"}</small></td>
+                    </tr>
+                    <tr>
+                        <th>Trigger</th>
+                        <td>
+                            <select name="sap_settings[trigger]">
+                                <option value="time" <?php selected(get_option('sap_settings')['trigger'] ?? 'time', 'time'); ?>>Time Delay</option>
+                                <option value="exit" <?php selected(get_option('sap_settings')['trigger'] ?? 'time', 'exit'); ?>>Exit Intent</option>
+                            </select>
+                        </td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
-            <h2>Upgrade to Pro</h2>
-            <p>Unlock A/B testing, geo-targeting, and more for $49/year!</p>
+            <p><strong>Pro Version:</strong> Unlock A/B testing, geo-targeting, unlimited campaigns for $49/year!</p>
         </div>
-        <style>
-        .sap-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: none; }
-        .sap-popup { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; max-width: 400px; }
-        .sap-popup-close { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; }
-        .sap-button { background: #0073aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
-        </style>
         <?php
     }
 
     public function activate() {
-        update_option('sap_pro_version', '1.0');
-        if (!get_option('sap_affiliates')) {
-            update_option('sap_affiliates', array(
-                array('name' => 'Sample Product', 'link' => '#', 'image' => ''),
-                array('name' => 'Another Deal', 'link' => '#', 'image' => '')
-            ));
-        }
+        add_option('sap_settings', array('enabled' => true, 'delay' => 5000));
     }
-
-    public function deactivate() {}
 }
 
-SmartAffiliatePopupPro::get_instance();
+SmartAffiliatePopup::get_instance();
+
+// AJAX handler for dynamic content
+add_action('wp_ajax_get_affiliate', 'sap_get_affiliate');
+add_action('wp_ajax_nopriv_get_affiliate', 'sap_get_affiliate');
+
+function sap_get_affiliate() {
+    check_ajax_referer('sap_nonce', 'nonce');
+    $links = json_decode(get_option('sap_settings')['affiliate_links'] ?? '[]', true);
+    $random = $links[array_rand($links)] ?? array('text' => 'Great deal!', 'url' => 'https://example.com');
+    wp_send_json_success($random);
+}
+
+// Inline CSS
+add_action('wp_head', 'sap_inline_css');
+function sap_inline_css() {
+?>
+<style>
+.sap-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; }
+.sap-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); }
+.sap-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+.sap-close { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #999; }
+.sap-btn { background: #0073aa; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+.sap-btn:hover { background: #005a87; }
+</style>
+<?php
+}
+
+// Inline JS
+add_action('wp_footer', 'sap_inline_js', 100);
+function sap_inline_js() {
+?>
+<script>
+jQuery(document).ready(function($) {
+    var popup = $('#sap-popup');
+    var settings = sap_settings;
+    var shown = false;
+
+    function showPopup() {
+        if (shown) return;
+        shown = true;
+        $.post(settings.ajax_url, {action: 'get_affiliate', nonce: settings.nonce}, function(res) {
+            if (res.success) {
+                $('.sap-affiliate').html('<img src="' + (res.data.image || '') + '" style="max-width:100%;"><p>' + res.data.text + '</p><a href="' + res.data.url + '" target="_blank">Shop Now</a>');
+                $('.sap-message').hide();
+            }
+        });
+        popup.fadeIn();
+    }
+
+    setTimeout(showPopup, <?php echo get_option('sap_settings')['delay'] ?? 5000; ?>);
+
+    $(document).on('click', '.sap-close, .sap-overlay, .sap-btn', function() {
+        popup.fadeOut();
+    });
+
+    // Exit intent
+    if ('exit' === '<?php echo get_option('sap_settings')['trigger'] ?? 'time'; ?>') {
+        $(document).on('mouseleave', function(e) {
+            if (e.clientY < 0) showPopup();
+        });
+    }
+});
+</script>
+<?php
+}
