@@ -6,153 +6,203 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer Pro
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: Automatically optimizes WordPress content for SEO using AI analysis. Free version with basic features; premium for advanced AI rewriting.
+ * Description: AI-powered content analysis and optimization for better SEO and engagement.
  * Version: 1.0.0
  * Author: Your Name
- * Author URI: https://example.com
  * License: GPL v2 or later
- * Text Domain: ai-content-optimizer
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
-// Define plugin constants
-define('AICOP_VERSION', '1.0.0');
-define('AICOP_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('AICOP_PLUGIN_PATH', plugin_dir_path(__FILE__));
+class AIContentOptimizer {
+    private static $instance = null;
 
-// Premium check (simulate license - in real, integrate with Freemius or similar)
-function aicop_is_premium() {
-    return false; // Change to true for testing premium
-}
-
-// Admin menu
-add_action('admin_menu', 'aicop_admin_menu');
-function aicop_admin_menu() {
-    add_menu_page(
-        'AI Content Optimizer',
-        'AI Optimizer',
-        'manage_options',
-        'ai-content-optimizer',
-        'aicop_admin_page',
-        'dashicons-editor-alignleft',
-        30
-    );
-}
-
-// Admin page
-function aicop_admin_page() {
-    if (!current_user_can('manage_options')) {
-        return;
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
-    echo '<div class="wrap">';
-    echo '<h1>AI Content Optimizer Pro</h1>';
-    echo '<p>Optimize your posts for SEO instantly!</p>';
-    
-    if (isset($_POST['aicop_optimize'])) {
-        $post_id = intval($_POST['post_id']);
-        aicop_optimize_post($post_id);
-    }
-    
-    $posts = get_posts(array('numberposts' => 5, 'post_status' => 'publish'));
-    echo '<form method="post">';
-    echo '<table class="form-table">';
-    echo '<tr><th>Posts</th><td>';
-    foreach ($posts as $post) {
-        echo '<label><input type="radio" name="post_id" value="' . $post->ID . '"> ' . esc_html($post->post_title) . '</label><br>';
-    }
-    echo '</td></tr>';
-    echo '</table>';
-    echo '<p class="submit"><input type="submit" name="aicop_optimize" class="button-primary" value="Optimize Selected Post"></p>';
-    echo '</form>';
-    
-    if (!aicop_is_premium()) {
-        echo '<div class="notice notice-info"><p>Upgrade to <strong>Premium</strong> for AI rewriting and bulk optimization. <a href="https://example.com/premium" target="_blank">Get Premium</a></p></div>';
-    }
-    echo '</div>';
-}
 
-// Optimize post
-function aicop_optimize_post($post_id) {
-    $post = get_post($post_id);
-    $content = $post->post_content;
-    
-    // Basic free optimization: Add keywords, improve readability
-    $title = get_the_title($post_id);
-    $keywords = aicop_extract_keywords($title); // Simulated
-    $optimized = aicop_basic_optimize($content, $keywords);
-    
-    if (aicop_is_premium()) {
-        $optimized = aicop_ai_rewrite($optimized); // Simulated AI
+    private function __construct() {
+        add_action('init', array($this, 'init'));
+        add_action('add_meta_boxes', array($this, 'add_meta_box'));
+        add_action('save_post', array($this, 'save_meta'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_aco_optimize', array($this, 'ajax_optimize'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
-    
-    wp_update_post(array(
-        'ID' => $post_id,
-        'post_content' => $optimized
-    ));
-    
-    echo '<div class="notice notice-success"><p>Post optimized! Keywords: ' . esc_html(implode(', ', $keywords)) . '</p></div>';
-}
 
-// Simulated keyword extraction
-function aicop_extract_keywords($text) {
-    return array('wordpress', 'seo', 'plugin');
-}
-
-// Basic optimization (free)
-function aicop_basic_optimize($content, $keywords) {
-    foreach ($keywords as $kw) {
-        $content = preg_replace('/(<h[1-6]>\s*)([^<]+)(\s*<\/h[1-6]>)/i', '$1$2 <strong>' . esc_html($kw) . '</strong> $3', $content, 1);
+    public function init() {
+        if (is_admin()) {
+            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'plugin_links'));
+        }
     }
-    $content .= '\n\n<p><em>Optimized with AI Content Optimizer Pro</em></p>';
-    return $content;
-}
 
-// Simulated AI rewrite (premium)
-function aicop_ai_rewrite($content) {
-    return $content . '\n\n<p><strong>AI Rewritten for better engagement!</strong></p>';
-}
-
-// Auto-optimize new posts (free basic)
-add_action('save_post', 'aicop_auto_optimize', 10, 3);
-function aicop_auto_optimize($post_id, $post, $update) {
-    if (wp_is_post_revision($post_id) || $post->post_status !== 'publish') {
-        return;
+    public function activate() {
+        add_option('aco_license_key', '');
+        add_option('aco_pro_activated', false);
     }
-    if (!aicop_is_premium() || rand(0, 1)) { // Free basic only sometimes
-        aicop_optimize_post($post_id);
-    }
-}
 
-// Enqueue scripts
-add_action('admin_enqueue_scripts', 'aicop_enqueue_scripts');
-function aicop_enqueue_scripts($hook) {
-    if ($hook !== 'toplevel_page_ai-content-optimizer') {
-        return;
+    public function enqueue_scripts($hook) {
+        if ('post.php' !== $hook && 'post-new.php' !== $hook) {
+            return;
+        }
+        wp_enqueue_script('aco-admin', plugin_dir_url(__FILE__) . 'aco-admin.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('aco-admin', 'aco_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('aco_nonce')));
+        wp_enqueue_style('aco-admin', plugin_dir_url(__FILE__) . 'aco-admin.css', array(), '1.0.0');
     }
-    wp_enqueue_style('aicop-style', AICOP_PLUGIN_URL . 'style.css', array(), AICOP_VERSION);
-}
 
-// Create assets dir placeholder
-register_activation_hook(__FILE__, 'aicop_create_assets');
-function aicop_create_assets() {
-    $css_dir = AICOP_PLUGIN_PATH . 'assets/';
-    if (!file_exists($css_dir)) {
-        wp_mkdir_p($css_dir);
+    public function add_meta_box() {
+        add_meta_box('aco-content-optimizer', 'AI Content Optimizer', array($this, 'meta_box_html'), 'post', 'side', 'high');
+        add_meta_box('aco-content-optimizer', 'AI Content Optimizer', array($this, 'meta_box_html'), 'page', 'side', 'high');
     }
-    file_put_contents($css_dir . 'style.css', '/* AI Content Optimizer Styles */ .wrap { max-width: 800px; }');
-}
 
-// Freemium upsell notice
-add_action('admin_notices', 'aicop_premium_notice');
-function aicop_premium_notice() {
-    if (!aicop_is_premium() && current_user_can('manage_options')) {
-        echo '<div class="notice notice-upgrade notice-info is-dismissible">';
-        echo '<p>Unlock <strong>AI rewriting</strong> and <strong>bulk optimization</strong> with AI Content Optimizer Pro Premium! <a href="https://example.com/premium" target="_blank">Upgrade Now</a></p>';
+    public function meta_box_html($post) {
+        wp_nonce_field('aco_meta_nonce', 'aco_meta_nonce');
+        $score = get_post_meta($post->ID, '_aco_score', true);
+        $suggestions = get_post_meta($post->ID, '_aco_suggestions', true);
+        echo '<div id="aco-panel">';
+        echo '<p><strong>Content Score:</strong> ' . esc_html($score ?: 'Not analyzed') . '/100</p>';
+        echo '<button id="aco-analyze" class="button button-primary">Analyze Content</button>';
+        echo '<button id="aco-optimize" class="button" style="display:none;">Optimize</button>';
+        echo '<div id="aco-suggestions"></div>';
+        echo '<div id="aco-pro-upsell"><p><em>Upgrade to Pro for unlimited optimizations and advanced AI suggestions!</em></p></div>';
         echo '</div>';
     }
+
+    public function save_meta($post_id) {
+        if (!isset($_POST['aco_meta_nonce']) || !wp_verify_nonce($_POST['aco_meta_nonce'], 'aco_meta_nonce')) {
+            return;
+        }
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+    }
+
+    public function ajax_optimize() {
+        check_ajax_referer('aco_nonce', 'nonce');
+        if (!current_user_can('edit_posts')) {
+            wp_die('Unauthorized');
+        }
+
+        $post_id = intval($_POST['post_id']);
+        $content = wp_strip_all_tags(get_post_field('post_content', $post_id));
+
+        // Simulate AI analysis with heuristics
+        $word_count = str_word_count($content);
+        $sentences = preg_split('/[.!?]+/', $content, -1, PREG_SPLIT_NO_EMPTY);
+        $sentence_count = count($sentences);
+        $readability = $this->flesch_readability($content);
+        $keywords = $this->extract_keywords($content);
+        $headings = preg_match_all('/<h[1-6][^>]*>/i', $content);
+
+        $score = min(100, (int)(($word_count / 10 > 30 ? 20 : 0) + ($readability > 60 ? 25 : 10) + ($headings > 2 ? 20 : 0) + (count($keywords) > 5 ? 25 : 0) + 10));
+
+        $suggestions = array(
+            'word_count' => $word_count < 500 ? 'Aim for 500+ words for better SEO.' : 'Good length.',
+            'readability' => $readability < 60 ? 'Improve readability (target 60-70).' : 'Excellent readability.',
+            'headings' => $headings < 3 ? 'Add more H2/H3 headings.' : 'Good structure.',
+            'keywords' => 'Primary keywords: ' . implode(', ', array_slice($keywords, 0, 3)),
+        );
+
+        update_post_meta($post_id, '_aco_score', $score);
+        update_post_meta($post_id, '_aco_suggestions', $suggestions);
+
+        if (get_option('aco_pro_activated')) {
+            // Pro: Auto-optimize
+            $optimized = $this->generate_optimized_content($content, $suggestions);
+            wp_update_post(array('ID' => $post_id, 'post_content' => $optimized));
+        }
+
+        wp_send_json_success(array('score' => $score, 'suggestions' => $suggestions));
+    }
+
+    private function flesch_readability($text) {
+        $sentence_count = preg_split('/[.!?]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+        $sentence_count = count($sentence_count);
+        $word_count = str_word_count($text);
+        $syllables = $this->count_syllables($text);
+        if ($sentence_count === 0 || $word_count === 0) return 0;
+        $asl = $word_count / $sentence_count;
+        $asw = $syllables / $word_count;
+        return 206.835 - 1.015 * $asl - 84.6 * $asw;
+    }
+
+    private function count_syllables($text) {
+        $text = strtolower(preg_replace('/[^a-z\s]/', '', $text));
+        $words = explode(' ', $text);
+        $syllables = 0;
+        foreach ($words as $word) {
+            $syllables += preg_match_all('/[aeiouy]{2}/', $word) + preg_match_all('/[aeiouy]/', $word) - preg_match_all('/ed|ing|es$/i', $word);
+        }
+        return max(1, $syllables);
+    }
+
+    private function extract_keywords($content) {
+        $words = explode(' ', strtolower(strip_tags($content)));
+        $freq = array_count_values(array_filter($words, function($w) { return strlen($w) > 4; }));
+        arsort($freq);
+        return array_keys(array_slice($freq, 0, 10, true));
+    }
+
+    private function generate_optimized_content($content, $suggestions) {
+        // Pro feature simulation: Add headings, improve structure
+        $content .= '\n\n<h2>Conclusion</h2><p>Optimized content summary here.</p>';
+        return $content;
+    }
+
+    public function plugin_links($links) {
+        $settings_link = '<a href="options-general.php?page=aco-settings">Settings</a>';
+        $pro_link = '<a style="color:#1d9bf0; font-weight:bold;" href="https://example.com/pro">Go Pro</a>';
+        array_unshift($links, $settings_link, $pro_link);
+        return $links;
+    }
 }
 
-?>
+AIContentOptimizer::get_instance();
+
+// Admin JS (embedded for single file)
+function aco_embed_js() {
+    if (isset($_GET['page']) && $_GET['page'] === 'aco-settings') return;
+    ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    jQuery('#aco-analyze').click(function(e) {
+        e.preventDefault();
+        var post_id = jQuery('#post_ID').val();
+        jQuery.post(aco_ajax.ajax_url, {
+            action: 'aco_optimize',
+            nonce: aco_ajax.nonce,
+            post_id: post_id
+        }, function(response) {
+            if (response.success) {
+                jQuery('#aco-panel strong').text(response.data.score);
+                var s = '';
+                jQuery.each(response.data.suggestions, function(k,v) {
+                    s += '<p><strong>' + k + ':</strong> ' + v + '</p>';
+                });
+                jQuery('#aco-suggestions').html(s);
+                jQuery('#aco-optimize').show();
+            }
+        });
+    });
+});
+</script>
+    <?php
+}
+add_action('admin_footer-post.php', 'aco_embed_js');
+add_action('admin_footer-post-new.php', 'aco_embed_js');
+
+// Minimal CSS
+
+function aco_embed_css() {
+    echo '<style>#aco-panel { padding: 10px; } #aco-panel button { margin: 5px 0; }</style>';
+}
+add_action('admin_head-post.php', 'aco_embed_css');
+add_action('admin_head-post-new.php', 'aco_embed_css');
