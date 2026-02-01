@@ -1,46 +1,39 @@
 # Smart Donation Pro
 
-A smart WordPress plugin to increase donations by showing targeted, customizable prompts to engaged visitors. Inspired by proven monetization strategies like donations and PayPal integration.[1][3]
+A lightweight, self-contained WordPress plugin to easily add donation buttons, progress bars, and PayPal-powered payment modals to your site. Perfect for monetizing blogs, non-profits, or content creators.[1][3][5]
 
 ## Features
-- **Smart Triggers**: Show prompts after 50% scroll or time delay (customizable).
-- **Customizable Messages & Amounts**: Predefined donation buttons (e.g., $5, $10).
-- **PayPal Integration**: One-click donations via PayPal (no account required for users).
-- **Shortcode Support**: Embed anywhere with `[smart_donation]`.
-- **Admin Dashboard**: Easy settings for message, amounts, email, triggers.
-- **Mobile-Responsive**: Works on all devices.
-- **Freemium Ready**: Premium unlocks A/B testing, analytics, geo-targeting.
+- **Customizable shortcodes**: Use `[smart_donation amount="10" title="Buy Me a Coffee" goal="500" current="150"]` to embed donation widgets with progress bars.
+- **Modal payment form**: One-time donations via PayPal with custom amounts.
+- **Progress tracking**: Visual goal bars to encourage contributions.
+- **Admin settings**: Configure PayPal email and client ID via Settings > Donation Settings.
+- **Mobile-responsive**: Clean, modern design works on all devices.
+- **Freemium-ready**: Extendable for recurring payments in premium version.
 
 ## Installation
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
-2. Activate the plugin.
-3. Go to **Settings > Donation Pro** to configure PayPal email and options.
-4. Add `[smart_donation]` shortcode to posts/pages or it auto-triggers site-wide.
+1. Download the plugin PHP file.
+2. Upload to `/wp-content/plugins/smart-donation-pro/smart-donation-pro.php` or create as a single-file plugin.
+3. Activate via WordPress Admin > Plugins.
+4. Configure PayPal settings in **Settings > Donation Settings** (use sandbox for testing).[3]
 
 ## Setup
-1. **PayPal Account**: Get a business email from PayPal.com.
-2. **Settings Page**:
-   - Enter **Message** (e.g., "Buy us a coffee!")
-   - Set **Amounts** (comma-separated: 5,10,25)
-   - Input **PayPal Email**
-   - Choose **Trigger**: Scroll or Time
-   - Set **Delay** in seconds
-3. Save and test on frontend.
+1. Go to **Settings > Donation Settings**.
+2. Enter your PayPal email and Client ID (get from [PayPal Developer Dashboard](https://developer.paypal.com/)).
+3. Save settings.
+4. Use shortcode in posts/pages: `[smart_donation]`. Customize with attributes like `amount`, `goal`, `current`.
 
 ## Usage
-- **Auto-Display**: Triggers on scroll/time site-wide.
-- **Manual Embed**: Use shortcode `[smart_donation id="custom"]` for specific modals.
-- **Customization**: Edit CSS in browser dev tools or child theme.
-- **Tracking**: View donations via PayPal dashboard.
+- **Basic donation button**: `[smart_donation amount="5"]`.
+- **With progress bar**: `[smart_donation amount="25" title="Fund Our Project" goal="1000" current="420"]`.
+- **Embed anywhere**: Posts, pages, sidebars via widgets or PHP: `<?php echo do_shortcode('[smart_donation]'); ?>`.
+- **Test donations**: Use PayPal Sandbox mode first.
+- **Track revenue**: Monitor via PayPal dashboard (analytics in premium).
 
-## Premium Features (Coming Soon)
-- A/B testing for messages[2]
-- Conversion analytics
-- Geo/IP targeting
-- Unlimited campaigns
+## Premium Roadmap
+- Recurring subscriptions.
+- WooCommerce integration.
+- Donation analytics dashboard.
+- Custom themes and email receipts.
 
 ## Support
-Report issues on WordPress.org forums. Premium support via email.
-
-## Changelog
-**1.0.0**: Initial release with core donation features.
+Report issues on WordPress.org forums. For premium support, donate via the plugin!
