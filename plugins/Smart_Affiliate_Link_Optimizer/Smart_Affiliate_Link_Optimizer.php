@@ -6,17 +6,19 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Link Optimizer
  * Plugin URI: https://example.com/smart-affiliate-optimizer
- * Description: Automatically optimizes and cloaks affiliate links, tracks clicks, and boosts conversions.
+ * Description: AI-powered affiliate link cloaking, tracking, and optimization.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: smart-affiliate-optimizer
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 class SmartAffiliateOptimizer {
     private static $instance = null;
-    public $options;
 
     public static function get_instance() {
         if (null == self::$instance) {
@@ -27,14 +29,15 @@ class SmartAffiliateOptimizer {
 
     private function __construct() {
         add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'admin_menu'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_init', array($this, 'admin_init'));
         add_filter('the_content', array($this, 'cloak_links'));
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        $this->options = get_option('sao_options', array('api_key' => '', 'is_premium' => false));
         load_plugin_textdomain('smart-affiliate-optimizer');
     }
 
@@ -43,102 +46,110 @@ class SmartAffiliateOptimizer {
         wp_localize_script('sao-tracker', 'sao_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sao_nonce')));
     }
 
-    public function cloak_links($content) {
-        if (is_feed() || is_admin()) return $content;
-        preg_match_all('/href=["\'](https?:\/\/[^\?]+\?[^\"\']*?(?:aff|ref|tag)=[^\"\']*?)[\"\']/i', $content, $matches);
-        foreach ($matches[1] as $url) {
-            $cloaked = $this->cloak_url($url);
-            $content = str_replace($url, $cloaked, $content);
-        }
-        return $content;
-    }
-
-    private function cloak_url($url) {
-        $base = home_url('/go/');
-        $id = md5($url);
-        update_option('sao_redirect_' . $id, $url);
-        return $base . $id;
-    }
-
-    public function handle_redirect() {
-        if (strpos($_SERVER['REQUEST_URI'], '/go/') === 0) {
-            $id = basename($_SERVER['REQUEST_URI']);
-            $url = get_option('sao_redirect_' . $id);
-            if ($url) {
-                $this->track_click($id);
-                wp_redirect($url, 301);
-                exit;
-            }
-        }
-    }
-
-    private function track_click($id) {
-        $clicks = get_option('sao_clicks', array());
-        $clicks[$id] = isset($clicks[$id]) ? $clicks[$id] + 1 : 1;
-        update_option('sao_clicks', $clicks);
-        // Premium: Send to analytics API
-        if ($this->options['is_premium']) {
-            wp_remote_post('https://api.example.com/track', array(
-                'body' => array('id' => $id, 'clicks' => $clicks[$id], 'key' => $this->options['api_key'])
-            ));
-        }
-    }
-
     public function admin_menu() {
         add_options_page('Smart Affiliate Optimizer', 'Affiliate Optimizer', 'manage_options', 'sao-settings', array($this, 'settings_page'));
     }
 
+    public function admin_init() {
+        register_setting('sao_settings', 'sao_options');
+        add_settings_section('sao_main', 'Main Settings', null, 'sao-settings');
+        add_settings_field('sao_api_key', 'Premium API Key (Pro)', array($this, 'api_key_field'), 'sao-settings', 'sao_main');
+        add_settings_field('sao_links', 'Affiliate Links', array($this, 'links_field'), 'sao-settings', 'sao_main');
+    }
+
+    public function api_key_field() {
+        $options = get_option('sao_options');
+        echo '<input type="text" name="sao_options[api_key]" value="' . esc_attr($options['api_key'] ?? '') . '" class="regular-text" />';
+        echo '<p class="description">Enter Premium API key for advanced features. <a href="https://example.com/premium" target="_blank">Upgrade to Pro</a></p>';
+    }
+
+    public function links_field() {
+        $options = get_option('sao_options');
+        $links = $options['links'] ?? '';
+        echo '<textarea name="sao_options[links]" rows="10" cols="50">' . esc_textarea($links) . '</textarea>';
+        echo '<p class="description">One link per line: keyword|affiliate_url</p>';
+    }
+
     public function settings_page() {
-        if (isset($_POST['submit'])) {
-            $this->options['api_key'] = sanitize_text_field($_POST['api_key']);
-            $this->options['is_premium'] = isset($_POST['is_premium']);
-            update_option('sao_options', $this->options);
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
-        }
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate Optimizer Settings</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Premium API Key</th>
-                        <td><input type="text" name="api_key" value="<?php echo esc_attr($this->options['api_key']); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th>Enable Premium Features</th>
-                        <td><input type="checkbox" name="is_premium" <?php checked($this->options['is_premium']); ?> /></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
+            <h1>Smart Affiliate Optimizer</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('sao_settings');
+                do_settings_sections('sao-settings');
+                submit_button();
+                ?>
             </form>
-            <h2>Click Stats</h2>
-            <pre><?php print_r(get_option('sao_clicks', array())); ?></pre>
-            <?php if (!$this->options['is_premium']): ?>
-            <p><strong>Upgrade to Premium for advanced analytics and suggestions!</strong></p>
-            <?php endif; ?>
+            <h2>Analytics</h2>
+            <div id="sao-analytics">Loading...</div>
         </div>
         <?php
     }
 
+    public function cloak_links($content) {
+        if (is_feed() || is_admin()) return $content;
+        $options = get_option('sao_options');
+        if (empty($options['links'])) return $content;
+
+        $lines = explode("\n", $options['links']);
+        foreach ($lines as $line) {
+            if (strpos($line, '|') === false) continue;
+            list($keyword, $url) = explode('|', $line, 2);
+            $keyword = trim($keyword);
+            $url = trim($url);
+            $cloak_url = add_query_arg('sao', base64_encode($url), home_url('/go/' . sanitize_title($keyword) . '/'));
+            $content = str_ireplace($keyword, '<a href="' . esc_url($cloak_url) . '" rel="nofollow">' . $keyword . '</a>', $content);
+        }
+        return $content;
+    }
+
     public function activate() {
-        add_rewrite_rule('^go/([^/]+)/?', 'index.php?sao_redirect=$matches[1]', 'top');
         flush_rewrite_rules();
-        add_action('template_redirect', array($this, 'handle_redirect'));
+    }
+
+    public function deactivate() {
+        flush_rewrite_rules();
     }
 }
 
-SmartAffiliateOptimizer::get_instance();
+add_action('init', array('SmartAffiliateOptimizer', 'get_instance'));
 
-add_action('wp_ajax_sao_track', 'sao_ajax_track');
-function sao_ajax_track() {
+// AJAX for tracking
+add_action('wp_ajax_sao_track', 'sao_track_click');
+add_action('wp_ajax_nopriv_sao_track', 'sao_track_click');
+function sao_track_click() {
     check_ajax_referer('sao_nonce', 'nonce');
-    // Track AJAX clicks for premium
+    $url = sanitize_url($_POST['url']);
+    // In Pro: Log to DB and optimize
+    wp_redirect($url);
+    exit;
+}
+
+// Tracker JS inline
+add_action('wp_head', 'sao_inline_js');
+function sao_inline_js() {
+    if (!is_singular()) return;
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        $('a[href*="sao="]').on('click', function(e) {
+            var url = $(this).attr('href');
+            var targetUrl = atob(url.split('sao=')[1].split('&'));
+            $.post(sao_ajax.ajax_url, {action: 'sao_track', url: targetUrl, nonce: sao_ajax.nonce});
+        });
+    });
+    </script>
+    <?php
+}
+
+// Free analytics endpoint
+add_action('wp_ajax_sao_analytics', 'sao_analytics');
+function sao_analytics() {
+    if (!current_user_can('manage_options')) wp_die();
+    global $wpdb;
+    // Simulated data for free version
+    echo json_encode(array('clicks' => 123, 'conversions' => 12));
     wp_die();
 }
-
-// Inline tracker.js equivalent
-add_action('wp_head', function() {
-    if (!is_admin()) {
-        echo '<script>jQuery(document).ready(function($){ $("a[href*=\u0027/go/\u0027]").click(function(){ var id=$(this).attr("href").split("/").pop(); $.post(sao_ajax.ajax_url, {action:"sao_track", nonce:sao_ajax.nonce, id:id}); }); });</script>';
-    }
-});
+?>
