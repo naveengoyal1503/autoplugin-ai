@@ -5,8 +5,8 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart Affiliate Link Manager
- * Plugin URI: https://example.com/smart-affiliate-link-manager
- * Description: Automatically cloaks, tracks, and displays contextual affiliate links to boost commissions.
+ * Plugin URI: https://example.com/smart-affiliate
+ * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -26,155 +26,136 @@ class SmartAffiliateLinkManager {
 
     private function __construct() {
         add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('wp_ajax_sal_update_link', array($this, 'ajax_update_link'));
+        add_shortcode('sal_link', array($this, 'shortcode_link'));
+        add_filter('widget_text', 'shortcode_unautop');
+        add_filter('the_content', 'shortcode_unautop');
         register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_head', array($this, 'inject_tracking_script'));
-        add_filter('the_content', array($this, 'replace_keywords_with_links'));
-        add_shortcode('afflink', array($this, 'afflink_shortcode'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_sal_save_link', array($this, 'ajax_save_link'));
-        add_action('wp_ajax_sal_delete_link', array($this, 'ajax_delete_link'));
-        add_action('wp_ajax_sal_get_stats', array($this, 'ajax_get_stats'));
-    }
+        // Create table on init if not exists
+        global $wpdb;
+        $table = $wpdb->prefix . 'sal_links';
+        $charset = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE $table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            keyword varchar(50) NOT NULL,
+            affiliate_url text NOT NULL,
+            clicks int DEFAULT 0,
+            created datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY keyword (keyword)
+        ) $charset;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
 
-    public function activate() {
-        add_option('sal_links', array());
-        add_option('sal_enabled', 1);
-    }
-
-    public function deactivate() {
-        // Cleanup optional
+        // Auto-cloak links in content
+        add_filter('the_content', array($this, 'cloak_links'));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sal-admin-js', plugin_dir_url(__FILE__) . 'sal-admin.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('sal-admin-css', plugin_dir_url(__FILE__) . 'sal-admin.css', array(), '1.0.0');
-        wp_localize_script('sal-admin-js', 'sal_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sal_nonce')));
+        wp_enqueue_script('sal-frontend', plugin_dir_url(__FILE__) . 'sal-frontend.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sal-frontend', 'sal_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 
-    public function inject_tracking_script() {
-        if (!get_option('sal_enabled')) return;
+    public function admin_menu() {
+        add_options_page('Smart Affiliate Links', 'Affiliate Links', 'manage_options', 'sal-links', array($this, 'admin_page'));
+    }
+
+    public function admin_page() {
+        if (isset($_POST['sal_submit'])) {
+            $keyword = sanitize_text_field($_POST['keyword']);
+            $url = esc_url_raw($_POST['url']);
+            global $wpdb;
+            $table = $wpdb->prefix . 'sal_links';
+            $wpdb->replace($table, array('keyword' => $keyword, 'affiliate_url' => $url));
+            echo '<div class="notice notice-success"><p>Link saved!</p></div>';
+        }
+        $links = $this->get_links();
         ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let links = document.querySelectorAll('a[href*="afflink"]');
-            links.forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    let code = this.href.match(/afflink=([^&]+)/)[1];
-                    fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=sal_track_click&code=' + code + '&nonce=<?php echo wp_create_nonce('sal_track'); ?>');
-                });
-            });
-        });
-        </script>
+        <div class="wrap">
+            <h1>Smart Affiliate Link Manager</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Keyword</th>
+                        <td><input type="text" name="keyword" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : ''; ?>" placeholder="buy now" required /></td>
+                    </tr>
+                    <tr>
+                        <th>Affiliate URL</th>
+                        <td><input type="url" name="url" style="width:100%;" value="<?php echo isset($_POST['url']) ? $_POST['url'] : ''; ?>" required /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+            <h2>Your Links</h2>
+            <table class="wp-list-table widefat fixed striped">
+                <thead><tr><th>Keyword</th><th>URL</th><th>Clicks</th></tr></thead>
+                <tbody>
+                <?php foreach ($links as $link): ?>
+                    <tr><td><?php echo esc_html($link->keyword); ?></td><td><?php echo esc_html($link->affiliate_url); ?></td><td><?php echo $link->clicks; ?></td></tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <p><strong>Upgrade to Pro:</strong> A/B testing, reports, unlimited links. <a href="#">Buy now $49/year</a></p>
+        </div>
         <?php
     }
 
-    public function replace_keywords_with_links($content) {
-        if (!get_option('sal_enabled')) return $content;
-        $links = get_option('sal_links', array());
+    public function ajax_update_link() {
+        if (!wp_verify_nonce($_POST['nonce'], 'sal_nonce')) return;
+        global $wpdb;
+        $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}sal_links SET clicks = clicks + 1 WHERE keyword = %s", $_POST['keyword']));
+        wp_die();
+    }
+
+    private function get_links() {
+        global $wpdb;
+        return $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sal_links");
+    }
+
+    public function cloak_links($content) {
+        global $wpdb;
+        $links = $this->get_links();
         foreach ($links as $link) {
-            $keyword = '/' . preg_quote($link['keyword'], '/') . '/i';
-            $replacement = '<a href="' . $this->cloak_link($link['url'], $link['code']) . '" target="_blank" rel="nofollow">' . $link['keyword'] . '</a>';
-            $content = preg_replace($keyword, $replacement, $content, 1);
+            $placeholder = '/sal/' . $link->keyword;
+            $content = preg_replace('/\b' . preg_quote($link->keyword, '/') . '\b/i', '<a href="' . $placeholder . '" class="sal-link">$0</a>', $content);
         }
         return $content;
     }
 
-    private function cloak_link($url, $code) {
-        $cloaked = home_url('/go/' . $code . '/');
-        return add_query_arg('afflink', $code, $cloaked);
+    public function shortcode_link($atts) {
+        $atts = shortcode_atts(array('keyword' => ''), $atts);
+        global $wpdb;
+        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}sal_links WHERE keyword = %s", $atts['keyword']));
+        if (!$link) return '';
+        return '<a href="/sal/' . esc_attr($link->keyword) . '" class="sal-link" data-keyword="' . esc_attr($link->keyword) . '">' . $atts['keyword'] . '</a>';
     }
 
-    public function afflink_shortcode($atts) {
-        $atts = shortcode_atts(array('code' => ''), $atts);
-        $links = get_option('sal_links', array());
-        foreach ($links as $link) {
-            if ($link['code'] == $atts['code']) {
-                return '<a href="' . $this->cloak_link($link['url'], $link['code']) . '" target="_blank" rel="nofollow">' . $link['keyword'] . '</a>';
-            }
-        }
-        return '';
-    }
-
-    public function admin_menu() {
-        add_options_page('Smart Affiliate Links', 'Affiliate Links', 'manage_options', 'sal-manager', array($this, 'admin_page'));
-    }
-
-    public function admin_page() {
-        if (isset($_POST['sal_save'])) {
-            check_admin_referer('sal_save');
-            $links = get_option('sal_links', array());
-            $new_link = array(
-                'code' => sanitize_text_field($_POST['code']),
-                'keyword' => sanitize_text_field($_POST['keyword']),
-                'url' => esc_url_raw($_POST['url'])
-            );
-            $links[] = $new_link;
-            update_option('sal_links', $links);
-        }
-        $links = get_option('sal_links', array());
-        include plugin_dir_path(__FILE__) . 'admin-page.php';
-    }
-
-    public function ajax_save_link() {
-        check_ajax_referer('sal_nonce', 'nonce');
-        // Similar to admin save
-        wp_die();
-    }
-
-    public function ajax_delete_link() {
-        check_ajax_referer('sal_nonce', 'nonce');
-        // Delete logic
-        wp_die();
-    }
-
-    public function ajax_get_stats() {
-        check_ajax_referer('sal_nonce', 'nonce');
-        // Stats logic
-        wp_die();
+    public function activate() {
+        $this->init();
     }
 }
 
 SmartAffiliateLinkManager::get_instance();
 
-// Embed admin-page.php content as string for single file
-function sal_admin_page_content($links) {
-    ?>
-    <div class="wrap">
-        <h1>Smart Affiliate Link Manager</h1>
-        <form method="post">
-            <?php wp_nonce_field('sal_save'); ?>
-            <table class="form-table">
-                <tr><th>Keyword</th><td><input type="text" name="keyword" required /></td></tr>
-                <tr><th>Affiliate URL</th><td><input type="url" name="url" style="width:50%;" required /></td></tr>
-                <tr><th>Code</th><td><input type="text" name="code" required /></td></tr>
-            </table>
-            <p><input type="submit" name="sal_save" class="button-primary" value="Add Link" /></p>
-        </form>
-        <h2>Links</h2>
-        <table class="wp-list-table widefat fixed striped">
-            <thead><tr><th>Keyword</th><th>URL</th><th>Code</th><th>Clicks</th></tr></thead>
-            <tbody>
-    <?php foreach ($links as $link): ?>
-                <tr><td><?php echo esc_html($link['keyword']); ?></td><td><?php echo esc_html($link['url']); ?></td><td><?php echo esc_html($link['code']); ?></td><td>0</td></tr>
-    <?php endforeach; ?>
-            </tbody>
-        </table>
-        <p><label><input type="checkbox" name="sal_enabled" <?php checked(get_option('sal_enabled')); ?> /> Enable Auto-Replacement</label></p>
-    </div>
-    <style>
-    /* Basic CSS */
-    .wrap h1 { color: #333; }
-    </style>
-    <script>
-    jQuery(document).ready(function($) {
-        // Basic JS for admin
-    });
-    </script>
-    <?php
+add_action('template_redirect', function() {
+    if (strpos($_SERVER['REQUEST_URI'], '/sal/') === 0) {
+        $keyword = str_replace('/sal/', '', $_SERVER['REQUEST_URI']);
+        global $wpdb;
+        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}sal_links WHERE keyword = %s", $keyword));
+        if ($link) {
+            wp_redirect($link->affiliate_url, 301);
+            exit;
+        }
+    }
+});
+
+// Frontend JS (inline for single file)
+function sal_frontend_js() {
+    ?><script>jQuery(document).ready(function($){$('.sal-link').click(function(e){e.preventDefault();var keyword=$(this).data('keyword');$.post(sal_ajax.ajaxurl,{action:'sal_update_link',keyword:keyword,nonce:'<?php echo wp_create_nonce('sal_nonce'); ?>'},function(){window.location=$(this).attr('href');});});});</script><?php
 }
-// Note: For full production, add tracking table via $wpdb on activate, AJAX handlers for stats, upgrade prompts, etc. This is functional MVP.
+add_action('wp_footer', 'sal_frontend_js');
