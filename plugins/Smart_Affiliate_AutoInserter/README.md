@@ -1,46 +1,52 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate revenue by inserting relevant links into content using smart keyword matching.**
+**Automatically insert relevant affiliate links into your WordPress posts and pages to boost passive income.**
 
 ## Features
 
-- **Automatic Link Insertion**: Scans posts and auto-inserts affiliate links based on keywords.
-- **Customizable Limits**: Set max links per post (free: up to 3).
-- **Easy Setup**: Add keyword-URL pairs via simple dashboard.
-- **Smart Randomization**: Avoids over-insertion with probability controls.
-- **nofollow & noopener**: All links are SEO-safe with proper attributes.
-- **Free Version Limits**: 5 links max; Pro removes all limits.
+- **Smart Auto-Insertion**: Scans content and inserts affiliate links on matching keywords without manual editing.
+- **Customizable Limits**: Set max links per post to avoid over-optimization.
+- **Easy Setup**: Add keywords and affiliate URLs via simple settings page.
+- **SEO-Friendly**: Adds `nofollow` and `noopener` attributes automatically.
+- **Mobile-Responsive**: Works seamlessly on all devices.
+- **Free Core**: Fully functional for basic use.
 
-**Pro Features (Coming Soon)**: AI-powered matching, performance analytics, A/B testing, bulk import, unlimited links ($49/year).
+**Pro Add-ons (coming soon)**:
+- AI-powered keyword relevance scoring.
+- Click analytics dashboard.
+- WooCommerce product integration.
+- Bulk import/export of links.
 
 ## Installation
 
 1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate AutoInserter** to configure.
+3. Go to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
 
-1. In the settings page, toggle **Enable Auto-Insertion**.
-2. Set **Max Links per Post** (default: 3).
-3. Click **Add Link** to enter keywords (e.g., "best laptop") and affiliate URLs (e.g., Amazon link).
-4. Save changes. Links auto-appear in new/existing posts.
-
-**Example**:
-- Keyword: `coffee maker`
-- URL: `https://amazon.com/affiliate-link`
+1. In **Settings > Affiliate Inserter**, enter your links in the format:
+   
+   WordPress|https://youraffiliate.link/wp
+   Plugin|https://youraffiliate.link/plugin
+   Hosting|https://youraffiliate.link/hosting
+   
+2. Set **Max Links per Post** (default: 2).
+3. Save changes. Links auto-appear in new and existing posts!
 
 ## Usage
 
-- Works on single posts only (not pages/home).
+- Links insert only on public single posts/pages (not admin, archives, or widgets unless enabled).
 - Test on a staging site first.
-- Links insert probabilistically to look natural.
-- Free version nags for Pro upgrade—remove by purchasing.
+- Monitor performance; upgrade to Pro for advanced analytics.
 
 ## Support
 
-Report issues via WordPress.org forums. For Pro support, email support@example.com.
+- [Documentation](https://example.com/docs)
+- [Submit a Ticket](https://example.com/support)
 
 ## Upgrade to Pro
 
-[Get Pro Now](https://example.com/pro) - Unlock AI, analytics, and unlimited power for recurring revenue!
+Unlock AI optimization and more for $49/year. [Get Pro Now](https://example.com/pro)
+
+**Built for affiliate marketers. Start earning passively today!**
