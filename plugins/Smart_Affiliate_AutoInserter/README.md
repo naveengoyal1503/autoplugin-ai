@@ -3,46 +3,30 @@
 **Automatically boosts your affiliate earnings by inserting relevant links into content using smart keyword matching.**
 
 ## Features
-
-- **Automatic Link Insertion**: Scans posts and pages for keywords and replaces them with your affiliate links.
-- **Customizable Limits**: Set max links per post to avoid over-optimization.
-- **Easy Setup**: Add keywords and links via intuitive dashboard.
-- **SEO-Friendly**: Adds `nofollow` and `sponsored` attributes.
-- **Free Core**: Fully functional for basic use.
-
-**Pro Add-ons (coming soon)**:
-- AI-powered keyword suggestions
-- Click analytics and performance reports
-- Unlimited links and advanced targeting
-- WooCommerce integration
+- **Automatic Link Insertion**: Scans posts and pages, inserts affiliate links where keywords match.
+- **Customizable Rules**: Add keywords, link text, and URLs via simple dashboard.
+- **Non-Intrusive**: Limits insertions (max 3 per post) to avoid spamming.
+- **SEO-Friendly**: Adds `nofollow`, `noopener`, and `target="_blank"` attributes.
+- **Freemium Ready**: Core free; premium add-ons for AI keyword suggestions and analytics.
 
 ## Installation
-
-1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
+1. Upload the `smart-affiliate-autoinserter.php` file to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Inserter** to configure keywords and links.
+3. Go to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
-
-1. In the settings page, toggle **Enabled** on.
-2. Set **Max Links per Post** (default: 3).
-3. Click **Add Keyword/Link** and enter:
-   - Keyword (e.g., "best laptop")
-   - Affiliate URL (e.g., your Amazon link)
-4. Save changes. Links auto-insert on published content.
+1. Enable auto-insertion toggle.
+2. Add affiliate entries: Keyword (e.g., "best laptop"), Link Text (e.g., "Buy on Amazon"), Affiliate URL.
+3. Save settings. Links auto-appear in new and existing posts.
 
 ## Usage
-
-- Works on single posts/pages automatically.
+- Works on single posts/pages only (not admin or archives).
 - Test on a staging site first.
-- Monitor earnings via your affiliate dashboard.
-- **Pro Tip**: Use high-converting keywords for best results.
+- **Pro Tip**: Use high-converting keywords from your analytics for best results.
 
-## Support
+## Premium Add-ons (Coming Soon)
+- AI Keyword Optimizer ($29/year)
+- Conversion Analytics ($19/year)
+- Unlimited Networks Bundle ($49/year)
 
-- [Documentation](https://example.com/docs)
-- [Submit a Ticket](https://example.com/support)
-
-## Upgrade to Pro
-
-Get advanced features for $49/year. [Learn More](https://example.com/pro)
+Support: example.com/support | License: GPL v2+
