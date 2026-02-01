@@ -1,37 +1,32 @@
 # AI Content Optimizer Pro
 
+## Description
+**AI Content Optimizer Pro** uses smart algorithms to analyze your WordPress posts for readability, SEO, and engagement. Get instant scores and one-click optimizations. Free version offers basic checks; premium unlocks AI-driven suggestions and bulk processing.
+
 ## Features
-
-**Free Version:**
-- Basic SEO analysis of post content.
-- Keyword density check and 3 top suggestions.
-- SEO score calculation.
-
-**Premium Version ($9/month):** 
-- Full AI-powered content rewriting and optimization.
-- Unlimited bulk processing for multiple posts/pages.
-- Advanced analytics and priority support.
-- Export optimized content.
+- **Readability Scoring**: Automated Flesch-like score based on sentence length and word count.
+- **Basic Suggestions**: Free tips on content length, links, and structure.
+- **One-Click Optimization**: Reformats content for better flow (free).
+- **Premium AI SEO**: Keyword suggestions, bulk optimize, export reports ($4.99/month).
+- **Post Metabox**: Quick access in post editor.
+- **Admin Dashboard**: Full analysis page.
 
 ## Installation
-
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to Posts > AI Optimizer to start.
+3. Edit any post to see the optimizer metabox.
 
 ## Setup
-
-- Free: Ready to use immediately.
-- Premium: Enter your license key in the plugin settings (after upgrade via [example.com/premium](https://example.com/premium)).
+- No configuration needed for free version.
+- Premium: Enter license key in Settings > AI Content Optimizer (coming in updates).
 
 ## Usage
+1. **In Post Editor**: Check the 'Content Optimizer' metabox for score and 'Optimize Now' button.
+2. **Admin Page**: Go to Posts > Content Optimizer for detailed analysis.
+3. **Upgrade**: Visit [premium link](https://example.com/premium) for AI features.
 
-1. Edit or create a post/page.
-2. Click **AI Optimizer** in the admin menu.
-3. Click **Basic SEO Check** (free) or **Full AI Optimize** (premium).
-4. Review suggestions and apply optimized content manually or via textarea (premium).
-
-**Pro Tip:** Integrate with popular SEO plugins like Yoast for best results.
+## Changelog
+- 1.0.0: Initial release with free readability tools.
 
 ## Support
-Contact support@example.com or visit our [premium site](https://example.com).
+Submit tickets at example.com/support.
