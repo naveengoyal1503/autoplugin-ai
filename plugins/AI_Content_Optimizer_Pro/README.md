@@ -1,38 +1,37 @@
 # AI Content Optimizer Pro
 
-## Description
-AI-powered WordPress plugin that instantly analyzes your post content for **SEO score**, **readability**, and **word count**. Free version provides basic insights; upgrade to Pro for AI rewriting, keyword suggestions, and unlimited optimizations.
-
 ## Features
-- **Free:** Real-time content analysis (SEO score, Flesch readability, word count)
-- **Pro:** AI content rewriter, automated keyword research, bulk optimization, priority support
-- Meta box in post/page editor for one-click analysis
-- Non-intrusive premium upsell without nagging
-- Lightweight & self-contained (single file)
+
+**Free Version:**
+- Basic SEO analysis of post content.
+- Keyword density check and 3 top suggestions.
+- SEO score calculation.
+
+**Premium Version ($9/month):** 
+- Full AI-powered content rewriting and optimization.
+- Unlimited bulk processing for multiple posts/pages.
+- Advanced analytics and priority support.
+- Export optimized content.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Edit any post/page – find the **AI Content Optimizer** sidebar box.
+
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to Posts > AI Optimizer to start.
 
 ## Setup
-No setup required! Analysis works instantly on content entry. Premium features activate via subscription link.
+
+- Free: Ready to use immediately.
+- Premium: Enter your license key in the plugin settings (after upgrade via [example.com/premium](https://example.com/premium)).
 
 ## Usage
-1. Create/edit a **Post** or **Page**.
-2. Scroll to the **AI Content Optimizer** meta box in the sidebar.
-3. Click **Analyze Content** – results appear instantly.
-4. **Free results:** Word count, readability score, SEO score (0-100).
-5. Upgrade to Pro for advanced AI tools: [Get Pro Now](https://example.com/premium-upgrade)
 
-## Screenshots
-*(Imagine: Sidebar meta box with analysis button and results display)*
+1. Edit or create a post/page.
+2. Click **AI Optimizer** in the admin menu.
+3. Click **Basic SEO Check** (free) or **Full AI Optimize** (premium).
+4. Review suggestions and apply optimized content manually or via textarea (premium).
 
-## Changelog
-**1.0.0**
-- Initial release with basic analysis.
+**Pro Tip:** Integrate with popular SEO plugins like Yoast for best results.
 
 ## Support
-- Free version: WordPress.org forums.
-- Pro: Dedicated support portal after upgrade.
+Contact support@example.com or visit our [premium site](https://example.com).
