@@ -1,33 +1,34 @@
 # AI Content Optimizer Lite
 
-## Description
-AI Content Optimizer Lite is a powerful **freemium WordPress plugin** that uses simulated AI to analyze your post content for **SEO score** and **readability**. Get instant suggestions to improve your content. Upgrade to Premium for AI-powered rewriting, bulk optimization, and advanced keyword tools.
-
 ## Features
-- **Free:** Real-time SEO score, readability analysis, and basic suggestions.
-- **Premium ($4.99/month):** AI content rewriting, bulk post optimization, keyword research, priority support.
-- One-click analysis in post editor.
-- Non-intrusive sidebar meta box.
+- **Free Basic Analysis**: Get instant readability and SEO scores for your posts.
+- **Daily Limit**: 3 free analyses per day to encourage upgrades.
+- **Premium Upsell**: Unlimited scans, AI-powered rewrites, keyword suggestions, and more ($4.99/month).
+- **Easy Integration**: Works on post edit screens with a sidebar meta box.
+- **Self-Contained**: Single PHP file, no dependencies.
 
 ## Installation
 1. Download the plugin ZIP.
 2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
 3. Upload and activate.
-4. Edit any post to see the optimizer in action.
+4. Edit any post to see the **AI Content Optimizer** sidebar.
 
 ## Setup
-- No configuration needed for free version.
-- Premium: Purchase at [example.com/premium](https://example.com/premium), enter license key in **Settings > AI Optimizer** (future update).
+No setup required! Click **Analyze Content** on post edit screens.
 
 ## Usage
-1. Edit or create a **Post**.
+1. Edit a post or page.
 2. In the sidebar, click **Analyze Content**.
-3. Review **SEO Score**, **Readability**, and suggestions.
-4. Apply changes manually (Premium auto-applies).
-5. **Upgrade** for full AI features and remove limits.
+3. View scores and basic suggestions.
+4. Upgrade to premium for advanced AI features via the links provided.
 
-## Freemium Model
-Free version hooks users with core value; upsell drives revenue[1][2][4].
+## Premium Features
+- Unlimited daily analyses.
+- AI-generated rewrite suggestions.
+- Advanced SEO keyword integration.
+- Export reports and priority support.
+
+Visit [premium site](https://example.com/premium) to upgrade.
 
 ## Support
-Report issues via WordPress.org forums. Premium users get email support.
+Report issues via WordPress.org forums (free version only).
