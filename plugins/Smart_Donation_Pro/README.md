@@ -1,48 +1,40 @@
 # Smart Donation Pro
 
 ## Description
-
-**Smart Donation Pro** is a simple yet powerful WordPress plugin to collect donations on your site. It features customizable donation buttons, visual progress bars toward your goal, seamless PayPal integration for one-time payments, and basic analytics. Perfect for bloggers, creators, and non-profits.
+Smart Donation Pro is a lightweight, self-contained WordPress plugin that helps you monetize your site by adding customizable donation buttons and forms. Accept one-time payments via PayPal instantly. Perfect for bloggers, creators, and non-profits.
 
 ## Features
-
-- **Customizable Shortcode**: Use `[sdp_donate]` with attributes like `amount`, `button_text`, `show_progress`.
-- **Progress Bar**: Visual indicator of donations raised vs. goal.
-- **PayPal Integration**: Secure one-time payments.
-- **Admin Dashboard**: Set goal, PayPal email, and view current total.
-- **Mobile Responsive**: Works on all devices.
-- **Lightweight**: Single-file, no bloat.
-
-Premium features (future): Recurring payments, advanced analytics, custom themes.
+- **Easy Shortcode**: Use `[smart_donation]` anywhere to display a donation widget.
+- **Customizable**: Set default amount, button text via admin settings.
+- **PayPal Integration**: Secure one-time donations without coding.
+- **Mobile Responsive**: Clean, modern design works on all devices.
+- **Freemium Ready**: Pro version adds recurring payments, progress bars, analytics, and custom themes.
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Go to **Settings > Donation Pro** to configure.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Donation Pro** to configure your PayPal email and options.
 
 ## Setup
-
-1. In **Settings > Donation Pro**:
-   - Enter your **Donation Goal** (e.g., 1000).
-   - Add your **PayPal Email**.
-   - Save settings.
-2. Add the shortcode to any post/page: `[sdp_donate amount="10" button_text="Buy Me a Coffee" show_progress="true"]`.
+1. In **Settings > Donation Pro**, enter your PayPal business email.
+2. Customize button text and default donation amount.
+3. Save settings.
+4. Add `[smart_donation]` shortcode to any post, page, or widget.
 
 ## Usage
+- Place the shortcode in your content: `[smart_donation amount="10"]` (optional amount override).
+- Visitors enter an amount and click 'Donate Now' to be redirected to PayPal.
+- Funds go directly to your PayPal account.
 
-- **Basic Button**: `[sdp_donate]`
-- **Custom Amount**: `[sdp_donate amount="50"]`
-- **No Progress**: `[sdp_donate show_progress="false"]`
+## Pro Upgrade
+Unlock advanced features:
+- Recurring subscriptions
+- Donation goal progress bars
+- Analytics dashboard
+- Multiple payment gateways (Stripe)
+- Custom designs and email receipts
 
-Donations update the progress in real-time (admin-tracked). View stats in settings.
+[Get Pro Now](https://example.com/pro)
 
 ## Support
-
-Report issues on WordPress.org forums. Premium support available.
-
-## Changelog
-
-**1.0.0**
-- Initial release.
+Report issues on WordPress.org forums or contact support@example.com.
