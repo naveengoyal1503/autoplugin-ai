@@ -5,22 +5,23 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart Affiliate Link Manager Pro
- * Plugin URI: https://example.com/smart-affiliate
- * Description: Automate affiliate link management, cloaking, tracking, and performance analytics.
+ * Plugin URI: https://example.com/smart-affiliate-link-manager
+ * Description: Automatically cloak, track, and optimize affiliate links to maximize commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: smart-affiliate-link-manager
  */
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-class SmartAffiliateManager {
+class SmartAffiliateLinkManager {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null === self::$instance) {
+        if (null == self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -30,104 +31,143 @@ class SmartAffiliateManager {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_head', array($this, 'inject_tracking'));
-        add_filter('the_content', array($this, 'cloak_links'), 99);
+        add_action('wp_ajax_salmp_track_click', array($this, 'track_click'));
+        add_filter('the_content', array($this, 'cloak_links'));
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        if (get_option('sam_pro_version') !== '1.0') {
+        if (get_option('salmp_pro') !== 'yes') {
             add_action('admin_notices', array($this, 'pro_notice'));
         }
+        load_plugin_textdomain('smart-affiliate-link-manager', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sam-tracker', plugin_dir_url(__FILE__) . 'tracker.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sam-tracker', 'sam_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sam_nonce')));
+        wp_enqueue_script('salmp-tracker', plugin_dir_url(__FILE__) . 'salmp-tracker.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('salmp-tracker', 'salmp_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 
     public function admin_menu() {
-        add_options_page('Smart Affiliate Manager', 'Affiliate Manager', 'manage_options', 'smart-affiliate', array($this, 'admin_page'));
+        add_options_page('Smart Affiliate Link Manager', 'Affiliate Links', 'manage_options', 'salmp', array($this, 'settings_page'));
     }
 
-    public function admin_page() {
-        if (isset($_POST['sam_save'])) {
-            update_option('sam_affiliate_links', sanitize_text_field($_POST['links']));
+    public function settings_page() {
+        if (isset($_POST['salmp_save'])) {
+            update_option('salmp_enabled', sanitize_text_field($_POST['salmp_enabled']));
+            update_option('salmp_cloak_base', esc_url_raw($_POST['salmp_cloak_base']));
+            if (current_user_can('manage_options')) {
+                update_option('salmp_pro', 'yes');
+            }
             echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        $links = get_option('sam_affiliate_links', 'https://example.com/ref=123|Affiliate Link 1;https://example.com/ref=456|Affiliate Link 2');
+        $enabled = get_option('salmp_enabled', '1');
+        $cloak_base = get_option('salmp_cloak_base', 'go');
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate Manager</h1>
+            <h1>Smart Affiliate Link Manager Settings</h1>
             <form method="post">
                 <table class="form-table">
                     <tr>
-                        <th>Affiliate Links (format: url|keyword;)</th>
-                        <td><textarea name="links" rows="10" cols="50"><?php echo esc_textarea($links); ?></textarea></td>
+                        <th>Enable Link Cloaking</th>
+                        <td><input type="checkbox" name="salmp_enabled" value="1" <?php checked($enabled, '1'); ?> /></td>
+                    </tr>
+                    <tr>
+                        <th>Cloak Base (e.g., go.yoursite.com)</th>
+                        <td><input type="text" name="salmp_cloak_base" value="<?php echo esc_attr($cloak_base); ?>" /></td>
                     </tr>
                 </table>
-                <p class="submit"><input type="submit" name="sam_save" class="button-primary" value="Save Settings"></p>
+                <?php if (!get_option('salmp_pro')): ?>
+                <p><strong>Upgrade to Pro for A/B testing and analytics!</strong></p>
+                <?php endif; ?>
+                <p><input type="submit" name="salmp_save" class="button-primary" value="Save Settings" /></p>
             </form>
-            <h2>Stats (Pro Feature)</h2>
-            <p><em>Upgrade to Pro for click tracking and analytics.</em></p>
         </div>
         <?php
     }
 
     public function cloak_links($content) {
-        $links = get_option('sam_affiliate_links', '');
-        if (empty($links)) return $content;
-        $link_pairs = explode(';', $links);
-        foreach ($link_pairs as $pair) {
-            $parts = explode('|', trim($pair));
-            if (count($parts) === 2) {
-                $keyword = $parts;
-                $url = $parts[1];
-                $content = str_replace($keyword, '<a href="' . esc_url($url) . '" class="sam-cloaked" data-sam-original="' . esc_url($url) . '">' . esc_html($keyword) . '</a>', $content);
-            }
-        }
+        if (!get_option('salmp_enabled')) return $content;
+        $cloak_base = get_option('salmp_cloak_base', 'go');
+        $pattern = '/https?:\/\/(amzn|aff|affiliate|ref|track|go)\.[^\s"\']+/i';
+        $content = preg_replace_callback($pattern, array($this, 'replace_link'), $content);
         return $content;
     }
 
-    public function inject_tracking() {
-        echo '<script>console.log("Smart Affiliate Manager loaded");</script>';
+    private function replace_link($matches) {
+        $id = uniqid('salmp_');
+        $original = $matches;
+        update_option('salmp_links_' . $id, $original, false);
+        $cloak_base = get_option('salmp_cloak_base', 'go');
+        $cloak_url = home_url('/' . $cloak_base . '/' . $id . '/');
+        return '<a href="' . esc_url($cloak_url) . '" class="salmp-link" data-id="' . esc_attr($id) . '" data-original="' . esc_attr($original) . '">' . $original . '</a>';
+    }
+
+    public function track_click() {
+        $id = sanitize_text_field($_POST['id']);
+        $original = get_option('salmp_links_' . $id);
+        if ($original) {
+            // Log click (Pro feature stub)
+            if (get_option('salmp_pro')) {
+                error_log('SALMP Pro Click: ' . $original);
+            }
+            wp_redirect($original);
+            exit;
+        }
     }
 
     public function pro_notice() {
-        echo '<div class="notice notice-info"><p>Upgrade to <strong>Smart Affiliate Manager Pro</strong> for advanced tracking and A/B testing! <a href="https://example.com/pro">Get Pro</a></p></div>';
+        echo '<div class="notice notice-info"><p>Unlock Pro features: A/B Testing & Analytics. <a href="options-general.php?page=salmp">Upgrade now!</a></p></div>';
     }
 
     public function activate() {
-        add_option('sam_version', '1.0.0');
+        update_option('salmp_enabled', '1');
     }
 
     public function deactivate() {}
 }
 
-// Tracker JS inline for single file
-add_action('wp_footer', function() {
-    if (is_admin()) return;
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('.sam-cloaked').on('click', function(e) {
-            var original = $(this).data('sam-original');
-            $.post(sam_ajax.ajax_url, {
-                action: 'sam_track_click',
-                nonce: sam_ajax.nonce,
-                url: original
-            });
-            window.location.href = original;
-        });
+// Add rewrite rules
+add_action('init', function() {
+    add_rewrite_rule('^' . get_option('salmp_cloak_base', 'go') . '/([^/]+)/?', 'index.php?salmp_id=$matches[1]', 'top');
+});
+
+add_filter('query_vars', function($vars) {
+    $vars[] = 'salmp_id';
+    return $vars;
+});
+
+add_action('template_redirect', function() {
+    $id = get_query_var('salmp_id');
+    if ($id) {
+        $original = get_option('salmp_links_' . $id);
+        if ($original) {
+            wp_redirect($original, 301);
+            exit;
+        }
+    }
+});
+
+SmartAffiliateLinkManager::get_instance();
+
+// Pro stub
+function salmp_pro_features() {
+    if (get_option('salmp_pro')) {
+        // A/B testing, analytics code here
+    }
+}
+
+?>
+<script>
+// salmp-tracker.js content embedded
+jQuery(document).ready(function($) {
+    $('.salmp-link').on('click', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        $.post(salmp_ajax.ajaxurl, {action: 'salmp_track_click', id: id}, function() {
+            window.location = $(this).attr('href');
+        }.bind(this));
     });
-    </script>
-    <?php
 });
-
-add_action('wp_ajax_sam_track_click', function() {
-    // Pro feature stub
-    wp_die('Tracked!');
-});
-
-SmartAffiliateManager::get_instance();
+</script>
