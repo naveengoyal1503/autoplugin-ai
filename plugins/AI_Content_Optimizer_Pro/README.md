@@ -1,31 +1,29 @@
 # AI Content Optimizer Pro
 
-## Description
-AI-powered WordPress plugin that scans your posts for **SEO**, readability, and engagement scores. Free version provides basic analysis; premium unlocks AI rewriting, keyword research, and bulk optimization.[1][2]
-
 ## Features
-- **Basic Analysis (Free)**: Word count, keyword density check, SEO score.
-- **Premium Features**: AI content rewriter, auto-keyword suggestions, readability improvements, priority support ($9/month).[5][6]
-- Real-time post editor integration.
-- Freemium upsell notices for conversion.
+
+- **Free Version**: Basic AI-powered content optimization for up to 5 posts, including keyword suggestions, readability scores, and title improvements.
+- **Premium Features** ($9.99/month): Unlimited optimizations, advanced AI analysis (meta descriptions, LSI keywords, schema markup), priority support, and auto-pilot mode for new posts.
+- **Easy Integration**: Works on any post type via meta box in WordPress editor.
+- **SEO Boost**: Improves on-page SEO automatically to increase traffic and rankings.
 
 ## Installation
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Edit any post to see the sidebar optimizer.
+
+1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' screen in WordPress admin.
+3. For premium, enter license key in plugin settings (demo key: `premium123`).
 
 ## Setup
-- No configuration needed for free version.
-- Premium: Purchase at [example.com/premium](https://example.com/premium), enter license key in **Settings > AI Optimizer** (future update).
+
+1. After activation, edit any post to see the **AI Content Optimizer** meta box on the side.
+2. Click **Optimize Content** to run analysis (limited to 5 free uses).
+3. Premium users get full access automatically after subscription.
 
 ## Usage
-1. Edit a post.
-2. Click **Analyze Content** in the sidebar meta box.
-3. View your **SEO Score** (e.g., 85/100).
-4. Upgrade for AI enhancements to boost scores automatically.
 
-## Changelog
-**1.0.0**: Initial release with freemium model.
+1. **Basic Optimization**: Click the button in post editor; view suggestions in alert.
+2. **View Results**: Optimized status shows in meta box; content is enhanced for SEO.
+3. **Upgrade**: Visit [premium link](https://example.com/premium) for subscription.
+4. **Support**: Free users - forums; Premium - email support@aioptimizer.com.
 
-## Support
-Free support via WordPress.org forums. Premium: Email support included.
+**Note**: Requires JavaScript. Create `optimizer.js` file in plugin directory with provided code snippet.
