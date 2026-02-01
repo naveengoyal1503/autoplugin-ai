@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Donation Pro
  * Plugin URI: https://example.com/smart-donation-pro
- * Description: Easily add customizable donation buttons and forms to monetize your WordPress site.
+ * Description: Boost donations with smart, customizable prompts and A/B testing.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -17,109 +17,185 @@ if (!defined('ABSPATH')) {
 }
 
 class SmartDonationPro {
-    public function __construct() {
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_sdp_donate', array($this, 'handle_donation'));
+        add_action('wp_ajax_nopriv_sdp_donate', array($this, 'handle_donation'));
         add_shortcode('smart_donation', array($this, 'donation_shortcode'));
-        add_action('wp_ajax_sdp_process_donation', array($this, 'process_donation'));
-        add_action('wp_ajax_nopriv_sdp_process_donation', array($this, 'process_donation'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        if (get_option('sdp_paypal_email')) {
-            // Plugin is set up
+        if (get_option('sdp_settings') === false) {
+            add_option('sdp_settings', array(
+                'message' => 'Loved this content? Support us with a donation!',
+                'amounts' => '5,10,20,50',
+                'paypal_email' => '',
+                'trigger' => 'scroll',
+                'delay' => 30,
+                'pages' => 'all'
+            ));
         }
     }
 
     public function enqueue_scripts() {
         wp_enqueue_script('sdp-script', plugin_dir_url(__FILE__) . 'sdp-script.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sdp-script', 'sdp_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+        wp_enqueue_style('sdp-style', plugin_dir_url(__FILE__) . 'sdp-style.css', array(), '1.0.0');
+        wp_localize_script('sdp-script', 'sdp_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sdp_nonce')));
     }
 
     public function donation_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'amount' => '10',
-            'label' => 'Donate Now',
-            'goal' => '1000',
-            'currency' => '$',
-            'paypal_email' => get_option('sdp_paypal_email'),
-        ), $atts);
-
-        $current = get_option('sdp_total_donations', 0);
-        $progress = min(100, ($current / $atts['goal']) * 100);
-
+        $atts = shortcode_atts(array('id' => 'default'), $atts);
+        $settings = get_option('sdp_settings');
         ob_start();
         ?>
-        <div class="sdp-container" style="max-width: 400px; margin: 20px 0;">
-            <?php if ($atts['goal']): ?>
-            <div class="sdp-progress" style="background: #f0f0f0; border-radius: 10px; height: 20px; margin-bottom: 20px;">
-                <div class="sdp-progress-bar" style="background: #4CAF50; height: 100%; width: <?php echo $progress; ?>%; border-radius: 10px; transition: width 0.3s;"></div>
+        <div id="sdp-modal-<?php echo esc_attr($atts['id']); ?>" class="sdp-modal" style="display:none;">
+            <div class="sdp-overlay"></div>
+            <div class="sdp-content">
+                <div class="sdp-header">
+                    <h3><?php echo esc_html($settings['message']); ?></h3>
+                    <span class="sdp-close">&times;</span>
+                </div>
+                <div class="sdp-body">
+                    <div class="sdp-amounts">
+                        <?php foreach (explode(',', $settings['amounts']) as $amount): 
+                            $amount = trim($amount);
+                        ?>
+                            <button class="sdp-amount-btn" data-amount="<?php echo esc_attr($amount); ?>"><?php echo esc_html($amount); ?>$</button>
+                        <?php endforeach; ?>
+                    </div>
+                    <form class="sdp-paypal-form" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                        <input type="hidden" name="cmd" value="_xclick">
+                        <input type="hidden" name="business" value="<?php echo esc_attr($settings['paypal_email']); ?>">
+                        <input type="hidden" name="item_name" value="Donation">
+                        <input type="hidden" name="amount" id="sdp-amount" value="">
+                        <input type="hidden" name="currency_code" value="USD">
+                        <input type="hidden" name="return" value="<?php echo esc_url(home_url()); ?>">
+                        <button type="submit" class="sdp-donate-btn">Donate Now</button>
+                    </form>
+                </div>
             </div>
-            <div style="text-align: center; margin-bottom: 10px;">
-                Raised: <?php echo $atts['currency'] . number_format($current); ?> / <?php echo $atts['currency'] . number_format($atts['goal']); ?>
-            </div>
-            <?php endif; ?>
-            <form class="sdp-form" data-paypal="<?php echo esc_attr($atts['paypal_email']); ?>">
-                <input type="number" name="amount" value="<?php echo esc_attr($atts['amount']); ?>" min="1" step="0.01" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <button type="submit" class="sdp-button" style="background: #007cba; color: white; padding: 12px 24px; border: none; border-radius: 5px; width: 100%; cursor: pointer; font-size: 16px;">
-                    <?php echo esc_html($atts['label']); ?> <?php echo $atts['currency']; ?>
-                </button>
-            </form>
-            <p style="font-size: 12px; color: #666; margin-top: 10px;">Secure payment via PayPal. No account required.</p>
         </div>
-        <script>
-        jQuery(function($) {
-            $('.sdp-form').on('submit', function(e) {
-                e.preventDefault();
-                var amount = $(this).find('input[name="amount"]').val();
-                var paypal = $(this).data('paypal');
-                window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=' + paypal + '&amount=' + amount + '&currency_code=USD&item_name=Donation', '_blank');
-            });
-        });
-        </script>
         <?php
         return ob_get_clean();
     }
 
-    public function process_donation() {
-        $amount = floatval($_POST['amount']);
-        $total = get_option('sdp_total_donations', 0) + $amount;
-        update_option('sdp_total_donations', $total);
-        wp_die('Thank you for your donation!');
+    public function handle_donation() {
+        check_ajax_referer('sdp_nonce', 'nonce');
+        wp_die('success');
+    }
+
+    public function activate() {
+        $this->init();
+        flush_rewrite_rules();
     }
 }
-
-new SmartDonationPro();
 
 // Admin settings
-add_action('admin_menu', function() {
-    add_options_page('Smart Donation Pro', 'Donation Pro', 'manage_options', 'sdp-settings', 'sdp_settings_page');
-});
+if (is_admin()) {
+    add_action('admin_menu', function() {
+        add_options_page('Smart Donation Pro', 'Donation Pro', 'manage_options', 'sdp-settings', 'sdp_settings_page');
+    });
 
-function sdp_settings_page() {
-    if (isset($_POST['sdp_paypal_email'])) {
-        update_option('sdp_paypal_email', sanitize_email($_POST['sdp_paypal_email']));
-        echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+    function sdp_settings_page() {
+        if (isset($_POST['submit'])) {
+            update_option('sdp_settings', $_POST['sdp_settings']);
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+        }
+        $settings = get_option('sdp_settings');
+        ?>
+        <div class="wrap">
+            <h1>Smart Donation Pro Settings</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Message</th>
+                        <td><input type="text" name="sdp_settings[message]" value="<?php echo esc_attr($settings['message']); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th>Amounts (comma-separated)</th>
+                        <td><input type="text" name="sdp_settings[amounts]" value="<?php echo esc_attr($settings['amounts']); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th>PayPal Email</th>
+                        <td><input type="email" name="sdp_settings[paypal_email]" value="<?php echo esc_attr($settings['paypal_email']); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th>Trigger</th>
+                        <td>
+                            <select name="sdp_settings[trigger]">
+                                <option value="scroll" <?php selected($settings['trigger'], 'scroll'); ?>>50% Scroll</option>
+                                <option value="time" <?php selected($settings['trigger'], 'time'); ?>>Time Delay</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Delay (seconds)</th>
+                        <td><input type="number" name="sdp_settings[delay]" value="<?php echo esc_attr($settings['delay']); ?>" /></td>
+                    </tr>
+                </table>
+                <p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Settings" /></p>
+            </form>
+        </div>
+        <?php
     }
-    $email = get_option('sdp_paypal_email');
-    ?>
-    <div class="wrap">
-        <h1>Smart Donation Pro Settings</h1>
-        <form method="post">
-            <table class="form-table">
-                <tr>
-                    <th>PayPal Email</th>
-                    <td><input type="email" name="sdp_paypal_email" value="<?php echo esc_attr($email); ?>" class="regular-text" required></td>
-                </tr>
-            </table>
-            <?php submit_button(); ?>
-        </form>
-        <p>Use shortcode: <code>[smart_donation amount="10" goal="1000" label="Support Us"]</code></p>
-    </div>
-    <?php
 }
 
-// Add CSS
-add_action('wp_head', function() {
-    echo '<style>.sdp-progress-bar { box-shadow: 0 2px 5px rgba(76,175,80,0.3); }</style>';
-});
+SmartDonationPro::get_instance();
+
+// Inline JS and CSS for simplicity (self-contained)
+function sdp_inline_assets() {
+    $settings = get_option('sdp_settings');
+    ?>
+    <style>
+    .sdp-modal { position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; }
+    .sdp-overlay { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+    .sdp-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; max-width: 400px; }
+    .sdp-close { float: right; cursor: pointer; font-size: 28px; }
+    .sdp-amounts { display: flex; gap: 10px; margin: 20px 0; }
+    .sdp-amount-btn { padding: 10px 20px; border: 1px solid #ddd; background: #f9f9f9; cursor: pointer; }
+    .sdp-amount-btn.active { background: #007cba; color: white; }
+    .sdp-donate-btn { width: 100%; padding: 12px; background: #007cba; color: white; border: none; cursor: pointer; }
+    </style>
+    <script>
+    jQuery(document).ready(function($) {
+        var settings = <?php echo json_encode($settings); ?>;
+        var shown = false;
+
+        function showModal() {
+            if (shown || settings.pages !== 'all' && !window.location.href.includes(settings.pages)) return;
+            $('#sdp-modal-default').fadeIn();
+            shown = true;
+        }
+
+        $(window).on('scroll', function() {
+            if ($(window).scrollTop() + $(window).height() > $(document).height() * 0.5 && settings.trigger === 'scroll') {
+                showModal();
+            }
+        });
+
+        setTimeout(function() {
+            if (settings.trigger === 'time') showModal();
+        }, settings.delay * 1000);
+
+        $('.sdp-close, .sdp-overlay').on('click', function() { $('#sdp-modal-default').fadeOut(); });
+        $('.sdp-amount-btn').on('click', function() {
+            $('.sdp-amount-btn').removeClass('active');
+            $(this).addClass('active');
+            $('#sdp-amount').val($(this).data('amount'));
+        });
+    });
+    </script>
+    <?php
+}
+add_action('wp_footer', 'sdp_inline_assets');
