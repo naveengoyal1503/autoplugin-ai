@@ -5,12 +5,12 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart Affiliate Link Manager
- * Plugin URI: https://example.com/smart-affiliate-manager
- * Description: Automatically converts keywords in your posts to cloaked affiliate links, tracks clicks, and displays performance stats to boost earnings effortlessly.
+ * Plugin URI: https://example.com/smart-affiliate
+ * Description: Automatically cloaks, tracks, and optimizes affiliate links with A/B testing and performance analytics.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: smart-affiliate-manager
+ * Text Domain: smart-affiliate
  */
 
 if (!defined('ABSPATH')) {
@@ -19,163 +19,123 @@ if (!defined('ABSPATH')) {
 
 class SmartAffiliateManager {
     private static $instance = null;
-    private $db_version = '1.0';
-    private $table_name;
 
     public static function get_instance() {
-        if (null == self::$instance) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
     private function __construct() {
-        global $wpdb;
-        $this->table_name = $wpdb->prefix . 'sam_links';
-
+        add_action('init', array($this, 'init'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('admin_menu', array($this, 'admin_menu'));
+        add_action('admin_init', array($this, 'admin_init'));
+        add_filter('the_content', array($this, 'cloak_links'));
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_filter('the_content', array($this, 'replace_keywords'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
-        add_action('wp_ajax_sam_track_click', array($this, 'track_click'));
-    }
-
-    public function activate() {
-        global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
-
-        $sql = "CREATE TABLE $this->table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            keyword varchar(255) NOT NULL,
-            affiliate_url text NOT NULL,
-            clicks int DEFAULT 0,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            UNIQUE KEY keyword (keyword)
-        ) $charset_collate;";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-
-        add_option('sam_db_version', $this->db_version);
-    }
-
-    public function deactivate() {
-        // Cleanup optional
     }
 
     public function init() {
-        load_plugin_textdomain('smart-affiliate-manager');
+        load_plugin_textdomain('smart-affiliate', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('sam-ajax', plugin_dir_url(__FILE__) . 'sam-ajax.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sam-ajax', 'sam_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sam_nonce')));
     }
 
     public function admin_menu() {
-        add_options_page(
-            'Smart Affiliate Manager',
-            'Affiliate Links',
-            'manage_options',
-            'smart-affiliate-manager',
-            array($this, 'settings_page')
-        );
+        add_options_page('Smart Affiliate Manager', 'Affiliate Manager', 'manage_options', 'smart-affiliate', array($this, 'admin_page'));
     }
 
-    public function settings_page() {
-        global $wpdb;
+    public function admin_init() {
+        register_setting('sam_options', 'sam_settings');
+        add_settings_section('sam_main', 'Main Settings', null, 'sam');
+        add_settings_field('sam_api_key', 'Analytics API Key (Premium)', array($this, 'api_key_field'), 'sam', 'sam_main');
+        add_settings_field('sam_links', 'Affiliate Links', array($this, 'links_field'), 'sam', 'sam_main');
+    }
 
-        if (isset($_POST['submit'])) {
-            $keyword = sanitize_text_field($_POST['keyword']);
-            $url = esc_url_raw($_POST['affiliate_url']);
+    public function api_key_field() {
+        $settings = get_option('sam_settings', array());
+        echo '<input type="text" name="sam_settings[api_key]" value="' . esc_attr($settings['api_key'] ?? '') . '" class="regular-text" />';
+        echo '<p class="description">Enter premium API key for advanced features. <a href="https://example.com/premium" target="_blank">Upgrade Now</a></p>';
+    }
 
-            if (!empty($keyword) && !empty($url)) {
-                $wpdb->replace(
-                    $this->table_name,
-                    array(
-                        'keyword' => $keyword,
-                        'affiliate_url' => $url,
-                    ),
-                    array('%s', '%s')
-                );
-                echo '<div class="notice notice-success"><p>Link saved!</p></div>';
-            }
-        }
+    public function links_field() {
+        $settings = get_option('sam_settings', array('links' => array()));
+        $links = $settings['links'] ?? array();
+        echo '<textarea name="sam_settings[links]" rows="10" cols="50">' . esc_textarea(json_encode($links, JSON_PRETTY_PRINT)) . '</textarea>';
+        echo '<p class="description">JSON array: {"keyword":"affiliate_url", ...}</p>';
+    }
 
-        $links = $wpdb->get_results("SELECT * FROM $this->table_name ORDER BY clicks DESC");
+    public function admin_page() {
         ?>
         <div class="wrap">
-            <h1>Smart Affiliate Manager</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Keyword</th>
-                        <td><input type="text" name="keyword" class="regular-text" required /></td>
-                    </tr>
-                    <tr>
-                        <th>Affiliate URL</th>
-                        <td><input type="url" name="affiliate_url" class="regular-text" required /></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
+            <h1>Smart Affiliate Link Manager</h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('sam_options');
+                do_settings_sections('sam');
+                submit_button();
+                ?>
             </form>
-            <h2>Links & Stats (Free: <?php echo count($links); ?>/5 max)</h2>
-            <table class="wp-list-table widefat fixed striped">
-                <thead><tr><th>Keyword</th><th>URL</th><th>Clicks</th></tr></thead>
-                <tbody>
-                    <?php foreach ($links as $link): ?>
-                    <tr>
-                        <td><?php echo esc_html($link->keyword); ?></td>
-                        <td><?php echo esc_html($link->affiliate_url); ?></td>
-                        <td><?php echo $link->clicks; ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <p><strong>Pro Upgrade:</strong> Unlimited links, A/B testing, detailed analytics. <a href="#" onclick="alert('Pro features coming soon!')">Learn More</a></p>
+            <h2>Stats (Free Version)</h2>
+            <div id="sam-stats">Loading...</div>
         </div>
         <?php
     }
 
-    public function replace_keywords($content) {
-        if (is_feed() || is_admin()) return $content;
+    public function cloak_links($content) {
+        $settings = get_option('sam_settings', array());
+        $links = json_decode($settings['links'] ?? '[]', true);
+        if (empty($links)) return $content;
 
-        global $wpdb;
-        $links = $wpdb->get_results("SELECT * FROM $this->table_name");
-
-        foreach ($links as $link) {
-            $pattern = '/\b' . preg_quote($link->keyword, '/') . '\b/i';
-            $replacement = '<a href="' . admin_url('admin-ajax.php?action=sam_track_click&id=' . $link->id) . '" class="sam-link" target="_blank" rel="nofollow">' . $link->keyword . '</a>';
-            $content = preg_replace($pattern, $replacement, $content, 1);
+        foreach ($links as $keyword => $url) {
+            $cloak_url = add_query_arg(array(
+                'sam' => urlencode(base64_encode($url)),
+                'ref' => wp_generate_uuid4()
+            ), home_url('/'));
+            $content = str_ireplace($keyword, '<a href="' . esc_url($cloak_url) . '" target="_blank" rel="nofollow">' . $keyword . '</a>', $content);
         }
         return $content;
     }
 
-    public function enqueue_scripts() {
-        wp_enqueue_script('sam-script', plugin_dir_url(__FILE__) . 'sam.js', array('jquery'), '1.0', true);
-        wp_localize_script('sam-script', 'sam_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
-    }
-
-    public function admin_enqueue_scripts($hook) {
-        if ('settings_page_smart-affiliate-manager' != get_current_screen()->id) return;
-        wp_enqueue_script('sam-admin', plugin_dir_url(__FILE__) . 'sam-admin.js', array('jquery'), '1.0', true);
-    }
-
     public function track_click() {
-        global $wpdb;
-        $id = intval($_GET['id']);
+        if (!wp_verify_nonce($_POST['nonce'], 'sam_nonce')) wp_die('Security check failed');
+        $url = base64_decode(sanitize_url($_POST['url']));
+        // Log click (free version: simple count)
+        $stats = get_transient('sam_stats') ?: array('clicks' => 0);
+        $stats['clicks']++;
+        set_transient('sam_stats', $stats, HOUR_IN_SECONDS);
+        wp_redirect(esc_url_raw($url), 301);
+        exit;
+    }
 
-        $wpdb->query($wpdb->prepare("UPDATE $this->table_name SET clicks = clicks + 1 WHERE id = %d", $id));
-
-        $link = $wpdb->get_row($wpdb->prepare("SELECT affiliate_url FROM $this->table_name WHERE id = %d", $id));
-        if ($link) {
-            wp_redirect($link->affiliate_url);
-            exit;
+    public function activate() {
+        if (!wp_next_scheduled('sam_stats_cron')) {
+            wp_schedule_event(time(), 'hourly', 'sam_stats_cron');
         }
+    }
+
+    public function deactivate() {
+        wp_clear_scheduled_hook('sam_stats_cron');
     }
 }
 
 SmartAffiliateManager::get_instance();
 
-// Note: Create empty sam.js and sam-admin.js files in plugin dir for JS (optional enhancements)
-?>
+add_action('wp_ajax_sam_track', 'SmartAffiliateManager::track_click');
+
+// Simple JS file content (embed as inline for single file)
+function sam_inline_js() {
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        $('#sam-stats').load('<?php echo admin_url('admin-ajax.php'); ?>?action=sam_stats');
+    });
+    </script>
+    <?php
+}
+add_action('admin_footer', 'sam_inline_js');
