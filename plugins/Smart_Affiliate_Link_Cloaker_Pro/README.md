@@ -1,46 +1,53 @@
 # Smart Affiliate Link Cloaker Pro
 
-A powerful freemium WordPress plugin to cloak, track, and optimize affiliate links for higher conversions.
+A powerful **freemium WordPress plugin** for affiliate marketers to cloak, track, and optimize links for maximum conversions.
 
 ## Features
 
 ### Free Version
-- **Link Cloaking**: Securely mask affiliate URLs with shortcodes `[sac_link id="1" url="https://affiliate.com" text="Buy Now"]`.
-- **Basic Click Tracking**: Monitor clicks per link in dashboard (up to 10 links).
-- **Easy Setup**: No coding required.
+- **Auto-cloaking**: Automatically detects and cloaks `rel="nofollow"` affiliate links in posts/pages.
+- **Shortcode support**: Use `[sac_link url="https://aff.link"]` for manual cloaking.
+- **Basic click tracking**: Monitors clicks via `/go/{hash}` redirects.
+- **Admin dashboard**: View top links and basic stats.
 
-### Pro Version ($49/year)
-- **Advanced Analytics**: Geo-location, device tracking, conversion rates.
-- **A/B Testing**: Test link texts and placements.
-- **Unlimited Links**: No limits on tracked links.
-- **API Integration**: Export data to Google Analytics.
-- **Priority Support**: Email support within 24 hours.
+### Pro Version ($9/mo or $79/yr)
+- **Advanced analytics**: UTM tracking, geolocation, device stats.
+- **A/B testing & rotation**: Test multiple affiliate links automatically.
+- **Link health monitoring**: Alerts for broken links.
+- **API integrations**: Amazon, CJ, ShareASale.
+- **Export reports** & priority support.
 
 ## Installation
-
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Configure in **Settings > Affiliate Cloaker**.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Links are auto-cloaked on publish/update.
 
 ## Setup
-
-1. Go to **Settings > Affiliate Cloaker**.
-2. Enter your affiliate URLs via shortcode or dashboard.
-3. Use shortcode: `[sac_link id="1" text="Click Here"]` (set URL in settings).
-4. View stats in the settings page.
+1. Go to **Settings > SAC Pro**.
+2. **Free**: Works out-of-box.
+3. **Pro**: Enter license key or [purchase here](https://example.com/buy-pro).
+4. Add affiliate links with `rel="nofollow"` or use shortcode.
 
 ## Usage
 
-- **Add Link**: Use shortcode in posts/pages: `[sac_link id="your-link-id" text="Your Text"]`.
-- **Track Stats**: Admin dashboard shows click counts.
-- **Pro Upgrade**: Visit [example.com/pro](https://example.com/pro) for premium features.
+### Auto-Cloaking
+Add links like:
+html
+<a href="https://amazon.com/product?tag=youraff" rel="nofollow">Buy Now</a>
 
-## Changelog
+Plugin converts to trackable `/go/hash`.
 
-**1.0.0**
-- Initial release with freemium model.
+### Shortcode
+
+[sac_link url="https://aff.link?tag=123" text="Get It Now"]
+
+
+### View Stats
+**Settings > SAC Pro** shows clicks per link. Pro users get detailed reports.
+
+## Upgrade to Pro
+Unlock revenue-boosting features. [Get Pro Now](https://example.com/pro) – 14-day money-back guarantee!
 
 ## Support
-
-Free support via WordPress forums. Pro support: support@example.com.
+- Free: WordPress.org forums.
+- Pro: Dedicated email + chat.
