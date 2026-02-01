@@ -1,39 +1,41 @@
 # AI Content Optimizer Pro
 
-## Description
-**AI Content Optimizer Pro** is a powerful WordPress plugin that uses simulated AI to analyze and optimize your post content for better SEO, readability, and keyword density. Free version offers basic analysis; Pro unlocks auto-optimizations, bulk processing, and advanced features.
-
 ## Features
-- **Basic Analysis (Free)**: Readability score, keyword density on post edit screen.
-- **Premium Optimizations**: Auto-apply SEO improvements, bulk optimize posts, API integrations.
-- **Side Meta Box**: Instant analysis button in post editor.
-- **Upsell Integration**: Seamless upgrade prompts for monetization.
-- **Settings Page**: Manage license and premium activation.
+
+- **Free Version**: Basic readability score, keyword density analysis (limited to 5 uses).
+- **Pro Version** ($4.99/month): Unlimited AI-powered content rewriting, advanced SEO suggestions, engagement scoring, automatic optimizations.
+- One-click analysis from post editor or frontend shortcode `[aico_button]`.
+- Self-contained, lightweight, no external dependencies.
 
 ## Installation
+
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit a post to see the AI Optimizer meta box.
+3. Access via **AI Optimizer** in the admin menu or add `[aico_button]` shortcode to posts/pages.
 
 ## Setup
-1. Go to **Settings > AI Optimizer**.
-2. Free: Use basic analysis immediately.
-3. Pro: Enter your premium key (purchase at example.com/premium, $9/month) to activate advanced features.
+
+- **Free**: Paste content and click **Analyze Content** (5 free uses).
+- **Upgrade to Pro**: Click **Upgrade Now** in the dashboard; enter payment details (integrates with Stripe simulation).
+- Pro unlocks AI features automatically.
 
 ## Usage
-1. Edit any post/page.
-2. Click **Analyze Content** in the sidebar meta box.
-3. View scores (Readability %, Keyword Density %).
-4. **Pro Users**: Click **Re-optimize** to auto-improve content.
-5. Save post to persist analysis.
 
-## Freemium Model
-- **Free**: Core analysis.
-- **Pro ($9/month)**: Auto-optimizations, bulk tools, priority support.
+1. **Admin Dashboard**: Go to **AI Optimizer** > Paste content > Analyze.
+2. **Post Editor**: Content auto-analyzes on save (Pro).
+3. **Frontend**: Use shortcode `[aico_button]` for live page optimization.
+4. View results: Readability score, keyword tips, AI suggestions.
 
-## Support
-Submit tickets at example.com/support. Pro users get priority.
+## Pro Benefits
 
-## Changelog
-**1.0.0**
-- Initial release with freemium features.
+| Feature | Free | Pro |
+|---------|------|-----|
+| Analyses | 5 | Unlimited |
+| AI Rewriting | No | Yes |
+| SEO Insights | Basic | Advanced |
+| Priority Support | No | Yes |
+
+**Support**: Free via WordPress forums. Pro: Email support@yourdomain.com.
+
+**Changelog**
+- 1.0.0: Initial release with freemium model.
