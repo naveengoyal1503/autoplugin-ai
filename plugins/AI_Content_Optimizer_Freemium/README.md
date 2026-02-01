@@ -1,52 +1,67 @@
 # AI Content Optimizer Freemium
 
-A powerful WordPress plugin that uses AI to analyze and optimize your content for **SEO** and **readability**. Free version offers basic analysis for up to 5 posts per month; premium unlocks unlimited use and advanced features.
+[![Contributors][badge-contributors]][contributors] [![ Forks][badge-forks]][forks] [![Stargazers][badge-stars]][stars] [![Issues][badge-issues]][issues] [![License][badge-license]][license]
+
+AI-powered WordPress plugin that instantly analyzes your post content for **word count**, **readability score**, and **SEO insights**. Free version provides essential metrics; premium unlocks **AI rewriting**, **keyword suggestions**, and more!
 
 ## Features
 
 ### Free Version
-- **Content Analysis**: Get readability and SEO scores for your posts.
-- **Basic Suggestions**: Tips to improve structure, keywords, and flow.
-- **Usage Limit**: 5 optimizations per month.
+- **Real-time Content Analysis**: Word count, Flesch Reading Ease score.
+- **SEO Score Preview**: Basic on-page SEO evaluation.
+- **Sidebar Meta Box**: Optimize directly from post editor.
 
-### Premium Version (Upsell)
-- **Unlimited Optimizations**: No limits on usage.
-- **Auto-Optimization**: One-click AI-generated optimized content.
-- **Advanced Insights**: Keyword density, meta suggestions, competitor analysis simulation.
-- **Priority Support**: Email support and updates.
+### Premium Features (Upsell)
+- **AI Content Rewriter**: Automatically improve readability and engagement.
+- **Keyword Optimizer**: AI-suggested keywords for better rankings.
+- **Bulk Analysis**: Optimize multiple posts at once.
+- **Priority Support & Updates**: Lifetime access.
 
 ## Installation
 
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Access settings via **Settings > AI Optimizer**.
+1. Download the plugin ZIP.
+2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Edit any post – see the **AI Content Optimizer** sidebar!
 
 ## Setup
 
-1. Go to **Settings > AI Optimizer** in your WordPress admin.
-2. For premium: Enter your license key (purchased from example.com/premium).
-3. Usage tracked automatically; upgrade notice appears after 5 free uses.
+- No configuration needed for free features.
+- Premium: Purchase at [example.com/premium](https://example.com/premium-upgrade), get license key, enter in **Settings > AI Optimizer**.
 
 ## Usage
 
-1. Edit any post or page.
-2. Look for the **AI Optimize** meta box (added automatically).
-3. Click **Analyze Content** to get scores and tips.
-4. **Premium**: Click **Auto-Optimize** for instant improvements.
-5. Save your post.
+1. Create or edit a **Post**.
+2. Scroll to the **AI Content Optimizer** sidebar.
+3. Click **Analyze (Free)** for instant metrics.
+4. **Upgrade** for AI-powered enhancements.
 
-## Monetization for Developers
+## Screenshots
 
-- **Freemium Model**: Drives upgrades via usage limits and teasers.[1][2][4]
-- **Upsell Links**: Built-in notices link to your premium sales page.
-- **Potential Revenue**: Target bloggers/SEOs; 40% freemium conversion possible.[6]
+*(Describe: Sidebar showing metrics, loader, premium upsell button)*
+
+## Changelog
+
+### 1.0.0
+- Initial release with free analysis tools.
+
+## Upgrade to Premium
+
+Get unlimited AI features for **$49/year** → [Upgrade Now](https://example.com/premium-upgrade?ref=plugin)
 
 ## Support
 
 - Free: WordPress.org forums.
-- Premium: Submit ticket at example.com/support.
+- Premium: Dedicated support ticket.
 
-## Changelog
+## Contributing
 
-**1.0.0**
-- Initial release with core freemium features.
+Pull requests welcome! Fork & submit PRs.
+
+[contributors]: https://github.com/example/ai-content-optimizer/contributors
+[forks]: https://github.com/example/ai-content-optimizer/network
+[stars]: https://github.com/example/ai-content-optimizer/stargazers
+[issues]: https://github.com/example/ai-content-optimizer/issues
+[license]: https://github.com/example/ai-content-optimizer/blob/main/LICENSE
+
+*Built with ❤️ for WordPress creators.*
