@@ -2,43 +2,39 @@
 
 ## Features
 
-- **Automatic Link Cloaking**: Detects and cloaks affiliate links in posts and pages for better UX and tracking.
-- **Click Tracking**: Logs clicks with IP, user agent, and timestamp (stored in custom DB table).
-- **Shortcode Support**: Use `[salmlink url="https://affiliate-link.com"]` for manual links.
-- **Admin Dashboard**: Configure affiliate keywords (e.g., amazon, clickbank) and view basic stats.
-- **Free Forever**: Core features are free.
+- **Auto-Linking**: Automatically replaces keywords in posts/pages with cloaked affiliate links.
+- **Click Tracking**: Real-time stats on clicks per keyword/link.
+- **Easy Setup**: Add keywords and affiliate URLs via simple dashboard.
+- **SEO-Friendly**: Nofollow links preserve site SEO.
+- **Freemium Model**: Free for up to 5 links; Pro unlocks unlimited + analytics.
 
-**Premium Add-ons (coming soon)**:
-- Advanced analytics dashboard with charts.
-- A/B link testing.
-- Integrations: WooCommerce, Amazon Associates, Pretty Links.
-- Unlimited links and custom domains.
+**Pro Features**: A/B testing, geo-targeting, detailed reports ($49/year).
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Configure in **Settings > Affiliate Links**.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Affiliate Links** to add your first keyword + URL.
 
 ## Setup
 
-1. Go to **Settings > Affiliate Links**.
-2. Add comma-separated keywords for auto-detection (e.g., `amazon,clickbank,commission`).
-3. Save changes.
-4. Add affiliate links to posts; they auto-cloak on frontend.
+1. In the dashboard, enter a **keyword** (e.g., "best hosting").
+2. Paste your **affiliate URL** (e.g., Amazon/partner link).
+3. Save. Keywords auto-link in new/existing content.
+
+**Limits**: Free tier: 5 links max. Upgrade for more.
 
 ## Usage
 
-- **Automatic**: Write affiliate URLs in content; they convert to trackable cloaked links.
-- **Manual**: `[salmlink url="https://example.com/aff?ref=123"]`.
-
-Clicks redirect after logging. View raw data in DB or upgrade for dashboard.
+- Links appear as `<a class="sam-link">keyword</a>` in content.
+- Clicks redirect via tracker to your affiliate URL.
+- View stats: Clicks per link in dashboard.
+- **Customization**: Style `.sam-link` in CSS (e.g., underline on hover).
 
 ## Support
 
-Report issues on GitHub or contact support@example.com.
+Report issues on WordPress.org forums. Pro support via email.
 
-## Upgrade to Pro
+## Changelog
 
-Unlock premium features for $49/year at [example.com/pro](https://example.com/pro).
+**1.0.0**: Initial release with auto-linking and tracking.
