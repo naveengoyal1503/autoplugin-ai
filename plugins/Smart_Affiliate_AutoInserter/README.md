@@ -1,40 +1,39 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into posts.**
+**Automatically boosts your affiliate earnings by inserting relevant links into content using smart keyword matching.**
 
 ## Features
-- **Auto-insertion**: Scans content and inserts affiliate links based on keywords.
-- **Customizable**: Define keywords, product URLs, and link text.
-- **Amazon optimized**: Appends your affiliate tag to all links.
-- **Safe & compliant**: Adds `nofollow sponsored` attributes.
-- **Limits insertions**: Max 3 links per post to avoid spamming.
-- **Freemium**: Free core; Pro adds A/B testing, analytics, click tracking ($49/year).
+- **Automatic Link Insertion**: Scans posts for keywords and inserts your affiliate links seamlessly.
+- **Customizable Rules**: Set max links per post, minimum word count, and manage affiliate links via dashboard.
+- **WordPress Native**: Works on single posts; lightweight and self-contained.
+- **Freemium Ready**: Free core for basic matching; **Pro** adds AI context analysis, performance analytics, A/B testing, and WooCommerce/Amazon integrations.
+- **SEO-Friendly**: Uses `nofollow sponsored` attributes and targets natural keyword placements.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Affiliate Inserter** to configure.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Configure in **Settings > Affiliate Inserter**.
 
 ## Setup
-1. Enter your **Amazon Affiliate Tag** (e.g., `yourtag-20`).
-2. Add keywords in JSON format:
-   
-   [
-     {"keyword":"laptop", "url":"https://amazon.com/dp/B08N5WRWNW", "text":"Best Laptop"},
-     {"keyword":"headphones", "url":"https://amazon.com/dp/B07Z7N8T3S", "text":"Buy Headphones"}
-   ]
-   
-3. Save settings. Links auto-appear in new/existing posts.
+1. Go to **Settings > Affiliate Inserter**.
+2. Toggle **Enable Auto-Insertion**.
+3. Set **Max Links per Post** (default: 3) and **Min Words per Post** (default: 100).
+4. Add affiliate links: Enter **Anchor Text** (e.g., "best hosting") and **Affiliate URL**.
+5. Save changes. Links auto-insert on new and existing posts.
 
 ## Usage
-- Write posts with keywords like "laptop".
-- Plugin inserts links automatically on single post views.
+- Write content with natural keywords matching your anchor texts.
+- Plugin analyzes top keywords and replaces matches with links (one per keyword).
 - Test on a staging site first.
-- **Pro**: Enable tracking to see clicks & earnings.
+- **Pro Upgrade**: Unlock AI-powered relevance scoring, link performance tracking, and bulk import for 50+ networks.
 
-## FAQ
-- **Does it slow my site?** No, lightweight and only runs on single posts.
-- **Works with Gutenberg/Classic?** Yes.
-- **Support:** [Contact us](https://example.com/support).
+## Freemium Model
+- **Free**: Basic keyword matching.
+- **Pro ($49/year)**: AI enhancements, analytics.
+- **Bundle ($99/year)**: Pro + Integrations Pack (Amazon, WooCommerce, etc.).
 
-**Upgrade to Pro for 5x more earnings with smart targeting!**
+## Support
+Submit tickets at example.com/support. Pro users get priority.
+
+**Start monetizing your content effortlessly! 🚀**
