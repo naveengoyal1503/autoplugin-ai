@@ -1,33 +1,34 @@
 # AI Content Optimizer Pro
 
-## Description
-AI Content Optimizer Pro uses smart algorithms to automatically improve your WordPress posts for SEO, readability, and engagement. Free version provides basic keyword highlighting and scoring. Premium unlocks advanced AI rewriting, keyword research, and analytics.
-
 ## Features
-- **Free:** Auto-keyword extraction, readability improvements, AI score on posts.
-- **Premium ($9/month):** Full AI content rewriting, competitor keyword analysis, performance tracking dashboard, priority support.
-- One-click optimization from post editor.
-- Works with any post type.
-- Lightweight and self-contained.
+
+- **Free Version**: Basic SEO analysis, readability score, keyword suggestions (limited to 5 scans/week).
+- **Premium Version** ($9.99/month): Unlimited scans, AI-powered content rewrites, integration with OpenAI, auto-apply optimizations, priority support.
+- Real-time analysis of posts/pages by ID or pasted content.
+- **SEO Boost**: Improves search rankings with actionable insights.
 
 ## Installation
-1. Upload the `ai-content-optimizer.php` file to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' screen in WordPress admin.
-3. Enable in **Settings > AI Optimizer**.
+
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Access from **WP Admin > AI Optimizer**.
 
 ## Setup
-1. Go to **Settings > AI Optimizer**.
-2. Check **Enable Auto-Optimization**.
-3. For premium: Enter your API key (obtained after purchase).
+
+- Free: Start analyzing immediately.
+- Premium: Purchase at [example.com/premium](https://example.com/premium), enter license key in settings (future update).
 
 ## Usage
-1. Edit any post.
-2. In the **AI Content Optimizer** sidebar, check **Auto-Optimize**.
-3. Save/update post – content is enhanced automatically.
-4. View **AI Score** for optimization quality.
 
-## Upgrade to Pro
-[Get Premium](https://example.com/premium) for AI-powered rewriting that boosts traffic by up to 40%.
+1. Go to **AI Optimizer** in admin menu.
+2. Paste content or enter Post ID.
+3. Click **Analyze & Optimize**.
+4. Review suggestions and apply manually (premium: one-click apply).
 
-## Changelog
-**1.0.0** - Initial release.
+## Monetization
+
+Upgrade to premium for full AI features and remove limits. Supports subscription model for recurring revenue.
+
+## Support
+
+Contact support@example.com. Premium users get priority.
