@@ -1,37 +1,32 @@
 # AI Content Optimizer
 
 ## Description
-AI-powered WordPress plugin that provides instant content analysis for **readability**, **keyword density**, and **word count**. Freemium model upgrades to full AI optimization features.
+**AI Content Optimizer** is a powerful WordPress plugin that helps you analyze and optimize your post content for better **SEO** and **readability**. The free version provides essential metrics like readability score and keyword density. Upgrade to Pro for AI-powered rewrite suggestions and advanced SEO insights[1][2].
 
 ## Features
-- **Free:** Real-time readability scoring, keyword density checker, word count in post editor.
-- **Premium ($49/year):** AI-generated optimization suggestions, one-click auto-optimization, advanced SEO insights, priority support.
-- Lightweight and self-contained single-file plugin.
-- Works on all post types.
+- **Free Tier**: Real-time readability score, keyword density analysis.
+- **Premium Tier** ($49/year): AI content rewrite suggestions, advanced keyword recommendations, auto-optimization, priority support.
+- Works on posts and pages.
+- Fully self-contained single-file plugin.
 
 ## Installation
 1. Download the plugin ZIP.
-2. Upload via **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Analysis appears automatically in the post editor sidebar.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
 
 ## Setup
-1. Go to **Settings > AI Content Optimizer**.
-2. Enter license key `premium123` (demo) or purchase real premium at [example.com/premium](https://example.com/premium).
-3. Premium features activate instantly.
+1. After activation, edit any post.
+2. In the **AI Content Optimizer** meta box (sidebar), enter a primary keyword.
+3. Click **Analyze (Free)** for instant basic metrics.
+4. Upgrade for premium features via the link in the meta box.
 
 ## Usage
-1. Edit any post.
-2. View **AI Content Optimizer** sidebar for free analysis.
-3. Premium users: Click **AI Optimize** button for suggestions.
-4. Save post to apply changes.
+- **Basic Analysis**: Enter keyword and click Analyze to see scores.
+- **Premium**: Unlock AI rewrites (teased in free version) for auto-generated optimized content.
+- Metrics update on save.
 
-## Screenshots
-*(Imagine: Post editor with sidebar showing scores and optimize button)*
+## Premium Upgrade
+Get advanced AI features and support: [Upgrade Now](#) (Integrates Freemius for seamless payments)[5].
 
 ## Changelog
-**1.0.0**
-- Initial release with freemium features.
-
-## Support
-Free support via WordPress forums. Premium: Email support@example.com.
+**1.0.0**: Initial release with free analysis.
