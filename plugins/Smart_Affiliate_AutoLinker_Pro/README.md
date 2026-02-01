@@ -1,71 +1,47 @@
 # Smart Affiliate AutoLinker Pro
 
-[![WordPress plugin](https://img.shields.io/wordpress/plugin/downloads/wp-seo?color=blue)](https://wordpress.org/plugins/smart-affiliate-autolinker)
+**Automatically turns keywords in your content into profitable affiliate links with smart A/B testing and analytics.**
 
-**Automatically turns keywords in your posts into profitable affiliate links.** Boost commissions without manual work. Free core + powerful Pro upgrade.
-
-## 🚀 **Key Features**
+## Features
 
 ### Free Version
-- **Auto-Link Keywords**: Detects up to **5 keywords** in content and links them to your affiliate URLs.
-- **Customizable Base URL**: Supports tracking params like `{keyword}` and `aff_id`.
-- **Safe Linking**: Only links plain text, skips existing links/images. Works on posts & widgets.
-- **No Coding Needed**: Simple settings page.
+- **Keyword Auto-Linking**: Define keywords and affiliate URLs; plugin auto-links them in posts/pages.
+- **Link Limits**: Control how many times each keyword links per post.
+- **Global Settings**: Nofollow, new tab options.
+- **Easy Admin Panel**: Add/edit keywords via intuitive interface.
 
-### Pro Version ($49/year)
-- ✅ **Unlimited Keywords** + Advanced regex support
-- ✅ **Click Analytics Dashboard** – Track conversions & earnings
-- ✅ **A/B Link Testing** – Auto-rotate links for max performance
-- ✅ **AffiliateWP Integration** – Auto-generate referral links
-- ✅ **Priority Support** + Updates
+### Pro Version (Upgrade for $49/year)
+- **A/B Testing**: Rotate multiple affiliate links to find top performers.
+- **Click Analytics**: Track clicks, conversions, and earnings.
+- **Premium Integrations**: Amazon, ClickBank, ShareASale auto-import.
+- **Priority Support**: Fast email support.
 
-## 🎯 **Who It's For**
-Bloggers, affiliate marketers, and site owners using programs like Amazon Associates, ShareASale, or AffiliateWP.
+## Installation
 
-## 📈 **Why Profitable?**
-- **Recurring Revenue Model**: Subscriptions retain 65% more customers [6].
-- **High Demand**: Affiliate plugins like AffiliateWP generate $33K/month [5].
-- **Freemium Upsell**: 40% convert to premium [6].
+1. Upload the `smart-affiliate-autolinker` folder to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Go to **Settings > Affiliate AutoLinker** to configure keywords and links.
 
-## 🛠️ **Installation**
+## Setup
 
-1. Download & upload the ZIP to **Plugins > Add New > Upload**.
-2. Activate the plugin.
-3. Go to **Settings > Affiliate AutoLinker**.
-4. Enter your **Affiliate Base URL** (e.g., `https://youraffiliate.com/ref/?product={keyword}&ref=123`).
-5. Add keywords: One per line, format `keyword|affiliate_id`.
-6. Save & watch commissions grow!
+1. In the admin panel, add keywords (e.g., "best laptop") and affiliate URLs.
+2. Set link limits (e.g., 3 per post).
+3. Enable nofollow/new tab as needed.
+4. Save and test on your site.
 
-## ⚙️ **Setup Guide**
+## Usage
 
-### Step 1: Configure Base URL
- https://example.com/aff/?product={keyword}&ref={aff_id} 
+- Write content with target keywords.
+- Plugin auto-converts matches to links.
+- Monitor performance in Pro dashboard.
 
-### Step 2: Add Keywords (Free limit: 5)
+**Pro Tip**: Use high-converting keywords from your analytics for max profits.
 
-Blue Widget|12345
-Best Laptop|67890
-WordPress Hosting|affwp-1
+## Changelog
 
+### 1.0.0
+- Initial release.
 
-### Step 3: Pro Setup
-Purchase Pro license → Enter key in settings → Unlock unlimited features.
+## Upgrade to Pro
 
-## 📖 **Usage**
-
-- **Automatic**: Links appear live on frontend (posts, pages, widgets).
-- **Test Mode**: Add `?saal_test=1` to preview links.
-- **Exclusions**: Use `no-saal-link` CSS class on elements to skip.
-
-**Example Output**:
-Before: "Check out this **Blue Widget**!"
-After: "Check out this <a href=\"...\" target=\"_blank\">**Blue Widget**</a>!"
-
-## 🤝 **Support**
-- Free: WordPress.org forums.
-- Pro: Priority email support@yourdomain.com.
-
-## 💰 **Upgrade to Pro**
-**[Get Pro Now](https://example.com/pro)** – Unlimited everything + analytics.
-
-**Built for 2026 WordPress standards. Compatible with Gutenberg, Classic Editor, WooCommerce.**
+Unlock A/B testing and analytics: [Get Pro Now](https://example.com/pro)
