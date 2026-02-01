@@ -1,43 +1,44 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into your content using smart keyword matching.**
+**Automatically boosts your affiliate earnings by inserting relevant Amazon links into your content.**
 
 ## Features
-
-- **Auto-Insert Links**: Detects keywords in posts/pages and inserts Amazon affiliate links.
-- **Free Version**: Supports 5 popular keywords (laptop, phone, book, headphones, camera).
-- **Pro Version** ($49/year):
-  - Unlimited custom keywords.
-  - AI-powered product matching via OpenAI.
-  - Click analytics dashboard.
-  - Custom link placements (sidebar, footer).
-  - Multi-site license.
-- Mobile-responsive links.
-- No speed impact (client-side enhancements).
+- **Smart Auto-Insertion**: Detects keywords in posts/pages and replaces them with your Amazon affiliate links.
+- **Easy Setup**: Add your Amazon tag and keyword:ASIN pairs via simple textarea.
+- **SEO-Friendly**: Links use `nofollow sponsored` attributes.
+- **Freemium Model**: Free core features; Pro unlocks AI suggestions, analytics, A/B testing ($49/year).
+- **Lightweight**: Single-file plugin, no bloat.
 
 ## Installation
-
 1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
+2. In WordPress Admin: Plugins > Add New > Upload Plugin.
 3. Activate the plugin.
-4. Go to **Settings > Affiliate Inserter** to configure.
+4. Go to Settings > Affiliate Inserter to configure.
 
 ## Setup
-
-1. Sign up for [Amazon Associates](https://affiliate-program.amazon.com/) and get your **Affiliate Tag** (e.g., yourtag-20).
-2. Enter your tag in plugin settings.
-3. Enable auto-insertion.
-4. (Pro) Add OpenAI API key for advanced matching.
-5. Test on a post containing keywords like 'laptop'.
+1. Sign up for [Amazon Associates](https://affiliate-program.amazon.com/) and get your **Associate Tag**.
+2. In plugin settings:
+   - Enable auto-insertion.
+   - Enter your Amazon tag (e.g., `yourid-20`).
+   - Add keywords and ASINs (e.g., `wireless headphones: B08N5WRWNW`).
+3. Save changes. Links auto-appear in content!
 
 ## Usage
+- Write posts with natural keywords (e.g., "best wireless headphones").
+- Plugin scans and inserts `<a href="amazon-link">wireless headphones</a>`.
+- Earn commissions on clicks/sales.
+- Test on a staging site first. Monitor earnings in Amazon dashboard.
 
-- Write content with natural keywords (e.g., "I love my new laptop").
-- Plugin auto-wraps them: `<a href="amazon-link">laptop</a>`.
-- Earn commissions on clicks/purchases.
-- View Pro analytics for performance.
-
-**Pro Upgrade**: [Get Pro](https://example.com/pro) for AI smarts & unlimited power.
+## Pro Version
+Upgrade for:
+- AI keyword research from your content.
+- Click/impression analytics.
+- A/B link testing.
+- Priority support.
 
 ## Support
-Contact support@example.com or use WordPress forums.
+- [WordPress.org Forum](https://wordpress.org/support/plugin/smart-affiliate-autoinserter)
+- Report issues via email: support@example.com
+
+## Changelog
+**1.0.0** - Initial release.
