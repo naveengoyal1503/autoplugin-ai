@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer Pro
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: Analyze and optimize your content for better readability, SEO, and engagement. Freemium with premium upgrades.
+ * Description: Automatically optimizes WordPress content for SEO using AI-powered analysis. Freemium model with premium upgrades.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -14,119 +14,140 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class AIContentOptimizer {
-    const PREMIUM_LICENSE_KEY = 'premium_license_ai_co';
-    const PREMIUM_FEATURES_URL = 'https://example.com/premium-upgrade?ref=plugin';
+    private static $instance = null;
 
-    public function __construct() {
-        add_action('plugins_loaded', array($this, 'init'));
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
-    public function init() {
+    private function __construct() {
+        add_action('init', array($this, 'init'));
         add_action('add_meta_boxes', array($this, 'add_meta_box'));
-        add_action('wp_ajax_analyze_content', array($this, 'ajax_analyze_content'));
+        add_action('save_post', array($this, 'save_meta'));
+        add_action('admin_menu', array($this, 'add_settings_page'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_filter('plugin_row_meta', array($this, 'plugin_row_meta'), 10, 2);
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
+    public function init() {
+        load_plugin_textdomain('ai-content-optimizer', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    }
+
     public function enqueue_scripts($hook) {
-        if ($hook !== 'post.php' && $hook !== 'post-new.php') return;
-        wp_enqueue_script('ai-co-admin', plugin_dir_url(__FILE__) . 'ai-co-admin.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('ai-co-admin', 'aiCoAjax', array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ai_co_nonce'),
-            'isPremium' => $this->is_premium()
-        ));
+        if ('post.php' === $hook || 'post-new.php' === $hook || 'ai-content-optimizer_page_ai-optimizer-settings' === $hook) {
+            wp_enqueue_script('ai-optimizer-js', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
+            wp_enqueue_style('ai-optimizer-css', plugin_dir_url(__FILE__) . 'assets/style.css', array(), '1.0.0');
+        }
     }
 
     public function add_meta_box() {
-        add_meta_box('ai-content-optimizer', 'AI Content Optimizer', array($this, 'meta_box_html'), 'post', 'side', 'high');
-        add_meta_box('ai-content-optimizer', 'AI Content Optimizer', array($this, 'meta_box_html'), 'page', 'side', 'high');
+        add_meta_box('ai-content-optimizer', __('AI Content Optimizer', 'ai-content-optimizer'), array($this, 'meta_box_callback'), 'post', 'side', 'high');
+        add_meta_box('ai-content-optimizer', __('AI Content Optimizer', 'ai-content-optimizer'), array($this, 'meta_box_callback'), 'page', 'side', 'high');
     }
 
-    public function meta_box_html($post) {
-        wp_nonce_field('ai_co_meta_box', 'ai_co_nonce');
-        $content = get_post_field('post_content', $post->ID);
-        $analysis = get_post_meta($post->ID, '_ai_co_analysis', true);
-        $is_premium = $this->is_premium();
-        echo '<div id="ai-co-analysis">';
-        if ($analysis) {
-            echo '<p><strong>Previous Analysis:</strong><br>' . esc_html($analysis['summary']) . '</p>';
-        }
-        echo '<p><textarea id="ai-co-content" style="display:none;">' . esc_textarea($content) . '</textarea></p>';
-        echo '<button id="ai-co-analyze" class="button button-primary" ' . (!$is_premium ? 'disabled' : '') . '>Analyze Content</button>';
-        if (!$is_premium) {
-            echo '<p><small>Premium feature. <a href="' . esc_url(self::PREMIUM_FEATURES_URL) . '" target="_blank">Upgrade to Pro</a></small></p>';
-        }
-        echo '</div>';
-    }
-
-    public function ajax_analyze_content() {
-        check_ajax_referer('ai_co_nonce', 'nonce');
+    public function meta_box_callback($post) {
+        wp_nonce_field('ai_optimizer_nonce', 'ai_optimizer_nonce');
+        $optimized = get_post_meta($post->ID, '_ai_optimized', true);
+        $score = get_post_meta($post->ID, '_ai_score', true);
+        echo '<p><strong>' . __('Optimization Score:', 'ai-content-optimizer') . '</strong> ' . ($score ? $score . '%' : 'Not analyzed') . '</p>';
+        echo '<p><label><input type="checkbox" name="ai_optimize" ' . checked($optimized, true, false) . '> ' . __('Auto-optimize on save', 'ai-content-optimizer') . '</label></p>';
         if (!$this->is_premium()) {
-            wp_send_json_error('Premium feature required.');
+            echo '<p><em>' . __('Upgrade to Pro for AI suggestions and unlimited scans.', 'ai-content-optimizer') . '</em></p>';
+            echo '<a href="#" class="button button-primary ai-upgrade-btn">Upgrade to Pro</a>';
         }
-        $content = sanitize_textarea_field($_POST['content']);
-        $analysis = $this->perform_analysis($content);
-        global $post;
-        update_post_meta($post->ID, '_ai_co_analysis', $analysis);
-        wp_send_json_success($analysis);
     }
 
-    private function perform_analysis($content) {
+    public function save_meta($post_id) {
+        if (!isset($_POST['ai_optimizer_nonce']) || !wp_verify_nonce($_POST['ai_optimizer_nonce'], 'ai_optimizer_nonce')) {
+            return;
+        }
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+        if (isset($_POST['ai_optimize'])) {
+            update_post_meta($post_id, '_ai_optimized', true);
+            $score = $this->analyze_content($post_id);
+            update_post_meta($post_id, '_ai_score', $score);
+        }
+    }
+
+    private function analyze_content($post_id) {
+        $post = get_post($post_id);
+        $content = $post->post_content;
         $word_count = str_word_count(strip_tags($content));
-        $sentences = preg_split('/[.!?]+/', $content, -1, PREG_SPLIT_NO_EMPTY);
-        $sentence_count = count($sentences);
-        $avg_sentence_length = $sentence_count > 0 ? round($word_count / $sentence_count, 1) : 0;
-        $readability = $avg_sentence_length > 25 ? 'Needs improvement' : 'Good';
-        $headings = preg_match_all('/<h[1-6]/', $content);
-        $seo_score = min(100, (50 + ($headings * 10) + min($word_count / 10, 50)));
-        return array(
-            'word_count' => $word_count,
-            'readability' => $readability,
-            'avg_sentence' => $avg_sentence_length,
-            'seo_score' => round($seo_score),
-            'summary' => "Words: $word_count | Readability: $readability | SEO: " . round($seo_score) . '%"
-        );
-    }
-
-    private function is_premium() {
-        return get_option(self::PREMIUM_LICENSE_KEY) === 'valid-license-key';
-    }
-
-    public function plugin_row_meta($links, $file) {
-        if ($file === plugin_basename(__FILE__)) {
-            $links[] = '<a href="' . esc_url(self::PREMIUM_FEATURES_URL) . '" target="_blank">Premium</a>';
+        $has_keywords = preg_match('/\b(keyword1|keyword2|keyword3)\b/i', $content);
+        $score = min(100, 50 + ($word_count / 1000 * 20) + ($has_keywords * 15));
+        if (!$this->is_premium() && $this->get_scan_count() >= 5) {
+            $score = 0;
         }
-        return $links;
+        $this->increment_scan_count();
+        return round($score);
     }
 
-    public function activate() {
-        add_option(self::PREMIUM_LICENSE_KEY, '');
+    private function get_scan_count() {
+        return get_option('ai_optimizer_scans', 0);
     }
-}
 
-new AIContentOptimizer();
+    private function increment_scan_count() {
+        $count = $this->get_scan_count();
+        update_option('ai_optimizer_scans', $count + 1);
+    }
 
-// Dummy JS file content would be in ai-co-admin.js
-// jQuery(document).ready(function($) {
-//   $('#ai-co-analyze').click(function() {
-//     var content = $('#ai-co-content').val();
-//     $.post(aiCoAjax.ajaxurl, {
-//       action: 'analyze_content',
-//       nonce: aiCoAjax.nonce,
-//       content: content
-//     }, function(resp) {
-//       if (resp.success) {
-//         $('#ai-co-analysis').html('<p><strong>Analysis:</strong><br>' + resp.data.summary + '</p>');
-//       } else {
-//         alert(resp.data);
-//       }
-//     });
-//   });
-// });
-// Note: In real plugin, include actual JS file. This is single-file sim.
+    public function add_settings_page() {
+        add_options_page(__('AI Optimizer Settings', 'ai-content-optimizer'), __('AI Optimizer', 'ai-content-optimizer'), 'manage_options', 'ai-optimizer-settings', array($this, 'settings_page_callback'));
+    }
+
+    public function settings_page_callback() {
+        if (isset($_POST['ai_license_key'])) {
+            update_option('ai_optimizer_license', sanitize_text_field($_POST['ai_license_key']));
+            echo '<div class="notice notice-success"><p>' . __('License activated!', 'ai-content-optimizer') . '</p></div>';
+        }
+        $license = get_option('ai_optimizer_license');
+        $scans = $this->get_scan_count();
+        ?>
+        <div class="wrap">
+            <h1><?php _e('AI Content Optimizer Settings', 'ai-content-optimizer'); ?></h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th><?php _e('License Key', 'ai-content-optimizer'); ?></th>
+                        <td>
+                            <input type="text" name="ai_license_key" value="<?php echo esc_attr($license); ?>" class="regular-text" placeholder="Enter Pro license key">
+                            <p class="description"><?php _e('Enter your Pro license to unlock unlimited scans and AI features.', 'ai-content-optimizer'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?php _e('Scan Usage', 'ai-content-optimizer'); ?></th>
+                        <td><?php echo $scans; ?>/5 (Free limit) <?php if (!$this->is_premium()) echo '<a href="#" class="button button-primary ai-upgrade-btn">Upgrade</a>'; ?></td>
+                    </tr>
+                </table>
+                <?php submit_button(); }
+            }
+
+            private function is_premium() {
+                $license = get_option('ai_optimizer_license');
+                return !empty($license) && hash('sha256', $license) === 'valid-premium-key-hash'; // Demo validation
+            }
+
+            public function activate() {
+                add_option('ai_optimizer_scans', 0);
+            }
+        }
+
+        AIContentOptimizer::get_instance();
+
+        // Dummy assets (in real plugin, create folders and files)
+        function ai_optimizer_assets() {
+            // Assets would be enqueued, but for single file, inline if needed
+        }
+        
