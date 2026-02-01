@@ -5,8 +5,8 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart Affiliate Link Manager
- * Plugin URI: https://example.com/smart-affiliate-link-manager
- * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics and A/B testing.
+ * Plugin URI: https://example.com/smart-affiliate-manager
+ * Description: Automatically cloaks, tracks clicks, and displays affiliate links with performance analytics to boost conversions and earnings.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class SmartAffiliateLinkManager {
+class SmartAffiliateManager {
     private static $instance = null;
 
     public static function get_instance() {
@@ -28,133 +28,143 @@ class SmartAffiliateLinkManager {
 
     private function __construct() {
         add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_sal_update_stats', array($this, 'update_stats'));
-        add_filter('wp_insert_post_data', array($this, 'cloak_links'), 10, 2);
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        // Rewrite rules for tracking
-        add_rewrite_rule('^track/([0-9]+)/?$', 'index.php?sal_track=$matches[1]', 'top');
-        flush_rewrite_rules(false);
-
-        add_rewrite_tag('%sal_track%', '([0-9]+)');
-        add_filter('query_vars', function($vars) {
-            $vars[] = 'sal_track';
-            return $vars;
-        });
-
-        add_action('template_redirect', array($this, 'handle_track'));
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('sal-frontend', plugin_dir_url(__FILE__) . 'sal-frontend.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sal-frontend', 'sal_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
-    }
-
-    public function admin_menu() {
-        add_options_page('Smart Affiliate Links', 'Affiliate Links', 'manage_options', 'sal-manager', array($this, 'admin_page'));
-    }
-
-    public function admin_page() {
-        echo '<div class="wrap"><h1>Smart Affiliate Link Manager</h1>';
-        echo '<p>Free version: Basic cloaking and stats. <a href="https://example.com/premium">Upgrade to Premium</a> for A/B testing and more.</p>';
-
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'sal_links';
-        $links = $wpdb->get_results("SELECT * FROM $table_name");
-
-        echo '<table class="wp-list-table widefat fixed striped"><thead><tr><th>ID</th><th>Original URL</th><th>Clicks</th><th>Shortcode</th></tr></thead><tbody>';
-        foreach ($links as $link) {
-            echo '<tr><td>' . $link->id . '</td><td>' . esc_html($link->original_url) . '</td><td>' . $link->clicks . '</td><td>[sal id="' . $link->id . '"]</td></tr>';
-        }
-        echo '</tbody></table>';
-
-        echo '<h2>Add New Link</h2><form method="post">';
-        wp_nonce_field('sal_add_link');
-        echo '<input type="url" name="sal_url" placeholder="https://affiliate-link.com" required><br><input type="submit" name="sal_add" value="Add Link" class="button-primary"></form>';
-        echo '</div>';
-
-        if (isset($_POST['sal_add']) && wp_verify_nonce($_POST['_wpnonce'], 'sal_add_link')) {
-            $url = sanitize_url($_POST['sal_url']);
-            $wpdb->insert($table_name, array('original_url' => $url, 'clicks' => 0));
-            echo '<div class="notice notice-success"><p>Link added!</p></div>';
-        }
-    }
-
-    public function cloak_links($data, $postarr) {
-        if ($data['post_type'] === 'post' || $data['post_type'] === 'page') {
-            global $wpdb;
-            $table_name = $wpdb->prefix . 'sal_links';
-            $links = $wpdb->get_results("SELECT id, original_url FROM $table_name");
-            foreach ($links as $link) {
-                $shortcode = '[sal id="' . $link->id . '"]';
-                $data['post_content'] = str_replace($link->original_url, $shortcode, $data['post_content']);
-            }
-        }
-        return $data;
-    }
-
-    public function handle_track() {
-        if (get_query_var('sal_track')) {
-            $id = intval(get_query_var('sal_track'));
-            global $wpdb;
-            $table_name = $wpdb->prefix . 'sal_links';
-            $wpdb->query($wpdb->prepare("UPDATE $table_name SET clicks = clicks + 1 WHERE id = %d", $id));
-            $link = $wpdb->get_var($wpdb->prepare("SELECT original_url FROM $table_name WHERE id = %d", $id));
-            if ($link) {
-                wp_redirect($link, 301);
-                exit;
-            }
-        }
-    }
-
-    public function update_stats() {
-        // AJAX for premium stats (free version logs only)
-        wp_die();
+        add_filter('the_content', array($this, 'cloak_links'));
+        add_shortcode('afflink', array($this, 'afflink_shortcode'));
+        add_action('wp_ajax_sam_track_click', array($this, 'track_click'));
+        add_action('wp_ajax_nopriv_sam_track_click', array($this, 'track_click'));
+        add_action('wp_dashboard_setup', array($this, 'add_dashboard_widget'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
     }
 
     public function activate() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'sal_links';
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            original_url text NOT NULL,
-            clicks bigint(20) DEFAULT 0,
-            created datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        add_option('sam_links', array());
+        add_option('sam_stats', array());
     }
 
     public function deactivate() {
         // Cleanup optional
     }
+
+    public function cloak_links($content) {
+        $links = get_option('sam_links', array());
+        foreach ($links as $short => $data) {
+            $pattern = '/\b' . preg_quote($short, '/') . '\b/i';
+            $content = preg_replace($pattern, $this->generate_cloaked_link($short), $content);
+        }
+        return $content;
+    }
+
+    private function generate_cloaked_link($shortcode) {
+        $nonce = wp_create_nonce('sam_click');
+        return '<a href="' . admin_url('admin-ajax.php?action=sam_track_click&link=' . urlencode($shortcode) . '&nonce=' . $nonce) . '" target="_blank" rel="nofollow noopener">' . $shortcode . '</a>';
+    }
+
+    public function afflink_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'id' => '',
+        ), $atts);
+        if (empty($atts['id'])) return '';
+        $links = get_option('sam_links', array());
+        if (!isset($links[$atts['id']])) return '';
+        $link = $links[$atts['id']]['url'];
+        $name = $links[$atts['id']]['name'];
+        $nonce = wp_create_nonce('sam_click');
+        return '<a href="' . admin_url('admin-ajax.php?action=sam_track_click&link=' . urlencode($atts['id']) . '&nonce=' . $nonce) . '" target="_blank" rel="nofollow noopener">' . esc_html($name) . '</a>';
+    }
+
+    public function track_click() {
+        if (!wp_verify_nonce($_GET['nonce'], 'sam_click')) {
+            wp_die('Unauthorized');
+        }
+        $link_id = sanitize_text_field($_GET['link']);
+        $stats = get_option('sam_stats', array());
+        if (!isset($stats[$link_id])) {
+            $stats[$link_id] = array('clicks' => 0, 'date' => current_time('mysql'));
+        }
+        $stats[$link_id]['clicks']++;
+        update_option('sam_stats', $stats);
+        $links = get_option('sam_links', array());
+        if (isset($links[$link_id]['url'])) {
+            wp_redirect($links[$link_id]['url'], 302);
+            exit;
+        }
+        wp_die('Link not found');
+    }
+
+    public function add_dashboard_widget() {
+        wp_add_dashboard_widget('sam_stats_widget', 'Affiliate Link Stats', array($this, 'dashboard_widget'));
+    }
+
+    public function dashboard_widget() {
+        $stats = get_option('sam_stats', array());
+        if (empty($stats)) {
+            echo '<p>No stats yet. Add some links!</p>';
+            return;
+        }
+        echo '<ul>';
+        foreach ($stats as $id => $data) {
+            echo '<li>' . esc_html($id) . ': ' . intval($data['clicks']) . ' clicks</li>';
+        }
+        echo '</ul>';
+        echo '<p><a href="' . admin_url('options-general.php?page=sam-settings') . '">Manage Links</a></p>';
+    }
+
+    public function add_admin_menu() {
+        add_options_page('Smart Affiliate Manager', 'Affiliate Links', 'manage_options', 'sam-settings', array($this, 'settings_page'));
+    }
+
+    public function settings_page() {
+        if (isset($_POST['submit'])) {
+            $links = array();
+            if (isset($_POST['links']) && is_array($_POST['links'])) {
+                foreach ($_POST['links'] as $id => $data) {
+                    if (!empty($data['url']) && !empty($data['name'])) {
+                        $links[$id] = array(
+                            'url' => esc_url_raw($data['url']),
+                            'name' => sanitize_text_field($data['name'])
+                        );
+                    }
+                }
+            }
+            update_option('sam_links', $links);
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+        }
+        $links = get_option('sam_links', array());
+        ?>
+        <div class="wrap">
+            <h1>Smart Affiliate Link Manager</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Link ID</th>
+                        <th>Affiliate URL</th>
+                        <th>Display Name</th>
+                    </tr>
+                    <?php foreach ($links as $id => $data): ?>
+                    <tr>
+                        <td><input type="text" name="links[<?php echo esc_attr($id); ?>][id]" value="<?php echo esc_attr($id); ?>" /></td>
+                        <td><input type="url" name="links[<?php echo esc_attr($id); ?>][url]" value="<?php echo esc_attr($data['url']); ?>" style="width: 300px;" /></td>
+                        <td><input type="text" name="links[<?php echo esc_attr($id); ?>][name]" value="<?php echo esc_attr($data['name']); ?>" /></td>
+                    </tr>
+                    <?php endforeach; ?>
+                    <tr>
+                        <td><input type="text" name="new_id" placeholder="new-link-id" /></td>
+                        <td><input type="url" name="new_url" placeholder="https://affiliate.com/product" style="width: 300px;" /></td>
+                        <td><input type="text" name="new_name" placeholder="Product Name" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+            <h2>Usage</h2>
+            <p>Use <code>[afflink id="your-link-id"]</code> shortcode or just type <code>your-link-id</code> in posts.</p>
+        </div>
+        <?php
+    }
 }
 
-// Shortcode handler
-add_shortcode('sal', function($atts) {
-    $atts = shortcode_atts(array('id' => 0), $atts);
-    $id = intval($atts['id']);
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'sal_links';
-    $link = $wpdb->get_var($wpdb->prepare("SELECT original_url FROM $table_name WHERE id = %d", $id));
-    if ($link) {
-        $track_url = home_url('/track/' . $id . '/');
-        return '<a href="' . esc_url($track_url) . '" target="_blank" rel="nofollow">' . esc_html(parse_url($link, PHP_URL_HOST)) . '</a>';
-    }
-    return '';
-});
-
-SmartAffiliateLinkManager::get_instance();
-
-// Premium upsell notice
-add_action('admin_notices', function() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p>Unlock A/B testing and advanced analytics with <a href="https://example.com/premium">Smart Affiliate Pro</a> - only $49/year!</p></div>';
-});
+SmartAffiliateManager::get_instance();
