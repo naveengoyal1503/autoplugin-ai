@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer Lite
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: Analyzes and optimizes your post content for SEO and readability. Freemium version with basic features.
+ * Description: Analyzes and optimizes your WordPress content for better SEO and readability. Freemium model with premium upgrades.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -14,39 +14,42 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class AIContentOptimizerLite {
     public function __construct() {
-        add_action('add_meta_boxes', array($this, 'add_meta_box'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('wp_ajax_analyze_content', array($this, 'analyze_content'));
-        add_action('admin_notices', array($this, 'premium_notice'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
+    public function activate() {
+        add_option('ai_content_optimizer_lite_activated', true);
+    }
+
+    public function add_admin_menu() {
+        add_posts_page(
+            'AI Content Optimizer',
+            'AI Optimizer',
+            'edit_posts',
+            'ai-content-optimizer',
+            array($this, 'admin_page')
+        );
+    }
+
     public function enqueue_scripts($hook) {
-        if ('post.php' !== $hook && 'post-new.php' !== $hook) {
+        if ($hook !== 'post.php' && $hook !== 'post-new.php') {
             return;
         }
-        wp_enqueue_script('ai-optimizer-js', plugin_dir_url(__FILE__) . 'optimizer.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('ai-optimizer-js', 'ai_optimizer', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ai_optimizer_nonce'),
-            'limit_reached' => get_option('ai_optimizer_scan_count', 0) >= 5
-        ));
+        wp_enqueue_script('ai-optimizer-js', plugin_dir_url(__FILE__) . 'ai-optimizer.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('ai-optimizer-js', 'ai_optimizer_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('ai_optimizer_nonce')));
+        wp_enqueue_style('ai-optimizer-css', plugin_dir_url(__FILE__) . 'ai-optimizer.css', array(), '1.0.0');
     }
 
-    public function add_meta_box() {
-        add_meta_box('ai-content-optimizer', 'AI Content Optimizer', array($this, 'meta_box_callback'), 'post', 'side');
-    }
-
-    public function meta_box_callback($post) {
-        wp_nonce_field('ai_optimizer_meta_box', 'ai_optimizer_nonce');
-        echo '<div id="ai-optimizer-results"></div>';
-        echo '<button id="ai-analyze-btn" class="button button-primary">Analyze Content</button>';
-        echo '<p><small>Free version: 5 scans/month. <a href="#" id="go-premium">Go Premium</a> for unlimited.</small></p>';
+    public function admin_page() {
+        echo '<div class="wrap"><h1>AI Content Optimizer Lite</h1><div id="ai-optimizer-panel"><button id="analyze-btn" class="button button-primary">Analyze Current Post</button><div id="results"></div><div class="premium-upsell"><p><strong>Go Premium!</strong> Unlock AI-powered suggestions, bulk optimization, and more. <a href="https://example.com/premium" target="_blank">Upgrade Now</a></p></div></div></div>';
     }
 
     public function analyze_content() {
@@ -58,89 +61,101 @@ class AIContentOptimizerLite {
         $post_id = intval($_POST['post_id']);
         $content = get_post_field('post_content', $post_id);
 
-        $scan_count = get_option('ai_optimizer_scan_count', 0);
-        if ($scan_count >= 5) {
-            wp_send_json_error('Free limit reached. Upgrade to premium!');
+        if (empty($content)) {
+            wp_send_json_error('No content found.');
         }
 
-        update_option('ai_optimizer_scan_count', $scan_count + 1);
-
-        // Simulated AI analysis (basic keyword density, readability score)
         $word_count = str_word_count(strip_tags($content));
+        $readability = $this->calculate_flesch_reading_ease($content);
         $sentences = preg_split('/[.!?]+/', $content, -1, PREG_SPLIT_NO_EMPTY);
         $sentence_count = count($sentences);
-        $readability = $word_count > 0 ? round(206.835 - 1.015 * ($word_count / ($sentence_count > 0 ? $sentence_count : 1)) - 84.6 * (100 / $word_count), 2) : 0;
-
-        $keywords = $this->extract_keywords($content);
-        $density = $word_count > 0 ? round(($keywords['count'] * 100 / $word_count), 2) : 0;
+        $avg_sentence_length = $sentence_count > 0 ? round($word_count / $sentence_count, 1) : 0;
 
         $results = array(
             'word_count' => $word_count,
-            'readability_score' => $readability,
-            'main_keyword' => $keywords['keyword'],
-            'density' => $density,
-            'suggestions' => $density < 1 ? 'Add more instances of main keyword.' : 'Good density.',
-            'limit_remaining' => 5 - $scan_count - 1
+            'readability_score' => round($readability, 2),
+            'avg_sentence_length' => $avg_sentence_length,
+            'recommendations' => $this->get_basic_recommendations($word_count, $readability, $avg_sentence_length)
         );
 
         wp_send_json_success($results);
     }
 
-    private function extract_keywords($content) {
-        $content = strtolower(strip_tags($content));
-        preg_match_all('/\b\w+\b/', $content, $words);
-        $word_freq = array_count_values($words);
-        arsort($word_freq);
-        $top_keyword = key($word_freq);
-        return array('keyword' => $top_keyword, 'count' => $word_freq[$top_keyword]);
+    private function calculate_flesch_reading_ease($text) {
+        $text = strip_tags($text);
+        $sentences = preg_split('/[.!?]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+        $sentence_count = count($sentences);
+        $words = str_word_count($text, 0);
+        $syllables = $this->count_syllables($text);
+
+        if ($sentence_count === 0 || $words === 0) {
+            return 0;
+        }
+
+        $asl = $words / $sentence_count;
+        $asw = $syllables / $words;
+        return 206.835 - (1.015 * $asl) - (84.6 * $asw);
     }
 
-    public function premium_notice() {
-        if (!current_user_can('manage_options')) return;
-        echo '<div class="notice notice-info"><p>Unlock unlimited AI scans and advanced suggestions with <strong>AI Content Optimizer Pro</strong>! <a href="https://example.com/premium" target="_blank">Upgrade now</a></p></div>';
+    private function count_syllables($text) {
+        $text = strtolower(preg_replace('/[^a-z\s]/', '', $text));
+        $words = explode(' ', $text);
+        $syllables = 0;
+        foreach ($words as $word) {
+            $syllables += preg_match_all('/[aeiouy]{2}/', $word) + preg_match_all('/[aeiouy](?![aeiouy])/', $word);
+        }
+        return $syllables;
     }
 
-    public function activate() {
-        add_option('ai_optimizer_scan_count', 0);
+    private function get_basic_recommendations($words, $readability, $avg_len) {
+        $recs = array();
+        if ($words < 300) $recs[] = 'Add more content for better engagement (aim for 500+ words).';
+        if ($readability < 60) $recs[] = 'Improve readability: Use shorter sentences and simpler words.';
+        if ($avg_len > 25) $recs[] = 'Shorten sentences for better flow.';
+        return $recs;
     }
 }
 
 new AIContentOptimizerLite();
 
-// Inline JS for simplicity (self-contained)
-function ai_optimizer_inline_js() {
+// Inline JS and CSS for self-contained plugin
+function ai_optimizer_assets() {
     ?>
-    <script type="text/javascript">
+    <style>
+    #ai-optimizer-panel { margin: 20px 0; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; }
+    #results { margin-top: 20px; }
+    .metric { display: inline-block; margin: 10px; padding: 10px; background: white; border-radius: 5px; }
+    .premium-upsell { background: #fff3cd; padding: 15px; margin-top: 20px; border: 1px solid #ffeaa7; }
+    </style>
+    <script>
     jQuery(document).ready(function($) {
-        $('#ai-analyze-btn').click(function() {
+        $('#analyze-btn').click(function() {
             var post_id = $('#post_ID').val();
-            $.post(ai_optimizer.ajax_url, {
+            $.post(ai_optimizer_ajax.ajax_url, {
                 action: 'analyze_content',
                 post_id: post_id,
-                nonce: ai_optimizer.nonce
+                nonce: ai_optimizer_ajax.nonce
             }, function(response) {
                 if (response.success) {
                     var res = response.data;
-                    var html = '<p><strong>Word Count:</strong> ' + res.word_count + '</p>' +
-                               '<p><strong>Readability:</strong> ' + res.readability_score + '</p>' +
-                               '<p><strong>Main Keyword:</strong> ' + res.main_keyword + ' (Density: ' + res.density + '%)</p>' +
-                               '<p><strong>Suggestion:</strong> ' + res.suggestions + '</p>' +
-                               '<p>Scans left: ' + res.limit_remaining + '</p>';
-                    $('#ai-optimizer-results').html(html);
+                    var html = '<div class="metric"><strong>Words:</strong> ' + res.word_count + '</div>' +
+                               '<div class="metric"><strong>Readability:</strong> ' + res.readability_score + ' (60-70 ideal)</div>' +
+                               '<div class="metric"><strong>Avg Sentence:</strong> ' + res.avg_sentence_length + ' words</div>' +
+                               '<h4>Recommendations:</h4><ul>';
+                    $.each(res.recommendations, function(i, rec) {
+                        html += '<li>' + rec + '</li>';
+                    });
+                    html += '</ul>';
+                    $('#results').html(html);
                 } else {
-                    alert(response.data);
+                    $('#results').html('<p>Error: ' + response.data + '</p>');
                 }
             });
-        });
-
-        $('#go-premium').click(function(e) {
-            e.preventDefault();
-            alert('Upgrade to Pro for unlimited features! Visit https://example.com/premium');
         });
     });
     </script>
     <?php
 }
-add_action('admin_footer-post.php', 'ai_optimizer_inline_js');
-add_action('admin_footer-post-new.php', 'ai_optimizer_inline_js');
+add_action('admin_footer-post.php', 'ai_optimizer_assets');
+add_action('admin_footer-post-new.php', 'ai_optimizer_assets');
 ?>
