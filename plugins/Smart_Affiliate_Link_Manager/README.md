@@ -2,31 +2,49 @@
 
 ## Features
 
-- **Automatic Link Cloaking**: Replace keywords in posts with cloaked affiliate links (e.g., `/go/keyword` redirects to affiliate URL).
-- **Click Tracking**: Monitor clicks and performance for each link.
-- **Easy Management**: Add, edit, delete links via simple dashboard.
-- **SEO-Friendly**: No-follow attributes and clean URLs.
-- **Freemium Model**: Free for basics; **Pro** ($49/year) adds A/B testing, advanced analytics, unlimited links, and export reports.
+- **Easy Link Cloaking**: Convert ugly affiliate URLs into clean, branded links like `yoursite.com/go/1`.
+- **Click Tracking**: Monitor performance with real-time click counts in your dashboard.
+- **Shortcode Support**: Use `[salml id=1]` in posts/pages for automatic replacement, or `[salml_link id=1]` directly.
+- **Free Tier Limits**: Up to 5 links (Pro: Unlimited).
+- **Pro Features** (Upgrade for $49/year): A/B testing, detailed analytics (geolocation, device), auto-optimization, email reports.
+- **SEO-Friendly**: Noindex on /go/ pages, fast redirects.
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-link-manager`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Visit **Settings > Affiliate Links** to add your first keyword and affiliate URL.
-4. Flush permalinks (Settings > Permalinks > Save Changes).
+1. Download the plugin ZIP.
+2. In WordPress Admin: Plugins > Add New > Upload Plugin.
+3. Activate the plugin.
+4. Go to **Settings > Affiliate Links** to add your first link.
 
 ## Setup
 
-1. Go to **Settings > Affiliate Links**.
-2. Add a keyword (e.g., "best hosting") and your affiliate URL.
-3. Save. The plugin auto-replaces the keyword in posts with a cloaked link.
-4. Links redirect to `/go/best-hosting` → your affiliate URL, tracking clicks.
+1. Navigate to **Settings > Affiliate Links**.
+2. Enter a **Shortcode** like `[salml id=1]` (unique per link).
+3. Paste your **Affiliate URL** (e.g., Amazon, ClickBank).
+4. Add optional **Description** for display text.
+5. Click **Add Link**.
+
+**Free Limit**: 5 links. Upgrade to Pro for more.
 
 ## Usage
 
-- **Adding Links**: Enter keyword and URL in the dashboard form.
-- **Viewing Stats**: See click counts in the table (Pro: detailed analytics).
-- **On Site**: Keywords auto-link in post content. Use shortcode `[sal keyword="hosting"]` for manual placement.
-- **Pro Upgrade**: Unlock A/B testing (rotate links), geo-targeting, and CSV exports for profitability optimization.
+### In Posts/Pages
+- Insert `[salml id=1]` – auto-converts to cloaked, trackable link.
 
-**Pro Tip**: Combine with content strategies for 40% higher conversions[6]. Supports high-traffic sites for passive income[2][5].
+### Direct Shortcode
+- Use `[salml_link id=1]` for inline links with custom text via description.
+
+### Example
+
+Check out this [salml id=1] product!
+
+Becomes: *Check out this [Product Name](yoursite.com/go/1) product!* (tracks clicks).
+
+### Dashboard
+View all links, clicks, and dates under **Settings > Affiliate Links**.
+
+## Pro Upgrade
+Unlock unlimited links, analytics, and A/B tests: [Upgrade Now](https://example.com/pro)
+
+## Support
+Contact support@example.com or visit our documentation.
