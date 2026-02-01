@@ -1,38 +1,43 @@
 # Smart Donation Pro
 
-A simple, powerful WordPress plugin to add customizable donation buttons with PayPal integration and fundraising progress bars. Perfect for monetizing blogs, non-profits, and membership sites.
+A lightweight, self-contained WordPress plugin to easily add donation buttons, progress bars, and goal tracking to your site. Perfect for bloggers, creators, and non-profits to collect one-time tips or support.
 
 ## Features
-- **Easy Shortcode**: Use `[smart_donation]` to embed donation forms anywhere.
-- **Progress Bars**: Visual goal tracking to encourage more donations.
-- **PayPal Integration**: One-click setup with your PayPal email.
-- **Customizable**: Set amounts, goals, titles, and currencies.
-- **Analytics**: Track total donations (premium: detailed reports).
-- **Mobile Responsive**: Looks great on all devices.
-- **Freemium**: Free core + premium upgrades for Stripe, webhooks, and more.
+- **Customizable shortcodes**: `[smart_donation goal="500" title="Buy Me a Coffee" amounts="5,10,20,50"]`
+- **Visual progress bars** tracking total donations
+- **Preset amount buttons** and custom input
+- **PayPal integration** for instant payments (one-time)
+- **Auto-insert** in post footers
+- **Mobile-responsive** design
+- **Admin dashboard** for settings and total tracking
+- **No database bloat**: Single-file plugin
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Donation Pro** and enter your PayPal email.
-4. Add shortcode to any post/page: `[smart_donation amount="5" goal="500" title="Buy Me a Coffee"]`.
+1. Download the plugin file (`smart-donation-pro.php`).
+2. Upload to `/wp-content/plugins/` via FTP or WordPress uploader.
+3. Activate in **Plugins > Installed Plugins**.
+4. Go to **Settings > Donation Pro** to set your PayPal email and options.
 
 ## Setup
-1. Configure PayPal email in settings.
-2. Optionally set default goal/total via options.
-3. Embed shortcode in sidebar, posts, or footers.
+1. In admin settings, enter your **PayPal email** (business account recommended).
+2. Enable **Auto-insert in post footer** if desired.
+3. Use shortcode in posts/pages or widgets.
+
+**Shortcode options**:
+- `goal`: Donation target (e.g., "100")
+- `title`: Widget title
+- `amounts`: Comma-separated presets (e.g., "5,10,25")
+- `button_text`: CTA button text
+- `paypal_email`: Override global PayPal
 
 ## Usage
-- **Basic**: `[smart_donation]` – Uses defaults.
-- **Custom**: `[smart_donation amount="20" goal="1000" currency="USD" button_text="Contribute"]`.
-- Donations redirect to PayPal; totals update automatically.
-- **Pro Upgrade**: Unlock unlimited campaigns, Stripe, email receipts ($29/year).
+- Add `[smart_donation]` to any post/page/sidebar.
+- Visitors select amount/email and click **Send to PayPal**.
+- Progress updates automatically on donations.
+- Track totals in admin dashboard.
 
-## FAQ
-- **Does it slow my site?** No, lightweight with no external dependencies.
-- **Supported Gateways?** PayPal (free), Stripe (pro).
+## Premium Upgrade
+Unlock recurring Stripe subscriptions, analytics, custom themes, and email notifications for $29/year.
 
-## Changelog
-**1.0.0** – Initial release.
-
-> Donate to this plugin: [Use the shortcode!](https://example.com)
+## Support
+Contact support@example.com. Contributions welcome on GitHub.
