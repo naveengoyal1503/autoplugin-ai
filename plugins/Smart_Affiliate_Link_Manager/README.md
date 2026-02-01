@@ -1,38 +1,36 @@
 # Smart Affiliate Link Manager
 
-## Description
-Boost your affiliate earnings with automatic link cloaking, click tracking, and a dashboard widget showing performance stats. Free core features; upgrade to Pro for A/B testing and more.
-
 ## Features
-- **Auto-cloaking**: Replace shortcodes like `amazon-product` with tracked, cloaked links in posts.
-- **Click tracking**: Real-time stats on dashboard.
-- **Shortcode support**: `[afflink id="your-id"]` for precise placement.
-- **Easy management**: Add/edit links in WP admin.
-- **nofollow & noopener**: SEO-friendly links.
-- **Freemium model**: Unlimited free links; Pro adds analytics export and A/B tests.
+
+### Free Version
+- **Automatic Link Cloaking**: Detects and cloaks affiliate links (e.g., containing 'aff', 'ref', Amazon) in posts/pages.
+- **Click Tracking**: Logs clicks with basic analytics viewable in admin.
+- **Privacy-Friendly**: No external services; data stored locally.
+
+### Premium Features ($9/month)
+- **A/B Testing**: Rotate links and track best performers.
+- **Auto-Optimization**: Automatically promotes top-converting links.
+- **Advanced Analytics**: Conversion tracking, geolocation, device stats.
+- **Priority Support**: Email support within 24 hours.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+1. Upload the `smart-affiliate-link-manager` folder to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Affiliate Links** to add your first link (ID, URL, Name).
+3. Visit **Settings > Affiliate Manager** for setup.
 
 ## Setup
-1. In admin, add links e.g.:
-   - ID: `best-laptop`
-   - URL: `https://amazon.com/affiliate-link`
-   - Name: `Buy Best Laptop`
-2. In posts, type `best-laptop` or use `[afflink id="best-laptop"]`.
-3. View stats on dashboard.
+1. Go to **Settings > Affiliate Manager**.
+2. Free version active by default.
+3. Add affiliate links to posts; they auto-cloak.
+4. View clicks in analytics section.
 
 ## Usage
-- **Inline**: Write `your-link-id` in content – auto-cloaks.
-- **Shortcode**: `[afflink id="your-link-id"]` for buttons/links.
-- **Stats**: Dashboard widget shows clicks per link.
-- **Pro Upgrade**: Visit example.com/pro for advanced features like geo-tracking.
+- Write posts with affiliate links (e.g., Amazon, ClickBank).
+- Links auto-transform to `/track/[id]/` for tracking.
+- Premium: Upgrade button simulates activation (real version uses API).
 
 ## Changelog
-**1.0.0**
-- Initial release.
+- **1.0.0**: Initial release.
 
 ## Support
-Report issues on WordPress.org forums.
+Contact support@example.com. Premium users get priority.
