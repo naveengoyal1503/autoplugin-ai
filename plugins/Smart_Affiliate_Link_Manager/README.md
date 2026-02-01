@@ -1,47 +1,46 @@
 # Smart Affiliate Link Manager
 
-A powerful freemium WordPress plugin for affiliate marketers to cloak, track, and optimize links automatically.
-
 ## Features
 
-- **Automatic Link Detection & Cloaking**: Detects affiliate links from Amazon, ClickBank, ShareASale, etc., and replaces them with tracked shortcodes.
-- **Click Tracking**: Logs all clicks with unique IDs (view totals in admin dashboard).
-- **Shortcode Support**: Use `[sal_link url="https://affiliate-link.com"]` manually.
-- **Premium Add-ons** (freemium upsell):
-  - A/B Testing: Rotate between link variants.
-  - Advanced Analytics: Conversion rates, top performers.
-  - Auto-Optimization: Pause underperforming links.
-  - Unlimited links & custom domains.
-- **Privacy Compliant**: No personal data tracked; GDPR-ready.
+- **Automatic Link Insertion**: Replaces keywords in posts with cloaked affiliate links.
+- **Click Tracking**: Monitors clicks on affiliate links with basic analytics.
+- **Shortcode Support**: Use `[afflink code="yourcode"]` anywhere.
+- **Admin Dashboard**: Easy management of keywords, URLs, and codes.
+- **Privacy-Friendly**: No external trackers; self-hosted.
+- **Freemium Ready**: Pro version unlocks A/B testing, advanced stats, auto-insertion rules.
+
+**Pro Features (Upsell)**: Detailed analytics, link rotation, geo-targeting, WooCommerce integration ($49/year).
 
 ## Installation
 
 1. Download the plugin ZIP.
-2. In WordPress admin: **Plugins > Add New > Upload Plugin**.
+2. In WordPress Admin: Plugins > Add New > Upload Plugin.
 3. Activate the plugin.
-4. Go to **Settings > SAL Manager** to enable and configure.
+4. Go to Settings > Affiliate Links to configure.
 
 ## Setup
 
-1. Enable the plugin in **Settings > SAL Manager**.
-2. Add affiliate links to posts/pages; they auto-cloak on publish.
-3. Or use shortcode: `[sal_link url="YOUR_AFFILIATE_URL"]`. 
-4. View click stats in the dashboard.
-5. **Upgrade to Premium** for A/B testing: Check "Premium Mode" (full version unlocks more).
+1. Navigate to **Settings > Affiliate Links**.
+2. Add a new link:
+   - **Keyword**: e.g., "best hosting"
+   - **Affiliate URL**: e.g., "https://affiliate.com/?ref=123"
+   - **Code**: Unique ID like "hosting123"
+3. Enable "Auto-Replacement" checkbox.
+4. Save. Links now auto-insert in content!
 
 ## Usage
 
-- **Auto Mode**: Write content with raw affiliate URLs; plugin replaces them.
-- **Manual**: Insert shortcodes anywhere.
-- **Tracking**: Clicks redirect via `/go/?sal=ID` (customize in premium).
-- **Dashboard**: Monitor total clicks and enable premium simulation.
+- **Automatic**: Keywords in posts/pages become affiliate links.
+- **Manual**: Use shortcode `[afflink code="hosting123"]`.
+- **Widgets/Sidebar**: Add shortcodes to text widgets.
+- **Tracking**: View clicks in dashboard (Pro: charts/export).
 
-## Monetization Potential
+## FAQ
 
-Freemium model: Free hooks users, upsell premium/add-ons ($49/year). Inspired by AffiliateWP success[5]. Target bloggers earning 30% from affiliates[6].
+**Does it slow my site?** No, lightweight with no external calls.
+**Compatible with caching?** Yes, client-side tracking.
+**Pro Upgrade?** Visit example.com/pro for advanced features.
 
-## Support
+## Changelog
 
-Contact support@example.com. Check FAQ in plugin settings.
-
-**Version 1.0.0 | Compatible with WordPress 6.0+**
+**1.0.0**: Initial release.
