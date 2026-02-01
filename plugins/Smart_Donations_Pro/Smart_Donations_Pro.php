@@ -6,24 +6,23 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Donations Pro
  * Plugin URI: https://example.com/smart-donations-pro
- * Description: Easily add donation buttons, progress bars, and payment forms to monetize your WordPress site.
+ * Description: Collect donations easily with customizable buttons, progress bars, and PayPal integration.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class SmartDonationsPro {
     public function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('smart_donation', array($this, 'donation_shortcode'));
-        add_shortcode('smart_donation_progress', array($this, 'progress_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_action('wp_ajax_smart_donation_process', array($this, 'process_donation'));
+        add_action('wp_ajax_nopriv_smart_donation_process', array($this, 'process_donation'));
     }
 
     public function init() {
@@ -34,115 +33,69 @@ class SmartDonationsPro {
 
     public function enqueue_scripts() {
         wp_enqueue_script('jquery');
-    }
-
-    public function admin_menu() {
-        add_options_page('Smart Donations Pro', 'Donations Pro', 'manage_options', 'smart-donations-pro', array($this, 'settings_page'));
-    }
-
-    public function settings_page() {
-        if (isset($_POST['submit'])) {
-            update_option('smart_donations_paypal_email', sanitize_email($_POST['paypal_email']));
-            update_option('smart_donations_goal_amount', floatval($_POST['goal_amount']));
-            update_option('smart_donations_current_amount', floatval($_POST['current_amount']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
-        }
-        $paypal_email = get_option('smart_donations_paypal_email', '');
-        $goal = get_option('smart_donations_goal_amount', 1000);
-        $current = get_option('smart_donations_current_amount', 0);
-        ?>
-        <div class="wrap">
-            <h1>Smart Donations Pro Settings</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>PayPal Email</th>
-                        <td><input type="email" name="paypal_email" value="<?php echo esc_attr($paypal_email); ?>" class="regular-text" required /></td>
-                    </tr>
-                    <tr>
-                        <th>Goal Amount</th>
-                        <td><input type="number" name="goal_amount" value="<?php echo esc_attr($goal); ?>" step="0.01" /></td>
-                    </tr>
-                    <tr>
-                        <th>Current Amount</th>
-                        <td><input type="number" name="current_amount" value="<?php echo esc_attr($current); ?>" step="0.01" /></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-            <p>Use shortcodes: <code>[smart_donation]</code> or <code>[smart_donation_progress]</code></p>
-        </div>
-        <?php
+        wp_add_inline_script('jquery', 'jQuery(document).ready(function($) { $(".smart-donate-btn").click(function(e) { e.preventDefault(); var amount = $(this).data("amount"); $("#donation-amount").val(amount); $("#donation-form").submit(); }); });');
+        wp_enqueue_style('smart-donations-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
     }
 
     public function donation_shortcode($atts) {
-        $atts = shortcode_atts(array('amount' => '10', 'label' => 'Donate Now'), $atts);
-        $paypal_email = get_option('smart_donations_paypal_email');
-        if (!$paypal_email) return '<p>Please configure PayPal email in settings.</p>';
+        $atts = shortcode_atts(array(
+            'amount' => '5',
+            'label' => 'Donate',
+            'goal' => '1000',
+            'current' => '250',
+            'paypal_email' => get_option('smart_donations_paypal_email'),
+        ), $atts);
 
-        ob_start();
-        ?>
-        <div class="smart-donation" style="text-align:center; margin:20px 0;">
-            <h3><?php echo esc_html($atts['label']); ?></h3>
-            <form action="https://www.paypal.com/donate" method="post" target="_top">
-                <input type="hidden" name="hosted_button_id" value="YOUR_BUTTON_ID" />
-                <input type="hidden" name="amount" value="<?php echo esc_attr($atts['amount']); ?>" />
-                <input type="hidden" name="currency_code" value="USD" />
-                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-                <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-            </form>
-            <p>Support us with any amount!</p>
-        </div>
-        <script>
-        jQuery(document).ready(function($) {
-            $('.smart-donation form').on('submit', function() {
-                $(this).find('input[name="amount"]').remove();
-                var amount = prompt('Enter donation amount ($):', '<?php echo esc_js($atts['amount']); ?>');
-                if (amount && !isNaN(amount) && amount > 0) {
-                    $('<input>').attr({type: 'hidden', name: 'amount', value: amount}).appendTo(this);
-                } else {
-                    return false;
-                }
-            });
-        });
-        </script>
-        <?php
-        return ob_get_clean();
+        $progress = ($atts['current'] / $atts['goal']) * 100;
+        $html = '<div class="smart-donation-container">';
+        $html .= '<div class="donation-progress" style="background: #f0f0f0; height: 20px; border-radius: 10px; overflow: hidden;"><div class="progress-bar" style="background: #4CAF50; height: 100%; width: ' . $progress . '%; transition: width 0.3s;"></div></div>';
+        $html .= '<p><strong>$' . $atts['current'] . '</strong> raised of <strong>$' . $atts['goal'] . '</strong> goal</p>';
+        $html .= '<form id="donation-form" method="post" action="https://www.paypal.com/cgi-bin/webscr">';
+        $html .= '<input type="hidden" name="cmd" value="_s-xclick">';
+        $html .= '<input type="hidden" name="hosted_button_id" value="' . $this->get_paypal_button_id() . '">';
+        $html .= '<input type="hidden" name="custom" value="' . get_the_ID() . '">';
+        $html .= '<input type="hidden" name="amount" id="donation-amount" value="' . $atts['amount'] . '">';
+        $html .= '<input type="hidden" name="business" value="' . esc_attr($atts['paypal_email']) . '">';
+        $html .= '<button type="submit" class="smart-donate-btn" data-amount="' . $atts['amount'] . '">' . esc_html($atts['label']) . ' $' . $atts['amount'] . '</button>';
+        $html .= '</form></div>';
+        return $html;
     }
 
-    public function progress_shortcode($atts) {
-        $atts = shortcode_atts(array('goal' => ''), $atts);
-        $goal = $atts['goal'] ?: get_option('smart_donations_goal_amount', 1000);
-        $current = get_option('smart_donations_current_amount', 0);
-        $percent = min(100, ($current / $goal) * 100);
+    private function get_paypal_button_id() {
+        return 'TESTBUTTON123'; // Replace with actual hosted button ID
+    }
 
-        ob_start();
-        ?>
-        <div class="smart-progress" style="margin:20px 0;">
-            <p><strong>$<?php echo number_format($current, 2); ?></strong> raised of $<strong><?php echo number_format($goal, 2); ?></strong> goal (<strong><?php echo round($percent); ?>%</strong>)</p>
-            <div style="background:#f0f0f0; height:30px; border-radius:15px; overflow:hidden;">
-                <div style="background:#4CAF50; height:100%; width:<?php echo $percent; ?>%; transition:width 0.5s;"></div>
-            </div>
-            <?php echo $this->donation_shortcode(array('amount' => '5', 'label' => 'Contribute Now')); ?>
-        </div>
-        <?php
-        return ob_get_clean();
+    public function process_donation() {
+        // Log donation attempt
+        error_log('Smart Donation: ' . print_r($_POST, true));
+        wp_die('Donation processed via PayPal. Thank you!');
     }
 
     public function add_defer_attribute($tag, $handle) {
-        return str_replace(' src', ' defer src', $tag);
-    }
-
-    public function activate() {
-        add_option('smart_donations_current_amount', 0);
+        return str_replace(' src=', ' defer src=', $tag);
     }
 }
 
 new SmartDonationsPro();
 
-// Premium teaser
-add_action('admin_notices', function() {
-    if (!get_option('smart_donations_paypal_email') && current_user_can('manage_options')) {
-        echo '<div class="notice notice-info"><p><strong>Smart Donations Pro:</strong> Configure your PayPal email in <a href="' . admin_url('options-general.php?page=smart-donations-pro') . '">Settings &gt; Donations Pro</a>. <em>Upgrade to Pro for recurring donations, Stripe, and analytics!</em></p></div>';
+// Admin settings
+add_action('admin_menu', function() {
+    add_options_page('Smart Donations', 'Smart Donations', 'manage_options', 'smart-donations', 'smart_donations_settings_page');
+});
+
+function smart_donations_settings_page() {
+    if (isset($_POST['paypal_email'])) {
+        update_option('smart_donations_paypal_email', sanitize_email($_POST['paypal_email']));
+        echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
     }
+    $paypal_email = get_option('smart_donations_paypal_email');
+    echo '<div class="wrap"><h1>Smart Donations Settings</h1><form method="post"><table class="form-table">';
+    echo '<tr><th>PayPal Email</th><td><input type="email" name="paypal_email" value="' . esc_attr($paypal_email) . '" class="regular-text"></td></tr>';
+    echo '</table><p><a href="https://www.paypal.com/buttons/" target="_blank">Create PayPal Button</a> and use its ID.</p>';
+    echo '<p class="submit"><input type="submit" class="button-primary" value="Save"></p></form></div>';
+}
+
+// Inline CSS
+add_action('wp_head', function() {
+    echo '<style>.smart-donation-container { max-width: 300px; margin: 20px 0; text-align: center; } .smart-donate-btn { background: #4CAF50; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 5px; cursor: pointer; } .smart-donate-btn:hover { background: #45a049; }</style>';
 });
