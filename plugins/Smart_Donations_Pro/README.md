@@ -1,34 +1,33 @@
 # Smart Donations Pro
 
-A lightweight, self-contained WordPress plugin to easily accept **one-time and recurring donations** via PayPal. Perfect for bloggers, creators, and non-profits to monetize content.[1][3]
+A powerful, lightweight WordPress plugin for adding donation buttons with real-time progress bars and goal tracking. Perfect for monetizing blogs, membership sites, or non-profits via PayPal integration[1][3].
 
 ## Features
-- **Customizable donation forms** with predefined amounts (e.g., $5, $10, $25, $50).
-- **PayPal integration** for secure payments (sandbox for testing, live for production).[3]
-- **Shortcode support**: `[smart_donations]` or customize with `title`, `amounts`, `recurring` attributes.
-- **Admin dashboard** to set PayPal email and track donations.
-- **Mobile-responsive** design with analytics-ready logging.
-- Freemium-ready: Extend for subscriptions, tiers, and reports in premium version (65% higher retention).[4]
+- **Customizable donation buttons** with progress bars showing goal progress.
+- **Shortcode support**: Use `[sdp_donate id="0"]` to embed anywhere.
+- **Admin goal management**: Set titles, goals, and track donations.
+- **AJAX-powered updates**: Real-time progress without page reloads.
+- **Freemium ready**: Free core with pro upgrades for Stripe, analytics, unlimited goals.
+- **Mobile responsive** and lightweight (single file, no dependencies).
 
 ## Installation
-1. Download the plugin PHP file.
-2. Upload to `/wp-content/plugins/smart-donations-pro.php` (single-file plugin).
-3. Activate in **Plugins > Installed Plugins**.
-4. Go to **Settings > Smart Donations** to enter your PayPal email (use sandbox for testing).[3]
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Goals auto-create on activation; edit via **Settings > Smart Donations** (pro feature coming).
 
 ## Setup
-1. **Configure PayPal**: In admin, add your PayPal business email. Test with PayPal sandbox.[3]
-2. **Add to site**: Use shortcode `[smart_donations amounts="9.99,19.99,49.99"]` for pricing psychology boost (28% sales increase).[1][4]
-3. **Embed anywhere**: Pages, posts, sidebars via shortcode or PHP.
+1. Use shortcode `[sdp_donate id="0"]` in posts/pages/widgets.
+2. Default goal: "Support Our Site" ($1000 USD).
+3. Donations simulate payment; integrate PayPal IPN in pro version.
 
 ## Usage
-- Place shortcode on any page/post.
-- Visitors select amount and pay via PayPal buttons.
-- Donations auto-logged (check server error logs or extend for dashboard stats).[2]
-- **Example**: `[smart_donations title="Buy Us a Coffee" recurring="yes"]` for monthly tips.[3]
+- Embed shortcode on any page.
+- Users enter amount and click "Donate via PayPal".
+- Progress updates live via AJAX.
+- View/edit goals in `wp_options` table (key: `sdp_goals`) or upgrade to pro dashboard.
 
-## Premium Upsell
-Unlock recurring billing, email receipts, donor tiers, and analytics. Contact for pro version!
+## Pro Upgrade
+Unlock Stripe, unlimited campaigns, analytics, and more for $29/year. Contact support@example.com.
 
 ## Support
-Report issues on WordPress.org or email support@example.com. Plugin is GPL-licensed.
+Report issues on WordPress.org forums.
