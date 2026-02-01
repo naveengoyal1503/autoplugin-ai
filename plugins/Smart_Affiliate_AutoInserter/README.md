@@ -1,44 +1,58 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into posts and pages.**
+**Automatically monetize your WordPress site by inserting relevant Amazon affiliate links into posts and pages.**
 
 ## Features
 
-- **Auto-Link Insertion**: Scans content for top keywords and adds Amazon affiliate search links.
-- **Customizable Frequency**: Control max links per post (1-10).
-- **Mobile-Responsive**: Links work perfectly on all devices.
-- **SEO-Friendly**: Uses `nofollow` and `sponsored` attributes.
-- **Easy Setup**: Enter your Amazon tag and OpenAI key (for Pro).
+- **Smart Auto-Insertion**: Detects keywords in content and replaces them with your Amazon affiliate links.
+- **Easy Setup**: Add your affiliate tag and keyword:ASIN pairs via simple admin settings.
+- **Customizable**: Control max links per post (1-10) to avoid over-optimization.
+- **SEO-Friendly**: Links use `nofollow sponsored` attributes.
+- **Freemium Model**: Free for basics; **Pro** adds AI context matching, analytics dashboard, unlimited keywords, and priority support ($49/year).
 
-**Free Version**: Keyword-based matching.
-**Pro Version** ($49/year): AI-powered product suggestions via OpenAI, analytics dashboard, custom styling, WooCommerce integration, and unlimited sites.
+## Target Users
+Bloggers, niche site owners, and affiliate marketers looking for hands-off passive income.
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-autoinserter` or install via WordPress dashboard.
-2. Activate the plugin.
-3. Go to **Settings > Affiliate Inserter** to configure.
+1. Download the plugin ZIP.
+2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Go to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
 
-1. **Get Amazon Affiliate Tag**: Sign up at [affiliate-program.amazon.com](https://affiliate-program.amazon.com) and copy your tag (e.g., `yourid-20`).
-2. **Optional: OpenAI API Key** (Pro): Get from [platform.openai.com](https://platform.openai.com).
-3. Enter details in settings and save.
-4. Test on a post – links appear automatically!
+1. **Get Amazon Affiliate Tag**: Sign up at [Amazon Associates](https://affiliate-program.amazon.com/) and note your tag (e.g., `yourtag-20`).
+2. **Find ASINs**: Search Amazon products; copy the ASIN (e.g., `B08N5WRWNW` from URL).
+3. **Configure**:
+   - Enter your **Amazon Affiliate Tag**.
+   - Add keywords and ASINs (one per line: `keyword:ASIN` e.g., `laptop:B08N5WRWNW`).
+   - Set **Max Links per Post** (default: 3).
+4. Save settings. Links auto-insert on published posts/pages.
+
+**Example Keywords List:**
+
+laptop:B08N5WRWNW
+headphones:B07ZPC9QD4
+coffee maker:B08L5LG4D8
+
 
 ## Usage
 
-- Write normal content; plugin auto-inserts links to matching Amazon searches.
-- Example: Post about "best coffee makers" → Links to Amazon coffee searches.
-- View stats in Pro dashboard.
-- **Pro Tip**: Use on high-traffic blogs for passive income.
+- Write content with keywords (e.g., "best laptop").
+- Publish: Links auto-appear as `<a href="amazon-url?tag=yourtag-20">laptop</a>`.
+- **Test**: View a post; check source for links. Track commissions in Amazon Associates dashboard.
+- **Pro Features**: Upgrade for click analytics, A/B testing, and auto-ASIN suggestions.
 
 ## FAQ
 
-**Does it work with Gutenberg/Classic Editor?** Yes, both.
-**Safe for SEO?** Yes, proper rel attributes used.
-**Premium Benefits?** AI accuracy (95%+ relevance), A/B testing, earnings tracker.
+**Does it slow my site?** No, lightweight regex processing only on single posts.
 
-**Support**: [example.com/support](https://example.com/support) | **Upgrade**: [example.com/pro](https://example.com/pro)
+**Compliant with Amazon TOS?** Yes, uses proper nofollow/sponsored; limit density.
 
-*Version 1.0.0 | © 2026 Your Name*
+**Pro Upgrade?** Visit [example.com/pro](https://example.com/pro) for advanced features.
+
+## Support
+Submit tickets via WordPress.org forums (free) or Pro support portal.
+
+**Start earning passive income today!** 🚀
