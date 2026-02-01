@@ -2,39 +2,51 @@
 
 ## Features
 
-- **Free Version**:
-  - Basic content analysis for SEO score, readability, and keyword suggestions.
-  - Simple dashboard to paste and analyze post content.
-
-- **Premium Version** ($4.99/month):
+- **Free Version**: Basic content analysis for SEO score, readability, word count, and simple suggestions.
+- **Premium Features** (Subscription $4.99/month):
   - AI-powered content rewriting and optimization.
-  - Bulk post optimization.
-  - Advanced metrics and priority support.
-  - Feature gating for pro users only.
+  - Advanced keyword research and suggestions.
+  - Unlimited scans and bulk optimization.
+  - Priority support and automatic updates.
+
+**Key Benefits**:
+- Improves **SEO rankings** with instant insights.
+- Boosts **readability** and user engagement.
+- **Freemium upsell** nags encourage upgrades.
+- Self-contained single-file plugin for easy install.
 
 ## Installation
 
-1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Navigate to **Settings > AI Optimizer** to use.
+1. Download the plugin ZIP.
+2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Edit any post/page to see the **AI Content Optimizer** meta box.
 
 ## Setup
 
-- Free version ready immediately.
-- Upgrade to Pro via the dashboard button (simulated; integrate real payment like Stripe in production).
+1. Go to **Settings > AI COP Pro**.
+2. Enter your **Premium License Key** (purchase at example.com/premium).
+3. Save changes to unlock pro features.
 
 ## Usage
 
-1. Go to **Settings > AI Optimizer**.
-2. Paste your post content into the textarea.
-3. Click **Analyze Content (Free)** for basic insights.
-4. Pro users: Click **AI Optimize (Pro)** for advanced features.
-5. Apply suggestions to improve SEO and engagement.
+1. Edit a **post or page**.
+2. In the sidebar, click **Analyze Content**.
+3. View **score, suggestions**, and upgrade prompt if needed.
+4. Premium users get **AI rewrites** and more.
 
-## Monetization
+**Demo Analysis Output**:
+- SEO Score: 85/100
+- Readability: 78/100
+- Suggestions: Add keywords, improve headings
 
-Freemium model encourages upgrades. In production, replace simulated upgrade with Stripe/PayPal integration for real subscriptions.
+## Changelog
+
+- **1.0.0**: Initial release with freemium model.
 
 ## Support
 
-Contact support@example.com for help.
+- Free: WordPress.org forums.
+- Premium: Submit ticket after upgrade.
+
+**Monetization Ready**: Built-in upsells drive conversions to paid plans.
