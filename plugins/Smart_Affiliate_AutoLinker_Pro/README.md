@@ -1,54 +1,48 @@
 # Smart Affiliate AutoLinker Pro
 
-**Transform your WordPress site into a passive income machine by automatically turning keywords into high-converting affiliate links.**
+**Transform your content into a revenue machine.** Automatically detects keywords and replaces them with your affiliate links from Amazon, ClickBank, and more.
 
 ## Features
 
-### Free Version
-- Auto-link up to **3 keywords** in posts, pages, and widgets.
-- **Amazon affiliate tag** integration.
-- **No-code setup** – just add keywords and URLs.
-- **SEO-friendly** rel="nofollow sponsored" links.
+- **Automatic Keyword Linking**: Scan posts and pages for keywords and insert cloaked affiliate links.
+- **Custom Limits**: Control links per post to avoid over-optimization.
+- **Nofollow & Target Blank**: SEO-friendly link attributes.
+- **Easy Keyword Management**: Add/edit keywords and URLs in the dashboard.
+- **Freemium Ready**: Built-in upsell for premium features like A/B testing and analytics.
 
-### Pro Version ($9/month or $79/year)
-- **Unlimited keywords** and domains.
-- **Advanced analytics**: Track clicks, conversions, and earnings.
-- **A/B testing** for link performance.
-- **Smart cloaking** and link shortening.
-- **Priority support** and automatic updates.
-- **Export reports** for tax and optimization.
+**Pro Add-ons (Coming Soon)**:
+- Click tracking & analytics
+- A/B link testing
+- 50+ affiliate network presets
+- Priority support
 
 ## Installation
 
 1. Upload the `smart-affiliate-autolinker` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate AutoLinker** to configure.
+3. Go to **Settings > Affiliate AutoLinker** to add your keywords and affiliate URLs.
+4. Publish content – links auto-generate!
 
 ## Setup
 
-1. Enter your **Amazon Affiliate Tag** (e.g., `yourid-20`).
-2. Add keywords (e.g., "WordPress") and affiliate URLs.
-3. Mark as "Free Tier" for free version limits.
-4. Save changes – links appear automatically!
-
-**Pro Tip:** Use your Amazon Associate links directly or let the plugin append your tag.
+1. In the settings page, add keywords (e.g., "WordPress") and your affiliate URL (e.g., `https://amazon.com/product?tag=yourid`).
+2. Set **Links Per Post** (default: 3) to control density.
+3. Enable **nofollow** for SEO compliance.
+4. Save and test on a post.
 
 ## Usage
 
-- Links auto-appear in **posts, pages, and widgets**.
-- **One replacement per keyword** per page to avoid spam.
-- Test on a staging site first.
-- Monitor performance in Pro analytics.
+- Write normally – the plugin handles linking.
+- Works on posts, pages, and widgets.
+- **Pro Tip**: Use high-converting keywords from your analytics.
+- Monitor performance and upgrade to Pro for detailed stats.
 
-## Upgrade to Pro
+## Monetization Potential
 
-[Get Pro Now](https://example.com/premium) – **7-day money-back guarantee**. Join 10,000+ users earning passive income!
+- **Free Core**: Drives installs (aim for 10K+).
+- **Add-ons**: $29-$99/year for advanced features.
+- **Expected Revenue**: 5-10% freemium conversion = $5K+/mo at scale.
 
-## Support
+**Support**: [example.com/support](https://example.com/support) | **Pro Demo**: [example.com/pro](https://example.com/pro)
 
-- Free: WordPress.org forums.
-- Pro: Priority email + chat.
-
-## Changelog
-
-**1.0.0** – Initial release.
+*Version 1.0.0 | © 2026 Your Name*
