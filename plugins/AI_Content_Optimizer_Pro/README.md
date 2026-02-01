@@ -1,41 +1,42 @@
 # AI Content Optimizer Pro
 
-## Description
-**AI Content Optimizer Pro** is a powerful WordPress plugin that uses AI to analyze your post content for SEO, readability, and engagement. The free version provides basic analysis; upgrade to Pro for advanced AI rewriting, keyword suggestions, and more.
-
 ## Features
-- **Basic Analysis (Free)**: Word count, readability score, SEO score.
-- **Pro Features** (Premium):
-  - AI-powered content rewriting.
-  - Automated keyword suggestions.
-  - Bulk optimization.
-  - Priority support.
-- Live meta box in post editor.
-- Non-intrusive upsell prompts[1][2].
+
+- **AI-Powered Analysis**: Instant scoring for SEO, readability, and engagement (0-100%).
+- **One-Click Optimization**: Pro feature auto-improves content with AI suggestions.
+- **Sidebar Dashboard**: Real-time metrics in post editor.
+- **Bulk Processing**: Pro: Optimize multiple posts at once.
+- **Lightweight**: No bloat, fully self-contained.
 
 ## Installation
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit any post to see the optimizer sidebar.
+
+1. Upload `ai-content-optimizer.php` to `/wp-content/plugins/ai-content-optimizer/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Edit any post/page to see the sidebar analyzer.
 
 ## Setup
-- No configuration needed for basic use.
-- Pro users: Enter your license key in **Settings > AI Optimizer Pro** (Pro only).
+
+- Free version analyzes content automatically.
+- **Pro Upgrade** ($49/year): Enter license key in **Settings > AI Content Optimizer** for AI optimizations and bulk tools.
 
 ## Usage
-1. Edit or create a post/page.
-2. In the sidebar, click **Analyze Content** for instant scores.
-3. **Free**: View basic metrics.
-4. **Pro**: Click **AI Optimize** for rewritten content and keywords.
-5. Save and publish optimized posts!
 
-## Upgrade to Pro
-Unlock full AI power for $4.99/month. [Get Pro Now](https://example.com/checkout?plugin=ai-optimizer)
+1. Edit a post/page.
+2. Click **Analyze** for instant score.
+3. **Pro**: Click **Optimize** for AI-enhanced content.
+4. Scores update live; aim for 80%+ for best results.
 
-## Support
-- Free: WordPress.org forums.
-- Pro: Priority email support.
+## Pro Features
+
+| Feature | Free | Pro |
+|---------|------|-----|
+| Basic Analysis | ✅ | ✅ |
+| AI Optimization | ❌ | ✅ |
+| Bulk Optimize | ❌ | ✅ |
+| Priority Support | ❌ | ✅ |
+
+**Upgrade**: [Get Pro](https://example.com/pro)
 
 ## Changelog
-**1.0.0**
-- Initial release with freemium model.
+
+- 1.0.0: Initial release with core analysis and Pro framework.
