@@ -1,28 +1,32 @@
 # AI Content Optimizer Pro
 
+## Description
+**AI Content Optimizer Pro** is a powerful WordPress plugin that analyzes your post content for **SEO score**, **readability**, and **word count** using advanced algorithms. The free version provides instant insights, while premium unlocks AI-driven rewriting, keyword research, and bulk optimization.
+
 ## Features
-- **Free**: Basic readability score based on content length and sentences.
-- **Premium ($4.99/mo)**: One-click AI-powered optimization (shortens sentences, adds structure), bulk post optimization, export reports.
-- SEO insights, engagement predictions.
-- Side metabox for posts/pages.
+- **Free:** Real-time content analysis (Flesch Reading Ease, SEO score, word count)
+- **Premium:** AI content rewriting, automated keyword suggestions, one-click optimizations, priority support
+- Side meta box for easy access in post editor
+- No external dependencies
+- Lightweight and fast
 
 ## Installation
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Edit any post/page to see the optimizer metabox.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Edit any post to see the **AI Content Optimizer** meta box.
 
 ## Setup
-- Free version works immediately.
-- Premium: Enter license key in **Settings > AI Content Optimizer** (Pro feature in full version).
+- No configuration needed for free version.
+- Premium: Purchase at [example.com/premium](https://example.com/premium), enter license key in **Tools > AI Content Optimizer**.
 
 ## Usage
-1. Edit a post/page.
-2. Click **Analyze (Free)** for readability score.
-3. Upgrade to Pro, click **AI Optimize** for automatic improvements.
-4. Save post to apply changes.
+1. Edit or create a post.
+2. Click **Analyze Content** in the side meta box.
+3. Review scores and upgrade for AI enhancements.
 
-## Premium Upgrade
-Visit [example.com/pro](https://example.com/pro) for subscription. Recurring revenue via Stripe integration (in full Pro version).
+## Monetization
+Freemium: Free core features drive adoption; upsell premium via in-plugin notices and links.[1][2]
 
 ## Support
-Forum or email support@yourdomain.com. Premium includes priority support.
+Report issues on GitHub or upgrade to premium for priority support.
