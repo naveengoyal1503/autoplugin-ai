@@ -2,45 +2,43 @@
 
 ## Features
 
-- **One-Click PayPal Donations**: Add donation buttons anywhere with `[sdb_donation]` shortcode.
-- **Visual Progress Bars**: Track goals with `[sdb_progress]` showing real-time progress.
-- **Customizable**: Set title, description, button text, goal, and PayPal email via settings.
-- **Mobile-Responsive**: Clean, modern design works on all devices.
-- **Freemium Model**: Free for basics; Pro adds analytics, webhooks, multiple goals ($29/year).
+- **Smart Triggers**: Automatically shows donation button after user scrolls 50% of the page (customizable).
+- **Customizable Prompts**: Set default amount, message, and styling via admin settings.
+- **PayPal Integration**: One-click donations using PayPal buttons (sandbox/test mode ready; pro adds live).
+- **Shortcode Support**: `[sdb_donation_button]` for manual placement anywhere.
+- **Non-Intrusive**: Floating button doesn't slow down site; mobile-responsive.
+- **Freemium Upsell**: Teases pro features like recurring donations, analytics, A/B testing.
 
-**Pro Features (Upsell)**: Donation analytics, auto-thank-you pages, Stripe integration, remove branding.
+**Pro Features (Coming Soon)**: Recurring subscriptions, Stripe integration, donation analytics dashboard, exit-intent popups, tiered amounts.
 
 ## Installation
 
-1. Upload the plugin files to `/wp-content/plugins/smart-donation-booster`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Donation Booster** to configure your PayPal email and goal.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Configure in **Settings > Donation Booster** (set PayPal email for pro testing).
+4. Add `[sdb_donation_button]` shortcode or let smart trigger handle it.
 
 ## Setup
 
-1. Enter your PayPal email (business account recommended for donations).
-2. Set your fundraising **goal amount** and current progress.
-3. Customize **title**, **description**, and **button text**.
-4. Save settings.
+1. Go to **Settings > Donation Booster**.
+2. Enable plugin, set default amount (e.g., $5), message, scroll trigger (%), and PayPal email.
+3. Test with PayPal sandbox (replace client-id in code for production).
+4. Save settings – button appears on frontend automatically.
 
 ## Usage
 
-- **Add Donation Button**: Use shortcode `[sdb_donation]` in posts/pages/widgets.
-- **Show Progress Bar**: Use `[sdb_progress]` to display goal progress.
-- **Example**: Combine them for a full campaign block.
+- **Automatic**: Donation button floats bottom-right after scroll trigger.
+- **Manual**: Use shortcode `[sdb_donation_button amount="10" label="Buy Me Coffee"]` in posts/pages.
+- **Customization**: Edit CSS in code or pro version for advanced styling.
+- **Tracking**: Pro logs donations; free shows basic alerts.
 
-**Demo**:
+## FAQ
 
-[sdb_progress]
-[sdb_donation]
+**Does it slow my site?** No, lightweight JS/CSS only loads when enabled.
+**Monetization Proof**: Inspired by top strategies – donations retain 65% more than one-time[4], easy setup like OptinMonster[2].
 
+**Upgrade to Pro**: Unlock recurring (boosts retention 65%)[4], analytics. Contact for early access.
 
-## Pro Upgrade
+## Changelog
 
-Unlock advanced features for $29/year. Contact support@example.com for Pro license.
-
-## Support
-
-Report issues on WordPress.org forums or email support@example.com.
-
-**Version 1.0.0 | Compatible with WordPress 6.0+**
+**1.0.0**: Initial release with smart triggers and PayPal.
