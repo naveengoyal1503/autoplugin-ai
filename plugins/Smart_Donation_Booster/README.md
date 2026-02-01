@@ -1,47 +1,36 @@
 # Smart Donation Booster
 
-## Description
-A powerful WordPress plugin to boost voluntary donations with beautiful progress bars, customizable goals, and one-click PayPal buttons. Perfect for creators, bloggers, and nonprofits.[1][3]
-
 ## Features
-- **Progress Bars**: Visual fundraising goals with real-time percentage display.
-- **Donation Buttons**: Easy PayPal integration (Pro: Stripe support).
-- **Shortcodes**: `[sdb_progress]` for bars, `[sdb_donation amount="20"]` for buttons.
-- **Admin Dashboard**: Set goals, track amounts, configure PayPal.
-- **Gamification**: Encourages contributions with visible progress.[5]
+- **Visual Progress Bars**: Eye-catching donation goals with real-time progress updates.
+- **One-Click Donations**: Buttons for $5, $10, $25 with AJAX updates (simulated for demo).
+- **PayPal Integration**: Native PayPal buttons for real payments (requires Client ID).
+- **Shortcode Ready**: Use `[donation_goal]` anywhere.
+- **Admin Dashboard**: Easy setup for goals, current amount, and PayPal credentials.
+- **Gamified UX**: Encourages donations with percentage badges and tiers.
 - **Mobile Responsive**: Works on all devices.
-- **Freemium**: Free core, Pro unlocks analytics, unlimited campaigns, custom themes ($49/year).
+- **Freemium Upsell**: Premium for analytics, custom themes, unlimited goals.
 
 ## Installation
-1. Upload the plugin ZIP to WordPress admin > Plugins > Add New > Upload.
-2. Activate the plugin.
-3. Go to Settings > Donation Booster to configure goal and PayPal email.
-4. Add shortcodes to posts/pages: `[sdb_progress]` or `[sdb_donation]`.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Donation Booster** to configure.
 
 ## Setup
-1. **Set Goal**: Enter target amount (e.g., $1000) in settings.
-2. **PayPal Email**: Add your PayPal business email for donations.
-3. **Current Amount**: Manually update or simulate donations for testing.
-4. **Embed**: Use shortcodes anywhere – sidebar, posts, footers.
+1. Set **Goal Amount** (e.g., 1000).
+2. Set **Current Amount** (starts at 0).
+3. Add your **PayPal Email** and **Client ID** (from [PayPal Developer](https://developer.paypal.com/)).
+4. Save settings.
 
 ## Usage
-- Display progress: `[sdb_progress]` shows bar + donate button.
-- Custom donate: `[sdb_donation amount="5"]` for $5 button.
-- Test donations via JS prompt (updates progress instantly).
-- **Pro Features**: A/B testing, email notifications, Stripe, detailed stats.[2]
+- Add `[donation_goal]` to any post, page, or widget.
+- Donations update progress via AJAX (demo mode; real PayPal for payments).
+- Customize CSS/JS in plugin assets for branding.
 
-## Pro Version
-Upgrade for:
-- Stripe/PayPal full integration.
-- Donation analytics & reports.
-- Unlimited goals/campaigns.
-- Premium progress themes.
-- Visit [example.com/pro](https://example.com/pro).
+## Premium Features (Upsell)
+- Advanced analytics dashboard.
+- Multiple goals and campaigns.
+- Custom progress themes.
+- Email notifications.
 
-## FAQ
-**How does it monetize my site?** Via donations/tips, similar to 'buy me a coffee'. High conversion with visual progress.[3][5]
-**Safe?** Yes, uses WordPress nonces and sanitization.
-**Support:** Contact support@example.com.
-
-## Changelog
-**1.0.0** Initial release.
+## Support
+Contact support@example.com. Rate 5⭐ on WordPress.org!
