@@ -1,34 +1,39 @@
 # AI Content Optimizer Pro
 
-## Features
+## Description
+**AI Content Optimizer Pro** is a powerful WordPress plugin that uses AI to analyze your posts for readability, SEO, and engagement. The free version provides essential scoring, while Pro unlocks advanced AI rewriting and optimizations for professional results.
 
-- **Free Version**: Real-time readability score (Flesch-Kincaid), keyword density analysis, basic SEO tips in post editor.
-- **Premium ($4.99/month)**: AI-powered content suggestions, one-click auto-optimization, advanced keyword research, priority support[1][2].
-- Self-contained single-file plugin, no dependencies.
-- Works on posts and pages.
+## Features
+- **Free:** Instant readability score (Flesch-like), word/sentence counts, basic suggestions.
+- **Pro ($9/mo or $99/yr):** AI-powered content rewriting, SEO keyword recommendations, engagement boosters, auto-insert optimizations, priority support.
+- Works on posts and pages sidebar.
+- Self-contained, no external dependencies.
 
 ## Installation
-
 1. Download the plugin ZIP.
-2. Upload via **Plugins > Add New > Upload Plugin**.
+2. In WordPress admin: Plugins > Add New > Upload Plugin.
 3. Activate the plugin.
-4. Edit any post to see the optimizer sidebar.
+4. Edit any post/page to see the optimizer meta box.
 
 ## Setup
-
-- Free features work immediately.
-- For premium: Enter license key in plugin settings (simulated Stripe checkout in meta box).
+1. **Free Use:** Click "Analyze Content" in post editor.
+2. **Pro Activation:** Go to Settings > AI Content Optimizer, enter license key (e.g., PRO01XXXXX after purchase).
+3. Pro users get full AI features automatically.
 
 ## Usage
-
 1. Edit a post/page.
-2. Check **AI Content Optimizer** sidebar for scores.
-3. Click **Analyze & Optimize** (premium only) for AI enhancements.
-4. Upgrade via the button for full AI features.
+2. In the sidebar "AI Content Optimizer" box, click **Analyze Content**.
+3. View score and tips.
+4. **Pro Only:** AI suggestions appear for instant improvements—copy/paste rewrites directly.
 
-## Screenshots
-*(Imagine sidebar with scores and buttons)*
+## Upgrade to Pro
+- Visit [Settings > AI Content Optimizer](#).
+- Enter license key from purchase.
+- Unlock AI magic!
+
+## Support
+- Free: WordPress.org forums.
+- Pro: Priority email support.
 
 ## Changelog
-
-- 1.0.0: Initial release with freemium model.
+**1.0.0** - Initial release.
