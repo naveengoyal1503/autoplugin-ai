@@ -2,66 +2,58 @@
 
 [![Contributors](https://img.shields.io/badge/contributors-welcome-brightgreen.svg)](https://github.com/example/smart-affiliate-autolinker)
 
-Automatically scans your WordPress content for specified keywords and converts them into trackable affiliate links. Boost your earnings with zero manual work!
+Automatically turns keywords in your posts into profitable affiliate links with click tracking and smart features.
 
 ## Features
 
-- **Automatic Keyword Detection**: Instantly links keywords in posts, pages, and widgets.
-- **Free Version**: Supports up to 5 keyword/link pairs.
-- **Pro Version** ($49/year):
-  - Unlimited keywords and links.
-  - Click analytics and performance tracking.
-  - A/B testing for link variations.
-  - Priority support and updates.
-  - Amazon, ClickBank, and custom affiliate integrations.
-- **SEO-Friendly**: Adds `nofollow` and `noopener` attributes automatically.
-- **Mobile-Responsive**: Works perfectly on all devices.
+### Free Version
+- **Auto-linking**: Automatically replaces up to 3 keywords per post with affiliate links.
+- **Simple setup**: Add keywords and URLs via admin settings.
+- **Click protection**: JavaScript-based tracking prevents direct link access.
+
+### Pro Version ($49/year)
+- **Unlimited keywords** and links per post.
+- **Link rotation**: Rotate multiple affiliate URLs for the same keyword to maximize conversions.
+- **Click analytics**: Detailed dashboard with clicks per keyword, IP tracking, and performance reports.
+- **Link cloaking**: Pretty, SEO-friendly short links.
+- **Priority support** and regular updates.
 
 ## Installation
 
-1. Download the plugin ZIP file.
-2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate the plugin.
-4. Navigate to **Settings > Affiliate AutoLinker** to configure.
+1. Upload the `smart-affiliate-autolinker` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate AutoLinker** to configure keywords.
 
 ## Setup
 
-1. Go to **Settings > Affiliate AutoLinker**.
-2. Enter keywords (one per line) in the first box, e.g.:
-   
-   hosting
-   VPN
-   email marketing
-   
-3. Enter corresponding affiliate links in the second box, e.g.:
-   
-   https://youraffiliate.link/hosting
-   https://youraffiliate.link/vpn
-   https://youraffiliate.link/email
-   
-4. Save changes. Links activate instantly!
-
-**Upgrade to Pro** for unlimited features and analytics.
+1. In the settings page, add keywords (e.g., "best laptop") and their affiliate URLs (e.g., Amazon link).
+2. Save changes. Links will automatically appear in new and existing posts.
+3. **Pro users**: Enable analytics and rotation in pro settings.
 
 ## Usage
 
-- Links are applied client-side via JavaScript for speed.
-- Targets main content areas (`.entry-content`, `article`).
-- Case-insensitive, whole-word matching only (no partial matches).
-- Compatible with Gutenberg, Classic Editor, and page builders.
+- Write content naturally using your keywords.
+- The plugin scans and links them on frontend display.
+- Monitor clicks in **Pro dashboard** (Tools > Affiliate Analytics).
 
-## FAQ
+### Example
 
-**Does it slow down my site?** No, lightweight JS only loads on singular pages.
+**Content**: "Looking for the best laptop?"
 
-**Pro Pricing?** $49/year single site, $99/year 5 sites. 30-day money-back.
+**Becomes**: "Looking for the <a href="#" class="sa-link" data-url="https://amazon.com/laptop-aff-link">best laptop</a>?"
+
+Clicks redirect via tracker to your affiliate URL.
+
+## Pro Upgrade
+
+Unlock unlimited potential: [Get Pro Now](https://example.com/pro)
 
 ## Support
 
-- Free version: WordPress.org forums.
-- Pro: Dedicated support portal.
+- [Documentation](https://example.com/docs)
+- [Submit Ticket](https://example.com/support)
 
 ## Changelog
 
 **1.0.0**
-- Initial release with core auto-linking.
+- Initial release with core auto-linking and free tier.
