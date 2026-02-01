@@ -1,37 +1,44 @@
 # Smart Donations Pro
 
-## Features
+A simple, lightweight WordPress plugin to monetize your site with customizable donation buttons and progress bars. Perfect for bloggers, creators, and non-profits.[1][3][5]
 
-- **One-Click PayPal Donations**: Integrate PayPal buttons with sandbox testing support.
-- **Goal Progress Bars**: Visual fundraising thermometers with real-time updates.
-- **Anonymous Giving**: Privacy-focused donations without requiring user data.
-- **Shortcodes**: Easy `[smart_donation]` and `[smart_donation_goal]` for any page/post.
-- **Analytics Dashboard**: Track total raised (Pro: detailed reports, exports).
-- **Mobile-Responsive**: Works perfectly on all devices.
-- **Freemium Model**: Free core; Pro unlocks custom themes, email notifications, WooCommerce integration ($29/year).
+## Features
+- **Easy Donation Buttons**: Add [smart_donation] shortcode anywhere for PayPal donations with custom amounts.
+- **Goal Progress Bars**: Track fundraising with [smart_donation_progress] – shows real-time progress.
+- **Mobile-Responsive**: Clean, modern design works on all devices.
+- **Freemium Upsell**: Teases premium features like recurring payments, Stripe integration, analytics, and custom themes.
+- **No Bloat**: Single-file, lightweight (<5KB), no database tables needed.
 
 ## Installation
-
-1. Upload the `smart-donations-pro` folder to `/wp-content/plugins/`.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Smart Donations** to configure PayPal credentials and goals.
-4. Use shortcodes in posts/pages.
+3. Go to **Settings > Donations Pro** to set your PayPal email and goals.
 
 ## Setup
+1. Enter your PayPal email (business account recommended for instant payouts).[3]
+2. Set a fundraising goal and current amount.
+3. Save settings.
 
-1. **PayPal Account**: Get a Business account. Use Sandbox Client ID for testing (from developer.paypal.com).
-2. Enter your PayPal email and Client ID in plugin settings.
-3. Set a fundraising goal (optional).
-4. Test donations in Sandbox mode.
+**Note**: Replace `YOUR_BUTTON_ID` in code with a real PayPal button ID for production, or use the dynamic amount prompt.
 
 ## Usage
+- **Basic Donation**: `[smart_donation amount="20" label="Buy Me a Coffee"]`
+- **Progress Bar**: `[smart_donation_progress goal="5000"]`
 
-- Add `[smart_donation amount="20"]` for a $20 default button.
-- Add `[smart_donation_goal]` to show progress.
-- Donations auto-update the goal tracker.
-- View totals in settings page.
+Embed in posts, pages, sidebars, or widgets. Update current amount manually in settings or via premium API.
 
-**Pro Upgrade**: Unlock analytics, recurring donations, and more at example.com/pro.
+### Example
+![Donation Button](https://via.placeholder.com/400x100/4CAF50/white?text=Donate+Now)
+
+## Premium Version
+Unlock:
+- Recurring subscriptions (monthly tips).[1][5]
+- Stripe/PayPal Pro integration.
+- Donation analytics dashboard.
+- Custom themes and multi-goal campaigns.
+- WooCommerce hooks for eCommerce upsells.
+
+Buy now: $29 [link to your store]. 40% higher conversions with freemium![5]
 
 ## Support
-Contact support@example.com. Contributions welcome on GitHub.
+Report issues on WordPress.org or email support@example.com.
