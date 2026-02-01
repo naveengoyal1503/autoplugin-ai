@@ -1,32 +1,34 @@
 # Smart Donation Pro
 
 ## Features
-- **Easy Donation Buttons**: Add customizable PayPal donation buttons via shortcode `[smart_donation amount="10" label="Buy me a coffee" button_text="Support"]`.
-- **Progress Bars**: Display fundraising goals with `[smart_donation_progress]` showing real-time progress.
-- **Admin Settings**: Configure PayPal email, goal amount, and manual progress updates from WordPress admin.
-- **Mobile Responsive**: Clean, modern design works on all devices.
-- **Freemium Ready**: Core free; premium unlocks recurring donations, Stripe integration, analytics, and custom themes.
+
+- **Customizable Donation Forms**: Easy shortcodes for forms with preset or custom amounts [1].
+- **Progress Bars & Goal Tracking**: Visual progress towards fundraising goals with real-time updates.
+- **Email Notifications**: Automatic admin alerts for new donations.
+- **Mobile-Responsive Design**: Works perfectly on all devices.
+- **Freemium Model**: Free core; Pro adds recurring payments, Stripe/PayPal integration, analytics, and custom themes ($49/year) [1][3].
+- **Shortcode Simplicity**: `[sdp_donation_form]` and `[sdp_progress_bar]`.
 
 ## Installation
+
 1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via WordPress Admin > Plugins.
-3. Go to Settings > Smart Donation to set your PayPal email and goal.
+3. Use shortcodes in posts/pages: `[sdp_donation_form]`.
+4. Set goal in Settings > Smart Donation (default: $1000).
 
 ## Setup
-1. Enter your PayPal business email in settings (use a 'Donate' button from PayPal for best results).
-2. Set a fundraising goal amount.
-3. Optionally update 'Current Amount' manually or integrate webhooks in premium.
+
+- **Configure Goal**: Go to Settings > Smart Donation Pro, set target amount and current raised.
+- **Customize**: Edit amounts in shortcode: `[sdp_donation_form amounts="10,20,50,100,500"]`.
+- **Progress Bar**: `[sdp_progress_bar]` auto-updates on donations.
 
 ## Usage
-- **Donation Button**: `[smart_donation]` - Customizable amount and text.
-- **Progress Bar**: `[smart_donation_progress]` - Auto-calculates percentage.
-- Embed in posts, pages, sidebars, or widgets.
-- Example: Create a 'Support Us' section with progress bar above donation button.
 
-## Premium Features (Upsell)
-- Recurring subscriptions.
-- Stripe/PayPal advanced integrations.
-- Donation analytics dashboard.
-- Custom templates and animations.
+1. Add `[sdp_donation_form]` to any page/post/sidebar.
+2. Visitors select amount/email and submit (simulates payment; Pro integrates real gateways) [3].
+3. Track donations in admin email and site progress.
+4. **Pro Upgrade**: For subscriptions, analytics, and ad-free experience.
 
-Support: Contact via plugin settings page.
+**Pro Tips**: Use tiered goals for memberships, combine with affiliate links for hybrid monetization [1][6].
+
+Support: Contact support@example.com
