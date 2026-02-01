@@ -1,39 +1,35 @@
 # AI Viral Giveaway Booster
 
 ## Features
-
-- **AI-Powered Optimization**: Analyzes entries to suggest high-converting actions (Pro).
-- **Viral Entry Mechanics**: Email signup, social shares, referrals with multipliers.
-- **Customizable Campaigns**: Set prizes, durations, templates via shortcode.
-- **Real-Time Leaderboard**: Boosts competition and engagement.
-- **Mobile-Responsive Design**: Works on all devices.
-- **Easy Integration**: One shortcode `[ai_giveaway id="1"]`.
-- **Freemium Model**: Unlimited free campaigns with 100 entry cap; Pro removes limits.
-
-**Pro Features ($49/year)**: A/B testing, OpenAI integration, Zapier/Mailchimp hooks, premium templates, analytics dashboard.
+- **Viral Giveaway Pages**: Create unlimited giveaway campaigns with shortcodes to boost emails, traffic, and social shares.
+- **Entry Tracking**: Collect emails securely and display live entry counters for social proof.
+- **Bonus Entries**: Facebook/Twitter share actions for extra viral boost (Pro: Unlimited).
+- **Easy Setup**: Drag-and-drop shortcode `[ai_giveaway]` anywhere.
+- **Admin Dashboard**: Customize prizes, emails, and settings.
+- **Freemium Power**: Free core; **Pro** adds AI template generator, A/B testing, analytics, Zapier integration ($49/year).
 
 ## Installation
-
-1. Upload the plugin ZIP to WordPress admin > Plugins > Add New > Upload.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload.
 2. Activate the plugin.
-3. Go to Settings > AI Viral Giveaway to enter OpenAI API key (optional for Pro).
-4. Create campaign data manually or via admin (future updates add UI).
+3. Go to **Settings > AI Giveaway** to configure prize and email.
+4. Add `[ai_giveaway]` shortcode to any page/post.
 
 ## Setup
-
-1. In wp-config.php or admin, set campaigns:
-   php
-   update_option('ai_vgb_campaigns', ['1' => ['prize' => 'iPhone 16', 'end' => '2026-03-01']]);
-   
-2. Add shortcode to any page/post: `[ai_giveaway id="1"]`.
-3. Customize CSS/JS in plugin file for branding.
+1. In admin, set your **Prize** (e.g., "Free Pro Plugin") and **Notify Email**.
+2. Create a new page: "Win Free Gift!" and insert `[ai_giveaway]`.
+3. Publish and promote for viral growth.
 
 ## Usage
+- **Basic**: Use `[ai_giveaway id="campaign1"]` for multiple campaigns.
+- **Embed Anywhere**: Pages, posts, sidebars, widgets.
+- **Pro Features**: AI generates custom themes; track conversions; export entries.
+- **Monetize Your Site**: Drives 10x email growth like RafflePress[1].
 
-- **Embed Anywhere**: Pages, posts, sidebars.
-- **Track Entries**: Data stored in `ai_vgb_entries_1` option.
-- **Monetize Traffic**: 30-50% lift in emails per campaign[1].
-- **Pro Upgrade**: Visit example.com/pro for advanced AI features.
+## Pro Upgrade
+- Unlimited campaigns & entries.
+- AI-powered templates & copy.
+- Integrations: Mailchimp, Google Analytics.
+<a href="https://example.com/pro">Upgrade Now ($49/year)</a>
 
 ## Support
-Contact support@example.com. Free updates guaranteed.
+Contact support@example.com. Free version supported via forums.
