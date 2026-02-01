@@ -1,28 +1,36 @@
 # Smart Donation Pro
 
+A lightweight, self-contained WordPress plugin for easy site monetization through customizable donation buttons supporting PayPal and Stripe. Perfect for bloggers, creators, and non-profits.[1][3]
+
 ## Features
-- **Easy Donation Buttons**: One-click PayPal integration for donations and tips.
-- **Customizable Shortcodes**: `[smart_donation amount="10" button="Buy Me a Coffee" goal="500"]`.
-- **Progress Bars**: Visual goal tracking for campaigns (e.g., funding goals).
-- **Mobile Responsive**: Works perfectly on all devices.
-- **Freemium Ready**: Premium unlocks recurring donations, analytics, and more.
+- **One-click donation buttons** for PayPal and Stripe (card payments).
+- **Customizable shortcodes**: Set amounts, currency, goals with progress bars `[smart_donation amount="10" currency="USD" goal="500"]`.
+- **Auto-insert** donation prompts after blog posts.
+- **Progress bars** for fundraising goals.
+- **Mobile-responsive** design.
+- **Freemium-ready**: Free core; pro adds recurring subs, analytics, custom themes ($29/year).[5]
 
 ## Installation
-1. Upload the `smart-donation-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Donation Pro** and enter your PayPal email.
+1. Download and upload the PHP file to `/wp-content/plugins/smart-donation-pro/`.
+2. Activate via WordPress Admin > Plugins.
+3. Configure in **Settings > Donation Pro** (add PayPal email/Stripe keys).[3]
 
 ## Setup
-1. Configure your PayPal email in the settings page.
-2. Use the shortcode in any post, page, or widget:
-   - Basic: `[smart_donation]`
-   - Custom: `[smart_donation amount="25" button="Support Us" goal="1000"]`
-3. Test donations using PayPal sandbox.
+1. Go to **Settings > Donation Pro**.
+2. Enter your PayPal email and Stripe keys (get from [stripe.com](https://stripe.com)).
+3. Enable auto-insert for posts.
+4. Save settings.
 
 ## Usage
-- Place shortcodes where you want donation prompts (sidebar, posts, footers).
-- Track progress visually with goal bars.
-- **Pro Tip**: Use on membership sites, blogs, or non-profits for steady income[1][3][5].
+- **Shortcode**: Paste `[smart_donation]` in posts/pages. Customize: `amount`, `currency`, `goal`, `button_text`, `provider`.
+- **Examples**:
+  - Basic: `[smart_donation amount="5"]`
+  - With goal: `[smart_donation amount="10" goal="1000"]`
+- Donations appear automatically after posts if enabled.
+- Track via PayPal/Stripe dashboards.
+
+## Pro Upgrade
+Unlock recurring donations, detailed analytics, unlimited buttons, and priority support. [Contact for premium](https://example.com).
 
 ## Support
-Contact support@example.com for help.
+Report issues on WordPress.org forums. Compatible with latest WordPress.
