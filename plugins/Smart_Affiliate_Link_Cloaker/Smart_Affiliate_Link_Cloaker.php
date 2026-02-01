@@ -6,40 +6,30 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Link Cloaker
  * Plugin URI: https://example.com/smart-affiliate-cloaker
- * Description: Automatically cloaks, tracks, and monetizes affiliate links with click stats and dashboards.
+ * Description: Automatically cloaks and tracks affiliate links in posts, boosts clicks with smart redirects, and displays performance analytics for higher commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class SmartAffiliateCloaker {
-    private static $instance = null;
-    public $db_version = '1.0';
-    public $table_name;
+    private $db_version = '1.0';
+    private $table_name;
 
-    public static function get_instance() {
-        if (null == self::$instance) {
-            self::$instance = new self;
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
+    public function __construct() {
         global $wpdb;
-        $this->table_name = $wpdb->prefix . 'salc_clicks';
+        $this->table_name = $wpdb->prefix . 'affiliate_links';
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
         add_filter('the_content', array($this, 'cloak_links'));
-        add_shortcode('salc_dashboard', array($this, 'dashboard_shortcode'));
-        add_rewrite_rule('^salc/([a-zA-Z0-9_-]+)/?$', 'index.php?salc_id=$matches[1]', 'top');
-        add_filter('query_vars', array($this, 'query_vars'));
-        add_action('template_redirect', array($this, 'handle_click'));
+        add_shortcode('aff-stats', array($this, 'stats_shortcode'));
     }
 
     public function activate() {
@@ -47,132 +37,113 @@ class SmartAffiliateCloaker {
         $charset_collate = $wpdb->get_charset_collate();
         $sql = "CREATE TABLE $this->table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            link_id varchar(255) NOT NULL,
             original_url text NOT NULL,
+            cloaked_slug varchar(50) NOT NULL,
             clicks int DEFAULT 0,
-            created datetime DEFAULT CURRENT_TIMESTAMP,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
-            KEY link_id (link_id)
+            UNIQUE KEY slug (cloaked_slug)
         ) $charset_collate;";
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
-        flush_rewrite_rules();
+        update_option('sal_db_version', $this->db_version);
     }
 
     public function deactivate() {
-        flush_rewrite_rules();
+        // Cleanup optional
     }
 
     public function init() {
-        if (get_option('salc_db_version') != $this->db_version) {
-            $this->activate();
-            update_option('salc_db_version', $this->db_version);
-        }
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('salc-tracker', plugin_dir_url(__FILE__) . 'tracker.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('salc-tracker', 'salc_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
-    }
-
-    public function admin_menu() {
-        add_menu_page('SALC Dashboard', 'Affiliate Cloaker', 'manage_options', 'salc-dashboard', array($this, 'admin_page'));
-    }
-
-    public function admin_scripts($hook) {
-        if ('toplevel_page_salc-dashboard' != $hook) return;
-        wp_enqueue_script('chart-js', 'https://cdn.jsdelivr.net/npm/chart.js', array(), '3.9.1', true);
-    }
-
-    public function cloak_links($content) {
-        if (is_admin() || !is_singular()) return $content;
-        preg_match_all('/href=["\'](https?:\/\/[^\s"\']+)["\']/i', $content, $matches);
-        $links = $matches[1];
-        foreach ($links as $url) {
-            if (strpos($url, 'affiliate') !== false || strpos($url, '?ref=') !== false || strpos($url, 'amazon.com/') !== false) {
-                $shortcode = $this->create_cloaked_link($url);
-                $content = str_replace('href="' . $url . '"', 'href="' . $shortcode . '"', $content);
-                $content = str_replace("href='" . $url . "'", "href='" . $shortcode . "'", $content);
-            }
-        }
-        return $content;
-    }
-
-    private function create_cloaked_link($url) {
-        global $wpdb;
-        $link_id = md5($url);
-        $wpdb->insert($this->table_name, array('link_id' => $link_id, 'original_url' => $url), array('%s', '%s'));
-        return home_url('/salc/' . $link_id . '/');
+        add_rewrite_rule('^aff/([a-z0-9-]+)$', 'index.php?aff_link=$matches[1]', 'top');
+        flush_rewrite_rules();
+        add_rewrite_tag('%aff_link%', '([^&]+)');
+        add_filter('query_vars', array($this, 'query_vars'));
+        add_action('template_redirect', array($this, 'handle_redirect'));
     }
 
     public function query_vars($vars) {
-        $vars[] = 'salc_id';
+        $vars[] = 'aff_link';
         return $vars;
     }
 
-    public function handle_click() {
-        if (get_query_var('salc_id')) {
-            $link_id = sanitize_text_field(get_query_var('salc_id'));
+    public function handle_redirect() {
+        if (get_query_var('aff_link')) {
+            $slug = sanitize_text_field(get_query_var('aff_link'));
             global $wpdb;
-            $wpdb->query($wpdb->prepare("UPDATE $this->table_name SET clicks = clicks + 1 WHERE link_id = %s", $link_id));
-            $link = $wpdb->get_row($wpdb->prepare("SELECT original_url FROM $this->table_name WHERE link_id = %s", $link_id));
+            $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->table_name WHERE cloaked_slug = %s", $slug));
             if ($link) {
+                $wpdb->query($wpdb->prepare("UPDATE $this->table_name SET clicks = clicks + 1 WHERE id = %d", $link->id));
                 wp_redirect($link->original_url, 301);
                 exit;
             }
         }
     }
 
-    public function dashboard_shortcode($atts) {
-        if (!current_user_can('manage_options')) return '';
+    public function cloak_links($content) {
+        if (is_feed() || is_admin()) return $content;
+        preg_match_all('/https?:\/\/[^\s"\']+?(?:\b|(?=[\?\!]))/i', $content, $matches);
+        foreach ($matches as $url) {
+            if (strpos($url, 'amazon.com') !== false || strpos($url, 'clickbank.net') !== false || strpos($url, 'affiliate') !== false) {
+                $slug = $this->generate_slug($url);
+                $this->save_link($url, $slug);
+                $cloaked = home_url('/aff/' . $slug . '/');
+                $content = str_replace($url, $cloaked, $content);
+            }
+        }
+        return $content;
+    }
+
+    private function generate_slug($url) {
+        return substr(md5($url), 0, 8);
+    }
+
+    private function save_link($url, $slug) {
         global $wpdb;
-        $stats = $wpdb->get_results("SELECT link_id, original_url, clicks, created FROM $this->table_name ORDER BY created DESC LIMIT 10");
-        $total_clicks = $wpdb->get_var("SELECT SUM(clicks) FROM $this->table_name");
-        ob_start();
-        ?>
-        <div id="salc-dashboard">
-            <h3>Affiliate Link Stats</h3>
-            <p>Total Clicks: <strong><?php echo $total_clicks; ?></strong></p>
-            <table>
-                <tr><th>Link</th><th>Clicks</th><th>Date</th></tr>
-                <?php foreach ($stats as $stat): ?>
-                <tr>
-                    <td><a href="<?php echo esc_url($stat->original_url); ?>" target="_blank"><?php echo esc_html(substr($stat->original_url, 0, 50)); ?>...</a></td>
-                    <td><?php echo $stat->clicks; ?></td>
-                    <td><?php echo $stat->created; ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </table>
-            <p><em>Upgrade to Pro for charts, A/B testing & more!</em></p>
-        </div>
-        <?php
-        return ob_get_clean();
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $this->table_name WHERE original_url = %s", $url));
+        if (!$exists) {
+            $wpdb->insert($this->table_name, array('original_url' => $url, 'cloaked_slug' => $slug));
+        }
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('sal-script', plugin_dir_url(__FILE__) . 'sal-script.js', array('jquery'), '1.0.0', true);
+    }
+
+    public function admin_menu() {
+        add_options_page('Affiliate Links', 'Affiliate Links', 'manage_options', 'smart-affiliate-cloaker', array($this, 'admin_page'));
     }
 
     public function admin_page() {
-        echo '<div class="wrap"><h1>Smart Affiliate Cloaker Pro</h1><p>Use [salc_dashboard] shortcode on any page for stats.</p><p><a href="https://example.com/pro" class="button button-primary">Upgrade to Pro ($49/yr)</a></p></div>';
+        global $wpdb;
+        if (isset($_POST['add_link'])) {
+            $url = sanitize_url($_POST['original_url']);
+            $slug = sanitize_text_field($_POST['slug']);
+            $wpdb->insert($this->table_name, array('original_url' => $url, 'cloaked_slug' => $slug));
+        }
+        $links = $wpdb->get_results("SELECT * FROM $this->table_name ORDER BY created_at DESC");
+        echo '<div class="wrap"><h1>Affiliate Links</h1><form method="post"><table class="form-table"><tr><th>Original URL</th><td><input type="url" name="original_url" required style="width:300px;"></td></tr><tr><th>Custom Slug</th><td><input type="text" name="slug" required style="width:200px;"></td></tr></table><p><input type="submit" name="add_link" value="Add Link" class="button-primary"></p></form><h2>Links</h2><table class="wp-list-table widefat"><thead><tr><th>ID</th><th>Original</th><th>Cloaked</th><th>Clicks</th></tr></thead><tbody>';
+        foreach ($links as $link) {
+            echo '<tr><td>' . $link->id . '</td><td>' . esc_html($link->original_url) . '</td><td><a href="' . home_url('/aff/' . $link->cloaked_slug . '/') . '" target="_blank">' . home_url('/aff/' . $link->cloaked_slug . '/') . '</a></td><td>' . $link->clicks . '</td></tr>';
+        }
+        echo '</tbody></table><p><strong>Pro Upgrade:</strong> Unlock A/B testing, geo-targeting, and export analytics for $49/year. <a href="https://example.com/pro">Buy Pro</a></p></div>';
+    }
+
+    public function stats_shortcode($atts) {
+        global $wpdb;
+        $total_clicks = $wpdb->get_var("SELECT SUM(clicks) FROM $this->table_name");
+        $top_link = $wpdb->get_row("SELECT * FROM $this->table_name ORDER BY clicks DESC LIMIT 1");
+        return '<div style="border:1px solid #ccc; padding:10px; background:#f9f9f9;"><strong>Total Clicks:</strong> ' . ($total_clicks ?: 0) . '<br><strong>Top Link:</strong> ' . ($top_link ? $top_link->clicks . ' clicks' : 'None') . ' <small>(Pro: Detailed dashboard)</small></div>';
     }
 }
 
-SmartAffiliateCloaker::get_instance();
+new SmartAffiliateCloaker();
 
-// Dummy tracker.js content (inline for single file)
-function salc_inline_tracker() {
-    if (!wp_script_is('salc-tracker', 'enqueued')) return;
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('a[href^="/salc/"]').on('click', function(e) {
-            var href = $(this).attr('href');
-            $.post(salc_ajax.ajaxurl, {action: 'salc_track', url: href});
-        });
-    });
-    </script>
-    <?php
-}
-add_action('wp_footer', 'salc_inline_tracker');
-
-add_action('wp_ajax_salc_track', function() {
-    error_log('SALC Track: ' . $_POST['url']);
-    wp_die();
+// Pro teaser
+add_action('admin_notices', function() {
+    if (!get_option('sal_pro_dismissed')) {
+        echo '<div class="notice notice-info"><p>Upgrade to <strong>Smart Affiliate Cloaker Pro</strong> for advanced analytics & A/B testing! <a href="https://example.com/pro">Learn More</a> | <a href="?sal_dismiss=1">Dismiss</a></p></div>';
+    }
 });
+if (isset($_GET['sal_dismiss'])) {
+    update_option('sal_pro_dismissed', 1);
+}
