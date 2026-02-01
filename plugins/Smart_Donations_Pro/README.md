@@ -1,33 +1,45 @@
 # Smart Donations Pro
 
-A powerful, lightweight WordPress plugin for adding donation buttons with real-time progress bars and goal tracking. Perfect for monetizing blogs, membership sites, or non-profits via PayPal integration[1][3].
-
 ## Features
-- **Customizable donation buttons** with progress bars showing goal progress.
-- **Shortcode support**: Use `[sdp_donate id="0"]` to embed anywhere.
-- **Admin goal management**: Set titles, goals, and track donations.
-- **AJAX-powered updates**: Real-time progress without page reloads.
-- **Freemium ready**: Free core with pro upgrades for Stripe, analytics, unlimited goals.
-- **Mobile responsive** and lightweight (single file, no dependencies).
+
+- **Customizable Donation Buttons**: Easy shortcode `[smart_donation amount="10" show_goal="true"]` to add buttons anywhere.
+- **Progress Bars & Goals**: Visual fundraising thermometer with admin-settable goals and current amounts.
+- **PayPal Integration**: One-click PayPal payments (sandbox/live) for one-time donations.
+- **Admin Dashboard**: Simple settings page to configure PayPal email, goals, button text, and messages.
+- **Mobile-Responsive**: Clean, modern design works on all devices.
+- **Freemium Ready**: Pro version unlocks recurring donations, Stripe, analytics, and more.
+
+**Pro Features (Upsell)**: Recurring subscriptions, email receipts, donation history, multiple gateways.
 
 ## Installation
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Goals auto-create on activation; edit via **Settings > Smart Donations** (pro feature coming).
+
+1. Download and upload the `smart-donations-pro.php` file to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Go to **Settings > Donations** to configure your PayPal email and goals.
+4. Replace `YOUR_PAYPAL_CLIENT_ID` in the code with your [PayPal Developer](https://developer.paypal.com) client ID.
 
 ## Setup
-1. Use shortcode `[sdp_donate id="0"]` in posts/pages/widgets.
-2. Default goal: "Support Our Site" ($1000 USD).
-3. Donations simulate payment; integrate PayPal IPN in pro version.
+
+1. **Get PayPal Client ID**:
+   - Sign up at [PayPal Developer](https://developer.paypal.com).
+   - Create an app and copy the Client ID.
+   - Edit the plugin file and replace `YOUR_PAYPAL_CLIENT_ID`.
+
+2. **Configure Settings**:
+   - Set your PayPal email.
+   - Define goal amount (e.g., 1000) and current raised (starts at 0).
+   - Customize button text and thank-you message.
 
 ## Usage
-- Embed shortcode on any page.
-- Users enter amount and click "Donate via PayPal".
-- Progress updates live via AJAX.
-- View/edit goals in `wp_options` table (key: `sdp_goals`) or upgrade to pro dashboard.
 
-## Pro Upgrade
-Unlock Stripe, unlimited campaigns, analytics, and more for $29/year. Contact support@example.com.
+- **Shortcode**: Use `[smart_donation amount="5"]` for $5 donation or `[smart_donation amount="25" show_goal="true"]` with progress bar.
+- **Place Anywhere**: Add to posts, pages, sidebars, or widgets.
+- **Track Donations**: Manually update 'Current Amount' in admin or automate via webhooks (pro).
 
 ## Support
-Report issues on WordPress.org forums.
+
+- WordPress.org forums or email support@yourdomain.com.
+
+## Upgrade to Pro
+
+Unlock recurring payments and more for $29/year at [yourshop.com](https://yourshop.com).
