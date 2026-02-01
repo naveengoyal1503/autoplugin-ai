@@ -1,52 +1,61 @@
 # AI Content Optimizer Freemium
 
-[![WordPress plugin](https://img.shields.io/badge/WordPress-plugin-blue)](https://wordpress.org/plugins/) **AI-powered content analysis for SEO and engagement. Free basic tools; premium for advanced AI features.**
+[![Contributors][badge-contributors]](https://example.com) [![ Forks][badge-forks]](https://example.com)
+
+AI-powered plugin that analyzes your WordPress posts for **SEO**, **readability**, and **engagement**. Free version offers basic scans (3/day); premium unlocks unlimited AI suggestions, keyword optimization, and auto-rewrites.
 
 ## Features
 
 ### Free Version
-- **Basic SEO Score**: Analyzes word count, readability (Flesch score), and simple SEO heuristic.
-- **Sidebar Meta Box**: One-click analysis on post edit screen.
-- **Upgrade Prompts**: Clear calls-to-action for premium.
+- **Basic Content Analysis**: Word count, readability score (Flesch Reading Ease), SEO score.
+- **Daily Limit**: 3 scans per day per user.
+- **Meta Box Integration**: One-click analysis in post/page editor.
+- **Upgrade Nudges**: Clear calls-to-action for premium.
 
 ### Premium Features (Upsell)
-- AI-powered content rewriting for better engagement.
-- Automated keyword suggestions.
-- Advanced readability optimizations.
-- Priority support & regular updates.
-- **Pricing**: $9/mo or $99/yr for unlimited sites.
+- Unlimited scans.
+- **AI Keyword Suggestions** (via OpenAI integration).
+- **Content Rewrites** for better engagement. 
+- **Priority Support** & regular updates.
+- **Export Reports** & bulk optimization.
 
 ## Installation
 
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress admin.
-3. Edit any post – find the **AI Content Optimizer** sidebar box.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Edit a post/page – find the **AI Content Optimizer** meta box on the side.
 
 ## Setup
 
-No setup required for free version. Premium activates via license key on upgrade page.
+1. Go to **Settings > AI Content Optimizer** for overview.
+2. **Click 'Analyze Content'** in the meta box (respects daily limit).
+3. View results and tips directly in the editor.
 
 ## Usage
 
-1. Edit a **Post** (not pages/custom post types in free version).
-2. Scroll to the **side sidebar** > **AI Content Optimizer**.
-3. Click **Analyze Content** for instant scores:
-   - **Words**: Total count.
-   - **Readability**: Flesch Reading Ease score (higher = easier).
-   - **SEO Score**: Combined metric (70+ = good).
-4. **Upgrade** for AI magic: Click the blue **Upgrade to Premium** button.
+1. **Create/Edit Post**: Open any post or page.
+2. **Click Analyze**: Button triggers instant analysis.
+3. **Review Scores**:
+   - **SEO Score**: Based on length, structure.
+   - **Readability**: Flesch score (higher = easier to read).
+   - **Tips**: Actionable free advice; premium for AI depth.
+4. **Upgrade**: Limited? Visit [Premium](https://example.com/premium-upgrade).
 
 ## Screenshots
 
-*(In full repo: Screenshot of meta box with scores and upsell button)*
+*(In real repo: Add images of meta box, results, settings page)*
 
 ## Changelog
 
-**1.0.0**
-- Initial release with basic analysis & freemium upsell.
+### 1.0.0
+- Initial release with free analysis & freemium gating.
 
-## Support
+## Support & Premium
 
-Free: WordPress.org forums. Premium: Dedicated dashboard.
+- Free support via WordPress.org forums.
+- Premium: [Upgrade Now](https://example.com/premium-upgrade) ($9.99/mo).
 
-**Upgrade today: [Get Premium](https://example.com/premium-upgrade)**
+[contributors-shield]: https://img.shields.io/badge/contributors-1-brightgreen
+[badge-contributors]: https://img.shields.io/badge/contributors-1-brightgreen
+[forks-shield]: https://img.shields.io/badge/forks-0-blue
+[badge-forks]: https://img.shields.io/badge/forks-0-blue
