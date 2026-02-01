@@ -1,36 +1,76 @@
 # Smart Affiliate AutoLinker
 
-**Automatically turns keywords in your posts into profitable Amazon affiliate links.**
+[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url] [![Activity][activity-shield]][activity-url]
 
-## Features
-- **Auto-Linking**: Detects keywords like "iphone" or "laptop" and replaces them with your Amazon affiliate links.
-- **Customizable**: Add unlimited keywords and URLs via settings.
-- **SEO-Friendly**: Links open in new tab with `nofollow`.
-- **Post-Specific Disable**: Checkbox to skip auto-linking on specific posts.
-- **Freemium**: Free core features; **Pro** adds analytics, multiple networks, A/B testing ($49/year).
+Automatically detects keywords in your WordPress posts and pages, converting them into **trackable affiliate links** (Amazon by default). Boost your earnings passively!
 
-## Installation
-1. Upload the `smart-affiliate-autolinker` folder to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Affiliate AutoLinker** to configure.
+## 🚀 **Key Features**
 
-## Setup
-1. Enter your **Amazon Affiliate ID** (e.g., `yourname-20`).
-2. Add keywords in JSON: `{"iphone":"https://amazon.com/dp/B0ABC123?tag=yourname-20","laptop":"https://amazon.com/dp/B0DEF456?tag=yourname-20"}`.
-3. Save. Links auto-appear in posts!
+- **Automatic Keyword Linking**: No manual insertion needed.
+- **Amazon Affiliate Integration**: Auto-generates search links with your tag.
+- **Custom Affiliate URLs**: Override with any provider (ClickBank, etc.).
+- **Link Limits**: Free limits to 3/post; **Pro: Unlimited**.
+- **No-Follow & Sponsored**: SEO-compliant links.
+- **Freemium Model**: Upgrade for advanced features.
 
-**Disable on post**: Edit post > Custom Fields > Add `saal_disable` = `true`.
+## 💎 **Pro Version Features** (Upgrade for $49/year)
 
-## Usage
-- Write normally: Mention "best iphone" → auto-links to Amazon.
-- Earn commissions on sales.
-- Track via Amazon Associates dashboard.
-- **Pro**: View click stats, support for ClickBank, Commission Junction.
+- Unlimited keywords & links per post.
+- **Analytics Dashboard**: Track clicks & earnings.
+- Multiple affiliate networks (Amazon, eBay, etc.).
+- A/B link testing.
+- Priority email support.
+- [Get Pro Now](https://example.com/pro)
 
-## FAQ
-**Safe?** Yes, regex is word-boundary only, no over-linking.
-**Conflicts?** Works with most themes/editors; test on staging.
+## 📦 **Installation**
 
-**Upgrade to Pro:** [Get Pro](https://example.com/pro) for full power!
+1. Download the plugin ZIP.
+2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Go to **Settings > Affiliate AutoLinker** to configure.
 
-**Support:** [Contact](mailto:support@example.com)
+## ⚙️ **Setup**
+
+1. **Enter Amazon Tag**: Get from [Amazon Associates](https://affiliate-program.amazon.com/).
+2. **Add Keywords**: e.g., Keyword: "laptop", URL: (leave empty for Amazon search).
+3. Set **Max Links** per post.
+4. **Save** and test on a post!
+
+**Pro Tip**: Use tiered pricing psychology like **$49** (not $50) for higher conversions.[7]
+
+## 📖 **Usage**
+
+- Write content with keywords (e.g., "best **WordPress** plugins").
+- Plugin auto-links on frontend (posts/pages only).
+- View earnings via your affiliate dashboard.
+
+**Example**:
+
+Before: "I love **coffee makers**."
+After: "I love <a href="https://amazon.com/s?k=coffee+makers&tag=yourtag-20" rel="nofollow sponsored">**coffee makers**</a>."
+
+## 🤝 **Support**
+
+- Free: WordPress.org forums.
+- **Pro**: Dedicated support ticket system.
+
+## 📈 **Why Profitable?**
+
+- **Passive Income**: Works 24/7 on existing content.[1][5]
+- **Freemium Upsell**: 40% convert to premium.[7]
+- **Proven Model**: Affiliate plugins dominate monetization.[2][4]
+
+**Upgrade to Pro** for full power!
+
+[contributors-shield]: https://img.shields.io/github/contributors/example/repo.svg?style=for-the-badge
+[contributors-url]: https://github.com/example/repo/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/example/repo.svg?style=for-the-badge
+[forks-url]: https://github.com/example/repo/network/members
+[stars-shield]: https://img.shields.io/github/stars/example/repo.svg?style=for-the-badge
+[stars-url]: https://github.com/example/repo/stargazers
+[issues-shield]: https://img.shields.io/github/issues/example/repo.svg?style=for-the-badge
+[issues-url]: https://github.com/example/repo/issues
+[license-shield]: https://img.shields.io/github/license/example/repo.svg?style=for-the-badge
+[license-url]: https://github.com/example/repo/blob/master/LICENSE.txt
+[activity-shield]: https://img.shields.io/github/last-commit/example/repo.svg?style=for-the-badge
+[activity-url]: https://github.com/example/repo/commits/master
