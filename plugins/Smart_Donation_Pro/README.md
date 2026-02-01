@@ -1,41 +1,37 @@
 # Smart Donation Pro
 
-## Features
+A lightweight, self-contained WordPress plugin to monetize your site with beautiful donation buttons, progress bars, and payment forms. Supports PayPal (one-time) and Stripe (one-time, demo recurring-ready). Perfect for bloggers, creators, and non-profits.[1][3]
 
-- **Customizable Donation Forms**: Use shortcode `[smart_donation]` with attributes like `goal="1000"`, `title="Support Us!"`, `tiers="5,10,25,50,100"`.
-- **Progress Bars**: Visual goal tracking with real-time updates.
-- **Tiered Donations**: Pre-set amounts for quick donations.
-- **Custom Amounts**: Users can enter their own donation value.
-- **PayPal Integration**: One-click PayPal payments (configure in settings).
-- **Analytics**: Tracks total raised (stored in database).
-- **Mobile Responsive**: Works perfectly on all devices.
-- **Freemium Ready**: Extend with premium features like Stripe, emails, and reports.
+## Features
+- **Customizable donation buttons** with preset amounts ($5, $10, $25, $50) and custom input.
+- **Progress bars** to show donation goals (e.g., 25% to $1000 goal).[1][5]
+- **PayPal integration** for instant one-time donations.
+- **Stripe integration** for card payments (publishable key only; extend for live server-side).[3]
+- **Shortcode-based**: `[smart_donation]` or `[smart_donation amount="10" goal="500" current="150"]`.
+- **Mobile-responsive** design with smooth animations.
+- **Admin settings** for PayPal email, Stripe key, and default amount.
+- **Freemium-ready**: Easy upsell to pro for recurring subs, analytics, and themes.[1][5]
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Donation Pro** to set your PayPal email.
-4. Add `[smart_donation]` shortcode to any page or post.
+1. Download and upload the single PHP file to `/wp-content/plugins/smart-donation-pro/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Go to **Settings > Donation Settings** to configure PayPal email and Stripe key (get from [stripe.com](https://stripe.com)).
+4. Add `[smart_donation]` to any post/page.
 
 ## Setup
-
-1. In **Settings > Donation Pro**, enter your PayPal business email.
-2. Customize shortcode: `[smart_donation goal="5000" tiers="10,25,50,100,500"]`.
-3. Embed on sidebar, footer, or dedicated donation page for maximum visibility.
+1. **PayPal**: Enter your PayPal business email. Donations open PayPal donate link.
+2. **Stripe**: Add your publishable key. Client-side demo; for live, add server endpoint for Payment Intents.
+3. **Customize**: Use shortcode attributes like `goal`, `current`, `amount`, `button_text`.
+4. Test on staging site. Ensure HTTPS for Stripe.
 
 ## Usage
+- Place shortcode in sidebar, posts, or footers for passive income.[3][5]
+- Update `current` goal manually or extend with AJAX form submissions.
+- **Pro tip**: Combine with memberships or ads for hybrid monetization.[1][2]
+- Track via PayPal/Stripe dashboards.
 
-- Place the shortcode on high-traffic pages like homepage or blog posts.
-- Watch donations roll in via PayPal.
-- Progress updates automatically as donations are processed.
-- **Pro Tip**: Use pricing psychology (e.g., tiers like $9.99) to boost conversions by up to 28%.
+## Premium Upsell
+Upgrade for recurring Stripe subs, donation analytics, custom themes, email receipts ($29/year).
 
-## Premium Features (Coming Soon)
-
-- Stripe & crypto payments.
-- Email notifications & thank-yous.
-- Advanced analytics dashboard.
-- Unlimited forms & white-labeling.
-
-Support: Contact via WordPress.org forums.
+## Support
+Report issues on WordPress.org forums. Contributors welcome!
