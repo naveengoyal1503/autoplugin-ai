@@ -1,76 +1,50 @@
 # Smart Affiliate AutoLinker
 
-[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url] [![Activity][activity-shield]][activity-url]
+**Automatically inserts relevant affiliate links into your WordPress posts and pages to maximize passive income.**
 
-Automatically detects keywords in your WordPress posts and pages, converting them into **trackable affiliate links** (Amazon by default). Boost your earnings passively!
+## Features
 
-## 🚀 **Key Features**
+- **Automatic Linking**: Scans content for keywords and replaces them with your affiliate links.
+- **Customizable**: Set keywords, affiliate URLs, and custom link text.
+- **Limits Control**: Configure max links per post to avoid over-optimization.
+- **Free Version**: Up to 5 keywords, basic matching.
+- **Pro Version** ($9/month): Unlimited keywords, AI-powered smart matching, click analytics, A/B testing, whitelist/blacklist posts, priority support.
 
-- **Automatic Keyword Linking**: No manual insertion needed.
-- **Amazon Affiliate Integration**: Auto-generates search links with your tag.
-- **Custom Affiliate URLs**: Override with any provider (ClickBank, etc.).
-- **Link Limits**: Free limits to 3/post; **Pro: Unlimited**.
-- **No-Follow & Sponsored**: SEO-compliant links.
-- **Freemium Model**: Upgrade for advanced features.
+## Installation
 
-## 💎 **Pro Version Features** (Upgrade for $49/year)
+1. Upload the `smart-affiliate-autolinker` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Linker** to configure.
 
-- Unlimited keywords & links per post.
-- **Analytics Dashboard**: Track clicks & earnings.
-- Multiple affiliate networks (Amazon, eBay, etc.).
-- A/B link testing.
-- Priority email support.
-- [Get Pro Now](https://example.com/pro)
+## Setup
 
-## 📦 **Installation**
+1. **Enable Auto-Linking**: Toggle on in settings.
+2. **Add Keywords**:
+   - Enter keyword (e.g., "WordPress").
+   - Add your affiliate URL (e.g., Amazon, hosting affiliate).
+   - Optional: Custom link text (e.g., "best WordPress host").
+3. **Set Max Links**: Default 3 per post.
+4. Click **Save Changes**.
 
-1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > Affiliate AutoLinker** to configure.
+## Usage
 
-## ⚙️ **Setup**
+- Links auto-appear in posts, pages, and excerpts.
+- **Test**: Create a test post with your keywords.
+- **Pro Tips**:
+  - Use high-converting affiliate programs (hosting, tools, products).
+  - Monitor performance and upgrade to Pro for analytics.
+  - Compatible with Gutenberg, Classic Editor, most themes.
 
-1. **Enter Amazon Tag**: Get from [Amazon Associates](https://affiliate-program.amazon.com/).
-2. **Add Keywords**: e.g., Keyword: "laptop", URL: (leave empty for Amazon search).
-3. Set **Max Links** per post.
-4. **Save** and test on a post!
+## Pro Upgrade
 
-**Pro Tip**: Use tiered pricing psychology like **$49** (not $50) for higher conversions.[7]
+Unlock full potential: [Get Pro Now](https://example.com/pro)
 
-## 📖 **Usage**
+## Support
 
-- Write content with keywords (e.g., "best **WordPress** plugins").
-- Plugin auto-links on frontend (posts/pages only).
-- View earnings via your affiliate dashboard.
+- Free support via WordPress forums.
+- Pro: Email support@yourdomain.com.
 
-**Example**:
+## Changelog
 
-Before: "I love **coffee makers**."
-After: "I love <a href="https://amazon.com/s?k=coffee+makers&tag=yourtag-20" rel="nofollow sponsored">**coffee makers**</a>."
-
-## 🤝 **Support**
-
-- Free: WordPress.org forums.
-- **Pro**: Dedicated support ticket system.
-
-## 📈 **Why Profitable?**
-
-- **Passive Income**: Works 24/7 on existing content.[1][5]
-- **Freemium Upsell**: 40% convert to premium.[7]
-- **Proven Model**: Affiliate plugins dominate monetization.[2][4]
-
-**Upgrade to Pro** for full power!
-
-[contributors-shield]: https://img.shields.io/github/contributors/example/repo.svg?style=for-the-badge
-[contributors-url]: https://github.com/example/repo/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/example/repo.svg?style=for-the-badge
-[forks-url]: https://github.com/example/repo/network/members
-[stars-shield]: https://img.shields.io/github/stars/example/repo.svg?style=for-the-badge
-[stars-url]: https://github.com/example/repo/stargazers
-[issues-shield]: https://img.shields.io/github/issues/example/repo.svg?style=for-the-badge
-[issues-url]: https://github.com/example/repo/issues
-[license-shield]: https://img.shields.io/github/license/example/repo.svg?style=for-the-badge
-[license-url]: https://github.com/example/repo/blob/master/LICENSE.txt
-[activity-shield]: https://img.shields.io/github/last-commit/example/repo.svg?style=for-the-badge
-[activity-url]: https://github.com/example/repo/commits/master
+**1.0.0**
+- Initial release.
