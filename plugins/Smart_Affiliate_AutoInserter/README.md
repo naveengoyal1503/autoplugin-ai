@@ -1,91 +1,51 @@
 # Smart Affiliate AutoInserter
 
-[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url] [![Activity][activity-shield]][activity-url]
+**AI-Powered Automatic Affiliate Link Insertion for WordPress**
 
-Boost your affiliate revenue automatically! **Smart Affiliate AutoInserter** scans your content and inserts relevant Amazon affiliate links seamlessly.
+Automatically detects keywords in your posts and inserts relevant Amazon affiliate links to generate passive income. Freemium model with powerful premium upgrades.
 
-## 🚀 **Why Choose Smart Affiliate AutoInserter?**
+## Features
 
-- **Automatic Insertion**: Detects keywords like "phone", "laptop" and adds affiliate links.
-- **Easy Setup**: Enter your Amazon tag once and go live.
-- **Mobile-Responsive**: Links work perfectly on all devices (premium: AI-optimized).
-- **Performance Optimized**: Lightweight with no bloat.
-- **Privacy Compliant**: GDPR-ready with no data collection.
+### Free Version
+- **Keyword-Based Auto-Insertion**: Define up to 10 keywords and their affiliate links; auto-inserts into posts (max 3 links per post).
+- **Smart Placement**: Replaces exact keyword matches without disrupting content flow.
+- **Easy Settings**: Simple dashboard to manage keywords and toggle on/off.
+- **nofollow & Sponsored**: All links include proper rel attributes for compliance.
 
-## 📦 **Free vs Pro Features**
+### Premium Add-ons (Coming Soon)
+- **AI Keyword Detection** ($49/year): Automatically suggests and inserts relevant Amazon links using AI.
+- **Analytics Dashboard** ($29/year): Track clicks, conversions, and earnings.
+- **Unlimited Bundle** ($99/year): Everything + unlimited sites, keywords, and links.
 
-| Feature | Free | Pro ($49/yr) |
-|---------|-----|--------------|
-| Basic Keyword Matching | ✅ | ✅ |
-| Amazon Integration | ✅ | ✅ |
-| AI-Powered Keyword Detection | ❌ | ✅ |
-| Analytics Dashboard | ❌ | ✅ |
-| Multi-Network Support (ClickBank, etc.) | ❌ | ✅ |
-| Custom Link Templates | ❌ | ✅ |
-| Priority Support | ❌ | ✅ |
+## Installation
 
-**Get Pro**: [Upgrade Now](https://example.com/premium)
+1. Download the plugin ZIP.
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate **Smart Affiliate AutoInserter**.
+4. Go to **Settings > Affiliate Inserter** to configure.
 
-## 🎨 **Demo**
+## Setup
 
-Watch how it works: [Live Demo Video](https://example.com/demo)
+1. **Add Keywords**: Enter post-relevant keywords (e.g., "wireless headphones") and your Amazon affiliate links.
+2. **Set Limits**: Adjust max links per post (free max: 3).
+3. **Enable**: Toggle on auto-insertion.
+4. **Test**: Publish a post with keywords and view frontend.
 
-## 🔧 **Installation**
+## Usage
 
-1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`
-2. Activate the plugin through **Plugins > Installed Plugins** in WordPress
-3. Go to **Settings > Affiliate AutoInserter** and enter your Amazon Affiliate Tag
-4. Enable auto-insertion and save
+- Works on single posts only (respects `is_single()`).
+- Links open in new tab with `nofollow sponsored`.
+- Free version teases Pro after limit reached.
+- **Pro Tip**: Use high-converting Amazon keywords for best results.
 
-## ⚙️ **Setup**
+## Support
 
-1. **Get Amazon Affiliate Tag**: Sign up at [Amazon Associates](https://affiliate-program.amazon.com/)
-2. Paste your tag (e.g., `yourid-20`) in plugin settings
-3. Test on a post containing keywords like "best laptop"
+- Free support via WordPress.org forums.
+- Premium support with Pro purchase.
 
-**Pro Tip**: Use specific keywords in content for best results.
+## Changelog
 
-## 📖 **Usage**
+**1.0.0**
+- Initial release with core auto-insertion.
 
-- **Automatic Mode**: Links insert on publish/update
-- **Supported Keywords** (Free): phone, laptop, book, headphones
-- **Pro Features**: Train AI on your niche, track clicks, A/B test links
-
-## 🤝 **Support**
-
-- Free: WordPress.org forums
-- Pro: Priority email + chat support
-
-## 🚀 **Roadmap**
-
-- [x] Basic auto-insertion
-- [x] Admin dashboard
-- [ ] WooCommerce integration (Pro)
-- [ ] Email capture upsell (Pro)
-
-See the [open issues](https://example.com/issues) for details.
-
-## 🤗 **Contributing**
-
-Contributions welcome! See `CONTRIBUTING.md`.
-
-## 📄 **License**
-
-MIT License - see `LICENSE`.
-
-## 🙏 **Credits**
-
-Built with ❤️ for WordPress creators.
-
-[contributors-shield]: https://img.shields.io/github/contributors/example/smart-affiliate.svg?style=for-the-badge
-[contributors-url]: https://github.com/example/smart-affiliate/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/example/smart-affiliate.svg?style=for-the-badge
-[forks-url]: https://github.com/example/smart-affiliate/network/members
-[stars-shield]: https://img.shields.io/github/stars/example/smart-affiliate.svg?style=for-the-badge
-[stars-url]: https://github.com/example/smart-affiliate/stargazers
-[issues-shield]: https://img.shields.io/github/issues/example/smart-affiliate.svg?style=for-the-badge
-[issues-url]: https://github.com/example/smart-affiliate/issues
-[license-shield]: https://img.shields.io/github/license/example/smart-affiliate.svg?style=for-the-badge
-[license-url]: https://github.com/example/smart-affiliate/blob/master/LICENSE.txt
-[activity-shield]: https://img.shields.io/github/last-commit/example/smart-affiliate.svg?style=for-the-badge
-[activity-url]: https://github.com/example/smart-affiliate/commits/master
+**Upgrade to Pro today for AI smarts and unlimited earning potential!** [Get Pro](https://example.com/pro)
