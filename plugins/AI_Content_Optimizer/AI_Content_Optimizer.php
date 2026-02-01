@@ -6,138 +6,136 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: AI-powered content analysis and optimization for better SEO and engagement. Free basic features; premium for advanced AI tools.
+ * Description: Analyzes and optimizes post readability and SEO with AI-powered suggestions. Freemium model.
  * Version: 1.0.0
  * Author: Your Name
  * Author URI: https://example.com
  * License: GPL v2 or later
  * Text Domain: ai-content-optimizer
+ * Requires at least: 5.0
+ * Tested up to: 6.6
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
+}
+
+// Define plugin constants
+define('AICOPT_VERSION', '1.0.0');
+define('AICOPT_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('AICOPT_PLUGIN_PATH', plugin_dir_path(__FILE__));
+
+// Freemius integration (replace with your Freemius ID)
+if (function_exists('freemius')) {
+    // Initialize Freemius
+    require_once AICOPT_PLUGIN_PATH . 'freemius-start.php';
+} else {
+    // Fallback: Simple nag for premium
 }
 
 class AIContentOptimizer {
-    private static $instance = null;
-    public $is_premium = false;
-
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function __construct() {
-        add_action('plugins_loaded', array($this, 'init'));
+        add_action('init', array($this, 'init'));
+        add_action('add_meta_boxes', array($this, 'add_meta_box'));
+        add_action('wp_ajax_aicopt_analyze', array($this, 'ajax_analyze'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        if (is_admin()) {
-            add_action('add_meta_boxes', array($this, 'add_meta_box'));
-            add_action('wp_ajax_aco_analyze_content', array($this, 'analyze_content'));
-            add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-            add_action('admin_notices', array($this, 'premium_nag'));
-        }
-        $this->is_premium = get_option('aco_premium_active', false);
+        load_plugin_textdomain('ai-content-optimizer', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function enqueue_scripts($hook) {
-        if ('post.php' !== $hook && 'post-new.php' !== $hook) {
-            return;
-        }
-        wp_enqueue_script('aco-admin', plugin_dir_url(__FILE__) . 'aco-admin.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('aco-admin', 'aco_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('aco_nonce')));
+        if ($hook !== 'post.php' && $hook !== 'post-new.php') return;
+        wp_enqueue_script('aicopt-admin', AICOPT_PLUGIN_URL . 'assets/admin.js', array('jquery'), AICOPT_VERSION, true);
+        wp_localize_script('aicopt-admin', 'aicopt_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('aicopt_nonce'),
+            'is_premium' => false // Set true for premium users
+        ));
     }
 
     public function add_meta_box() {
-        add_meta_box('aco-content-analysis', 'AI Content Optimizer', array($this, 'meta_box_callback'), 'post', 'side', 'high');
+        add_meta_box(
+            'aicopt-meta',
+            'AI Content Optimizer',
+            array($this, 'meta_box_callback'),
+            array('post', 'page'),
+            'side',
+            'high'
+        );
     }
 
     public function meta_box_callback($post) {
-        wp_nonce_field('aco_meta_box', 'aco_meta_box_nonce');
-        echo '<div id="aco-analysis-result">Click "Analyze" to scan your content.</div>';
-        echo '<button id="aco-analyze-btn" class="button button-primary">Analyze Content</button>';
-        echo '<div id="aco-loader" style="display:none;">Analyzing...</div>';
+        wp_nonce_field('aicopt_meta_nonce', 'aicopt_meta_nonce');
+        echo '<div id="aicopt-results"></div>';
+        echo '<button id="aicopt-analyze" class="button button-primary">Analyze Content</button>';
+        echo '<p><small>Free: Readability & Keyword Score | <strong>Premium:</strong> AI Suggestions & Fixes</small></p>';
     }
 
-    public function analyze_content() {
-        check_ajax_referer('aco_nonce', 'nonce');
-        $post_id = intval($_POST['post_id']);
-        $content = wp_strip_all_tags(get_post_field('post_content', $post_id));
+    public function ajax_analyze() {
+        check_ajax_referer('aicopt_nonce', 'nonce');
 
-        $word_count = str_word_count($content);
-        $readability = $this->calculate_flesch_reading_ease($content);
+        if (!current_user_can('edit_posts')) {
+            wp_die('Unauthorized');
+        }
+
+        $post_id = intval($_POST['post_id']);
+        $content = get_post_field('post_content', $post_id);
+
+        // Basic free analysis
+        $word_count = str_word_count(strip_tags($content));
         $sentences = preg_split('/[.!?]+/', $content, -1, PREG_SPLIT_NO_EMPTY);
         $sentence_count = count($sentences);
-        $avg_sentence_length = $sentence_count > 0 ? round($word_count / $sentence_count, 1) : 0;
+        $readability = $sentence_count > 0 ? round(($word_count / $sentence_count) / 15 * 100, 1) : 0; // Flesch approx
+        $keywords = $this->extract_keywords($content);
 
-        $score = 80;
-        if ($word_count < 300) $score -= 20;
-        if ($avg_sentence_length > 25) $score -= 15;
-        if ($readability < 60) $score -= 15;
-
-        $result = array(
-            'score' => min(100, max(0, $score)),
+        $results = array(
             'word_count' => $word_count,
-            'readability' => round($readability, 1),
-            'avg_sentence' => $avg_sentence_length,
-            'tips' => $this->get_tips($word_count, $readability, $avg_sentence_length)
+            'readability_score' => min(100, max(0, 100 - $readability)), // Simplified score
+            'keyword_density' => $keywords ? round(($keywords['count'] * 100 / $word_count), 1) : 0,
+            'premium_nag' => 'Upgrade to Premium for AI-powered suggestions, auto-fixes, and bulk optimization!',
+            'is_premium' => false
         );
 
-        if (!$this->is_premium) {
-            $result['premium_teaser'] = 'Upgrade to Premium for AI keyword suggestions and auto-rewriting!';
+        // Simulate premium (in real, check license)
+        if (isset($_POST['premium_key']) && $_POST['premium_key'] === 'demo') {
+            $results['ai_suggestions'] = array(
+                'Shorten sentences under 20 words',
+                'Add subheadings for scannability',
+                'Include call-to-action at end'
+            );
+            $results['is_premium'] = true;
+            $results['premium_nag'] = '';
         }
 
-        wp_send_json_success($result);
+        wp_send_json_success($results);
     }
 
-    private function calculate_flesch_reading_ease($text) {
-        $word_count = str_word_count($text);
-        $sentence_count = preg_split('/[.!?]+/', $text, -1, PREG_SPLIT_NO_EMPTY);
-        $sentence_count = count($sentence_count);
-        $syllables = $this->count_syllables($text);
-
-        if ($sentence_count == 0 || $word_count == 0) return 0;
-
-        $asl = $word_count / $sentence_count;
-        $asw = $syllables / $word_count;
-        return 206.835 - (1.015 * $asl) - (84.6 * $asw);
-    }
-
-    private function count_syllables($text) {
-        $text = strtolower(preg_replace('/[^a-z\s]/', '', $text));
-        $rules = array('/tion/', '/sion/', '/ious/', '/[^aeiouy]+[aeiouy]+/', '/ed/');
-        $replace = array('', '', '', '1', '');
-        return preg_match_all('/[aeiouy]{2}/', $text) + preg_match_all($rules, $text, $matches) + strlen(preg_replace($rules, $replace, $text));
-    }
-
-    private function get_tips($words, $readability, $avg) {
-        $tips = array();
-        if ($words < 300) $tips[] = 'Add more content: Aim for 500+ words.';
-        if ($avg > 25) $tips[] = 'Shorten sentences: Keep under 20 words.';
-        if ($readability < 60) $tips[] = 'Improve readability: Use simpler words.';
-        return $tips;
-    }
-
-    public function premium_nag() {
-        if (!$this->is_premium && current_user_can('manage_options')) {
-            echo '<div class="notice notice-info"><p>Unlock <strong>AI Content Optimizer Premium</strong> for AI rewriting and keywords! <a href="https://example.com/premium" target="_blank">Upgrade now ($4.99/mo)</a></p></div>';
+    private function extract_keywords($content) {
+        $content = strtolower(strip_tags($content));
+        preg_match_all('/\b\w+\b/', $content, $matches);
+        $words = array_count_values($matches);
+        arsort($words);
+        $keywords = array();
+        $i = 0;
+        foreach ($words as $word => $count) {
+            if (strlen($word) > 4 && $i < 5) {
+                $keywords[] = array('word' => $word, 'count' => $count);
+                $i++;
+            }
         }
+        return $keywords;
     }
 
     public function activate() {
-        update_option('aco_premium_active', false);
+        // Activation hook
     }
 }
 
-AIContentOptimizer::get_instance();
+new AIContentOptimizer();
 
-// Premium stub - simulate license check
-function aco_premium_features() {
-    // In real premium, check license via API
-    return false;
-}
-?>
+// Freemius placeholder (in real plugin, include Freemius SDK)
+// require_once AICOPT_PLUGIN_PATH . 'freemius/includes/freemius.php';
+// $freemius = fs_dynamic_init();
