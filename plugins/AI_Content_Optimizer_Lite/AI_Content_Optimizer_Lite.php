@@ -6,186 +6,136 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer Lite
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: Analyzes and optimizes your WordPress post content for SEO and readability with AI-powered insights. Freemium model with premium upgrades.
+ * Description: Analyzes and optimizes your post content for better SEO and readability. Freemium model with premium upgrades.
  * Version: 1.0.0
  * Author: Your Name
- * Author URI: https://example.com
  * License: GPL v2 or later
- * Text Domain: ai-content-optimizer
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
-class AIContentOptimizer {
+class AIContentOptimizerLite {
     public function __construct() {
-        add_action('init', array($this, 'init'));
         add_action('add_meta_boxes', array($this, 'add_meta_box'));
-        add_action('wp_ajax_analyze_content', array($this, 'analyze_content'));
+        add_action('wp_ajax_aco_analyze_content', array($this, 'analyze_content'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('admin_notices', array($this, 'premium_notice'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
-    public function init() {
-        load_plugin_textdomain('ai-content-optimizer', false, dirname(plugin_basename(__FILE__)) . '/languages');
-    }
-
     public function enqueue_scripts($hook) {
-        if ($hook !== 'post.php' && $hook !== 'post-new.php') {
-            return;
-        }
-        wp_enqueue_script('ai-optimizer-js', plugin_dir_url(__FILE__) . 'optimizer.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('ai-optimizer-js', 'ai_optimizer', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ai_optimizer_nonce'),
-            'is_premium' => $this->is_premium_user()
-        ));
+        if ($hook != 'post.php' && $hook != 'post-new.php') return;
+        wp_enqueue_script('aco-script', plugin_dir_url(__FILE__) . 'aco.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('aco-script', 'aco_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('aco_nonce')));
+        wp_enqueue_style('aco-style', plugin_dir_url(__FILE__) . 'aco.css', array(), '1.0.0');
     }
 
     public function add_meta_box() {
-        add_meta_box(
-            'ai-content-optimizer',
-            'AI Content Optimizer',
-            array($this, 'meta_box_callback'),
-            array('post', 'page'),
-            'side',
-            'high'
-        );
+        add_meta_box('ai-content-optimizer', 'AI Content Optimizer (Lite)', array($this, 'meta_box_callback'), 'post', 'side', 'high');
     }
 
     public function meta_box_callback($post) {
-        wp_nonce_field('ai_optimizer_meta_box', 'ai_optimizer_nonce');
-        echo '<div id="ai-optimizer-results">';
-        echo '<p><strong>Basic Analysis:</strong> Free for up to 5 scans/day.</p>';
-        echo '<textarea id="ai-content-input" rows="4" cols="20" placeholder="Paste content or use editor content..."></textarea>';
-        echo '<button id="analyze-btn" class="button button-primary">Analyze Content</button>';
-        echo '<div id="ai-results"></div>';
-        echo '<p id="premium-upsell" style="display:none;"><a href="https://example.com/premium" target="_blank">Upgrade to Premium for unlimited AI rewriting & advanced SEO metrics!</a></p>';
-        echo '</div>';
+        wp_nonce_field('aco_meta_box', 'aco_meta_box_nonce');
+        echo '<div id="aco-results"><p><strong>Free Features:</strong> Readability score & basic keyword tips.</p>';
+        echo '<textarea id="aco-content" rows="5" cols="30" placeholder="Content will be analyzed here..."></textarea>';
+        echo '<br><button id="aco-analyze" class="button button-primary">Analyze Content</button>';
+        echo '<div id="aco-output"></div>';
+        echo '<p><em>Upgrade to Premium for AI rewriting & bulk tools: <a href="https://example.com/premium" target="_blank">Get Premium</a></em></p></div>';
     }
 
     public function analyze_content() {
-        check_ajax_referer('ai_optimizer_nonce', 'nonce');
-
-        if (!$this->is_premium_user() && $this->get_daily_scans() >= 5) {
-            wp_send_json_error('Daily limit reached. Upgrade to premium!');
-        }
-
+        check_ajax_referer('aco_nonce', 'nonce');
         $content = sanitize_textarea_field($_POST['content']);
+
         if (empty($content)) {
             wp_send_json_error('No content provided.');
         }
 
-        // Simulate AI analysis (in real plugin, integrate OpenAI API or similar)
-        $word_count = str_word_count($content);
-        $readability = $this->calculate_flesch_reading_ease($content);
-        $keywords = $this->extract_keywords($content);
-        $suggestions = $this->generate_suggestions($content, $word_count, $readability, $keywords);
+        // Basic readability score (Flesch-Kincaid approximation)
+        $sentences = preg_split('/[.!?]+/', $content, -1, PREG_SPLIT_NO_EMPTY);
+        $sentence_count = count($sentences);
+        $words = str_word_count(strip_tags($content));
+        $syllables = $this->count_syllables(strip_tags($content));
+        $readability = 206.835 - 1.015 * ($words / max(1, $sentence_count)) - 84.6 * ($syllables / $words);
 
-        $this->increment_daily_scans();
+        // Basic keyword extraction (top 3 words)
+        $words_array = preg_split('/\s+/', strtolower(strip_tags($content)));
+        $word_freq = array_count_values(array_filter($words_array, function($w) { return strlen($w) > 3; }));
+        arsort($word_freq);
+        $top_keywords = array_slice(array_keys($word_freq), 0, 3);
 
-        wp_send_json_success(array(
-            'word_count' => $word_count,
-            'readability' => round($readability, 2),
-            'keywords' => $keywords,
-            'suggestions' => $suggestions,
-            'premium_teaser' => !$this->is_premium_user()
-        ));
-    }
+        $output = '<h4>Readability Score: ' . round($readability, 1) . '/100</h4>';
+        $output .= $readability > 60 ? '<p class="good">Good readability!</p>' : '<p class="poor">Improve sentence length & words.</p>';
+        $output .= '<h4>Top Keywords:</h4><ul>';
+        foreach ($top_keywords as $kw) {
+            $output .= '<li>' . esc_html($kw) . '</li>';
+        }
+        $output .= '</ul><p><strong>Premium:</strong> AI rewrite, SEO scores, bulk optimize.</p>';
 
-    private function calculate_flesch_reading_ease($text) {
-        $sentence_count = preg_match_all('/[.!?]+/s', $text);
-        $word_count = str_word_count($text);
-        $syllable_count = $this->count_syllables($text);
-        if ($sentence_count == 0 || $word_count == 0) return 0;
-        $asl = $word_count / $sentence_count;
-        $asw = $syllable_count / $word_count;
-        return 206.835 - (1.015 * $asl) - (84.6 * $asw);
+        wp_send_json_success($output);
     }
 
     private function count_syllables($text) {
-        $text = strtolower(preg_replace('/[^a-z\s]/', '', $text));
-        preg_match_all('/[aeiouy]+/', $text, $matches);
-        return count($matches);
+        $syllables = 0;
+        $words = explode(' ', $text);
+        foreach ($words as $word) {
+            $word = strtolower($word);
+            $syl = preg_match_all('/[aeiouy]{2}/', $word) + preg_match_all('/[aeiouy]/', $word) - preg_match_all('/ed/', $word) - preg_match_all('/es/', $word);
+            $syllables += $syl > 0 ? $syl : 1;
+        }
+        return $syllables;
     }
 
-    private function extract_keywords($content) {
-        $words = explode(' ', strtolower($content));
-        $word_freq = array_count_values(array_filter($words, function($w) {
-            return strlen($w) > 4 && !in_array($w, ['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 'her', 'was', 'one', 'our', 'out', 'day', 'get']);
-        }));
-        arsort($word_freq);
-        return array_slice(array_keys($word_freq), 0, 5);
-    }
-
-    private function generate_suggestions($content, $wc, $readability, $keywords) {
-        $sugs = [];
-        if ($wc < 300) $sugs[] = 'Add more content to reach 300+ words for better SEO.';
-        if ($readability < 60) $sugs[] = 'Improve readability: Use shorter sentences and simpler words.';
-        $sugs[] = 'Top keywords: ' . implode(', ', $keywords);
-        $sugs[] = 'Add H2/H3 headings and internal links for structure.';
-        return $sugs;
-    }
-
-    private function get_daily_scans() {
-        $today = date('Y-m-d');
-        $scans = get_option('ai_optimizer_scans_' . $today, 0);
-        return $scans;
-    }
-
-    private function increment_daily_scans() {
-        $today = date('Y-m-d');
-        $scans = $this->get_daily_scans() + 1;
-        update_option('ai_optimizer_scans_' . $today, $scans);
-    }
-
-    private function is_premium_user() {
-        // Simulate premium check (integrate with Freemius or Stripe in full version)
-        return false; // Free version
+    public function premium_notice() {
+        if (!current_user_can('manage_options')) return;
+        echo '<div class="notice notice-info"><p>Unlock <strong>AI Content Optimizer Premium</strong> for advanced features! <a href="https://example.com/premium" target="_blank">Upgrade Now</a></p></div>';
     }
 
     public function activate() {
-        // Reset daily scans on activation
-        delete_option('ai_optimizer_scans_' . date('Y-m-d'));
+        flush_rewrite_rules();
     }
 }
 
-new AIContentOptimizer();
+new AIContentOptimizerLite();
 
-// Inline JS for simplicity (self-contained)
-function ai_optimizer_inline_js() {
+// Enqueue dummy JS/CSS (inline for single file)
+function aco_inline_assets() {
+    if (!wp_script_is('aco-script', 'enqueued')) return;
     ?>
-    <script type="text/javascript">
+    <script>
     jQuery(document).ready(function($) {
-        $('#analyze-btn').click(function() {
-            var content = $('#ai-content-input').val() || tinyMCE.activeEditor.getContent();
-            if (!content) {
-                alert('Please enter content to analyze.');
-                return;
-            }
-            $('#analyze-btn').prop('disabled', true).text('Analyzing...');
-            $.post(ai_optimizer.ajax_url, {
-                action: 'analyze_content',
-                nonce: ai_optimizer.nonce,
+        $('#aco-analyze').click(function() {
+            var content = $('#aco-content').val() || $('#content').val();
+            if (!content) return alert('Add some content first!');
+            $('#aco-output').html('<p>Analyzing...</p>');
+            $.post(aco_ajax.ajax_url, {
+                action: 'aco_analyze_content',
+                nonce: aco_ajax.nonce,
                 content: content
-            }, function(response) {
-                if (response.success) {
-                    var res = response.data;
-                    var html = '<strong>Results:</strong><br>Words: ' + res.word_count + '<br>Readability Score: ' + res.readability + ' (Higher is easier)<br>Keywords: ' + res.keywords.join(', ') + '<br><ul>';
-                    res.suggestions.forEach(function(s) { html += '<li>' + s + '</li>'; });
-                    html += '</ul>';
-                    $('#ai-results').html(html);
-                    if (res.premium_teaser) $('#premium-upsell').show();
+            }, function(res) {
+                if (res.success) {
+                    $('#aco-output').html(res.data);
                 } else {
-                    alert(response.data);
+                    $('#aco-output').html('<p>Error: ' + res.data + '</p>');
                 }
-                $('#analyze-btn').prop('disabled', false).text('Analyze Content');
             });
+        });
+        $('#aco-content').on('input', function() {
+            $('#aco-content').val($(this).val());
         });
     });
     </script>
+    <style>
+    #aco-results { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #aco-results h4 { margin: 10px 0 5px 0; font-size: 14px; }
+    .good { color: green; }
+    .poor { color: orange; }
+    #aco-output ul { margin: 5px 0; padding-left: 20px; }
+    </style>
     <?php
 }
-add_action('admin_footer-post.php', 'ai_optimizer_inline_js');
-add_action('admin_footer-post-new.php', 'ai_optimizer_inline_js');
+add_action('admin_footer-post.php', 'aco_inline_assets');
+add_action('admin_footer-post-new.php', 'aco_inline_assets');
+?>
