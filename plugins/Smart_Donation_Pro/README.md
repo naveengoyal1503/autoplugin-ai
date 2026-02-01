@@ -1,47 +1,34 @@
 # Smart Donation Pro
 
-A lightweight, self-contained WordPress plugin for collecting donations via shortcode. Supports tiered amounts, email capture, database analytics, and PayPal integration. Freemium model with pro upgrades.
-
 ## Features
-
-- **Easy Shortcode**: `[smart_donation]` to embed donation form anywhere.
-- **Customizable Tiers**: Define amounts like `[smart_donation tiers="5,10,25,50,100"]`.
-- **Donor Tracking**: Stores donations in DB with email and timestamp.
-- **Admin Analytics**: View all donations in Tools > Donations.
-- **PayPal Ready**: Add your hosted button ID for instant PayPal.
-- **Stripe Compatible**: Pro version includes Stripe (PK key support).
-- **Mobile Responsive**: Clean, modern design.
-- **Secure**: Nonce-protected AJAX submissions.
-
-**Pro Features (Upsell)**: Recurring Stripe, custom branding, email notifications, export CSV, donation goals.
+- **Customizable donation buttons** with amounts, labels, and currency.
+- **Progress bars** showing donation goals and current total.
+- **PayPal integration** for one-time donations (recurring in premium).
+- **Shortcode support**: `[smart_donation]` for easy embedding.
+- **Admin dashboard** to set PayPal email and track totals.
+- **Mobile responsive** design.
+- **Freemium**: Free core; premium for analytics, themes, subscriptions ($29/year).
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via Plugins > Installed Plugins.
-3. Use shortcode `[smart_donation]` on any page/post.
+1. Upload the plugin files to `/wp-content/plugins/smart-donation-pro/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Donation Pro** to enter your PayPal email.
 
 ## Setup
-
-1. Go to **Settings > Donations** for analytics.
-2. Customize: `[smart_donation title="Buy Me Coffee" tiers="3,5,10" paypal="YOUR_PAYPAL_BUTTON_ID"]`.
-3. For PayPal: Create a hosted button at paypal.com and paste the ID.
-4. Test form submission.
+1. Configure your PayPal email in the settings page.
+2. Use the shortcode in any post/page: `[smart_donation amount="10" goal="1000" label="Support Us" currency="$"]`.
+3. Donations update the progress bar automatically (simulated total).
 
 ## Usage
+- Embed shortcode anywhere: posts, pages, widgets, sidebars.
+- Customize via attributes: `amount`, `goal`, `label`, `currency`, `paypal_email`.
+- Visitors enter amount/email and are redirected to PayPal.
+- Track total donations in settings (premium: detailed analytics).
 
-- Embed on sidebar, posts, or dedicated page.
-- View stats: **Tools > Donations** shows total donations, amounts, emails.
-- Example tiers boost conversions with psychology pricing (e.g., $4.99).[1][6]
+## Premium Features
+- Recurring donations.
+- Custom themes and animations.
+- Email notifications and donor management.
+- Advanced stats dashboard.
 
-## FAQ
-
-**Self-contained?** Yes, single PHP file with embedded JS logic.
-**Monetization?** Free core; pro via add-on ($29/year).
-**GDPR?** Emails optional; add privacy note.
-
-## Changelog
-
-**1.0.0** Initial release.
-
-Support: example.com/support
+Support: Contact support@example.com
