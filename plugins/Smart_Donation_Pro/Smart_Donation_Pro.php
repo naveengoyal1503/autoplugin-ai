@@ -6,14 +6,14 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Donation Pro
  * Plugin URI: https://example.com/smart-donation-pro
- * Description: Boost your WordPress site revenue with customizable donation buttons, progress bars, and PayPal payments.
+ * Description: Add customizable donation buttons and forms to monetize your WordPress site with Stripe and PayPal.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class SmartDonationPro {
@@ -22,62 +22,16 @@ class SmartDonationPro {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('smart_donation', array($this, 'donation_shortcode'));
-        add_action('wp_ajax_process_donation', array($this, 'process_donation'));
-        add_action('wp_ajax_nopriv_process_donation', array($this, 'process_donation'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
     public function init() {
-        if (get_option('smart_donation_paypal_email')) {
-            wp_register_script('paypal-sdk', 'https://www.paypal.com/sdk/js?client-id=' . get_option('smart_donation_paypal_client_id', 'YOUR_SANDBOX_CLIENT_ID'), array(), null, true);
-        }
+        load_plugin_textdomain('smart-donation-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('jquery');
-        wp_add_inline_script('jquery', "
-            jQuery(document).ready(function($) {
-                $('.smart-donate-btn').click(function(e) {
-                    e.preventDefault();
-                    var amount = $(this).data('amount');
-                    $('#donation-amount').val(amount);
-                    $('#donation-modal').show();
-                });
-                $('.close-modal').click(function() {
-                    $('#donation-modal').hide();
-                });
-                $('#process-donation').click(function() {
-                    var amount = $('#donation-amount').val();
-                    var name = $('#donor-name').val();
-                    $.post('" . admin_url('admin-ajax.php') . "', {
-                        action: 'process_donation',
-                        amount: amount,
-                        name: name
-                    }, function(response) {
-                        if (response.success) {
-                            $('#paypal-button-container').html(response.data.html);
-                            if (typeof paypal !== 'undefined') {
-                                paypal.Buttons({
-                                    createOrder: function(data, actions) {
-                                        return actions.order.create({
-                                            purchase_units: [{
-                                                amount: { value: amount }
-                                            }]
-                                        });
-                                    },
-                                    onApprove: function(data, actions) {
-                                        return actions.order.capture().then(function(details) {
-                                            alert('Transaction completed by ' + details.payer.name.given_name);
-                                            $('#donation-modal').hide();
-                                        });
-                                    }
-                                }).render('#paypal-button-container');
-                            }
-                        }
-                    });
-                });
-            });
-        ");
-        wp_enqueue_style('smart-donation-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
+        wp_enqueue_script('stripe', 'https://js.stripe.com/v3/', array(), '3.0', true);
+        wp_enqueue_style('smart-donation', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0');
     }
 
     public function admin_menu() {
@@ -85,23 +39,37 @@ class SmartDonationPro {
     }
 
     public function settings_page() {
-        if (isset($_POST['paypal_email'])) {
-            update_option('smart_donation_paypal_email', sanitize_email($_POST['paypal_email']));
-            update_option('smart_donation_paypal_client_id', sanitize_text_field($_POST['paypal_client_id']));
-            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+        if (isset($_POST['submit'])) {
+            update_option('sdp_stripe_key', sanitize_text_field($_POST['stripe_key']));
+            update_option('sdp_stripe_secret', sanitize_text_field($_POST['stripe_secret']));
+            update_option('sdp_paypal_email', sanitize_email($_POST['paypal_email']));
+            update_option('sdp_donation_amount', sanitize_text_field($_POST['donation_amount']));
+            echo '<div class="updated"><p>Settings saved!</p></div>';
         }
+        $stripe_key = get_option('sdp_stripe_key', '');
+        $stripe_secret = get_option('sdp_stripe_secret', '');
+        $paypal_email = get_option('sdp_paypal_email', '');
+        $donation_amount = get_option('sdp_donation_amount', '10');
         ?>
         <div class="wrap">
             <h1>Smart Donation Pro Settings</h1>
             <form method="post">
                 <table class="form-table">
                     <tr>
-                        <th>PayPal Email</th>
-                        <td><input type="email" name="paypal_email" value="<?php echo get_option('smart_donation_paypal_email'); ?>" /></td>
+                        <th>Stripe Publishable Key</th>
+                        <td><input type="text" name="stripe_key" value="<?php echo esc_attr($stripe_key); ?>" class="regular-text" /></td>
                     </tr>
                     <tr>
-                        <th>PayPal Client ID (Sandbox)</th>
-                        <td><input type="text" name="paypal_client_id" value="<?php echo get_option('smart_donation_paypal_client_id'); ?>" /></td>
+                        <th>Stripe Secret Key</th>
+                        <td><input type="password" name="stripe_secret" value="<?php echo esc_attr($stripe_secret); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th>PayPal Email</th>
+                        <td><input type="email" name="paypal_email" value="<?php echo esc_attr($paypal_email); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th>Default Donation Amount ($)</th>
+                        <td><input type="number" name="donation_amount" value="<?php echo esc_attr($donation_amount); ?>" step="0.01" /></td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
@@ -112,54 +80,99 @@ class SmartDonationPro {
 
     public function donation_shortcode($atts) {
         $atts = shortcode_atts(array(
-            'amount' => '5',
-            'title' => 'Support Us',
-            'goal' => '1000',
+            'amount' => get_option('sdp_donation_amount', '10'),
+            'button_text' => 'Donate Now',
+            'goal' => '500',
             'current' => '250'
         ), $atts);
 
+        $stripe_key = get_option('sdp_stripe_key', '');
+        $paypal_email = get_option('sdp_paypal_email', '');
+
         ob_start();
         ?>
-        <div class="smart-donation-container">
-            <h3><?php echo esc_html($atts['title']); ?></h3>
-            <div class="donation-progress" style="background: #f0f0f0; height: 20px; border-radius: 10px; overflow: hidden;">
-                <div class="progress-bar" style="background: #007cba; height: 100%; width: <?php echo ($atts['current'] / $atts['goal']) * 100; ?>%; transition: width 0.3s;"></div>
+        <div id="smart-donation" class="sdp-container">
+            <div class="sdp-progress" style="background: #f0f0f0; height: 20px; border-radius: 10px; overflow: hidden;">
+                <div class="sdp-progress-bar" style="background: #007cba; height: 100%; width: <?php echo ($atts['current'] / $atts['goal']) * 100; ?>%; transition: width 0.3s;"></div>
             </div>
-            <p>$<?php echo esc_html($atts['current']); ?> / $<?php echo esc_html($atts['goal']); ?> raised</p>
-            <button class="smart-donate-btn button" data-amount="<?php echo esc_attr($atts['amount']); ?>">Donate $<?php echo esc_html($atts['amount']); ?></button>
-        </div>
-        <div id="donation-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
-            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px;">
-                <span class="close-modal" style="float:right; cursor:pointer; font-size:24px;">&times;</span>
-                <h4>Enter Donation Amount</h4>
-                $<input type="number" id="donation-amount" value="<?php echo esc_attr($atts['amount']); ?>" step="0.01" min="1" />
-                <p>Name: <input type="text" id="donor-name" /></p>
-                <button id="process-donation" class="button button-primary">Pay with PayPal</button>
-                <div id="paypal-button-container"></div>
+            <p><strong>$<?php echo esc_html($atts['current']); ?> / $<?php echo esc_html($atts['goal']); ?> raised</strong></p>
+            <div class="sdp-buttons">
+                <?php if ($stripe_key): ?>
+                <button id="sdp-stripe-btn" class="sdp-btn sdp-stripe" data-amount="<?php echo $atts['amount'] * 100; ?>"><?php echo esc_html($atts['button_text']); ?> (Stripe)</button>
+                <?php endif; ?>
+                <?php if ($paypal_email): ?>
+                <a href="https://www.paypal.com/donate?hosted_button_id=TEST&business=<?php echo urlencode($paypal_email); ?>&amount=<?php echo $atts['amount']; ?>" class="sdp-btn sdp-paypal" target="_blank"><?php echo esc_html($atts['button_text']); ?> (PayPal)</a>
+                <?php endif; ?>
+            </div>
+            <div id="sdp-payment-form" style="display: none;">
+                <div id="card-element"></div>
+                <button id="sdp-submit-payment">Pay $<?php echo $atts['amount']; ?></button>
+                <div id="sdp-payment-message"></div>
             </div>
         </div>
+        <script>
+        var stripe = Stripe('<?php echo esc_js($stripe_key); ?>');
+        var elements = stripe.elements();
+        var card = elements.create('card');
+        card.mount('#card-element');
+
+        document.getElementById('sdp-stripe-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('sdp-payment-form').style.display = 'block';
+        });
+
+        document.getElementById('sdp-submit-payment').addEventListener('click', function() {
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    document.getElementById('sdp-payment-message').textContent = result.error.message;
+                } else {
+                    fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: 'action=sdp_process_payment&token=' + result.token.id + '&amount=<?php echo $atts['amount'] * 100; ?>'
+                    }).then(response => response.json()).then(data => {
+                        if (data.success) {
+                            document.getElementById('sdp-payment-message').textContent = 'Payment successful!';
+                        } else {
+                            document.getElementById('sdp-payment-message').textContent = data.message;
+                        }
+                    });
+                }
+            });
+        });
+        </script>
+        <style>
+        .sdp-container { max-width: 400px; margin: 20px auto; text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+        .sdp-btn { background: #007cba; color: white; padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .sdp-btn:hover { background: #005a87; }
+        #sdp-payment-message { margin-top: 10px; color: green; }
+        </style>
         <?php
         return ob_get_clean();
     }
 
-    public function process_donation() {
-        $amount = floatval($_POST['amount']);
-        $name = sanitize_text_field($_POST['name']);
-        $paypal_email = get_option('smart_donation_paypal_email');
-        if (!$paypal_email) {
-            wp_send_json_error('PayPal not configured');
-        }
-        wp_send_json_success(array('html' => '<p>Redirecting to PayPal...</p>'));
+    public function activate() {
+        add_option('sdp_donation_amount', '10');
     }
 }
 
 new SmartDonationPro();
 
-// Inline CSS
-add_action('wp_head', function() {
-    echo '<style>
-        .smart-donation-container { text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 10px; margin: 20px 0; }
-        .smart-donate-btn { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
-        .smart-donate-btn:hover { background: #005a87; }
-    </style>';
+add_action('wp_ajax_sdp_process_payment', function() {
+    $stripe_secret = get_option('sdp_stripe_secret');
+    if (!$stripe_secret) {
+        wp_die(json_encode(array('success' => false, 'message' => 'Stripe not configured')));
+    }
+    \Stripe\Stripe::setApiKey($stripe_secret);
+    try {
+        \Stripe\Charge::create(array(
+            'amount' => intval($_POST['amount']),
+            'currency' => 'usd',
+            'source' => $_POST['token'],
+            'description' => 'Donation via Smart Donation Pro'
+        ));
+        wp_die(json_encode(array('success' => true)));
+    } catch (Exception $e) {
+        wp_die(json_encode(array('success' => false, 'message' => $e->getMessage())));
+    }
 });
