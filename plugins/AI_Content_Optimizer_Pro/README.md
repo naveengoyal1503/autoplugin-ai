@@ -1,36 +1,36 @@
 # AI Content Optimizer Pro
 
-## Features
+## Description
+**AI Content Optimizer Pro** is a powerful WordPress plugin that provides instant content analysis for SEO, readability, and engagement. The free version offers basic stats, while Pro unlocks AI-driven rewriting, advanced keyword research, and more.
 
-- **Automatic Readability Scoring**: Calculates Flesch-Kincaid score on posts for better user engagement[1][3].
-- **AI-Powered Affiliate Integration**: Premium version scans content for keywords and inserts trackable affiliate links[1][2][3].
-- **Smart Ad Placement**: Adds optimized ad placeholders for AdSense or affiliates to boost revenue[1][4].
-- **SEO Enhancements**: Improves content structure for search engines and monetization[1].
-- **Freemium Model**: Free core features; Pro unlocks unlimited optimizations and custom affiliates.
+## Features
+- **Free Version:**
+  - Real-time word count, readability score (Flesch-Kincaid based), and keyword density analysis.
+  - Side metabox on posts/pages for quick insights.
+- **Pro Version ($9/month):**
+  - AI-powered content rewriting and optimization suggestions.
+  - Competitor keyword analysis and integration.
+  - Bulk optimization for multiple posts.
+  - Priority email support and automatic updates.
 
 ## Installation
-
-1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`.
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > AI Optimizer** to configure.
+3. Edit any post/page; the optimizer metabox appears on the side.
 
 ## Setup
-
-1. In the admin panel (**Settings > AI Optimizer**), enable premium features (requires license for full Pro).
-2. Add your affiliate IDs as JSON: `{"keyword":"your-affiliate-link"}`.
-3. Replace ad placeholders with your AdSense or affiliate ad code.
-4. Premium: Integrates with popular networks like Amazon Associates[3].
+- No configuration needed for free features.
+- For Pro: Purchase at [example.com/premium](https://example.com/premium), enter license key in plugin settings (Pro only).
 
 ## Usage
+1. Open a post or page editor.
+2. Click **Analyze Content** in the AI Content Optimizer box.
+3. Review basic stats (word count, readability, keywords).
+4. Upgrade to Pro for AI enhancements via the teaser link.
 
-- **Automatic Optimization**: Content is optimized on frontend single posts/pages.
-- **Readability Display**: Shows score below content; green (>70) = excellent.
-- **Affiliate Links**: Pro auto-inserts nofollow links for commissions[1][3].
-- **Ads**: Edit `.ai-ad-placeholder` divs with your ad code.
-- **Upgrade to Pro**: Visit [your site] for $49/year license to enable AI keyword matching and analytics.
+## Changelog
+- **1.0.0:** Initial release with free basic analysis and Pro upsell.
 
 ## Support
-
-Report issues via WordPress.org forums. Pro users get priority email support.
-
-**Monetization Potential**: Targets high-demand SEO/monetization niche; upsell Pro for recurring revenue[1][2][8].
+- Free: WordPress.org forums.
+- Pro: Submit tickets at example.com/support.
