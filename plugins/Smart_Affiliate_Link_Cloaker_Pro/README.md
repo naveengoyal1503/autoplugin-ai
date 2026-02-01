@@ -1,54 +1,51 @@
 # Smart Affiliate Link Cloaker Pro
 
-**Automatically cloak, track, and optimize your affiliate links to boost conversions and protect commissions.**
+A freemium WordPress plugin to cloak, track, and optimize affiliate links for higher conversions.
 
 ## Features
 
 ### Free Version
-- **Auto-Link Cloaking**: Detects affiliate links (Amazon, ClickBank, etc.) in posts/pages and replaces with pretty, branded links.
-- **Shortcode Support**: Use `[afflink url="https://affiliate-link.com"]Click Here[/afflink]`.
-- **SEO-Friendly Redirects**: Clean `/go/slug/` URLs with 301 redirects.
+- **Link Cloaking**: Convert raw affiliate URLs to clean, branded links using `[sac_link url="https://aff.link" text="Buy Now"]` shortcode.
+- **Click Tracking**: Dashboard widget shows click stats.
+- **Custom Prefix**: Set your cloak prefix (e.g., `/go/`) in settings.
+- **SEO-Friendly**: 301 redirects preserve link juice.
 
-### Pro Version (Upgrade for $9/mo)
-- **Click Analytics**: Detailed stats on clicks, locations, devices.
-- **A/B Testing**: Test link texts/CTAs automatically.
-- **Auto-Optimization**: AI-suggested improvements based on performance.
-- **Unlimited Links & Custom Domains**.
-- **White-label Reports** for agencies.
+### Pro Add-ons (Upsell)
+- **Advanced Analytics**: Real-time reports, conversion tracking ($49/year).
+- **A/B Testing**: Test link texts and track winners ($29/year).
+- **WooCommerce Integration**: Auto-cloak product affiliate links ($39/year).
+- **Bundle**: All Pro features for $99/year.
 
 ## Installation
 
-1. Upload the plugin ZIP to your WordPress admin → **Plugins** → **Add New** → **Upload Plugin**.
-2. Activate the plugin.
-3. Flush permalinks: **Settings** → **Permalinks** → **Save Changes**.
-4. Go to **Settings** → **Affiliate Cloaker** to configure.
+1. Upload the `smart-affiliate-cloaker` folder to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Smart Affiliate Cloaker** to configure prefix.
+4. Flush permalinks: **Settings > Permalinks > Save**.
 
 ## Setup
 
-1. **Basic Use**: Just add affiliate links to posts—they auto-cloak!
-2. **Shortcodes**: Insert `[afflink url="YOUR_LINK"]Your Text[/afflink]` anywhere.
-3. **Pro Setup**: Enter API key from your Pro dashboard (after upgrade).
-4. Enable premium checkbox for gated features.
+1. Set **Cloak Prefix** (default: `go` → yoursite.com/go/link-text/).
+2. Optional: Enter Pro API key for premium features.
+3. Use shortcode: `[sac_link url="https://your-affiliate-link.com" text="Click Here"]`.
 
 ## Usage
 
-- **Auto-Cloak**: Write normally; plugin handles detection and cloaking.
-- **Manual**: Use shortcode for precise control.
-- **Track**: View console logs (free) or Pro dashboard for analytics.
-- **Customization**: Style `.sac-link` class in your CSS.
+- **Embed Links**: Add shortcode to posts/pages.
+- **View Stats**: Check dashboard widget for clicks.
+- **Upgrade**: Visit [example.com/pro](https://example.com/pro) for Pro keys.
 
-## Upgrade to Pro
-
-Unlock analytics and optimization: [Upgrade Now](https://example.com/pricing) ($9/month or $79/year). 14-day money-back guarantee.
-
-## Support
-
-- Free: WordPress.org forums.
-- Pro: Priority email + chat support.
+## Screenshots
+*(Pro dashboard analytics - available in paid version)*
 
 ## Changelog
 
 **1.0.0**
-- Initial release with auto-cloaking and shortcodes.
+- Initial release with core cloaking and tracking.
 
-**License**: GPL v2 or later.
+## Support
+
+- Free support via WordPress.org forums.
+- Pro support: support@example.com.
+
+**Boost your affiliate earnings today!**
