@@ -1,30 +1,32 @@
 # Smart Donation Pro
 
 ## Features
-- **Easy Donation Buttons**: Add [sdp_donate] shortcode with custom amounts and labels.
-- **Fundraising Goals**: Track progress with [sdp_goal target="1000"] shortcode and visual progress bars.
-- **PayPal Integration**: One-click PayPal payments (configure in settings).
-- **Donation Logging**: Database tracks all donations for analytics.
-- **Mobile Responsive**: Clean, modern design works on all devices.
-- **Freemium Ready**: Premium unlocks Stripe, recurring payments, and reports.
+- **Easy Donation Buttons**: Add customizable donation shortcodes anywhere on your site.
+- **Progress Bars**: Visual fundraising goals with real-time progress tracking.
+- **Preset Amounts**: Quick-select buttons for $5, $10, $25, $50, or custom input.
+- **PayPal Integration**: Simple setup for one-time payments (Pro: Recurring subscriptions).
+- **Admin Dashboard**: Track total donations and configure settings.
+- **Freemium Upsell**: Premium features include analytics, custom themes, and Stripe support.
+- **Mobile Responsive**: Works perfectly on all devices.
 
 ## Installation
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload Plugin.
-2. Activate the plugin.
-3. Go to Settings > Donation Pro to set your PayPal email.
+1. Upload the `smart-donation-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Donation Pro** to enter your PayPal email.
+4. Use the shortcode `[smart_donation goal="500" title="Buy Me a Coffee!"]` on any page or post.
 
 ## Setup
-1. Configure PayPal email in Settings > Donation Pro.
-2. Add shortcodes to posts/pages:
-   - `[sdp_donate amount="25" label="Buy Me a Coffee"]`
-   - `[sdp_goal target="5000" label="Help Reach Our Goal!`]"
-3. Donations are logged automatically.
+1. Configure PayPal email in **Settings > Donation Pro**.
+2. Optionally set a donation goal in the shortcode.
+3. Test the button (uses simulated donation processing in free version).
 
 ## Usage
-- Place shortcodes anywhere: posts, pages, sidebars, widgets.
-- Customize amounts/goals per shortcode.
-- View donations in database or upgrade for dashboard.
-- Supports one-time tips, goal tracking for campaigns.
+- **Shortcode Example**: `[smart_donation]` - Default setup.
+- **Customized**: `[smart_donation goal="1000" title="Fund Our Project" button_text="Contribute"]`.
+- Donations update the progress bar on page reload.
+- **Pro Upgrade**: Unlock recurring billing, detailed stats, and more at example.com/pro.
 
 ## Support
-Contact support@example.com. Premium support available.
+Visit our support forum or contact support@example.com.
+
+**Note**: This plugin simulates donations for demo; integrate with PayPal IPN for live payments.
