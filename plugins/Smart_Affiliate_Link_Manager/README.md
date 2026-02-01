@@ -2,45 +2,40 @@
 
 ## Features
 
-- **Automatic Link Insertion**: Replaces keywords in posts with cloaked affiliate links.
-- **Click Tracking**: Monitors clicks on affiliate links with basic analytics.
-- **Shortcode Support**: Use `[afflink code="yourcode"]` anywhere.
-- **Admin Dashboard**: Easy management of keywords, URLs, and codes.
-- **Privacy-Friendly**: No external trackers; self-hosted.
-- **Freemium Ready**: Pro version unlocks A/B testing, advanced stats, auto-insertion rules.
-
-**Pro Features (Upsell)**: Detailed analytics, link rotation, geo-targeting, WooCommerce integration ($49/year).
+- **Automatic Link Cloaking**: Replace keywords in posts with cloaked affiliate links.
+- **Click Tracking**: Monitor clicks on each link with a simple dashboard.
+- **Shortcode Support**: Use `[sal_link keyword="buy now"]` anywhere.
+- **Free & Easy**: Self-contained, no dependencies.
+- **Pro Upgrade**: A/B testing, unlimited links, reports, WooCommerce integration ($49/year).
 
 ## Installation
 
 1. Download the plugin ZIP.
-2. In WordPress Admin: Plugins > Add New > Upload Plugin.
+2. In WordPress admin: Plugins > Add New > Upload Plugin.
 3. Activate the plugin.
-4. Go to Settings > Affiliate Links to configure.
+4. Go to Settings > Affiliate Links to add your first keyword and affiliate URL.
 
 ## Setup
 
 1. Navigate to **Settings > Affiliate Links**.
-2. Add a new link:
-   - **Keyword**: e.g., "best hosting"
-   - **Affiliate URL**: e.g., "https://affiliate.com/?ref=123"
-   - **Code**: Unique ID like "hosting123"
-3. Enable "Auto-Replacement" checkbox.
-4. Save. Links now auto-insert in content!
+2. Enter a **keyword** (e.g., "buy now").
+3. Paste your **affiliate URL** (e.g., Amazon link).
+4. Save. The plugin auto-cloaks matching keywords in posts/pages.
 
 ## Usage
 
-- **Automatic**: Keywords in posts/pages become affiliate links.
-- **Manual**: Use shortcode `[afflink code="hosting123"]`.
-- **Widgets/Sidebar**: Add shortcodes to text widgets.
-- **Tracking**: View clicks in dashboard (Pro: charts/export).
+- **Automatic**: Keywords are replaced in content on frontend.
+- **Shortcode**: `[sal_link keyword="yourkeyword"]` for manual placement.
+- **Dashboard**: View clicks and manage links.
+- **Pro Features**: Unlock with purchase for advanced analytics.
 
-## FAQ
-
-**Does it slow my site?** No, lightweight with no external calls.
-**Compatible with caching?** Yes, client-side tracking.
-**Pro Upgrade?** Visit example.com/pro for advanced features.
+## Screenshots
+*(Imagine dashboard and cloaked link previews)*
 
 ## Changelog
 
-**1.0.0**: Initial release.
+### 1.0.0
+- Initial release.
+
+## Support
+Contact support@example.com. Upgrade to Pro for priority support.
