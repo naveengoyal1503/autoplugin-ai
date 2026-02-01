@@ -1,49 +1,37 @@
 # AI Content Optimizer
 
-A powerful **freemium** WordPress plugin that analyzes your post content for **SEO optimization** using intelligent algorithms. Boost your search rankings effortlessly!
+A **freemium** WordPress plugin that analyzes post content for **SEO** and readability, with premium AI-powered rewriting.[1][2]
 
 ## Features
 
 ### Free Version
-- **Basic SEO Score**: Get an instant readability and keyword density score (0-100%).
-- **Quick Tips**: Actionable suggestions to improve content.
-- **Side-panel Integration**: Analyze directly from the post editor.
+- Content analysis: Word count, readability score (Flesch-Kincaid).
+- Basic optimization suggestions.
+- One-click post meta box.
 
-### Premium Version ($29/year)
-- **AI-Powered Suggestions**: Advanced keyword recommendations, title optimizations, and meta descriptions.
-- **Auto-Optimizations**: One-click fixes for headings, readability, and more.
-- **Unlimited Analyses**: No limits on posts.
-- **Priority Support**: Email support within 24 hours.
-- **Future Updates**: New AI features added regularly.
+### Premium ($4.99/month)
+- **AI rewriting** for improved SEO and engagement.
+- Bulk optimization.
+- Unlimited usage.
+- Priority support.[5][6]
 
 ## Installation
-
-1. Download the plugin ZIP from [WordPress.org](https://wordpress.org/plugins/ai-content-optimizer/) or your purchase dashboard.
-2. Go to **Plugins > Add New > Upload Plugin** in your WordPress dashboard.
-3. Upload and activate the plugin.
-4. Start optimizing your posts!
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin via **Plugins > Installed Plugins**.
+3. Access via **Settings > AI Content Optimizer** or post editor meta box.
 
 ## Setup
-
-- No setup required for free version.
-- For **Premium**: Purchase at [example.com/premium](https://example.com/premium), enter license key in **Settings > AI Optimizer** (coming in updates).
+- No API keys needed for free version.
+- Premium: Enter license key in plugin settings (integrate Freemius in production).
 
 ## Usage
-
-1. Edit or create a **Post**.
-2. Look for the **AI Content Optimizer** meta box in the sidebar.
-3. Click **Analyze Content** to get your SEO score and tips.
-4. **Free**: Follow manual tips.
-5. **Premium**: Apply AI suggestions with one click.
-
-## Screenshots
-*(In full plugin: Visuals of meta box, score display, and suggestions.)*
-
-## Support
-- Free: WordPress.org forums.
-- Premium: Submit ticket at example.com/support.
+1. Go to **Settings > AI Content Optimizer** or use post meta box.
+2. Select/paste content and click **Optimize Content**.
+3. Review suggestions and updated post.
+4. **Upgrade** for AI features: Visit [premium link](https://example.com/premium).
 
 ## Changelog
-- **1.0.0**: Initial release with basic analysis and freemium upsell.
+- **1.0.0**: Initial release.
 
-**Upgrade to Premium today and 10x your SEO results!**
+## Support
+Free support via WordPress.org. Premium: Email support@yourdomain.com.
