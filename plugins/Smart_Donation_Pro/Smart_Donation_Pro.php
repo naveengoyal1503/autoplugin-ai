@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Donation Pro
  * Plugin URI: https://example.com/smart-donation-pro
- * Description: Add customizable donation buttons and forms to monetize your WordPress site with Stripe and PayPal.
+ * Description: Easily add customizable donation buttons and forms to monetize your WordPress site with PayPal.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -20,159 +20,130 @@ class SmartDonationPro {
     public function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
         add_shortcode('smart_donation', array($this, 'donation_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_action('wp_ajax_sdp_process_donation', array($this, 'process_donation'));
+        add_action('wp_ajax_nopriv_sdp_process_donation', array($this, 'process_donation'));
     }
 
     public function init() {
-        load_plugin_textdomain('smart-donation-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        if (get_option('sdp_paypal_email')) {
+            // Plugin is set up
+        }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('stripe', 'https://js.stripe.com/v3/', array(), '3.0', true);
-        wp_enqueue_style('smart-donation', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0');
-    }
-
-    public function admin_menu() {
-        add_options_page('Smart Donation Pro', 'Donation Settings', 'manage_options', 'smart-donation', array($this, 'settings_page'));
-    }
-
-    public function settings_page() {
-        if (isset($_POST['submit'])) {
-            update_option('sdp_stripe_key', sanitize_text_field($_POST['stripe_key']));
-            update_option('sdp_stripe_secret', sanitize_text_field($_POST['stripe_secret']));
-            update_option('sdp_paypal_email', sanitize_email($_POST['paypal_email']));
-            update_option('sdp_donation_amount', sanitize_text_field($_POST['donation_amount']));
-            echo '<div class="updated"><p>Settings saved!</p></div>';
-        }
-        $stripe_key = get_option('sdp_stripe_key', '');
-        $stripe_secret = get_option('sdp_stripe_secret', '');
-        $paypal_email = get_option('sdp_paypal_email', '');
-        $donation_amount = get_option('sdp_donation_amount', '10');
-        ?>
-        <div class="wrap">
-            <h1>Smart Donation Pro Settings</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Stripe Publishable Key</th>
-                        <td><input type="text" name="stripe_key" value="<?php echo esc_attr($stripe_key); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th>Stripe Secret Key</th>
-                        <td><input type="password" name="stripe_secret" value="<?php echo esc_attr($stripe_secret); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th>PayPal Email</th>
-                        <td><input type="email" name="paypal_email" value="<?php echo esc_attr($paypal_email); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th>Default Donation Amount ($)</th>
-                        <td><input type="number" name="donation_amount" value="<?php echo esc_attr($donation_amount); ?>" step="0.01" /></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-        </div>
-        <?php
+        wp_enqueue_script('paypal-sdk', 'https://www.paypal.com/sdk/js?client-id=TEST&currency=USD', array(), null, true);
+        wp_enqueue_script('sdp-script', plugin_dir_url(__FILE__) . 'sdp-script.js', array('jquery', 'paypal-sdk'), '1.0.0', true);
+        wp_localize_script('sdp-script', 'sdp_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sdp_nonce')));
     }
 
     public function donation_shortcode($atts) {
         $atts = shortcode_atts(array(
-            'amount' => get_option('sdp_donation_amount', '10'),
-            'button_text' => 'Donate Now',
-            'goal' => '500',
-            'current' => '250'
+            'amount' => '10',
+            'label' => 'Donate Now',
+            'goal' => '1000',
+            'current' => '250',
+            'paypal_email' => get_option('sdp_paypal_email', ''),
         ), $atts);
-
-        $stripe_key = get_option('sdp_stripe_key', '');
-        $paypal_email = get_option('sdp_paypal_email', '');
 
         ob_start();
         ?>
-        <div id="smart-donation" class="sdp-container">
-            <div class="sdp-progress" style="background: #f0f0f0; height: 20px; border-radius: 10px; overflow: hidden;">
-                <div class="sdp-progress-bar" style="background: #007cba; height: 100%; width: <?php echo ($atts['current'] / $atts['goal']) * 100; ?>%; transition: width 0.3s;"></div>
+        <div class="sdp-container">
+            <h3>Support Our Work</h3>
+            <?php if ($atts['goal']) : ?>
+            <div class="sdp-progress">
+                <div class="sdp-progress-bar" style="width: <?php echo ($atts['current'] / $atts['goal']) * 100; ?>%;"></div>
             </div>
-            <p><strong>$<?php echo esc_html($atts['current']); ?> / $<?php echo esc_html($atts['goal']); ?> raised</strong></p>
-            <div class="sdp-buttons">
-                <?php if ($stripe_key): ?>
-                <button id="sdp-stripe-btn" class="sdp-btn sdp-stripe" data-amount="<?php echo $atts['amount'] * 100; ?>"><?php echo esc_html($atts['button_text']); ?> (Stripe)</button>
-                <?php endif; ?>
-                <?php if ($paypal_email): ?>
-                <a href="https://www.paypal.com/donate?hosted_button_id=TEST&business=<?php echo urlencode($paypal_email); ?>&amount=<?php echo $atts['amount']; ?>" class="sdp-btn sdp-paypal" target="_blank"><?php echo esc_html($atts['button_text']); ?> (PayPal)</a>
-                <?php endif; ?>
-            </div>
-            <div id="sdp-payment-form" style="display: none;">
-                <div id="card-element"></div>
-                <button id="sdp-submit-payment">Pay $<?php echo $atts['amount']; ?></button>
-                <div id="sdp-payment-message"></div>
-            </div>
+            <p>$<?php echo $atts['current']; ?> / $<?php echo $atts['goal']; ?> raised</p>
+            <?php endif; ?>
+            <div id="sdp-paypal-button-<?php echo uniqid(); ?>" data-amount="<?php echo $atts['amount']; ?>" data-paypal-email="<?php echo esc_attr($atts['paypal_email']); ?>"></div>
+            <p class="sdp-amount">Suggested: $<?php echo $atts['amount']; ?></p>
+            <button class="sdp-custom-donate" onclick="sdpShowCustomAmount(this)">$ Custom Amount</button>
+            <input type="number" class="sdp-custom-input" style="display:none;" min="1" step="0.01" placeholder="Enter amount">
         </div>
-        <script>
-        var stripe = Stripe('<?php echo esc_js($stripe_key); ?>');
-        var elements = stripe.elements();
-        var card = elements.create('card');
-        card.mount('#card-element');
-
-        document.getElementById('sdp-stripe-btn').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('sdp-payment-form').style.display = 'block';
-        });
-
-        document.getElementById('sdp-submit-payment').addEventListener('click', function() {
-            stripe.createToken(card).then(function(result) {
-                if (result.error) {
-                    document.getElementById('sdp-payment-message').textContent = result.error.message;
-                } else {
-                    fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                        body: 'action=sdp_process_payment&token=' + result.token.id + '&amount=<?php echo $atts['amount'] * 100; ?>'
-                    }).then(response => response.json()).then(data => {
-                        if (data.success) {
-                            document.getElementById('sdp-payment-message').textContent = 'Payment successful!';
-                        } else {
-                            document.getElementById('sdp-payment-message').textContent = data.message;
-                        }
-                    });
-                }
-            });
-        });
-        </script>
         <style>
-        .sdp-container { max-width: 400px; margin: 20px auto; text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
-        .sdp-btn { background: #007cba; color: white; padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .sdp-btn:hover { background: #005a87; }
-        #sdp-payment-message { margin-top: 10px; color: green; }
+        .sdp-container { text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
+        .sdp-progress { background: #eee; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .sdp-progress-bar { height: 100%; background: #28a745; transition: width 0.3s; }
+        .sdp-custom-input { width: 100px; margin-top: 10px; }
         </style>
+        <script>
+        function sdpShowCustomAmount(btn) {
+            var input = btn.nextElementSibling;
+            input.style.display = input.style.display === 'none' ? 'block' : 'none';
+        }
+        </script>
         <?php
         return ob_get_clean();
     }
 
-    public function activate() {
-        add_option('sdp_donation_amount', '10');
+    public function process_donation() {
+        check_ajax_referer('sdp_nonce', 'nonce');
+        $amount = sanitize_text_field($_POST['amount']);
+        $email = get_option('sdp_paypal_email');
+        // In pro version, integrate full PayPal API for recurring/one-time
+        wp_send_json_success(array('message' => 'Thank you for your donation of $' . $amount . '!'));
     }
+}
+
+// Admin settings
+if (is_admin()) {
+    add_action('admin_menu', function() {
+        add_options_page('Smart Donation Pro', 'Donation Pro', 'manage_options', 'sdp-settings', 'sdp_settings_page');
+    });
+}
+
+function sdp_settings_page() {
+    if (isset($_POST['sdp_paypal_email'])) {
+        update_option('sdp_paypal_email', sanitize_email($_POST['sdp_paypal_email']));
+        echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+    }
+    $paypal_email = get_option('sdp_paypal_email', '');
+    ?>
+    <div class="wrap">
+        <h1>Smart Donation Pro Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr>
+                    <th>PayPal Email</th>
+                    <td><input type="email" name="sdp_paypal_email" value="<?php echo esc_attr($paypal_email); ?>" class="regular-text" required></td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+        <p>Use shortcode: <code>[smart_donation amount="20" goal="500" current="150"]</code></p>
+        <p><strong>Pro Features (Upgrade for $29/year):</strong> Recurring donations, analytics, custom themes, Stripe integration.</p>
+    </div>
+    <?php
 }
 
 new SmartDonationPro();
 
-add_action('wp_ajax_sdp_process_payment', function() {
-    $stripe_secret = get_option('sdp_stripe_secret');
-    if (!$stripe_secret) {
-        wp_die(json_encode(array('success' => false, 'message' => 'Stripe not configured')));
-    }
-    \Stripe\Stripe::setApiKey($stripe_secret);
-    try {
-        \Stripe\Charge::create(array(
-            'amount' => intval($_POST['amount']),
-            'currency' => 'usd',
-            'source' => $_POST['token'],
-            'description' => 'Donation via Smart Donation Pro'
-        ));
-        wp_die(json_encode(array('success' => true)));
-    } catch (Exception $e) {
-        wp_die(json_encode(array('success' => false, 'message' => $e->getMessage())));
-    }
+// Dummy JS file content (in real plugin, separate file)
+/*
+Add this as sdp-script.js in plugin dir:
+
+document.addEventListener('DOMContentLoaded', function() {
+    var elements = document.querySelectorAll('[id^="sdp-paypal-button-"]');
+    elements.forEach(function(el) {
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: { value: el.dataset.amount }
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    jQuery.post(sdp_ajax.ajax_url, {
+                        action: 'sdp_process_donation',
+                        amount: el.dataset.amount,
+                        nonce: sdp_ajax.nonce
+                    });
+                });
+            }
+        }).render('#' + el.id);
+    });
 });
+*/
