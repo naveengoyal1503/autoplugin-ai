@@ -5,25 +5,19 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart AI Content Optimizer
- * Plugin URI: https://example.com/smart-ai-content-optimizer
- * Description: AI-powered plugin that analyzes and optimizes post content for SEO, readability, and engagement.
+ * Plugin URI: https://example.com/smart-ai-optimizer
+ * Description: AI-powered content analysis and optimization for better SEO and engagement. Freemium model.
  * Version: 1.0.0
  * Author: Your Name
- * Author URI: https://example.com
  * License: GPL v2 or later
- * Text Domain: smart-ai-content-optimizer
- * Requires at least: 5.0
- * Tested up to: 6.6
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
 class SmartAIContentOptimizer {
     private static $instance = null;
-    public $is_premium = false;
-    public $usage_count = 0;
 
     public static function get_instance() {
         if (null === self::$instance) {
@@ -33,152 +27,131 @@ class SmartAIContentOptimizer {
     }
 
     private function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_ajax_optimize_content', array($this, 'handle_optimize_content'));
+        add_action('add_meta_boxes', array($this, 'add_meta_box'));
+        add_action('save_post', array($this, 'save_meta_box_data'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_saico_analyze', array($this, 'ajax_analyze'));
+        add_action('admin_notices', array($this, 'premium_notice'));
         register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
-    }
-
-    public function init() {
-        load_plugin_textdomain('smart-ai-content-optimizer', false, dirname(plugin_basename(__FILE__)) . '/languages');
-        $this->is_premium = get_option('saco_premium_active', false);
-        $this->usage_count = get_option('saco_usage_count', 0);
     }
 
     public function enqueue_scripts($hook) {
         if ('post.php' !== $hook && 'post-new.php' !== $hook) {
             return;
         }
-        wp_enqueue_script('saco-admin-js', plugin_dir_url(__FILE__) . 'admin.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('saco-admin-js', 'saco_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('saco_nonce'),
-            'is_premium' => $this->is_premium,
-            'usage_count' => $this->usage_count,
-            'max_free' => 5
-        ));
-        wp_enqueue_style('saco-admin-css', plugin_dir_url(__FILE__) . 'admin.css', array(), '1.0.0');
+        wp_enqueue_script('saico-script', plugin_dir_url(__FILE__) . 'saico.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('saico-script', 'saico_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('saico_nonce')));
     }
 
-    public function add_admin_menu() {
-        add_options_page(
-            'Smart AI Content Optimizer Settings',
-            'AI Content Optimizer',
-            'manage_options',
-            'saco-settings',
-            array($this, 'settings_page')
+    public function add_meta_box() {
+        add_meta_box(
+            'saico-meta-box',
+            'Smart AI Content Optimizer',
+            array($this, 'render_meta_box'),
+            array('post', 'page'),
+            'side',
+            'high'
         );
     }
 
-    public function settings_page() {
-        if (isset($_POST['saco_premium_key'])) {
-            update_option('saco_premium_active', true);
-            $this->is_premium = true;
-            echo '<div class="notice notice-success"><p>Premium activated!</p></div>';
+    public function render_meta_box($post) {
+        wp_nonce_field('saico_meta_nonce', 'saico_meta_nonce');
+        $score = get_post_meta($post->ID, '_saico_score', true);
+        echo '<div id="saico-results">';
+        if ($score) {
+            echo '<p><strong>AI Score:</strong> ' . esc_html($score) . '/100</p>';
+            echo '<p id="saico-suggestions"></p>';
         }
-        ?>
-        <div class="wrap">
-            <h1><?php _e('Smart AI Content Optimizer', 'smart-ai-content-optimizer'); ?></h1>
-            <p><?php _e('Free scans left this month: ', 'smart-ai-content-optimizer'); ?><?php echo max(0, 5 - $this->usage_count); ?></p>
-            <form method="post">
-                <p>
-                    <label><?php _e('Enter Premium Key: ', 'smart-ai-content-optimizer'); ?></label>
-                    <input type="text" name="saco_premium_key" placeholder="premium-key-123">
-                    <input type="submit" class="button-primary" value="Activate Premium">
-                </p>
-            </form>
-            <p><strong>Upgrade to Premium:</strong> <a href="https://example.com/premium" target="_blank">Subscribe for $9.99/mo</a> for unlimited optimizations and advanced features.</p>
-        </div>
-        <?php
+        echo '<button id="saico-analyze" class="button button-primary">Analyze Content</button>';
+        echo '<p><small>Free: Basic analysis. <a href="#" id="saico-upgrade">Upgrade to Premium</a> for AI rewriting & keywords.</small></p>';
+        echo '</div>';
     }
 
-    public function handle_optimize_content() {
-        check_ajax_referer('saco_nonce', 'nonce');
-
-        if (!$this->is_premium && $this->usage_count >= 5) {
-            wp_die(json_encode(array('error' => 'Free limit reached. Upgrade to premium!')));
+    public function save_meta_box_data($post_id) {
+        if (!isset($_POST['saico_meta_nonce']) || !wp_verify_nonce($_POST['saico_meta_nonce'], 'saico_meta_nonce')) {
+            return;
         }
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+        if (isset($_POST['saico_score'])) {
+            update_post_meta($post_id, '_saico_score', sanitize_text_field($_POST['saico_score']));
+        }
+    }
 
+    public function ajax_analyze() {
+        check_ajax_referer('saico_nonce', 'nonce');
+        if (!current_user_can('edit_posts')) {
+            wp_die('Unauthorized');
+        }
         $post_id = intval($_POST['post_id']);
-        $content = sanitize_textarea_field($_POST['content']);
+        $content = wp_strip_all_tags(get_post_field('post_content', $post_id));
 
-        if (!$this->is_premium) {
-            $this->usage_count++;
-            update_option('saco_usage_count', $this->usage_count);
+        // Simulate basic AI analysis (word count, readability proxy)
+        $word_count = str_word_count($content);
+        $sentences = preg_split('/[.!?]+/', $content);
+        $sentence_count = count(array_filter($sentences));
+        $readability = $sentence_count > 0 ? round(180 - ($word_count / $sentence_count * 10), 0) : 50;
+        $score = min(100, max(0, 50 + ($readability / 2) + (min(500, $word_count) / 10)));
+
+        // Basic suggestions
+        $suggestions = array();
+        if ($word_count < 300) {
+            $suggestions[] = 'Add more content (aim for 500+ words).';
         }
+        if ($readability < 60) {
+            $suggestions[] = 'Improve sentence variety for better readability.';
+        }
+        $suggestions_str = implode(' ', $suggestions);
 
-        // Simulate AI optimization (in real version, integrate OpenAI API or similar)
-        $suggestions = $this->mock_ai_optimize($content);
-
-        wp_die(json_encode(array(
-            'optimized_content' => $suggestions['content'],
-            'seo_score' => $suggestions['seo_score'],
-            'readability_score' => $suggestions['readability'],
-            'suggestions' => $suggestions['tips']
-        )));
+        wp_send_json_success(array(
+            'score' => $score,
+            'suggestions' => $suggestions_str,
+            'is_premium' => false // Simulate premium check
+        ));
     }
 
-    private function mock_ai_optimize($content) {
-        // Mock AI logic: Add keywords, improve structure, etc.
-        $word_count = str_word_count($content);
-        $seo_score = min(95, 50 + ($word_count / 10));
-        $readability = rand(70, 90);
-
-        $optimized = $content;
-        $optimized .= '\n\n<h2>Optimized Summary</h2><p>This content has been enhanced for better SEO and engagement.</p>';
-
-        $tips = array(
-            'Add more H2 headings for structure.',
-            'Include target keywords naturally.',
-            'Shorten sentences for readability.'
-        );
-
-        return array(
-            'content' => $optimized,
-            'seo_score' => $seo_score,
-            'readability' => $readability,
-            'tips' => $tips
-        );
+    public function premium_notice() {
+        if (!current_user_can('manage_options')) return;
+        echo '<div class="notice notice-info"><p>Unlock <strong>Smart AI Content Optimizer Premium</strong>: AI rewriting, keyword research & more! <a href="https://example.com/premium" target="_blank">Upgrade now for $9.99/mo</a></p></div>';
     }
 
     public function activate() {
-        add_option('saco_usage_count', 0);
+        flush_rewrite_rules();
     }
-
-    public function deactivate() {
-        // Reset monthly count on deactivate for demo
-        delete_option('saco_usage_count');
-    }
-}
-
-// Add meta box to post editor
-add_action('add_meta_boxes', function() {
-    add_meta_box('saco-optimizer', 'AI Content Optimizer', 'saco_meta_box_callback', 'post', 'side');
-});
-
-function saco_meta_box_callback($post) {
-    echo '<button id="saco-optimize-btn" class="button button-primary">Optimize Content with AI</button>';
-    echo '<div id="saco-results"></div>';
-    echo '<p><em>Free: 5/month | Premium: Unlimited</em></p>';
 }
 
 SmartAIContentOptimizer::get_instance();
 
-// admin.js content (embedded as string for single file)
-$js = "jQuery(document).ready(function($) { $('#saco-optimize-btn').click(function() { var content = tinyMCE.activeEditor.getContent(); $.post(saco_ajax.ajax_url, { action: 'optimize_content', post_id: " . get_the_ID() . ", content: content, nonce: saco_ajax.nonce }, function(response) { var data = JSON.parse(response); $('#saco-results').html('<p>SEO Score: ' + data.seo_score + '% | Readability: ' + data.readability_score + '%</p><ul>' + data.suggestions.map(function(s) { return '<li>' + s + '</li>'; }).join('') + '</ul><textarea rows="10" cols="50">' + data.optimized_content + '</textarea>'); }); }); });");
-
-// For simplicity, enqueue inline JS
-add_action('admin_footer-post.php', function() { ?>
-<script><?php echo $js; ?></script>
-<style>#saco-optimizer { background: #0073aa; color: white; }</style>
-<?php });
-
-// admin.css inline
-add_action('admin_head-post.php', function() { ?>
-<style>
-#saco-results textarea { width: 100%; }
-#saco-results { margin-top: 10px; }
-</style>
-<?php });
+// Inline JS for simplicity (self-contained)
+function saico_inline_js() {
+    if (('post.php' === $GLOBALS['pagenow'] || 'post-new.php' === $GLOBALS['pagenow']) && (get_post_type() === 'post' || get_post_type() === 'page')) {
+        ?>
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('#saico-analyze').click(function(e) {
+                e.preventDefault();
+                var postId = $('#post_ID').val();
+                $.post(saico_ajax.ajax_url, {
+                    action: 'saico_analyze',
+                    post_id: postId,
+                    nonce: saico_ajax.nonce
+                }, function(response) {
+                    if (response.success) {
+                        $('#saico-results p:first').html('<strong>AI Score:</strong> ' + response.data.score + '/100');
+                        $('#saico-suggestions').html('<strong>Suggestions:</strong> ' + response.data.suggestions);
+                        if (!response.data.is_premium) {
+                            $('#saico-upgrade').show();
+                        }
+                    }
+                });
+            });
+        });
+        </script>
+        <?php
+    }
+}
+add_action('admin_footer', 'saico_inline_js');
