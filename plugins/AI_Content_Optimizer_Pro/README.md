@@ -1,38 +1,33 @@
 # AI Content Optimizer Pro
 
 ## Description
-**AI Content Optimizer Pro** is a powerful WordPress plugin that analyzes your post content in real-time, providing **readability scores**, **SEO suggestions**, and **AI-driven optimizations** to boost search rankings and engagement. The free version offers essential tools; upgrade to Pro for advanced AI features.
+AI Content Optimizer Pro is a powerful WordPress plugin that leverages AI to analyze and improve your post content for better **SEO**, **readability**, and **user engagement**. The free version provides essential metrics, while premium unlocks advanced AI-driven suggestions and optimizations.
 
 ## Features
-- **Real-time Readability Scoring**: Flesch-Kincaid based score (0-100) in post editor.
-- **Free AI Suggestions**: Keyword tips, content length, headings, and images.
-- **Pro Features** (Premium):
-  - Full AI content rewriting and optimization.
-  - Auto-generate meta titles/descriptions.
-  - Bulk optimize existing posts.
-  - Keyword research integration.
-  - Priority support and updates.
-- **Settings Page**: Enable/disable and configure API (Pro).
+- **Free:** Readability score, keyword density analysis, word count.
+- **Premium ($9.99/month):** AI-powered SEO suggestions, engagement scoring, bulk content optimization, optimized content generation.
+- Real-time analysis in WordPress admin.
+- Secure, self-contained—no external dependencies in free version.
 
 ## Installation
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' screen in WordPress admin.
-3. The optimizer meta box appears automatically on Posts > Edit.
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Access via **Settings > AI Optimizer**.
 
 ## Setup
-1. Go to **Settings > AI Optimizer**.
-2. Enable the plugin.
-3. For Pro: Enter your API key from [premium dashboard](https://example.com/premium).
+1. Navigate to **Settings > AI Optimizer**.
+2. For premium features, [upgrade here](https://example.com/pricing) and enter your license key.
+3. Paste content into the textarea and click **Optimize Content**.
 
 ## Usage
-- Edit any post: See **AI Content Optimizer** sidebar with score and suggestions.
-- Follow suggestions to improve content.
-- **Pro Users**: Click 'Optimize with AI' button (added in premium) for auto-enhancements.
+- Use on any post or page content.
+- Free users get basic scores.
+- Premium users receive actionable AI suggestions and auto-optimized versions.
+- Example: Input raw draft → Get SEO tweaks like adding headers or shortening sentences.
 
-## Monetization & Support
-- **Free**: Basic tools to attract users.
-- **Pro Upgrade**: $49/year or $99 lifetime at [example.com/premium](https://example.com/premium).
-- Support: Free users - forums; Pro - email/tickets.
+## Premium Upgrade
+Unlock full AI potential with subscription. Steady revenue via recurring payments. Contact support@example.com for issues.
 
 ## Changelog
-- 1.0.0: Initial release with free readability and suggestions.
+**1.0.0** - Initial release.
