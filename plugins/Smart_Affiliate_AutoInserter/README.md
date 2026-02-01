@@ -1,59 +1,46 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your Amazon affiliate earnings by inserting relevant product links into posts based on smart keyword matching.**
+**Automatically boosts your affiliate earnings by inserting relevant Amazon links into posts based on keywords.**
 
 ## Features
 
-- **Keyword-Based Auto-Insertion**: Define keywords and matching Amazon ASINs; plugin auto-links them in content.
-- **Customizable Limits**: Control max links per post (1-5 in free version).
-- **Performance Optimized**: Lightweight, no external API calls, instant linking.
-- **Mobile-Responsive Links**: Clean, sponsored affiliate links with nofollow.
-- **Easy Setup**: Single-file plugin, no database bloat.
-- **Freemium Upsell**: Premium adds analytics, A/B testing, unlimited links ($29/year).
+- **AI-like Keyword Matching**: Scans content and auto-inserts Amazon affiliate links for matched terms (e.g., 'laptop' → your affiliate product link).
+- **Freemium Model**: Free version limits to 2 links/post; **Pro ($49/yr)**: Unlimited links, custom niches, click analytics, A/B testing.
+- **Easy Setup**: Configure your Amazon ID and keyword-product pairs in 2 minutes.
+- **SEO-Friendly**: Links are nofollow/sponsored, mobile-responsive, and non-intrusive.
+- **Passive Income**: Works on all posts/pages automatically.
+
+**Pro Exclusive**: Performance dashboard, link rotation, geo-targeting, and priority support.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > Affiliate Inserter** to configure.
+1. Download and upload the plugin ZIP to your WordPress site.
+2. Activate via **Plugins > Add New**.
+3. Go to **Settings > Affiliate Inserter** to set your Amazon Associate ID.
+4. Add keyword-product URL pairs (JSON format).
+5. Publish posts – links auto-insert!
 
 ## Setup
 
-1. **Get Amazon Associates Account**: Sign up at [affiliate-program.amazon.com](https://affiliate-program.amazon.com) for your affiliate tag (e.g., `yourtag-20`).
-2. **Optional API Key**: For future product data (not required for basic use).
-3. **Add Keywords**: In settings, enter `keyword:ASIN` pairs, one per line. Example:
-   
-   wireless headphones:B08FC6MR62
-   laptop stand:B07W1N4D8S
-   
-4. Set **Max Links per Post** (default: 2).
-5. Enable **Auto-Insert** and save.
+1. **Get Amazon Affiliate ID**: Sign up at [affiliate-program.amazon.com](https://affiliate-program.amazon.com).
+2. **Admin Settings**:
+   - Paste your `tag=yourid`.
+   - Keywords example:
+     
+     {"laptop":"https://amazon.com/dp/B0ABC123?tag=yourid","phone":"https://amazon.com/dp/B0DEF456?tag=yourid"}
+     
+3. **Pro Upgrade**: Enter key or buy at [example.com/pro](https://example.com/pro) for unlimited features.
 
 ## Usage
 
-- Write posts with your keywords naturally.
-- Plugin scans and replaces first occurrence of each keyword with affiliate link.
-- View links in published posts (e.g., "wireless headphones" becomes a linked product).
-- **Test**: Create a test post with keywords and preview.
-- **Earnings Tracking**: Use Amazon Associates dashboard for clicks/commissions.
-
-## Premium Features
-
-Upgrade for:
-- Unlimited keywords/links.
-- Click analytics dashboard.
-- A/B link testing.
-- Custom link styles and placements.
-
-Purchase at [example.com/pro](https://example.com/pro).
+- Write normally – plugin detects keywords and wraps them in affiliate links.
+- View stats in Pro dashboard (clicks, conversions).
+- Customize: Edit keywords anytime; free version shows subtle Pro upsell.
+- **Best Practices**: Use high-commission products; test on staging site.
 
 ## Support
 
-- WordPress.org forums.
-- Email: support@example.com.
+- Free: WordPress.org forums.
+- Pro: Dedicated email + updates.
 
-## Changelog
-
-**1.0.0**
-- Initial release.
+**Start earning commissions today – passive and profitable! 🚀**
