@@ -6,150 +6,153 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer Pro
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: AI-powered SEO content optimization for WordPress. Free basic features; premium for advanced tools.
+ * Description: Analyzes and optimizes your post content for SEO using AI-powered suggestions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: ai-content-optimizer
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class AIContentOptimizer {
-    private static $instance = null;
+// Define plugin constants
+define('AICOP_VERSION', '1.0.0');
+define('AICOP_PATH', plugin_dir_path(__FILE__));
+define('AICOP_PREMIUM', get_option('aicop_premium_key') !== false);
 
-    public static function get_instance() {
-        if (null === self::$instance) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    private function __construct() {
-        add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-        add_action('wp_ajax_optimize_content', array($this, 'ajax_optimize_content'));
-        add_action('wp_ajax_premium_upgrade', array($this, 'show_premium_nag'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
-    }
-
-    public function init() {
-        load_plugin_textdomain('ai-content-optimizer', false, dirname(plugin_basename(__FILE__)) . '/languages');
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('ai-optimizer-js', plugin_dir_url(__FILE__) . 'assets/optimizer.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('ai-optimizer-js', 'ai_optimizer_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ai_optimizer_nonce'),
-            'is_premium' => $this->is_premium_user()
-        ));
-    }
-
-    public function add_admin_menu() {
-        add_options_page(
-            'AI Content Optimizer',
-            'AI Optimizer',
-            'manage_options',
-            'ai-content-optimizer',
-            array($this, 'admin_page')
-        );
-    }
-
-    public function admin_page() {
-        $is_premium = $this->is_premium_user();
-        ?>
-        <div class="wrap">
-            <h1><?php _e('AI Content Optimizer Pro', 'ai-content-optimizer'); ?></h1>
-            <p><?php _e('Paste your content below for AI-powered SEO optimization.', 'ai-content-optimizer'); ?></p>
-            <?php if (!$is_premium): ?>
-                <div class="notice notice-warning"><p><?php _e('Upgrade to Pro for unlimited optimizations and advanced features!', 'ai-content-optimizer'); ?> <a href="https://example.com/premium" target="_blank">Get Pro Now</a></p></div>
-            <?php endif; ?>
-            <textarea id="content-input" rows="10" cols="80" placeholder="Paste your content here..."><?php echo esc_textarea(get_post_field('post_content', get_the_ID())); ?></textarea>
-            <br><button id="optimize-btn" class="button button-primary">Optimize Content</button>
-            <div id="results"></div>
-        </div>
-        <?php
-    }
-
-    public function ajax_optimize_content() {
-        check_ajax_referer('ai_optimizer_nonce', 'nonce');
-
-        if (!$this->is_premium_user() && $this->get_usage_count() >= 5) {
-            wp_send_json_error('Upgrade to premium for more optimizations.');
-            return;
-        }
-
-        $content = sanitize_textarea_field($_POST['content']);
-        if (empty($content)) {
-            wp_send_json_error('Content is empty.');
-        }
-
-        $optimized = $this->simulate_ai_optimize($content);
-        $this->increment_usage();
-
-        wp_send_json_success(array('optimized' => $optimized));
-    }
-
-    private function simulate_ai_optimize($content) {
-        // Simulate basic AI optimization: improve readability, add keywords
-        $keywords = array('WordPress', 'SEO', 'content', 'optimize');
-        $improved = $content;
-        foreach ($keywords as $kw) {
-            $improved = preg_replace('/\b(' . preg_quote($kw, '/') . ')\b/i', '<strong>$1</strong>', $improved, 3);
-        }
-        // Basic readability: shorten sentences (simulation)
-        $improved .= '\n\n<h3>SEO Score: 85/100</h3>\n<p>Readability improved. Keywords enhanced.</p>';
-        if (!$this->is_premium_user()) {
-            $improved .= '\n<p><em>Premium: Real AI analysis, meta suggestions, bulk optimize.</em></p>';
-        }
-        return $improved;
-    }
-
-    private function is_premium_user() {
-        // Simulate license check
-        return get_option('ai_optimizer_premium_license', false) === 'valid';
-    }
-
-    private function get_usage_count() {
-        return get_option('ai_optimizer_usage', 0);
-    }
-
-    private function increment_usage() {
-        $count = $this->get_usage_count() + 1;
-        update_option('ai_optimizer_usage', $count);
-    }
-
-    public function show_premium_nag() {
-        // Premium upsell AJAX
-        echo '<div class="premium-nag">Unlock Pro: Unlimited scans, AI insights! <a href="https://example.com/premium">Upgrade</a></div>';
-        wp_die();
-    }
-
-    public function activate() {
-        update_option('ai_optimizer_usage', 0);
-    }
+// Premium check function
+function aicop_is_premium() {
+    return AICOP_PREMIUM;
 }
 
-AIContentOptimizer::get_instance();
+// Admin menu
+add_action('admin_menu', 'aicop_admin_menu');
+function aicop_admin_menu() {
+    add_management_page(
+        'AI Content Optimizer',
+        'AI Content Optimizer',
+        'manage_options',
+        'aicop',
+        'aicop_admin_page'
+    );
+}
 
-// Freemium upsell notice
-function ai_optimizer_admin_notice() {
+// Admin page
+function aicop_admin_page() {
     if (!current_user_can('manage_options')) return;
-    $screen = get_current_screen();
-    if ($screen->id === 'settings_page_ai-content-optimizer') return;
-    echo '<div class="notice notice-info"><p>Enhance your SEO with <strong>AI Content Optimizer Pro</strong>! <a href="' . admin_url('options-general.php?page=ai-content-optimizer') . '">Try it now</a> | <a href="https://example.com/premium" target="_blank">Go Pro</a></p></div>';
-}
-add_action('admin_notices', 'ai_optimizer_admin_notice');
 
-// Create assets dir placeholder (in real plugin, include JS file)
-$upload_dir = wp_upload_dir();
-$assets_dir = plugin_dir_path(__FILE__) . 'assets/';
-if (!file_exists($assets_dir)) {
-    wp_mkdir_p($assets_dir);
-    file_put_contents($assets_dir . 'optimizer.js', '// JS for AJAX optimization\n $("#optimize-btn").click(function() { /* AJAX call */ });');
+    $posts_analyzed = get_option('aicop_posts_analyzed', 0);
+    $limit = aicop_is_premium() ? 'Unlimited' : '5 per month';
+
+    echo '<div class="wrap">';
+    echo '<h1>AI Content Optimizer Pro</h1>';
+    echo '<p><strong>Posts analyzed this month:</strong> ' . $posts_analyzed . ' / ' . $limit . '</p>';
+
+    if (!aicop_is_premium()) {
+        echo '<div class="notice notice-warning"><p>Upgrade to Premium for unlimited optimizations and advanced features! <a href="https://example.com/premium" target="_blank">Get Premium</a></p></div>';
+    }
+
+    echo '<form method="post">';
+    echo '<p><label for="post_id">Select Post:</label> ';
+    wp_dropdown_posts(array('post_type' => 'post', 'numberposts' => -1, 'name' => 'post_id'));
+    echo ' <input type="submit" name="aicop_analyze" class="button button-primary" value="Analyze & Optimize"></p>';
+    echo '</form>';
+
+    if (isset($_POST['aicop_analyze']) && isset($_POST['post_id'])) {
+        aicop_analyze_post(absint($_POST['post_id']));
+    }
+
+    echo '</div>';
 }
-?>
+
+// Analyze post
+function aicop_analyze_post($post_id) {
+    if (!current_user_can('edit_post', $post_id)) return;
+
+    if (!aicop_check_limit()) {
+        echo '<div class="notice notice-error"><p>Free limit reached. Upgrade to Premium!</p></div>';
+        return;
+    }
+
+    $post = get_post($post_id);
+    $content = $post->post_content;
+
+    // Simulate AI analysis (in real version, integrate OpenAI API or similar)
+    $suggestions = aicop_generate_suggestions($content);
+
+    // Display results
+    echo '<h2>Analysis Results for "' . esc_html($post->post_title) . '"</h2>';
+    echo '<h3>SEO Score: ' . aicop_calculate_score($content) . '/100</h3>';
+    echo '<h3>Suggestions:</h3><ul>';
+    foreach ($suggestions as $suggestion) {
+        echo '<li>' . esc_html($suggestion) . '</li>';
+    }
+    echo '</ul>';
+
+    if (aicop_is_premium()) {
+        echo '<p><a href="#" onclick="aicopAutoOptimize(' . $post_id . ')" class="button button-secondary">Auto-Optimize (Premium)</a></p>';
+    }
+
+    aicop_update_usage();
+}
+
+// Check free limit
+function aicop_check_limit() {
+    if (aicop_is_premium()) return true;
+    $analyzed = get_option('aicop_posts_analyzed', 0);
+    return $analyzed < 5;
+}
+
+// Update usage
+function aicop_update_usage() {
+    if (!aicop_is_premium()) {
+        $count = get_option('aicop_posts_analyzed', 0) + 1;
+        update_option('aicop_posts_analyzed', $count);
+    }
+}
+
+// Generate mock AI suggestions
+function aicop_generate_suggestions($content) {
+    $suggestions = array(
+        'Add more keywords related to your main topic.',
+        'Improve readability by shortening sentences.',
+        'Include internal links to related posts.',
+        'Optimize meta description for better click-through.'
+    );
+    if (aicop_is_premium()) {
+        $suggestions[] = 'Premium: Advanced keyword density optimization suggested.';
+    }
+    return $suggestions;
+}
+
+// Calculate mock SEO score
+function aicop_calculate_score($content) {
+    $score = 65 + (rand(0, 30)); // Mock calculation
+    if (aicop_is_premium()) $score += 10;
+    return min(100, $score);
+}
+
+// Enqueue scripts
+add_action('admin_enqueue_scripts', 'aicop_scripts');
+function aicop_scripts($hook) {
+    if ($hook !== 'tools_page_aicop') return;
+    wp_enqueue_script('aicop-js', plugin_dir_url(__FILE__) . 'aicop.js', array('jquery'), AICOP_VERSION);
+}
+
+// Premium activation (simplified)
+register_activation_hook(__FILE__, 'aicop_activate');
+function aicop_activate() {
+    if (isset($_POST['aicop_premium_key'])) {
+        update_option('aicop_premium_key', sanitize_text_field($_POST['aicop_premium_key']));
+    }
+}
+
+// Reset monthly count (cron or manual)
+add_action('aicop_monthly_reset', 'aicop_reset_monthly');
+function aicop_reset_monthly() {
+    delete_option('aicop_posts_analyzed');
+}
+
+// Mock JS for auto-optimize
+/* In real plugin, add aicop.js file with premium features */
