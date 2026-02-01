@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: Analyzes and optimizes your WordPress content for better SEO and readability. Freemium model with premium upgrades.
+ * Description: AI-powered content analysis and optimization for better SEO and engagement.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -16,116 +16,126 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Define plugin constants
-define('AICO_VERSION', '1.0.0');
-define('AICO_PATH', plugin_dir_path(__FILE__));
-define('AICO_URL', plugin_dir_url(__FILE__));
-
-// Premium key check (simulate license)
-function aico_is_premium() {
-    return get_option('aico_premium_key') && get_option('aico_premium_active');
-}
-
-// Admin menu
-add_action('admin_menu', 'aico_admin_menu');
-function aico_admin_menu() {
-    add_options_page('AI Content Optimizer', 'AI Optimizer', 'manage_options', 'aico', 'aico_admin_page');
-}
-
-// Admin page
-function aico_admin_page() {
-    if (isset($_POST['aico_optimize'])) {
-        aico_optimize_content($_POST['post_id']);
+class AIContentOptimizer {
+    public function __construct() {
+        add_action('add_meta_boxes', array($this, 'add_meta_box'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+        add_action('wp_ajax_aco_analyze_content', array($this, 'analyze_content'));
+        add_action('wp_ajax_aco_upgrade', array($this, 'show_upgrade_nag'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
     }
-    if (isset($_POST['aico_premium_key'])) {
-        update_option('aico_premium_key', sanitize_text_field($_POST['aico_premium_key']));
-        // Simulate activation (in real: call API)
-        update_option('aico_premium_active', true);
-        echo '<div class="notice notice-success"><p>Premium activated!</p></div>';
+
+    public function enqueue_scripts($hook) {
+        if ($hook != 'post.php' && $hook != 'post-new.php') return;
+        wp_enqueue_script('aco-script', plugin_dir_url(__FILE__) . 'aco.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('aco-script', 'aco_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('aco_nonce'),
+            'is_premium' => false
+        ));
     }
-    ?>
-    <div class="wrap">
-        <h1>AI Content Optimizer</h1>
-        <p>Free: Basic SEO score and readability analysis.</p>
-        <p><strong>Premium ($4.99/mo):</strong> AI rewriting, bulk tools, export reports. <a href="#" onclick="aicoShowPremium()">Upgrade Now</a></p>
-        <form method="post">
-            <?php wp_nonce_field('aico_optimize'); ?>
-            <p><label>Select Post: </label>
-            <select name="post_id">
-                <?php
-                $posts = get_posts(['numberposts' => 20]);
-                foreach ($posts as $post) {
-                    echo '<option value="' . $post->ID . '">' . esc_html($post->post_title) . '</option>';
-                }
-                ?>
-            </select></p>
-            <p><input type="submit" name="aico_optimize" value="Optimize" class="button-primary"></p>
-        </form>
-        <div id="aico-premium" style="display:none;">
-            <h3>Enter Premium Key:</h3>
-            <form method="post">
-                <input type="text" name="aico_premium_key" placeholder="Premium Key" required>
-                <input type="submit" value="Activate" class="button-primary">
-            </form>
-            <p><em>Get key at example.com/premium</em></p>
-        </div>
-        <script>
-        function aicoShowPremium() {
-            document.getElementById('aico-premium').style.display = 'block';
+
+    public function add_meta_box() {
+        add_meta_box('aco-meta-box', 'AI Content Optimizer', array($this, 'meta_box_callback'), 'post', 'side');
+    }
+
+    public function meta_box_callback($post) {
+        wp_nonce_field('aco_meta_box', 'aco_meta_box_nonce');
+        echo '<div id="aco-results">Click Analyze to optimize your content!</div>';
+        echo '<button id="aco-analyze" class="button button-primary">Analyze Content</button>';
+        echo '<div id="aco-upgrade" style="display:none;"><p><strong>Upgrade to Premium</strong> for AI rewriting & advanced SEO keywords! <a href="https://example.com/premium" target="_blank">Get Premium</a></p></div>';
+    }
+
+    public function analyze_content() {
+        check_ajax_referer('aco_nonce', 'nonce');
+        $content = sanitize_textarea_field($_POST['content']);
+
+        // Basic free analysis
+        $word_count = str_word_count($content);
+        $readability = $this->calculate_readability($content);
+        $seo_score = min(100, ($word_count / 5) + ($readability * 20));
+
+        $results = array(
+            'word_count' => $word_count,
+            'readability' => round($readability, 2),
+            'seo_score' => round($seo_score),
+            'suggestions' => $this->get_free_suggestions($content)
+        );
+
+        if (!get_option('aco_premium_key')) {
+            $results['upgrade'] = true;
         }
-        </script>
-    </div>
-    <?php
-}
 
-// Optimize content
-function aico_optimize_content($post_id) {
-    $post = get_post($post_id);
-    $content = $post->post_content;
+        wp_send_json_success($results);
+    }
 
-    // Basic free analysis
-    $word_count = str_word_count(strip_tags($content));
-    $readability = $word_count > 300 ? 'Good' : 'Improve length';
-    $seo_score = min(100, (int)($word_count / 5));
+    private function calculate_readability($content) {
+        $sentences = preg_split('/[.!?]+/', $content, -1, PREG_SPLIT_NO_EMPTY);
+        $words = str_word_count($content);
+        $sentences = count($sentences);
+        if ($sentences == 0) return 0;
+        $syl = $this->estimate_syllables($content);
+        $asl = $words / $sentences;
+        return 206.835 - 1.015 * $asl - 84.6 * ($syl / $words);
+    }
 
-    echo '<div class="notice notice-info"><p><strong>Free Analysis:</strong><br>Words: ' . $word_count . '<br>Readability: ' . $readability . '<br>SEO Score: ' . $seo_score . '%</p></div>';
+    private function estimate_syllables($text) {
+        $text = strtolower($text);
+        preg_match_all('/[aeiouy]+/', $text, $matches);
+        return count($matches);
+    }
 
-    if (aico_is_premium()) {
-        // Premium AI rewrite simulation
-        $optimized = '[AI Optimized: Improved SEO keywords, readability enhanced.] ' . substr($content, 0, 200) . '...';
-        wp_update_post(['ID' => $post_id, 'post_content' => $optimized]);
-        echo '<div class="notice notice-success"><p>Premium AI rewrite applied!</p></div>';
-    } else {
-        echo '<div class="notice notice-warning"><p>Upgrade to premium for AI rewriting and bulk optimization.</p></div>';
+    private function get_free_suggestions($content) {
+        $suggestions = array();
+        if (str_word_count($content) < 300) {
+            $suggestions[] = 'Add more content for better SEO (aim for 1000+ words).';
+        }
+        if (strpos($content, 'href=') === false) {
+            $suggestions[] = 'Include internal/external links.';
+        }
+        return $suggestions;
+    }
+
+    public function show_upgrade_nag() {
+        echo '<div class="notice notice-info"><p>Unlock AI rewriting with Premium! <a href="https://example.com/premium">Upgrade Now</a></p></div>';
+    }
+
+    public function activate() {
+        add_option('aco_premium_key', false);
     }
 }
 
-// Add meta box to posts
-add_action('add_meta_boxes', 'aico_meta_box');
-function aico_meta_box() {
-    add_meta_box('aico-optimizer', 'AI Optimizer', 'aico_meta_box_content', 'post', 'side');
-}
-function aico_meta_box_content($post) {
-    echo '<p><a href="' . admin_url('options-general.php?page=aico') . '" class="button">Quick Optimize</a></p>';
-    if (!aico_is_premium()) {
-        echo '<p><em>Premium: Unlock AI features</em></p>';
-    }
-}
+new AIContentOptimizer();
 
-// Freemius-like upsell notice
-add_action('admin_notices', 'aico_upsell_notice');
-function aico_upsell_notice() {
-    if (!aico_is_premium() && current_user_can('manage_options')) {
-        echo '<div class="notice notice-info"><p>Unlock <strong>AI Content Optimizer Premium</strong> for $4.99/mo: AI rewriting, bulk tools & more! <a href="' . admin_url('options-general.php?page=aico') . '">Upgrade Now</a></p></div>';
-    }
+// Dummy JS file content (in real plugin, separate file)
+/*
+function aco_js() {
+    jQuery(document).ready(function($) {
+        $('#aco-analyze').click(function() {
+            var content = $('#content').val();
+            $.post(aco_ajax.ajax_url, {
+                action: 'aco_analyze_content',
+                nonce: aco_ajax.nonce,
+                content: content
+            }, function(response) {
+                if (response.success) {
+                    var res = response.data;
+                    var html = '<p><strong>Words:</strong> ' + res.word_count + '</p>' +
+                               '<p><strong>Readability (Flesch):</strong> ' + res.readability + '</p>' +
+                               '<p><strong>SEO Score:</strong> ' + res.seo_score + '/100</p>';
+                    if (res.suggestions.length) {
+                        html += '<ul>';
+                        res.suggestions.forEach(function(s) { html += '<li>' + s + '</li>'; });
+                        html += '</ul>';
+                    }
+                    if (res.upgrade) {
+                        $('#aco-upgrade').show();
+                    }
+                    $('#aco-results').html(html);
+                }
+            });
+        });
+    });
 }
-
-// Enqueue styles
-add_action('admin_enqueue_scripts', 'aico_enqueue');
-function aico_enqueue($hook) {
-    if ($hook !== 'settings_page_aico') return;
-    wp_enqueue_style('aico-style', AICO_URL . 'style.css', [], AICO_VERSION);
-}
-
-// Create style.css file placeholder (self-contained, inline would be better but for demo)
-/* Inline CSS could be added here */
+*/
+?>
