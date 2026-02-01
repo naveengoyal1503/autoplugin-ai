@@ -1,47 +1,51 @@
 # AI Content Optimizer Freemium
 
-A powerful WordPress plugin that leverages AI to analyze and optimize your post content for **SEO**, readability, and user engagement. **Freemium model** for maximum reach and profitability.[1][2]
+A powerful **AI-powered content analysis plugin** for WordPress that helps optimize your posts and pages for **SEO** and **readability**. Free version includes basic analysis; premium unlocks unlimited use and advanced features.
 
 ## Features
 
 ### Free Version
-- AI-powered content optimization (limited to **5 posts per month**).
-- Analyzes SEO keywords, readability score, and engagement potential.
-- One-click optimization from post editor sidebar.
+- **Content Analysis**: Get a readability score and basic optimization tips for up to **5 posts per month**.
+- **Post/Page Meta Box**: One-click analysis directly in the editor.
+- **SEO & Readability Insights**: Simulated AI checks word count, structure, and more.
 
-### Premium Version ($9.99/month or $99/year)
-- **Unlimited optimizations**.
-- Advanced AI suggestions (meta titles, featured images, internal links).
-- Auto-optimization on save/publish.
-- Bulk optimize existing posts.
-- Priority support and regular updates.
-- Export optimization reports.
+### Premium Version ($9/month or $99/year)
+- **Unlimited Analyses**: No limits on posts.
+- **Advanced AI Suggestions**: Keyword optimization, auto-rewrite suggestions (integrates with OpenAI API).
+- **Auto-Optimization**: One-click apply fixes.
+- **Priority Support & Updates**.
+- **Export Reports**: Download SEO audits.
 
 ## Installation
 
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin via **Plugins > Installed Plugins**.
-3. Go to **Settings > AI Optimizer** and enter your **OpenAI API key** (get one free at openai.com).
-4. Edit any post – use the **Optimize Content with AI** button in the sidebar.
+2. Activate the plugin through the **Plugins** screen in WordPress admin.
+3. Edit a post/page to see the **AI Content Optimizer** meta box.
 
 ## Setup
 
-1. **API Key**: Required for AI processing. Free tier available from OpenAI.
-2. **Premium Upgrade**: Click "Activate Premium" in settings (links to subscription checkout in production).
-3. **Usage Limits**: Free: 5/month. Premium: Unlimited.
+1. Go to **Settings > AI Content Optimizer**.
+2. Enter your premium key (if purchased) to unlock premium features.
+3. Free users: Limited to 5 analyses/month (resets monthly; admin can reset manually).
 
 ## Usage
 
-1. Create or edit a **Post** or **Page**.
-2. In the sidebar, click **Optimize Content with AI**.
-3. AI rewrites for better SEO/readability – review and publish!
+1. Edit a **Post** or **Page**.
+2. In the sidebar, click **Analyze Content**.
+3. View your **score** and **tips**.
+4. Premium users get deeper insights and auto-fixes.
 
-**Pro Tip**: Premium auto-optimizes on publish for hands-free workflow.
+## Upgrade to Premium
 
-## Monetization & Support
+- Visit [example.com/premium](https://example.com/premium) for subscription.
+- Benefits: Recurring revenue model ensures ongoing updates[1][2].
 
-- **Upgrade**: Visit settings page for subscription.
-- **Support**: Free users – forums. Premium – email priority.
-- **Changelog**: v1.0.0 – Initial freemium release.
+## Support
 
-Built for scalability. Feedback? Contact support@example.com.
+- Free support via WordPress forums.
+- Premium: Dedicated email support.
+
+## Changelog
+
+**1.0.0**
+- Initial release with freemium model.
