@@ -1,46 +1,57 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into posts based on keywords.**
+**Automatically inserts relevant Amazon affiliate links into your WordPress posts and pages** to generate passive income from your content.[4][6]
 
 ## Features
 
-- **AI-like Keyword Matching**: Scans content and auto-inserts Amazon affiliate links for matched terms (e.g., 'laptop' → your affiliate product link).
-- **Freemium Model**: Free version limits to 2 links/post; **Pro ($49/yr)**: Unlimited links, custom niches, click analytics, A/B testing.
-- **Easy Setup**: Configure your Amazon ID and keyword-product pairs in 2 minutes.
-- **SEO-Friendly**: Links are nofollow/sponsored, mobile-responsive, and non-intrusive.
-- **Passive Income**: Works on all posts/pages automatically.
-
-**Pro Exclusive**: Performance dashboard, link rotation, geo-targeting, and priority support.
+- **Automatic Link Insertion**: Scans post content for predefined keywords and replaces them with your Amazon affiliate links.
+- **Easy Keyword Management**: Add keywords and matching Amazon ASINs via simple admin interface.
+- **Mobile-Responsive Links**: Clean, nofollow links that work perfectly on all devices.[2]
+- **Freemium Model**: Free core features; Pro adds AI suggestions, analytics, and A/B testing.[1][5]
+- **Performance Optimized**: Lightweight with no site slowdown.[5]
+- **One-Click Setup**: Enter your Amazon tag and keywords – links appear instantly in posts.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to your WordPress site.
-2. Activate via **Plugins > Add New**.
-3. Go to **Settings > Affiliate Inserter** to set your Amazon Associate ID.
-4. Add keyword-product URL pairs (JSON format).
-5. Publish posts – links auto-insert!
+1. Download the plugin ZIP file.
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate **Smart Affiliate AutoInserter**.
+4. Configure in **Settings > Affiliate Inserter**.
 
 ## Setup
 
-1. **Get Amazon Affiliate ID**: Sign up at [affiliate-program.amazon.com](https://affiliate-program.amazon.com).
-2. **Admin Settings**:
-   - Paste your `tag=yourid`.
-   - Keywords example:
-     
-     {"laptop":"https://amazon.com/dp/B0ABC123?tag=yourid","phone":"https://amazon.com/dp/B0DEF456?tag=yourid"}
-     
-3. **Pro Upgrade**: Enter key or buy at [example.com/pro](https://example.com/pro) for unlimited features.
+1. **Get Amazon Affiliate Tag**: Sign up at [Amazon Associates](https://affiliate-program.amazon.com/) and copy your tag (e.g., `yourid-20`).[4]
+2. **Add Keywords & ASINs**:
+   - Go to **Settings > Affiliate Inserter**.
+   - Enter your Amazon tag.
+   - Add pairs like: Keyword=`best laptop`, ASIN=`B08N5WRWNW`.
+   - Save changes.
+3. **Test**: Edit a post containing your keyword – the link auto-appears on frontend.
 
 ## Usage
 
-- Write normally – plugin detects keywords and wraps them in affiliate links.
-- View stats in Pro dashboard (clicks, conversions).
-- Customize: Edit keywords anytime; free version shows subtle Pro upsell.
-- **Best Practices**: Use high-commission products; test on staging site.
+- Write content naturally using your keywords.
+- Links insert automatically on single post pages.
+- **Pro Tip**: Use high-conversion keywords from your analytics for max earnings.[2][5]
+- Earn commissions on every qualifying purchase via your affiliate links.[1][6]
+
+### Example
+
+**Post Content**: "Looking for the **best laptop** under $1000?"
+
+**Becomes**: "Looking for the <a href="https://amazon.com/dp/B08N5WRWNW?tag=yourid-20">best laptop</a> under $1000?"
+
+## Pro Version ($29/year)
+
+- AI-powered keyword discovery from your content.
+- Click tracking and performance analytics.
+- A/B testing for link placements.
+- Priority support.
 
 ## Support
 
-- Free: WordPress.org forums.
-- Pro: Dedicated email + updates.
+Report issues on the [WordPress.org forum](https://wordpress.org/support/plugin/smart-affiliate-autoinserter).
 
-**Start earning commissions today – passive and profitable! 🚀**
+## Changelog
+
+**1.0.0** - Initial release with auto-insertion and keyword manager.
