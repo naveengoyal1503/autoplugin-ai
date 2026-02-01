@@ -1,36 +1,32 @@
 # AI Content Optimizer Pro
 
+## Description
+AI-powered WordPress plugin that scans your posts for **SEO**, readability, and engagement scores. Free version provides basic analysis; Pro unlocks advanced AI optimizations.[1][2]
+
 ## Features
-
-### Free Version
-- **SEO Score Calculation**: Analyzes post content for word count, title length, headings.[1]
-- **Readability Analysis**: Flesch-like score based on sentence and word length.
-- **Meta Box Integration**: Side panel in post editor showing scores.
-- **Frontend Badge**: Displays optimization badge on posts.
-
-### Premium Add-ons ($49/year)
-- AI-powered content rewriting using OpenAI API.
-- Bulk optimization for multiple posts.
-- Keyword research and suggestions.
-- Advanced integrations (Yoast, RankMath).[2]
+- **Free:** Instant content score, basic suggestions on word count and structure.
+- **Pro ($9/mo):** AI keyword research, auto-rewrite suggestions, bulk optimization, export reports, priority support.[4][6]
+- One-click analysis in post editor.
+- Compatible with Gutenberg and Classic Editor.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Access settings under **Settings > AI Content Optimizer**.
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Edit any post to see the sidebar optimizer.
 
 ## Setup
-1. Enter your AI API key (premium) in settings.
-2. Edit any post to see the meta box with scores.
-3. Premium: Click "AI Optimize" for auto-improvements.
+No configuration needed for free version. For Pro:
+1. Purchase at [example.com/pricing](https://example.com/pricing).
+2. Enter license key in **Settings > AI Optimizer Pro**.
 
 ## Usage
-- **Post Editor**: Scores update on save.
-- **Settings Page**: Configure API and upgrade.
-- **Monetization Ready**: Built-in upsell links for premium sales.
+1. Edit a post/page.
+2. Click **Analyze Free** in the sidebar meta box.
+3. View score and tips.
+4. Upgrade for pro features like AI rewrites.
+
+## Changelog
+**1.0.0** - Initial release.
 
 ## Support
-Contact support@example.com. Premium includes priority support.
-
-**Upgrade Today**: [Premium Link](https://example.com/premium)
+Free support via WordPress.org forums. Pro users get email/ticket support.
