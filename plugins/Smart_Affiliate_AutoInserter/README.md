@@ -1,45 +1,56 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant links into posts and pages based on keyword matching.**
+**Automatically inserts relevant affiliate links into your WordPress posts and pages to boost revenue with minimal effort.**
 
 ## Features
 
-- **AI-Powered Keyword Matching**: Scans content and auto-inserts affiliate links where keywords match.
-- **Customizable Rules**: Define keywords, link text, and URLs via easy admin interface.
-- **Link Limits**: Control max links per post to avoid over-optimization.
-- **SEO-Friendly**: Adds `nofollow` and `sponsored` attributes for compliance.
-- **Freemium Ready**: Free for basics; Pro unlocks unlimited rules, analytics, A/B testing.
-- **Mobile-Responsive**: Works seamlessly on all devices.
+- **Smart Auto-Insertion**: Automatically detects keywords in your content and replaces them with affiliate links.
+- **Customizable Rules**: Add your own keywords, affiliate URLs, and display text via the admin dashboard.
+- **Link Limits**: Control the maximum number of links per post to avoid over-optimization.
+- **SEO-Friendly**: Links include `nofollow` and `sponsored` attributes for compliance.
+- **Free Core Features**: Essential auto-insertion for up to 10 rules.
+
+**Premium Features (Upgrade for $49/year)**:
+- Unlimited affiliate rules
+- Advanced regex keyword matching
+- Click analytics and tracking
+- A/B testing for link performance
+- Priority email support
+- White-label option
 
 ## Installation
 
-1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
+1. Upload the `smart-affiliate-autoinserter` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate AutoInserter** to configure.
+3. Go to **Settings > Affiliate Inserter** to configure your affiliate rules.
 
 ## Setup
 
-1. **Enable Plugin**: Toggle 'Enabled' in settings.
-2. **Add Affiliate Rules**:
-   - Keyword: e.g., "best laptop"
-   - Link Text: e.g., "Check out this laptop"
-   - Affiliate URL: Your affiliate link
-3. **Set Max Links**: Default 3 per post.
+1. In the plugin settings, toggle **Enable Auto-Insertion**.
+2. Set **Max Links per Post** (default: 3).
+3. Add affiliate rules:
+   - **Keyword**: Word to match (e.g., "wordpress").
+   - **Link**: Your affiliate URL.
+   - **Display Text**: Anchor text for the link (e.g., "Best WordPress hosting").
 4. Click **Save Changes**.
 
 ## Usage
 
-- Write or edit posts/pages as usual.
-- The plugin auto-inserts links on frontend display.
+- Write or edit posts as usual. The plugin automatically inserts links on the frontend.
 - Test on a staging site first.
-- **Pro Tip**: Use specific, long-tail keywords for higher relevance and conversions.
+- Monitor performance in WordPress analytics.
+- **Pro Tip**: Use high-converting affiliates like Amazon Associates, hosting providers, or tools relevant to your niche.
 
-## Pro Version
+## Upgrade to Premium
 
-Upgrade for:
-- Unlimited affiliate rules and sites.
-- Click tracking and performance analytics.
-- A/B testing for link placements.
-- Priority support.
+Unlock advanced features at [example.com/premium](https://example.com/premium). Freemium model ensures low barrier to entry with high-value upsells.
 
-Purchase at [example.com/pro](https://example.com/pro) ($49/year).
+## Support
+
+- Free support via WordPress.org forums.
+- Premium users get dedicated email support.
+
+## Changelog
+
+**1.0.0**
+- Initial release.
