@@ -1,83 +1,55 @@
 # AI Content Optimizer Pro
 
-[![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url] [![Activity][activity-shield]][activity-url]
+[![WordPress plugin](https://img.shields.io/wordpress/plugin/free)](https://wordpress.org/plugins/ai-content-optimizer/) [![Tested up to WP 6.6](https://img.shields.io/wordpress/v/ai-content-optimizer.svg)](https://wordpress.org/plugins/ai-content-optimizer/)
 
-AI-powered WordPress plugin to analyze and optimize your content for SEO, readability, and engagement. Free version offers basic analysis; **Pro** unlocks AI rewriting, bulk processing, and more.
+**AI-powered plugin that instantly analyzes your post's readability, SEO, and engagement scores right in the editor. Free basic analysis; premium unlocks advanced AI features.**
 
-## 🚀 **Why AI Content Optimizer Pro?**
+## Features
 
-- **Instant Analysis**: Get readability scores, word counts, and SEO insights in seconds.
-- **AI-Powered (Pro)**: Automatically rewrite content for better engagement.
-- **Easy to Use**: Paste content in the dashboard and optimize on the fly.
-- **Freemium Model**: Start free, upgrade for advanced features.
+### Free Version
+- **Real-time Content Analysis**: Get **readability**, **SEO**, and **engagement** scores in the post editor sidebar.
+- **Basic Heuristics**: Powered by smart algorithms checking word count, sentence length, and structure.
+- **Settings Page**: Configure basic options from WP Admin.
 
-## ✨ **Free Features**
+### Premium Version ($49/year)
+- **AI Rewrite Suggestions**: One-click improvements using advanced AI.
+- **Bulk Optimization**: Optimize all posts at once.
+- **Keyword Research**: Integrated SEO keyword tools.
+- **Priority Support**: Email support within 24 hours.
+- **Remove Upsells**: Clean, pro interface.
 
-- Content analysis (readability, SEO score, word/sentence count)
-- Basic recommendations
-- Single post optimization
+## Installation
 
-## 💎 **Pro Features** (Upgrade for $9/mo)
+1. Download the plugin ZIP from [WordPress.org](https://wordpress.org/plugins/ai-content-optimizer/) or upload via WP Admin.
+2. Activate the plugin through the 'Plugins' screen in WordPress.
+3. Go to **Posts > Add New** to see the AI sidebar in action.
 
-- **AI Content Rewriting**: Smart rewrites for higher engagement
-- Bulk optimization for multiple posts
-- Unlimited scans
-- Priority support
-- Export reports
+## Setup
 
-## 📦 **Installation**
+1. **Access Settings**: Go to **Settings > AI Optimizer** for configuration.
+2. **Usage in Editor**: Edit any post/page; scores update automatically.
+3. **Upgrade**: Click the premium upsell in the meta box or sidebar for full features.
 
-1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > AI Content Optimizer** to start!
+## Usage
 
-## ⚙️ **Setup**
+- **Post Editor**: Scores appear in the right sidebar. Aim for 80%+ in all categories.
+- **Interpreting Scores**:
+  - **Readability**: Higher = easier to read (shorter sentences).
+  - **SEO**: Checks length, structure, keywords.
+  - **Engagement**: Based on paragraphs, lists, headings.
+- **Premium Tip**: Integrate with OpenAI API for real AI rewrites (docs included).
 
-1. **Free Version**: Paste content and click **Analyze**.
-2. **Pro Activation**: Enter your license key (demo: `pro-demo123`) in the settings.
-3. **Integrate**: Use in post editor or bulk tools (Pro).
+## FAQ
 
-## 📖 **Usage**
+**Is it really AI?** Free version uses heuristics; premium integrates true AI APIs.
 
-1. Navigate to **Settings > AI Content Optimizer**.
-2. Paste your post content.
-3. Click **Analyze Content**.
-4. Review scores and recommendations.
-5. **Pro**: Get AI rewrite and apply changes.
+**Monetization Ready**: Built with freemium upsells for developers.
 
-### Example Output
+## Changelog
 
-- **Readability**: 65 (Good for general audience)
-- **SEO Score**: 85%
-- **Recommendations**:
-  - Add more content for better SEO.
-  - Simplify sentences.
+**1.0.0** - Initial release with core analysis and upsells.
 
-## 🤝 **Support**
+**Support**: Free users - WordPress.org forums. Pro users - premium@example.com.
 
-- Free: WordPress.org forums
-- Pro: Priority email support
-
-## 📈 **Monetization Potential**
-
-- **Freemium Upsell**: 40% conversion rate typical[6]
-- **Subscription**: Recurring revenue[1][2]
-- **Market**: Millions of WordPress bloggers/SEOs
-
-## 🔗 **Upgrade to Pro**
-
-Visit [aicontentoptimizer.com/pro](https://example.com/pro) for subscription.
-
-[contributors-shield]: https://img.shields.io/github/contributors/example/repo.svg?style=for-the-badge
-[contributors-url]: https://github.com/example/repo/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/example/repo.svg?style=for-the-badge
-[forks-url]: https://github.com/example/repo/network/members
-[stars-shield]: https://img.shields.io/github/stars/example/repo.svg?style=for-the-badge
-[stars-url]: https://github.com/example/repo/stargazers
-[issues-shield]: https://img.shields.io/github/issues/example/repo.svg?style=for-the-badge
-[issues-url]: https://github.com/example/repo/issues
-[license-shield]: https://img.shields.io/github/license/example/repo.svg?style=for-the-badge
-[license-url]: https://github.com/example/repo/blob/master/LICENSE.txt
-[activity-shield]: https://img.shields.io/github/last-commit/example/repo.svg?style=for-the-badge
-[activity-url]: https://github.com/example/repo/commits/master
+---
+*Developed for profitability with freemium model. Submit to WP.org for max exposure.*
