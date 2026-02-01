@@ -1,37 +1,34 @@
 # Smart Donation Pro
 
-A lightweight, self-contained WordPress plugin for easy donation collection with progress tracking, PayPal integration, and customizable forms. Perfect for bloggers, creators, and non-profits.[1][3]
-
 ## Features
-- **Customizable donation forms** via shortcode `[smart_donation goal="1000" title="Support Us!"]`.
-- **Progress bar** showing real-time donation goals.
-- **PayPal integration** for one-time donations (Stripe in Pro).
-- **Admin dashboard** for settings and total tracking.
-- **Mobile-responsive** design.
-- **Freemium**: Upgrade for recurring payments, analytics, and more.
+- **Easy Donation Buttons**: Add customizable donation forms anywhere with a simple shortcode `[smart_donation]`.
+- **Progress Bars**: Visual fundraising goal tracker to motivate more donations[1][3].
+- **PayPal Integration**: Secure one-time payments via PayPal (Pro: recurring subscriptions)[1][3].
+- **Customizable**: Set button text, currency, goals, and progress visibility from settings.
+- **Mobile-Responsive**: Works perfectly on all devices.
+- **Freemium Upsell**: Pro version adds analytics, recurring payments, and themes for higher revenue.
 
 ## Installation
-1. Download and upload the single PHP file to `/wp-content/plugins/smart-donation-pro/`.
-2. Activate the plugin in WordPress Admin > Plugins.
-3. Go to Settings > Donation Pro to set your PayPal email.
-4. Add shortcode to any page/post: `[smart_donation]`. Customize with `goal`, `title`, `button_text`.
+1. Download and upload the plugin ZIP to your `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Donation Pro** to configure your PayPal email and options.
 
 ## Setup
-- **PayPal**: Enter your PayPal email in settings. Donations redirect to PayPal.
-- **Goals**: Set `goal` attribute (e.g., `goal="5000"` for $5,000 target).
-- **Currency**: Defaults to `$`, editable via shortcode.
+1. In **Settings > Donation Pro**:
+   - Enter your PayPal email.
+   - Set goal amount and currency (e.g., USD).
+   - Customize button text (e.g., "Buy Me a Coffee").
+   - Enable progress bar.
+2. Save settings.
 
 ## Usage
-1. Create a page: "Support My Work".
-2. Insert `[smart_donation goal="1000" title="Help Reach Our Goal!" button_text="Contribute"]`.
-3. Track total donations in settings page.
-4. **Pro Upgrade**: Recurring subs, Stripe, email notifications ($29/year).[1][6]
+- Use shortcode `[smart_donation]` in posts, pages, or widgets.
+- Optional: `[smart_donation amount="20"]` pre-fills amount.
+- Embed in sidebars, footers, or content for maximum visibility.
+- Track progress in settings; donations update current amount.
 
-## FAQ
-- **Tracks totals?** Yes, persists across sessions.
-- **GDPR compliant?** No personal data stored.
+## Pro Upgrade
+Unlock recurring donations, detailed analytics, custom themes, and priority support for $29/year. Perfect for bloggers and non-profits[1][6].
 
-## Changelog
-- 1.0.0: Initial release.
-
-> Boost donations with progress visuals – proven to increase engagement![6]
+## Support
+Contact support@example.com or visit our documentation.
