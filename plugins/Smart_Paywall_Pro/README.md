@@ -1,47 +1,53 @@
 # Smart Paywall Pro
 
-**AI-Powered Content Monetization for WordPress.**
-
-Turn your blog or site into a revenue machine with automatic paywalls on high-value content. Freemium model with pro upgrades.
+**Transform your WordPress site into a revenue machine with intelligent paywalls.** Automatically teaser premium content and convert visitors into paying subscribers with one-click payments.
 
 ## Features
 
-- **Auto-Paywall**: Automatically applies paywalls to long posts (configurable preview words)[1][2].
-- **Tiered Pricing**: Monthly ($9.99), Yearly ($99, 20% savings), One-time access[1][6].
-- **Freemium Teasers**: Show previews to hook readers[6].
-- **Shortcode Support**: `[smart_paywall content="Your protected content"]`.
-- **Pro Features** (paid upgrade): Stripe integration, A/B testing, analytics dashboard, unlimited paywalls.
-- **Mobile-Responsive**: Clean modals work on all devices[2].
+- **Auto-Paywall**: Automatically limits content to first 100 words on designated posts/pages[1][6].
+- **Freemium Teasers**: Show previews to hook readers, then prompt subscription[1][6].
+- **Tiered Pricing**: Supports monthly ($9.99), yearly discounts (20% off)[1].
+- **One-Click Subscribe**: Email capture with Stripe-ready integration (Pro).
+- **Shortcode Support**: `[paywall_teaser price="9.99" period="month"]` for custom placement.
+- **Analytics Ready**: Track impressions and conversions (Pro)[2].
+- **Mobile Responsive**: Works on all devices.
+
+**Free vs Pro**
+
+| Feature | Free | Pro ($49/year) |
+|---------|------|----------------|
+| Paywalls | 5 | Unlimited |
+| A/B Testing | No | Yes |
+| Stripe Integration | No | Yes |
+| Analytics | Basic | Advanced |
 
 ## Installation
 
-1. Upload the `smart-paywall-pro` folder to `/wp-content/plugins/`.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. Configure in **Settings > Smart Paywall**.
+3. Mark posts for paywall: Edit post > Check "Enable Paywall" meta box.
 
 ## Setup
 
-1. Go to **Settings > Smart Paywall**.
-2. Enable paywall and set preview words (default: 100).
-3. Set prices (psychological pricing: $9.99/mo recommended)[1][6].
-4. **Pro**: Enter Stripe keys for live payments.
-5. Save and test on a post.
+1. Go to **Settings > Smart Paywall** (Pro unlocks full settings).
+2. Set teaser word limit (default: 100).
+3. Configure pricing: Monthly $9.99, Yearly $99 (20% discount)[1].
+4. **Pro Only**: Enter Stripe API keys for live payments[3].
+5. Use shortcode `[paywall_teaser]` in content.
 
 ## Usage
 
-- **Automatic**: Applies to all single posts exceeding preview length.
-- **Manual**: Use shortcode `[smart_paywall content="Full premium content here"]`.
-- **Bypass**: Logged-in users see full content.
-- **Customization**: Edit CSS/JS in plugin settings (pro).
+- **Automatic**: Tag any post/page with paywall meta box.
+- **Manual**: Insert shortcode for custom paywalls.
+- **Subscriptions**: Visitors enter email; Pro handles real payments and unlocks content via user meta.
+- **Testing**: View site in incognito; teaser shows, full content hidden.
 
 ## Monetization Tips
 
-- Offer free trials or freemium to boost conversions (40% rate)[6].
-- Use hybrid model: Subscriptions + one-time[1].
-- Upsell pro version on your site or WordPress.org.
+- Use pricing psychology: $9.99 > $10 (28% higher conversions)[6].
+- Offer free trials/freemium (40% upgrade rate)[6].
+- Tiered plans for upsells[1].
 
-## Support
+**Upgrade to Pro**: [Get Pro Now](https://example.com/upgrade) for full monetization power.
 
-Report issues on WordPress.org forums. Pro support via email.
-
-**Upgrade to Pro for full payments & analytics!**
+**Support**: Contact support@example.com | Compatible with latest WordPress.
