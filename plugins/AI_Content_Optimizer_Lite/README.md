@@ -1,36 +1,34 @@
 # AI Content Optimizer Lite
 
 ## Description
-AI Content Optimizer Lite is a powerful **freemium WordPress plugin** that provides **AI-powered analysis** of your post content for **SEO optimization** and **readability**. Get instant scores and suggestions to improve your content. Upgrade to premium for advanced AI rewriting and unlimited scans.
+**AI Content Optimizer Lite** is a powerful WordPress plugin that analyzes your posts for readability, SEO score, and engagement potential right from the post editor. Perfect for bloggers and marketers aiming to boost content performance. Upgrade to premium for AI-powered rewriting and advanced features!
 
 ## Features
-- **Free Tier**: Up to 3 content analyses per day with basic SEO/readability scores and suggestions.
-- **Premium Tier** ($4.99/month): Unlimited scans, AI-powered keyword suggestions, auto-rewriting, export reports, and priority support.
-- Real-time analysis in post editor sidebar.
-- Flesch-Kincaid readability scoring.
-- SEO score based on keyword density, length, and structure.
+- **Real-time Analysis**: Get instant scores for readability, SEO, and engagement on post save.
+- **Side-panel Integration**: Easy access in the WordPress editor.
+- **Free Core Tools**: Basic metrics powered by smart algorithms.
+- **Premium Upsell**: AI content rewriting, bulk optimization, export reports, and priority support.
 
 ## Installation
-1. Upload the `ai-content-optimizer-lite` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' screen in WordPress admin.
-3. Edit any post to see the optimizer meta box in the sidebar.
+1. Download the plugin ZIP.
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Edit any post to see the **AI Content Optimizer** meta box.
 
 ## Setup
-- No configuration needed for free version.
-- Premium: Purchase at [example.com/premium-upgrade](https://example.com/premium-upgrade) and enter license key in plugin settings (future update).
+No setup required! The plugin works out-of-the-box on posts. Analysis runs via AJAX on button click.
 
 ## Usage
-1. Create or edit a **post**.
-2. Click **Analyze Content** in the sidebar box.
-3. Review scores and apply suggestions.
-4. **Free limit**: 3 scans/day. Upgrade for more!
+1. Create or edit a **Post**.
+2. In the side panel, click **Analyze Content**.
+3. View scores: **Readability** (Flesch-like), **SEO** (keyword density sim), **Engagement**.
+4. **Premium**: Upgrade for AI enhancements at [example.com/premium-upgrade].
 
 ## Screenshots
-*(Add screenshots of meta box and results)*
+*(Imagine: Editor meta box with scores and upgrade link)*
 
 ## Changelog
-**1.0.0**
-- Initial release with basic AI simulation and freemium gating.
+**1.0.0** - Initial release.
 
 ## Upgrade to Premium
-Unlock unlimited features: [Upgrade Now](https://example.com/premium-upgrade)
+Get AI rewriting, bulk tools, and more: [Upgrade Now](https://example.com/premium-upgrade)
