@@ -1,60 +1,43 @@
 # AI Content Optimizer Pro
 
-[![Contributors](https://img.shields.io/badge/contributors-welcome-brightgreen.svg?style=flat)](https://github.com/example/ai-content-optimizer)
+## Description
+**AI Content Optimizer Pro** is a powerful WordPress plugin that uses mock AI algorithms to analyze your post and page content for **SEO score**, readability, word count, and engagement potential. Get instant insights to improve your content right from the editor.
 
-**AI-powered WordPress plugin that instantly analyzes your posts for SEO, readability, and engagement scores. Free basic analysis; Pro unlocks AI rewriting and advanced features.**
+Free version provides basic analysis. **Premium** unlocks AI-powered rewrite suggestions, bulk optimization, and advanced metrics.[1][2]
 
 ## Features
-
-### Free Version
-- **Instant Content Analysis**: Get SEO score, readability insights, and optimization suggestions right in the post editor.
-- **Key Metrics**: Word count, heading structure, content length checks.
-- **Side Meta Box**: Easy access without leaving the editor.
-
-### Pro Version ($9/mo or $99/yr)
-- **AI-Powered Rewriting**: Automatically improve content with GPT-like suggestions.
-- **Keyword Research**: AI-driven keyword recommendations and density optimization.
-- **Bulk Optimization**: Analyze and fix multiple posts at once.
-- **Priority Support & Updates**: Ongoing improvements and dedicated help.
-- **Advanced Metrics**: Engagement predictions, competitor analysis integration.
+- **Real-time Content Analysis**: SEO score, readability (Flesch index), word/sentence count.
+- **Sidebar Meta Box**: Analyze directly in post/page editor.
+- **Freemium Upsell**: Tease premium features with upgrade links.
+- **Settings Page**: Manage premium license.
+- **Premium (Paid)**: AI rewrites, bulk processing, priority support ($4.99/mo).
 
 ## Installation
-
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit any post/page – find the **AI Content Optimizer** meta box on the side.
-4. Click **Analyze Content** to see your score and tips.
+1. Download the plugin ZIP.
+2. In WordPress admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Access settings at **Settings > AI Optimizer**.
 
 ## Setup
-
-- No configuration needed for free version.
-- **Pro Setup**: After purchase, enter your license key in **Settings > AI Content Optimizer** and add your OpenAI API key for AI features.
+1. Go to **Settings > AI Optimizer**.
+2. Enter your **Premium License Key** (demo: use any key hashing to 'demo_premium_hash' for testing).
+3. Edit any post/page – see the **AI Content Optimizer** sidebar.
 
 ## Usage
+1. Edit a **post** or **page**.
+2. Scroll to the **AI Content Optimizer** sidebar.
+3. Click **Analyze Content** for instant score and tips.
+4. **Free**: Basic metrics.
+5. **Premium**: Advanced AI suggestions appear.
 
-1. **Create/Edit Post**: Open any post or page.
-2. **Analyze**: Click "Analyze Content" in the meta box.
-3. **Review Results**: See your **SEO Score** (0-100%) and bullet-point suggestions.
-4. **Optimize**: Apply suggestions manually (free) or upgrade for AI auto-fixes.
-5. **Pro Tips**: Use bulk tools in Pro for sites with 50+ posts.
-
-### Example Output
- SEO Score: 85% - Add more content (aim for 500+ words). - Use more H2 headings. 
-
-## Upgrade to Pro
-
-[Get Pro Now](https://example.com/pricing/) – 7-day money-back guarantee. Join 1,000+ sites boosting traffic with AI optimization.
-
-## Support
-
-- **Free**: WordPress.org forums.
-- **Pro**: Priority email support.
+## Premium Upgrade
+- Recurring revenue via subscription.
+- Links direct to your sales page: https://example.com/premium
+- High conversion potential (40% freemium to premium).[6]
 
 ## Changelog
-
 **1.0.0**
-- Initial release with basic analysis.
+- Initial release with core analysis and freemium model.
 
-## License
-
-GPL v2 or later. See [GNU GPL](https://www.gnu.org/licenses/gpl-2.0.html).
+## Support
+Report issues on WordPress.org or premium support for paid users.
