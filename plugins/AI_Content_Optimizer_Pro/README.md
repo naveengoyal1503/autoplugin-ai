@@ -1,32 +1,37 @@
 # AI Content Optimizer Pro
 
 ## Description
-**AI Content Optimizer Pro** is a powerful WordPress plugin that automatically analyzes your posts and pages for **SEO**, **readability**, and **engagement**. The free version provides basic metrics, while premium unlocks **AI-powered suggestions**, bulk optimization, and advanced features.
+**AI Content Optimizer Pro** is a powerful WordPress plugin that uses AI to analyze and optimize your post content for SEO. The free version provides basic analysis, while premium unlocks advanced AI rewrites, bulk processing, and more for profitable content marketing.[1][2]
 
 ## Features
-- **Free**: Word count, basic readability score, SEO score checker.
-- **Premium** ($9.99/month): AI optimization tips, auto-rewrite suggestions, bulk post analysis, priority support.[1][2]
-- Real-time analysis in post editor.
-- Freemium model encourages upgrades.[6]
+- **Free Version:**
+  - Basic SEO score and keyword suggestions.
+  - Word count analysis and readability tips.
+  - One-click optimization per post.
+- **Premium Features ($4.99/month):**
+  - AI-powered content rewrites for higher rankings.
+  - Bulk optimization for multiple posts/pages.
+  - Auto-generate meta descriptions and headings.
+  - Priority support and unlimited usage.
+  - Export optimization reports.[4][6]
 
 ## Installation
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit a post/page to see the **AI Content Optimizer** meta box.
+3. For premium: Enter your license key in Settings > AI Optimizer.
 
 ## Setup
-1. Go to **Settings > AI Optimizer** to enter your premium license key (if purchased).
-2. Premium features activate automatically.
+1. Go to **Settings > AI Optimizer** to input your premium key (if purchased).
+2. Edit any post; find the **AI Content Optimizer** meta box in the sidebar.
 
 ## Usage
-1. Edit any post or page.
-2. In the **AI Content Optimizer** sidebar, click **Analyze Content**.
-3. View scores and tips instantly.
-4. Premium users get AI suggestions like keyword improvements and structure tips.
+1. Open a post editor.
+2. Click **Optimize Content** in the sidebar meta box.
+3. Review free suggestions or apply premium AI rewrites.
+4. **Upgrade** via the link for advanced features to boost traffic and monetize your site effectively.[1][2][3]
 
-## Monetization
-- **Freemium model**: Upsell from free to premium via in-plugin links.[1][2][4]
-- Subscription for recurring revenue.[2][5]
+## Changelog
+- **1.0.0:** Initial release with freemium model.
 
 ## Support
-Visit [example.com/support](https://example.com/support) or upgrade to premium.
+Visit https://example.com/support for help.
