@@ -1,28 +1,36 @@
 # AI Content Optimizer Pro
 
+## Description
+AI Content Optimizer Pro is a powerful WordPress plugin that analyzes your posts for **readability**, **SEO**, and **engagement** using simulated AI metrics. The free version provides basic scoring; upgrade to Pro for AI-powered rewriting, bulk processing, and more.
+
 ## Features
-- **AI-Powered Analysis**: Instant content scoring for SEO, readability, and engagement.
-- **Smart Suggestions**: Actionable tips to improve your posts (e.g., word count, keywords).
-- **Sidebar Integration**: Works directly in the WordPress post editor.
-- **Freemium Model**: Free core features; Pro unlocks advanced analytics and API integration.
-- **Lightweight**: Single-file plugin, no bloat.
+- **Basic Analysis (Free)**: Get instant scores for readability, SEO, and engagement on post edit screen.
+- **Side Meta Box**: Easy access without leaving your editor.
+- **Premium Features** (subscription $9.99/mo):
+  - AI content rewriting suggestions.
+  - Bulk optimize entire site.
+  - Export reports.
+  - Priority support.
 
 ## Installation
-1. Download the plugin ZIP.
-2. Upload via **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Edit any post to see the optimizer meta box.
 
 ## Setup
-1. Go to **Settings > AI Optimizer** to configure (optional API key for Pro).
-2. Edit any post; find the **AI Content Optimizer** sidebar.
+No setup required for free version. For Pro:
+1. Purchase at [example.com/pro](https://example.com/pro).
+2. Enter license key in **Settings > AI Content Optimizer**.
 
 ## Usage
-1. Write or edit your post.
-2. Click **Analyze Now** in the sidebar.
-3. Review your **score** (0-100%) and **suggestions**.
-4. Optimize content and re-analyze.
+1. Edit a post.
+2. In the side meta box, click **Analyze Content**.
+3. Review scores and tips.
+4. **Pro users**: Click 'Rewrite with AI' for suggestions.
 
-**Pro Upgrade**: Visit example.com/pricing for unlimited analyses and advanced features.
+## Changelog
+**1.0.0**
+- Initial release with basic analysis.
 
 ## Support
-Contact support@example.com
+Free support via WordPress forums. Pro users get email support.
