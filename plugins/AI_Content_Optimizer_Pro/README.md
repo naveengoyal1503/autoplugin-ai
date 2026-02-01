@@ -2,50 +2,39 @@
 
 ## Features
 
-**Free Version:**
-- Real-time content analysis for word count and readability score (Flesch-Kincaid inspired).
-- Side meta box in post editor for quick scans.
-
-**Premium Features (Upgrade for $4.99/month):**
-- **AI-Powered Rewrites:** Automatically improve content readability and engagement.
-- **SEO Keyword Suggestions:** AI-generated keywords based on your content.
-- **Unlimited Scans & Bulk Optimization:** Process entire posts/pages.
-- **Priority Support & Regular Updates.**
-
-Boost your content's SEO and reader engagement effortlessly!
+- **Free Version**: Basic SEO analysis including keyword density checks and simple optimization tips[1][2].
+- **Premium Features** (Subscription $4.99/month): AI-powered content rewriting, bulk post optimization, advanced readability scores, and priority support.
+- Self-contained single-file plugin for easy installation.
+- Admin dashboard for quick content pasting and optimization.
+- Secure AJAX handling with nonces.
 
 ## Installation
 
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit any post – find the **AI Content Optimizer** meta box on the side.
+1. Download the plugin ZIP or copy the PHP code into a file named `ai-content-optimizer-pro.php`.
+2. Upload via WordPress Admin > Plugins > Add New > Upload Plugin.
+3. Activate the plugin.
+4. Access via Settings > AI Optimizer.
 
 ## Setup
 
-No setup required for free version. Click **Analyze Content** in the meta box after writing.
-
-**Premium:** Purchase at [example.com/premium-upgrade](https://example.com/premium-upgrade), get license key, enter in Settings > AI Optimizer.
+- **Free**: Use immediately after activation.
+- **Premium**: Enter your license key in the plugin settings (simulated here; integrate with Freemius or similar for real sales[5]).
+- No API keys needed for basic; premium uses placeholder for OpenAI integration.
 
 ## Usage
 
-1. **Write your post** in the editor.
-2. Click **Analyze Content** in the side meta box.
-3. View **basic results** (word count, readability score).
-4. **Upgrade to Pro** for AI magic: rewrites, keywords, and more!
+1. Go to **Settings > AI Optimizer**.
+2. Paste content into the textarea.
+3. Click **Optimize Content**.
+4. Review suggestions and copy optimized text.
+5. **Upgrade Prompt**: Non-premium users see upsell notice linking to your sales page.
 
-**Example Output (Free):**
-- Words: 250
-- Readability: 65.2 (Good)
+## Monetization Notes
 
-## FAQ
+- **Freemium Model**: Drives upgrades via feature gating[1][2][5].
+- Integrate with WooCommerce or Freemius for real payments.
+- Target WordPress.org submission for free version visibility[4].
 
-**Why upgrade?** Free gives basics; Pro uses advanced AI for pro-level optimization.
+## Support
 
-**Support:** Free users – forums. Pro – email support.
-
-## Changelog
-
-**1.0.0**
-- Initial release with free analysis.
-
-**Upgrade Today:** [Get Premium](https://example.com/premium-upgrade)
+Contact support@example.com. Premium users get priority.
