@@ -1,30 +1,47 @@
 # Smart Paywall Pro
 
+**AI-Powered Content Monetization for WordPress.**
+
+Turn your blog or site into a revenue machine with automatic paywalls on high-value content. Freemium model with pro upgrades.
+
 ## Features
 
-- **Auto-Paywall High-Traffic Posts**: Automatically enables paywall on posts with >1000 views.
-- **Freemium Preview**: Shows first 500 words free, then prompts payment.
-- **Tiered Pricing**: $4.99/month subscription or $9.99 one-time access.
-- **View Tracking**: Built-in analytics for post views.
-- **Shortcode Support**: `[smart_paywall]` for manual paywalls.
-- **Pro Upgrades**: Stripe/PayPal integration, A/B testing, custom tiers ($49/year).
+- **Auto-Paywall**: Automatically applies paywalls to long posts (configurable preview words)[1][2].
+- **Tiered Pricing**: Monthly ($9.99), Yearly ($99, 20% savings), One-time access[1][6].
+- **Freemium Teasers**: Show previews to hook readers[6].
+- **Shortcode Support**: `[smart_paywall content="Your protected content"]`.
+- **Pro Features** (paid upgrade): Stripe integration, A/B testing, analytics dashboard, unlimited paywalls.
+- **Mobile-Responsive**: Clean modals work on all devices[2].
 
 ## Installation
 
 1. Upload the `smart-paywall-pro` folder to `/wp-content/plugins/`.
 2. Activate via **Plugins > Installed Plugins**.
-3. No setup required—paywalls auto-activate on popular posts.
+3. Configure in **Settings > Smart Paywall**.
 
 ## Setup
 
-- Edit posts to toggle paywall manually (custom field `spp_paywall`).
-- Pro: Go to **Settings > Reading** to add API keys.
+1. Go to **Settings > Smart Paywall**.
+2. Enable paywall and set preview words (default: 100).
+3. Set prices (psychological pricing: $9.99/mo recommended)[1][6].
+4. **Pro**: Enter Stripe keys for live payments.
+5. Save and test on a post.
 
 ## Usage
 
-- Publish content; plugin tracks views and adds paywalls automatically.
-- Use shortcode `[smart_paywall]` in posts/pages.
-- Test: Visit a post as guest to see overlay.
-- **Monetization Tip**: Offer free trials to convert 40% to paid (industry stat).
+- **Automatic**: Applies to all single posts exceeding preview length.
+- **Manual**: Use shortcode `[smart_paywall content="Full premium content here"]`.
+- **Bypass**: Logged-in users see full content.
+- **Customization**: Edit CSS/JS in plugin settings (pro).
 
-**Upgrade to Pro** for live payments and analytics. Contact support@example.com.
+## Monetization Tips
+
+- Offer free trials or freemium to boost conversions (40% rate)[6].
+- Use hybrid model: Subscriptions + one-time[1].
+- Upsell pro version on your site or WordPress.org.
+
+## Support
+
+Report issues on WordPress.org forums. Pro support via email.
+
+**Upgrade to Pro for full payments & analytics!**
