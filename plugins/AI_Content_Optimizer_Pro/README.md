@@ -1,42 +1,54 @@
 # AI Content Optimizer Pro
 
+A powerful **freemium** WordPress plugin that uses AI to analyze and optimize your post content for better SEO performance.
+
 ## Features
 
-- **AI-Powered Content Scoring**: Analyzes readability, SEO potential, and engagement score in seconds.
-- **One-Click Optimizations** (Pro): Automatically improves content structure, adds headings, and enhances keywords.
-- **Real-Time Analysis**: Sidebar meta box on post edit screens.
-- **Word Count & Readability Metrics**: Instant insights to boost content quality.
-- **Freemium Model**: Free analysis; Pro unlocks rewrites and schema markup.
-- **Lightweight & Self-Contained**: No external dependencies, works on any WordPress site.
+### Free Version
+- Basic SEO score calculation (up to 3 analyses per day)
+- Keyword density check
+- Readability suggestions
+- Side meta box in post editor
+
+### Premium Version ($4.99/month)
+- **Unlimited analyses**
+- Advanced AI suggestions (mock OpenAI integration ready)
+- **Auto-optimization** button
+- Export reports
+- Priority support
+- White-label option for agencies
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. Upload via **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Edit any post/page to see the AI sidebar analyzer.
+1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Access settings via **Settings > AI Content Optimizer**
+4. Use the meta box in post editor to analyze content
 
 ## Setup
 
-- No configuration needed for free version.
-- **Pro Activation**: Purchase license, then activate via plugin settings (future updates).
+1. **Free**: Start immediately – limited to 3 analyses/day
+2. **Premium**: Enter license key in settings page
+3. Optional: Replace mock AI with real API (OpenAI key in settings)
 
 ## Usage
 
-1. Edit a **Post** or **Page**.
-2. In the sidebar, click **Analyze Content** for instant score.
-3. (Pro) Click **Optimize** to auto-improve content.
-4. Save to apply changes.
+1. Edit any post/page
+2. Look for **AI Content Optimizer** sidebar box
+3. Click **Analyze** for instant SEO score and tips
+4. Premium users: Click **Auto-Optimize** for hands-free improvements
+5. Check score updates live
 
-## Pro Features ($49/year)
+## Monetization for Developers
 
-- Unlimited optimizations.
-- Advanced AI rewrites.
-- SEO schema integration.
-- Priority support.
+- Submit free version to WordPress.org for visibility[1][5]
+- Upsell premium via in-plugin prompts
+- Offer add-ons like industry-specific templates
+- Affiliate integrations possible
 
 ## Support
 
-Contact support@example.com. Check [WordPress.org](https://wordpress.org) for updates.
+- Free: WordPress.org forums
+- Premium: Dedicated email support
 
-**Upgrade today for content that converts!**
+**Upgrade today for unlimited power!**
