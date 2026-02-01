@@ -1,57 +1,52 @@
 # Smart Affiliate AutoInserter
 
-**Automatically inserts relevant Amazon affiliate links into your WordPress posts and pages** to generate passive income from your content.[4][6]
+**Automatically boosts your affiliate earnings by inserting relevant Amazon links into posts using smart keyword matching.**
 
 ## Features
 
-- **Automatic Link Insertion**: Scans post content for predefined keywords and replaces them with your Amazon affiliate links.
-- **Easy Keyword Management**: Add keywords and matching Amazon ASINs via simple admin interface.
-- **Mobile-Responsive Links**: Clean, nofollow links that work perfectly on all devices.[2]
-- **Freemium Model**: Free core features; Pro adds AI suggestions, analytics, and A/B testing.[1][5]
-- **Performance Optimized**: Lightweight with no site slowdown.[5]
-- **One-Click Setup**: Enter your Amazon tag and keywords – links appear instantly in posts.
+- **AI-Powered Keyword Matching**: Scans content for product-related keywords and inserts Amazon affiliate links automatically.
+- **Freemium Model**: Free version limits to 2 links per post; Pro unlocks unlimited links, analytics, A/B testing, and multi-network support.
+- **Mobile-Responsive**: Links work perfectly on all devices.
+- **Easy Setup**: Enter your Amazon API key and affiliate tag – done!
+- **SEO-Friendly**: Uses `nofollow sponsored` attributes for compliance.
+- **Performance Optimized**: Lightweight with no bloat.
+
+**Pro Features (Upgrade for $29/year)**:
+- Unlimited links per post
+- Detailed click analytics dashboard
+- Support for other networks (e.g., ShareASale)
+- Custom link templates and positioning
+- A/B testing for higher conversions
 
 ## Installation
 
-1. Download the plugin ZIP file.
-2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate **Smart Affiliate AutoInserter**.
-4. Configure in **Settings > Affiliate Inserter**.
+1. Download and upload the plugin ZIP to your WordPress site via **Plugins > Add New > Upload Plugin**.
+2. Activate the plugin.
+3. Go to **Settings > Affiliate Inserter** to enter your Amazon Associates API key and affiliate tag (e.g., `yourid-20`).
+4. Save settings – links will auto-insert on new and existing posts!
 
 ## Setup
 
-1. **Get Amazon Affiliate Tag**: Sign up at [Amazon Associates](https://affiliate-program.amazon.com/) and copy your tag (e.g., `yourid-20`).[4]
-2. **Add Keywords & ASINs**:
-   - Go to **Settings > Affiliate Inserter**.
-   - Enter your Amazon tag.
-   - Add pairs like: Keyword=`best laptop`, ASIN=`B08N5WRWNW`.
-   - Save changes.
-3. **Test**: Edit a post containing your keyword – the link auto-appears on frontend.
+1. Sign up for [Amazon Associates](https://affiliate-program.amazon.com/) if you haven't.
+2. Get your Product Advertising API key from Amazon.
+3. Input credentials in plugin settings.
+4. Adjust free limit (default: 2 links/post) or upgrade to Pro.
 
 ## Usage
 
-- Write content naturally using your keywords.
-- Links insert automatically on single post pages.
-- **Pro Tip**: Use high-conversion keywords from your analytics for max earnings.[2][5]
-- Earn commissions on every qualifying purchase via your affiliate links.[1][6]
+- **Automatic**: Links insert on publish/update. Targets singular posts/pages.
+- **Test It**: Create a post with words like "laptop", "coffee", or "book" to see demo links.
+- **Customize**: Pro users can set positions (e.g., after first paragraph) and exclude pages.
+- **Track Earnings**: Monitor Amazon Associates dashboard for commissions.
 
-### Example
+## FAQ
 
-**Post Content**: "Looking for the **best laptop** under $1000?"
+**Does it slow my site?** No, it's lightweight and uses efficient regex matching.
 
-**Becomes**: "Looking for the <a href="https://amazon.com/dp/B08N5WRWNW?tag=yourid-20">best laptop</a> under $1000?"
+**Compliant with Amazon TOS?** Yes, uses proper tagging and nofollow.
 
-## Pro Version ($29/year)
+**Production API**: Demo uses mock data; replace `search_amazon_product()` with real Amazon PA-API calls.
 
-- AI-powered keyword discovery from your content.
-- Click tracking and performance analytics.
-- A/B testing for link placements.
-- Priority support.
+**Support**: Free users – forums. Pro – priority email support.
 
-## Support
-
-Report issues on the [WordPress.org forum](https://wordpress.org/support/plugin/smart-affiliate-autoinserter).
-
-## Changelog
-
-**1.0.0** - Initial release with auto-insertion and keyword manager.
+**Upgrade**: [Get Pro Now](https://example.com/pro) for max earnings!
