@@ -6,125 +6,118 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Affiliate AutoLink Pro
  * Plugin URI: https://example.com/affiliate-autolink-pro
- * Description: Automatically detects keywords in your content and converts them into cloaked affiliate links from Amazon, boosting commissions with smart tracking and performance reports.
+ * Description: Automatically converts keywords in posts to affiliate links. Freemium model.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: affiliate-autolink-pro
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit; // Exit if accessed directly
 }
 
 class AffiliateAutoLinkPro {
-    private $api_key;
-    private $affiliate_id;
-    private $keywords;
-    private $enabled;
+    private static $instance = null;
 
-    public function __construct() {
+    public static function get_instance() {
+        if (null == self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_filter('the_content', array($this, 'replace_keywords'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_init', array($this, 'admin_init'));
+        add_action('wp_head', array($this, 'inject_links'));
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        $this->api_key = get_option('aalp_api_key', '');
-        $this->affiliate_id = get_option('aalp_affiliate_id', '');
-        $this->keywords = get_option('aalp_keywords', array());
-        $this->enabled = get_option('aalp_enabled', true);
+        load_plugin_textdomain('affiliate-autolink-pro');
+        if (is_admin()) {
+            add_action('admin_init', array($this, 'admin_init'));
+        }
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('aalp-script', plugin_dir_url(__FILE__) . 'js/aalp.js', array('jquery'), '1.0.0', true);
-    }
-
-    public function replace_keywords($content) {
-        if (!$this->enabled || empty($this->keywords) || empty($this->affiliate_id)) {
-            return $content;
-        }
-
-        foreach ($this->keywords as $keyword => $asin) {
-            $link = $this->generate_amazon_link($asin);
-            $regex = '/\b' . preg_quote($keyword, '/') . '\b/i';
-            $content = preg_replace($regex, '<a href="' . esc_url($link) . '" target="_blank" rel="nofollow noopener" class="aalp-link">$0</a>', $content, 1);
-        }
-        return $content;
-    }
-
-    private function generate_amazon_link($asin) {
-        $url = 'https://www.amazon.com/dp/' . $asin . '?tag=' . $this->affiliate_id;
-        return $url;
+        wp_enqueue_script('aalp-script', plugin_dir_url(__FILE__) . 'aalp.js', array('jquery'), '1.0.0', true);
     }
 
     public function admin_menu() {
-        add_options_page('Affiliate AutoLink Pro', 'AutoLink Pro', 'manage_options', 'aalp-settings', array($this, 'settings_page'));
+        add_options_page(
+            'Affiliate AutoLink Pro Settings',
+            'Affiliate AutoLink',
+            'manage_options',
+            'aalp-settings',
+            array($this, 'settings_page')
+        );
     }
 
     public function admin_init() {
-        register_setting('aalp_settings', 'aalp_api_key');
-        register_setting('aalp_settings', 'aalp_affiliate_id');
         register_setting('aalp_settings', 'aalp_keywords');
-        register_setting('aalp_settings', 'aalp_enabled');
+        register_setting('aalp_settings', 'aalp_amazon_id');
     }
 
     public function settings_page() {
         ?>
         <div class="wrap">
-            <h1>Affiliate AutoLink Pro Settings</h1>
+            <h1><?php _e('Affiliate AutoLink Pro Settings', 'affiliate-autolink-pro'); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields('aalp_settings'); ?>
                 <?php do_settings_sections('aalp_settings'); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Enable Auto-Linking</th>
-                        <td><input type="checkbox" name="aalp_enabled" value="1" <?php checked(get_option('aalp_enabled')); ?> /></td>
+                        <th><?php _e('Amazon Affiliate ID', 'affiliate-autolink-pro'); ?></th>
+                        <td><input type="text" name="aalp_amazon_id" value="<?php echo esc_attr(get_option('aalp_amazon_id')); ?>" class="regular-text" /></td>
                     </tr>
                     <tr>
-                        <th>Amazon Affiliate ID (tag)</th>
-                        <td><input type="text" name="aalp_affiliate_id" value="<?php echo esc_attr(get_option('aalp_affiliate_id')); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr>
-                        <th>Keywords (JSON: {"keyword":"ASIN"})</th>
-                        <td><textarea name="aalp_keywords" rows="10" cols="50"><?php echo esc_textarea(json_encode(get_option('aalp_keywords'))); ?></textarea><br><small>Example: {"iPhone":"B08N5WRWNW","Laptop":"B09G9FPGT6"}</small></td>
+                        <th><?php _e('Keywords (JSON format: {"keyword":"product_asin"})', 'affiliate-autolink-pro'); ?></th>
+                        <td><textarea name="aalp_keywords" rows="10" cols="50"><?php echo esc_textarea(get_option('aalp_keywords')); ?></textarea>
+                        <p class="description">Example: {"WordPress":"B08N5WRWNW","Plugin":"B01M4P6RRA"}</p>
+                        </td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
-            <h2>Performance Report (Free Version Limited)</h2>
-            <p>Upgrade to Pro for click tracking and analytics.</p>
+            <h2>Upgrade to Pro</h2>
+            <p>Unlock A/B testing, analytics, and more networks for $49/year. <a href="https://example.com/pro">Get Pro</a></p>
         </div>
         <?php
     }
 
+    public function inject_links() {
+        if (is_admin()) return;
+        $keywords = json_decode(get_option('aalp_keywords', '{}'), true);
+        $amazon_id = get_option('aalp_amazon_id', '');
+        if (empty($keywords) || empty($amazon_id)) return;
+
+        $script = '<script>var aalp_keywords = ' . json_encode($keywords) . '; var aalp_affid = \'' . esc_js($amazon_id) . '\'; </script>';
+        echo $script;
+    }
+
     public function activate() {
-        add_option('aalp_enabled', true);
+        add_option('aalp_keywords', '{}');
     }
 
-    public function deactivate() {
-        // Cleanup if needed
-    }
+    public function deactivate() {}
 }
 
-new AffiliateAutoLinkPro();
+AffiliateAutoLinkPro::get_instance();
 
-// Pro upgrade notice
-function aalp_pro_notice() {
-    if (!current_user_can('manage_options')) return;
-    echo '<div class="notice notice-info"><p><strong>Affiliate AutoLink Pro:</strong> Unlock unlimited keywords and analytics. <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
+// JavaScript for link replacement
+function aalp_replace_links() {
+    jQuery(document).ready(function($) {
+        Object.keys(aalp_keywords).forEach(function(keyword) {
+            var asin = aalp_keywords[keyword];
+            var link = 'https://amazon.com/dp/' + asin + '?tag=' + aalp_affid;
+            $('*').html(function(_, html) {
+                return html.replace(new RegExp('\\b' + keyword + '\\b', 'gi'), '<a href="' + link + '" target="_blank" rel="nofollow">$&</a>');
+            });
+        });
+    });
 }
-add_action('admin_notices', 'aalp_pro_notice');
-
-// Create JS file placeholder (in real plugin, include actual file)
-// For single-file, inline simple JS
-add_action('wp_head', function() {
-    ?>
-    <script>jQuery(document).ready(function($) { $('.aalp-link').on('click', function() { console.log('Affiliate link clicked'); }); });</script>
-    <?php
-});
-
 ?>
