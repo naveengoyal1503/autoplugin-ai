@@ -5,21 +5,26 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart Affiliate Link Manager
- * Plugin URI: https://example.com/smart-affiliate
- * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics.
+ * Plugin URI: https://example.com/smart-affiliate-link-manager
+ * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics and A/B testing.
  * Version: 1.0.0
  * Author: Your Name
+ * Author URI: https://example.com
  * License: GPL v2 or later
+ * Text Domain: smart-affiliate-link-manager
+ * Domain Path: /languages
  */
 
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class SmartAffiliateLinkManager {
     private static $instance = null;
 
     public static function get_instance() {
         if (null == self::$instance) {
-            self::$instance = new self;
+            self::$instance = new self();
         }
         return self::$instance;
     }
@@ -28,134 +33,135 @@ class SmartAffiliateLinkManager {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_sal_update_link', array($this, 'ajax_update_link'));
-        add_shortcode('sal_link', array($this, 'shortcode_link'));
-        add_filter('widget_text', 'shortcode_unautop');
-        add_filter('the_content', 'shortcode_unautop');
+        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+        add_filter('the_content', array($this, 'cloak_links'));
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        // Create table on init if not exists
-        global $wpdb;
-        $table = $wpdb->prefix . 'sal_links';
-        $charset = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            keyword varchar(50) NOT NULL,
-            affiliate_url text NOT NULL,
-            clicks int DEFAULT 0,
-            created datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            UNIQUE KEY keyword (keyword)
-        ) $charset;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-
-        // Auto-cloak links in content
-        add_filter('the_content', array($this, 'cloak_links'));
+        if (!session_id()) {
+            session_start();
+        }
+        $this->create_table();
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sal-frontend', plugin_dir_url(__FILE__) . 'sal-frontend.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sal-frontend', 'sal_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
+        wp_enqueue_script('salml-script', plugin_dir_url(__FILE__) . 'salml.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('salml-script', 'salml_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('salml_nonce')));
     }
 
     public function admin_menu() {
-        add_options_page('Smart Affiliate Links', 'Affiliate Links', 'manage_options', 'sal-links', array($this, 'admin_page'));
+        add_options_page('Smart Affiliate Link Manager', 'Affiliate Manager', 'manage_options', 'salml-settings', array($this, 'settings_page'));
     }
 
-    public function admin_page() {
-        if (isset($_POST['sal_submit'])) {
-            $keyword = sanitize_text_field($_POST['keyword']);
-            $url = esc_url_raw($_POST['url']);
-            global $wpdb;
-            $table = $wpdb->prefix . 'sal_links';
-            $wpdb->replace($table, array('keyword' => $keyword, 'affiliate_url' => $url));
-            echo '<div class="notice notice-success"><p>Link saved!</p></div>';
+    public function admin_enqueue_scripts($hook) {
+        if ('settings_page' !== get_current_screen()->id) return;
+        wp_enqueue_script('salml-admin', plugin_dir_url(__FILE__) . 'salml-admin.js', array('jquery'), '1.0.0', true);
+    }
+
+    public function settings_page() {
+        if (isset($_POST['salml_save'])) {
+            update_option('salml_api_key', sanitize_text_field($_POST['api_key']));
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
-        $links = $this->get_links();
-        ?>
-        <div class="wrap">
-            <h1>Smart Affiliate Link Manager</h1>
-            <form method="post">
-                <table class="form-table">
-                    <tr>
-                        <th>Keyword</th>
-                        <td><input type="text" name="keyword" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : ''; ?>" placeholder="buy now" required /></td>
-                    </tr>
-                    <tr>
-                        <th>Affiliate URL</th>
-                        <td><input type="url" name="url" style="width:100%;" value="<?php echo isset($_POST['url']) ? $_POST['url'] : ''; ?>" required /></td>
-                    </tr>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-            <h2>Your Links</h2>
-            <table class="wp-list-table widefat fixed striped">
-                <thead><tr><th>Keyword</th><th>URL</th><th>Clicks</th></tr></thead>
-                <tbody>
-                <?php foreach ($links as $link): ?>
-                    <tr><td><?php echo esc_html($link->keyword); ?></td><td><?php echo esc_html($link->affiliate_url); ?></td><td><?php echo $link->clicks; ?></td></tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
-            <p><strong>Upgrade to Pro:</strong> A/B testing, reports, unlimited links. <a href="#">Buy now $49/year</a></p>
-        </div>
-        <?php
+        $api_key = get_option('salml_api_key', '');
+        echo '<div class="wrap"><h1>Smart Affiliate Link Manager Settings</h1><form method="post"><table class="form-table"><tr><th>Premium API Key</th><td><input type="text" name="api_key" value="' . esc_attr($api_key) . '" class="regular-text" placeholder="Enter for premium features" /> <p class="description">Get premium key at <a href="https://example.com/premium" target="_blank">example.com/premium</a></p></td></tr></table><p><input type="submit" name="salml_save" class="button-primary" value="Save Settings" /></p></form>';
+        $this->show_stats();
     }
 
-    public function ajax_update_link() {
-        if (!wp_verify_nonce($_POST['nonce'], 'sal_nonce')) return;
+    private function create_table() {
         global $wpdb;
-        $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}sal_links SET clicks = clicks + 1 WHERE keyword = %s", $_POST['keyword']));
-        wp_die();
-    }
-
-    private function get_links() {
-        global $wpdb;
-        return $wpdb->get_results("SELECT * FROM {$wpdb->prefix}sal_links");
+        $table_name = $wpdb->prefix . 'salml_clicks';
+        $charset_collate = $wpdb->get_charset_collate();
+        $sql = "CREATE TABLE $table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            link text NOT NULL,
+            ip text NOT NULL,
+            user_agent text NOT NULL,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
     }
 
     public function cloak_links($content) {
-        global $wpdb;
-        $links = $this->get_links();
-        foreach ($links as $link) {
-            $placeholder = '/sal/' . $link->keyword;
-            $content = preg_replace('/\b' . preg_quote($link->keyword, '/') . '\b/i', '<a href="' . $placeholder . '" class="sal-link">$0</a>', $content);
+        if (is_feed() || is_preview()) return $content;
+        preg_match_all('/https?:\/\/[^\s<>"]+?(?=[^\w\/\-](?:[a-zA-Z]|$))/', $content, $matches);
+        foreach ($matches as $url) {
+            if (strpos($url, 'amazon.com') !== false || strpos($url, 'clickbank.net') !== false || strpos($url, 'youraffiliate') !== false) {
+                $cloaked = add_query_arg('salml', base64_encode($url), home_url('/go/'));
+                $content = str_replace($url, '<a href="' . esc_url($cloaked) . '" target="_blank" rel="nofollow">' . $url . '</a>', $content);
+            }
         }
         return $content;
     }
 
-    public function shortcode_link($atts) {
-        $atts = shortcode_atts(array('keyword' => ''), $atts);
-        global $wpdb;
-        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}sal_links WHERE keyword = %s", $atts['keyword']));
-        if (!$link) return '';
-        return '<a href="/sal/' . esc_attr($link->keyword) . '" class="sal-link" data-keyword="' . esc_attr($link->keyword) . '">' . $atts['keyword'] . '</a>';
+    public function activate() {
+        $this->create_table();
     }
 
-    public function activate() {
-        $this->init();
+    public function deactivate() {
+        // Cleanup optional
+    }
+
+    public function show_stats() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'salml_clicks';
+        $stats = $wpdb->get_results("SELECT COUNT(*) as total, DATE(time) as date FROM $table_name GROUP BY DATE(time) ORDER BY time DESC LIMIT 7");
+        echo '<h2>Recent Stats (Free Version)</h2><ul>';
+        foreach ($stats as $stat) {
+            echo '<li>' . esc_html($stat->date) . ': ' . intval($stat->total) . ' clicks</li>';
+        }
+        echo '</ul><p><strong>Upgrade to Premium for A/B testing, conversion tracking, and auto-optimization!</strong></p>';
+    }
+}
+
+// AJAX for tracking
+add_action('wp_ajax_salml_track', 'salml_track_click');
+add_action('wp_ajax_nopriv_salml_track', 'salml_track_click');
+function salml_track_click() {
+    check_ajax_referer('salml_nonce', 'nonce');
+    $link = sanitize_url($_POST['link']);
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'salml_clicks';
+    $wpdb->insert($table_name, array(
+        'link' => $link,
+        'ip' => $_SERVER['REMOTE_ADDR'],
+        'user_agent' => $_SERVER['HTTP_USER_AGENT']
+    ));
+    wp_redirect($link);
+    exit;
+}
+
+// Handle cloaked redirects
+add_action('init', 'salml_handle_redirect');
+function salml_handle_redirect() {
+    if (isset($_GET['salml']) && $_SERVER['REQUEST_URI'] === '/go/') {
+        $url = base64_decode(sanitize_text_field($_GET['salml']));
+        if ($url) {
+            // Track via AJAX simulation or direct
+            wp_remote_post(admin_url('admin-ajax.php'), array(
+                'body' => array(
+                    'action' => 'salml_track',
+                    'link' => $url,
+                    'nonce' => wp_create_nonce('salml_nonce')
+                )
+            ));
+            wp_redirect($url, 301);
+            exit;
+        }
     }
 }
 
 SmartAffiliateLinkManager::get_instance();
 
-add_action('template_redirect', function() {
-    if (strpos($_SERVER['REQUEST_URI'], '/sal/') === 0) {
-        $keyword = str_replace('/sal/', '', $_SERVER['REQUEST_URI']);
-        global $wpdb;
-        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}sal_links WHERE keyword = %s", $keyword));
-        if ($link) {
-            wp_redirect($link->affiliate_url, 301);
-            exit;
-        }
+// Freemium nag
+add_action('admin_notices', 'salml_premium_nag');
+function salml_premium_nag() {
+    if (!get_option('salml_api_key') && current_user_can('manage_options')) {
+        echo '<div class="notice notice-info"><p>Unlock <strong>A/B testing, advanced analytics</strong> with <a href="' . admin_url('options-general.php?page=salml-settings') . '">Smart Affiliate Link Manager Premium</a> for $9/mo!</p></div>';
     }
-});
-
-// Frontend JS (inline for single file)
-function sal_frontend_js() {
-    ?><script>jQuery(document).ready(function($){$('.sal-link').click(function(e){e.preventDefault();var keyword=$(this).data('keyword');$.post(sal_ajax.ajaxurl,{action:'sal_update_link',keyword:keyword,nonce:'<?php echo wp_create_nonce('sal_nonce'); ?>'},function(){window.location=$(this).attr('href');});});});</script><?php
 }
-add_action('wp_footer', 'sal_frontend_js');
+?>
