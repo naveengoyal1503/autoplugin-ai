@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoInserter
  * Plugin URI: https://example.com/smart-affiliate-autoinserter
- * Description: Automatically inserts relevant affiliate links into your WordPress content to boost revenue. Freemium model with premium add-ons.
+ * Description: Automatically inserts relevant affiliate links into your content using keyword matching and AI-like rules.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -22,23 +22,37 @@ class SmartAffiliateAutoInserter {
 
     public function __construct() {
         add_action('init', array($this, 'init'));
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_filter('the_content', array($this, 'insert_affiliate_links'), 99);
         add_action('admin_menu', array($this, 'admin_menu'));
         add_action('admin_init', array($this, 'admin_init'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
-        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        $this->options = get_option('smart_affiliate_settings', array(
-            'api_key' => '',
-            'affiliate_links' => array(),
-            'enabled' => true,
+        $this->options = get_option('smart_affiliate_options', array(
+            'keywords' => array(),
+            'links' => array(),
             'max_links' => 3,
-            'pro_nag' => true
+            'enabled' => true
         ));
-        load_plugin_textdomain('smart-affiliate-autoinserter', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+        load_plugin_textdomain('smart-affiliate-autoinserter');
+    }
+
+    public function activate() {
+        if (!get_option('smart_affiliate_options')) {
+            add_option('smart_affiliate_options', array(
+                'keywords' => array(),
+                'links' => array(),
+                'max_links' => 3,
+                'enabled' => true
+            ));
+        }
+    }
+
+    public function deactivate() {
+        // Cleanup if needed
     }
 
     public function enqueue_scripts() {
@@ -47,41 +61,28 @@ class SmartAffiliateAutoInserter {
     }
 
     public function insert_affiliate_links($content) {
-        if (!$this->options['enabled'] || is_admin() || in_the_loop()) {
+        if (!is_single() || !$this->options['enabled'] || !current_user_can('read')) {
             return $content;
         }
 
-        $paragraphs = explode('</p>', $content);
-        $link_count = 0;
-        $max_links = intval($this->options['max_links']);
+        $words = explode(' ', $content);
+        $inserted = 0;
+        $max = intval($this->options['max_links']);
 
-        foreach ($paragraphs as &$paragraph) {
-            if ($link_count >= $max_links) break;
+        foreach ($words as $index => &$word) {
+            if ($inserted >= $max) break;
 
-            $link = $this->find_relevant_link($paragraph);
-            if ($link && stripos($paragraph, 'rel="nofollow"') === false) {
-                $anchor = $this->get_anchor_text($paragraph);
-                $paragraph = str_replace($anchor, '<a href="' . esc_url($link['url']) . '" rel="nofollow" target="_blank">' . esc_html($anchor) . '</a>', $paragraph);
-                $link_count++;
+            foreach ($this->options['keywords'] as $keyword => $link_data) {
+                if (stripos($word, $keyword) !== false) {
+                    $link = '<a href="' . esc_url($link_data['url']) . '" target="_blank" rel="nofollow sponsored">' . esc_html($word) . '</a>';
+                    $word = $link;
+                    $inserted++;
+                    break;
+                }
             }
         }
 
-        return implode('</p>', $paragraphs);
-    }
-
-    private function find_relevant_link($text) {
-        $keywords = array('buy', 'purchase', 'best', 'review', 'top', 'amazon', 'clickbank');
-        foreach ($keywords as $keyword) {
-            if (stripos($text, $keyword) !== false) {
-                return $this->options['affiliate_links'][$keyword] ?? array('url' => '#', 'text' => 'Affiliate Product');
-            }
-        }
-        return false;
-    }
-
-    private function get_anchor_text($text) {
-        preg_match('/\b\w+\b/', strip_tags($text), $matches);
-        return $matches ?? 'Learn More';
+        return implode(' ', $words);
     }
 
     public function admin_menu() {
@@ -95,14 +96,15 @@ class SmartAffiliateAutoInserter {
     }
 
     public function admin_init() {
-        register_setting('smart_affiliate_group', 'smart_affiliate_settings');
+        register_setting('smart_affiliate_group', 'smart_affiliate_options');
     }
 
     public function admin_page() {
         if (isset($_POST['submit'])) {
-            update_option('smart_affiliate_settings', $_POST['smart_affiliate_settings']);
+            update_option('smart_affiliate_options', $_POST['smart_affiliate_options']);
             echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
+        $options = $this->options;
         ?>
         <div class="wrap">
             <h1>Smart Affiliate AutoInserter Settings</h1>
@@ -110,64 +112,66 @@ class SmartAffiliateAutoInserter {
                 <?php settings_fields('smart_affiliate_group'); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Enable Auto-Insertion</th>
-                        <td><input type="checkbox" name="smart_affiliate_settings[enabled]" value="1" <?php checked($this->options['enabled']); ?> /></td>
+                        <th>Enabled</th>
+                        <td><input type="checkbox" name="smart_affiliate_options[enabled]" <?php checked($options['enabled']); ?> /></td>
                     </tr>
                     <tr>
                         <th>Max Links per Post</th>
-                        <td><input type="number" name="smart_affiliate_settings[max_links]" value="<?php echo esc_attr($this->options['max_links']); ?>" min="1" max="10" /></td>
+                        <td><input type="number" name="smart_affiliate_options[max_links]" value="<?php echo esc_attr($options['max_links']); ?>" min="1" max="10" /></td>
                     </tr>
                     <tr>
-                        <th>Affiliate Links (Keyword: URL)</th>
+                        <th>Affiliate Keywords & Links</th>
                         <td>
-                            <?php
-                            $links = $this->options['affiliate_links'];
-                            $i = 0;
-                            foreach ($links as $kw => $data) {
-                                echo '<p><input type="text" name="smart_affiliate_settings[affiliate_links][' . $i . '][keyword]" placeholder="Keyword" value="' . esc_attr($kw) . '" style="width:150px;"> : <input type="url" name="smart_affiliate_settings[affiliate_links][' . $i . '][url]" placeholder="Affiliate URL" value="' . esc_url($data['url']) . '" style="width:300px;"></p>';
-                                $i++;
-                            }
-                            ?>
-                            <p><em>Add more: keyword=url in settings.</em></p>
-                            <p><strong>Upgrade to Pro for AI keyword detection & analytics!</strong></p>
+                            <div id="keyword-links">
+                                <?php foreach ($options['keywords'] as $kw => $data): ?>
+                                    <div class="keyword-row">
+                                        <input type="text" name="smart_affiliate_options[keywords][<?php echo esc_attr($kw); ?>][keyword]" placeholder="Keyword" value="<?php echo esc_attr($data['keyword']); ?>" />
+                                        <input type="url" name="smart_affiliate_options[keywords][<?php echo esc_attr($kw); ?>][url]" placeholder="Affiliate URL" value="<?php echo esc_attr($data['url']); ?>" />
+                                        <button type="button" class="button remove-kw">Remove</button>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <button type="button" id="add-kw" class="button">Add Keyword/Link</button>
                         </td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
+            <h2>Upgrade to Pro</h2>
+            <p>Unlock AI-powered link suggestions, analytics, and unlimited links for $49/year!</p>
         </div>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#add-kw').click(function() {
+                var count = $('#keyword-links .keyword-row').length;
+                $('#keyword-links').append(
+                    '<div class="keyword-row">' +
+                    '<input type="text" name="smart_affiliate_options[keywords][' + count + '][keyword]" placeholder="Keyword" />' +
+                    '<input type="url" name="smart_affiliate_options[keywords][' + count + '][url]" placeholder="Affiliate URL" />' +
+                    '<button type="button" class="button remove-kw">Remove</button>' +
+                    '</div>'
+                );
+            });
+            $(document).on('click', '.remove-kw', function() {
+                $(this).parent().remove();
+            });
+        });
+        </script>
+        <style>
+        .keyword-row { margin-bottom: 10px; }
+        .keyword-row input { margin-right: 10px; }
+        </style>
         <?php
-    }
-
-    public function activate() {
-        add_option('smart_affiliate_settings', array(
-            'enabled' => true,
-            'max_links' => 3,
-            'affiliate_links' => array(
-                'amazon' => array('url' => 'https://amazon.com'),
-                'buy' => array('url' => 'https://example-affiliate.com')
-            )
-        ));
-    }
-
-    public function deactivate() {
-        // Cleanup if needed
     }
 }
 
 new SmartAffiliateAutoInserter();
 
-// Pro upsell nag
-function smart_affiliate_nag() {
-    if (current_user_can('manage_options') && !defined('SMART_AFFILIATE_PRO')) {
-        echo '<div class="notice notice-info"><p>Unlock AI features and unlimited links with <a href="https://example.com/pro" target="_blank">Smart Affiliate Pro</a> - Starting at $49/year!</p></div>';
+// Freemium nag
+add_action('admin_notices', function() {
+    if (!current_user_can('manage_options')) return;
+    $screen = get_current_screen();
+    if ($screen->id === 'settings_page_smart-affiliate') {
+        echo '<div class="notice notice-info"><p><strong>Pro Features:</strong> AI link suggestions, performance tracking, and more. <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
     }
-}
-add_action('admin_notices', 'smart_affiliate_nag');
-
-// Create assets dir placeholder (in real plugin, include files)
-if (!file_exists(plugin_dir_path(__FILE__) . 'assets')) {
-    mkdir(plugin_dir_path(__FILE__) . 'assets', 0755, true);
-    file_put_contents(plugin_dir_path(__FILE__) . 'assets/frontend.js', '// Frontend JS for tracking clicks\nconsole.log("Smart Affiliate loaded");');
-}
-?>
+});
