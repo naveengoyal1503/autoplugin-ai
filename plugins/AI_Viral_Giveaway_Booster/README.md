@@ -1,35 +1,48 @@
 # AI Viral Giveaway Booster
 
 ## Features
-- **Viral Giveaway Pages**: Create unlimited giveaway campaigns with shortcodes to boost emails, traffic, and social shares.
-- **Entry Tracking**: Collect emails securely and display live entry counters for social proof.
-- **Bonus Entries**: Facebook/Twitter share actions for extra viral boost (Pro: Unlimited).
-- **Easy Setup**: Drag-and-drop shortcode `[ai_giveaway]` anywhere.
-- **Admin Dashboard**: Customize prizes, emails, and settings.
-- **Freemium Power**: Free core; **Pro** adds AI template generator, A/B testing, analytics, Zapier integration ($49/year).
+
+- **Viral Giveaway Pages**: Create stunning, mobile-responsive giveaway landing pages with countdown timers and entry counters.
+- **Multiple Entry Methods**: Email signup, social shares (Facebook, Twitter) for bonus entries.
+- **Real-Time Analytics**: Track entries, shares, and conversions (Pro: advanced dashboard).
+- **Easy Shortcodes**: Embed anywhere with `[ai_viral_giveaway id="1"]`.
+- **AI-Optimized Templates**: Pre-built high-converting designs (Pro: custom AI suggestions).
+- **Free Version Limits**: 500 entries/month, basic features.
+- **Pro Features** ($49/year): Unlimited entries, email integrations (Mailchimp, ActiveCampaign), A/B testing, winner selection, custom domains, priority support.
 
 ## Installation
-1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New > Upload.
-2. Activate the plugin.
-3. Go to **Settings > AI Giveaway** to configure prize and email.
-4. Add `[ai_giveaway]` shortcode to any page/post.
+
+1. Upload the `ai-viral-giveaway-booster` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Giveaways** in the admin menu to configure your first giveaway.
+4. Use the shortcode `[ai_viral_giveaway]` on any page or post.
 
 ## Setup
-1. In admin, set your **Prize** (e.g., "Free Pro Plugin") and **Notify Email**.
-2. Create a new page: "Win Free Gift!" and insert `[ai_giveaway]`.
-3. Publish and promote for viral growth.
+
+1. In **Giveaways > Settings**, enter giveaway title, description, prize, and end date.
+2. Copy the shortcode and paste into a page.
+3. Visit the page to see your live giveaway.
+4. Promote via social media for viral growth!
 
 ## Usage
-- **Basic**: Use `[ai_giveaway id="campaign1"]` for multiple campaigns.
-- **Embed Anywhere**: Pages, posts, sidebars, widgets.
-- **Pro Features**: AI generates custom themes; track conversions; export entries.
-- **Monetize Your Site**: Drives 10x email growth like RafflePress[1].
+
+- **Basic Giveaway**: Set up in admin, embed shortcode, drive traffic.
+- **Viral Loop**: Users share for extra entries, growing your list exponentially.
+- **Embed Options**: Works in Elementor, Gutenberg, or classic editor.
+- **Customization**: Edit CSS in the plugin styles or override in theme.
 
 ## Pro Upgrade
-- Unlimited campaigns & entries.
-- AI-powered templates & copy.
-- Integrations: Mailchimp, Google Analytics.
-<a href="https://example.com/pro">Upgrade Now ($49/year)</a>
+
+Unlock unlimited power:
+- Integrations with top email services.
+- Automated winner emails and selection.
+- Detailed analytics and export.
+
+[Get Pro Now](https://example.com/pro)
 
 ## Support
-Contact support@example.com. Free version supported via forums.
+
+- Free support via WordPress forums.
+- Pro: Dedicated email + chat support.
+
+**Grow your audience 10x faster with viral giveaways! 🚀**
