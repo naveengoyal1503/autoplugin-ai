@@ -1,35 +1,47 @@
 # Smart Donation Pro
 
+A lightweight, self-contained WordPress plugin for collecting donations via shortcode. Supports tiered amounts, email capture, database analytics, and PayPal integration. Freemium model with pro upgrades.
+
 ## Features
-- **Easy Donation Forms**: Drop-in shortcode `[smart_donation]` for customizable donation buttons.
-- **PayPal Integration**: Accept payments instantly with PayPal SDK (one-time donations in free version).
-- **Progress Tracker**: Visual goal progress bar to motivate donors.
-- **Customizable**: Set title, goal amount, button text via shortcode attributes.
-- **Admin Settings**: Configure PayPal email and client ID from WordPress dashboard.
-- **Mobile Responsive**: Works perfectly on all devices.
-- **Freemium Ready**: Premium unlocks recurring donations, analytics, and more gateways.
+
+- **Easy Shortcode**: `[smart_donation]` to embed donation form anywhere.
+- **Customizable Tiers**: Define amounts like `[smart_donation tiers="5,10,25,50,100"]`.
+- **Donor Tracking**: Stores donations in DB with email and timestamp.
+- **Admin Analytics**: View all donations in Tools > Donations.
+- **PayPal Ready**: Add your hosted button ID for instant PayPal.
+- **Stripe Compatible**: Pro version includes Stripe (PK key support).
+- **Mobile Responsive**: Clean, modern design.
+- **Secure**: Nonce-protected AJAX submissions.
+
+**Pro Features (Upsell)**: Recurring Stripe, custom branding, email notifications, export CSV, donation goals.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate **Smart Donation Pro**.
-4. Go to **Settings > SDP Settings** to enter your PayPal details.
+
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via Plugins > Installed Plugins.
+3. Use shortcode `[smart_donation]` on any page/post.
 
 ## Setup
-1. Get a PayPal Client ID from [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/).
-2. Enter your PayPal email and Client ID in the plugin settings.
-3. Add the shortcode to any page/post: `[smart_donation goal="500" title="Buy Me a Coffee"]`. 
+
+1. Go to **Settings > Donations** for analytics.
+2. Customize: `[smart_donation title="Buy Me Coffee" tiers="3,5,10" paypal="YOUR_PAYPAL_BUTTON_ID"]`.
+3. For PayPal: Create a hosted button at paypal.com and paste the ID.
+4. Test form submission.
 
 ## Usage
-- Place the shortcode on a page to create a donation form.
-- Customize: `goal` (target amount), `title` (heading), `button_text` (CTA).
-- Donations process via PayPal; logs are saved for review (premium: full dashboard).
-- Test in sandbox mode by using test Client ID.
 
-## Premium Features (Coming Soon)
-- Recurring subscriptions.
-- Donation analytics dashboard.
-- Stripe integration.
-- Email notifications.
+- Embed on sidebar, posts, or dedicated page.
+- View stats: **Tools > Donations** shows total donations, amounts, emails.
+- Example tiers boost conversions with psychology pricing (e.g., $4.99).[1][6]
 
-Support: Contact support@example.com | Upgrade: $49/year.
+## FAQ
+
+**Self-contained?** Yes, single PHP file with embedded JS logic.
+**Monetization?** Free core; pro via add-on ($29/year).
+**GDPR?** Emails optional; add privacy note.
+
+## Changelog
+
+**1.0.0** Initial release.
+
+Support: example.com/support
