@@ -1,35 +1,28 @@
 # Smart Donation Pro
 
-A lightweight, self-contained WordPress plugin to add professional donation buttons and forms. Perfect for bloggers, creators, and non-profits to monetize content via PayPal[1][3].
-
 ## Features
-- **Easy Shortcodes**: Use `[smart_donation amount="10" label="Support My Work"]` anywhere.
-- **Customizable**: Set amounts, labels, currency (USD default).
-- **PayPal Integration**: Secure one-time donations with auto-redirect.
-- **Mobile-Responsive**: Clean, modern design works on all devices[2].
-- **Freemium Ready**: Free core; premium for recurring subs, Stripe, analytics (65% retention boost)[1][5].
-- **No Database Overhead**: Settings-only storage, lightweight performance.
+- **One-click donation buttons** with customizable amounts, labels, and currencies.
+- **PayPal integration** for instant payments (Stripe premium).
+- **Shortcode support**: `[sdp_donate amount="10" label="Buy Me a Coffee" button_text="Support Now" currency="USD"]`.
+- **Analytics dashboard** tracks donation attempts, amounts, and IPs.
+- **Mobile-responsive** design with smooth animations.
+- **Freemium model**: Free for PayPal; premium for advanced features ($29/year).
 
 ## Installation
-1. Download and upload the PHP file to `/wp-content/plugins/smart-donation-pro/`.
-2. Activate in **Plugins > Installed Plugins**.
-3. Go to **Settings > Donation Pro** to set your PayPal email.
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Donation Pro** to configure PayPal email.
 
 ## Setup
-1. Configure PayPal email in settings (required for donations).
-2. Add shortcode to posts/pages/widgets: `[smart_donation amount="5" label="Buy Me Coffee" button_text="Donate $5" currency="USD"]`.
-3. Test donation flow (uses PayPal sandbox if email supports).
+1. Enter your PayPal business email in the settings page.
+2. Add shortcode to any post/page: `[sdp_donate]`.
+3. Customize via shortcode attributes (see Features).
 
 ## Usage
-- **Basic Donation**: `[smart_donation]` – Defaults to $5 USD.
-- **Custom**: Adjust `amount`, `label`, `button_text`, `currency`.
-- **Multiple Buttons**: Add multiple shortcodes for tiers ($5, $10, $25).
-- **Pro Tips**: Place in sidebars, footers, or post ends. Offer tiers for higher conversions (e.g., $9.99 pricing)[1][5].
+- Place shortcodes in content for "Buy Me a Coffee" style buttons[1][3].
+- View donation logs in admin dashboard for revenue insights.
+- Buttons redirect to PayPal; tracks clicks without slowing site[5].
+- **Upgrade to Pro** for Stripe, unlimited logs, A/B testing, and email notifications.
 
-## Premium Roadmap
-- Recurring donations.
-- Stripe support.
-- Donation goals/progress bars.
-- Analytics dashboard.
-
-Support: WordPress.org forums. License: GPL v2.
+## Support
+Contact support@example.com. Free updates for life.
