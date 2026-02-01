@@ -1,35 +1,34 @@
 # Affiliate AutoLink Pro
 
-**Automatically turns keywords in your posts into high-converting Amazon affiliate links.**
+## Description
+Automatically scans your WordPress posts and pages for specified keywords and replaces them with Amazon affiliate links. Earn passive income effortlessly. **Freemium model**: Free for basic use, Pro unlocks advanced features.
 
 ## Features
-- **Keyword Auto-Detection**: Scans content for predefined keywords and replaces with cloaked affiliate links.
-- **Amazon Integration**: Direct links with your affiliate tag for commissions.
-- **Cloaking & Tracking**: Links open in new tab with nofollow; basic click logging (Pro: advanced analytics).
-- **Easy Setup**: Simple dashboard to add keywords (e.g., "iPhone" → ASIN link).
-- **Freemium Model**: Free for up to 5 keywords; **Pro ($49/year)**: Unlimited keywords, A/B testing, performance reports, priority support.
+- **Automatic keyword replacement** with Amazon affiliate links
+- Customizable keywords and ASINs
+- Mobile-responsive links
+- Easy settings panel
+- **Pro only**: A/B testing, click analytics, multiple networks (ClickBank, etc.), priority support
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > AutoLink Pro** to configure.
+1. Upload the `affiliate-autolink-pro` folder to `/wp-content/plugins/`
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Go to **Settings > Affiliate AutoLink** to configure
 
 ## Setup
-1. Enter your **Amazon Affiliate ID (tag)**, e.g., `yourid-20`.
-2. Add keywords in JSON format: `{"iPhone":"B08N5WRWNW","Laptop":"B09G9FPGT6"}`.
-3. Enable auto-linking.
-4. Save changes. Links appear instantly in posts/pages.
+1. Enter your **Amazon Affiliate ID** (Tag)
+2. Add keywords in JSON format: `{"keyword":"ASIN"}`
+   - Example: `{"WordPress":"B08N5WRWNW","hosting":"B01M4P6RRA"}`
+3. Save changes. Links auto-appear on frontend!
 
 ## Usage
-- Write content with keywords like "best iPhone".
-- Plugin auto-converts to affiliate link.
-- **Pro Features**: View click stats, optimize links, A/B test ASINs.
-- Compatible with Gutenberg, Classic Editor, and most themes.
+- Write content with keywords (e.g., "best WordPress hosting")
+- Plugin replaces them with tracked affiliate links
+- Track earnings in your Amazon Associates dashboard
+
+## Pro Upgrade
+- $49/year: A/B tests, analytics dashboard, 10+ networks
+- [Buy Pro Now](https://example.com/pro)
 
 ## Support
-- Free: WordPress.org forums.
-- Pro: Dedicated email support.
-
-## Changelog
-- 1.0.0: Initial release.
+Submit tickets at example.com/support. Free users: community forum.
