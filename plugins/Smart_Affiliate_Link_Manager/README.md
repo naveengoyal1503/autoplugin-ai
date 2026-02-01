@@ -2,49 +2,31 @@
 
 ## Features
 
-- **Link Cloaking & Tracking**: Convert ugly affiliate URLs into clean, trackable shortcodes like `[salml id="buy-now"]`. Tracks every click with real-time stats.
-- **Easy Shortcodes**: Drop `[salml id="your-id"]` anywhere in posts/pages.
-- **Admin Dashboard**: View clicks, add/delete links, export reports (CSV coming in Pro).
-- **SEO-Friendly Redirects**: 301 redirects preserve link juice.
-- **Freemium Model**: Free for basics; **Pro ($49/year)** adds:
-  - A/B Testing (rotate multiple affiliate links automatically).
-  - Advanced Analytics (geolocation, device tracking, conversion estimates).
-  - Auto-Optimization (switch to highest-performing link).
-  - Unlimited links & priority support.
+- **Automatic Link Cloaking**: Replace keywords in posts with cloaked affiliate links (e.g., `/go/keyword` redirects to affiliate URL).
+- **Click Tracking**: Monitor clicks and performance for each link.
+- **Easy Management**: Add, edit, delete links via simple dashboard.
+- **SEO-Friendly**: No-follow attributes and clean URLs.
+- **Freemium Model**: Free for basics; **Pro** ($49/year) adds A/B testing, advanced analytics, unlimited links, and export reports.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > Affiliate Links** to add your first link.
+1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-link-manager`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Visit **Settings > Affiliate Links** to add your first keyword and affiliate URL.
+4. Flush permalinks (Settings > Permalinks > Save Changes).
 
 ## Setup
 
-1. Navigate to **Settings > Affiliate Links**.
-2. Click **Add New Link**:
-   - Enter a unique **Shortcode** (e.g., `amazon-deal`).
-   - Paste your **Affiliate URL** (e.g., Amazon, ClickBank).
-   - Save.
-3. Use in content: `[salml id="amazon-deal"]`.
-4. Test the link via the **Test** button in dashboard.
+1. Go to **Settings > Affiliate Links**.
+2. Add a keyword (e.g., "best hosting") and your affiliate URL.
+3. Save. The plugin auto-replaces the keyword in posts with a cloaked link.
+4. Links redirect to `/go/best-hosting` → your affiliate URL, tracking clicks.
 
 ## Usage
 
-- **Basic Example**:
-  
-  Check out this [great deal][salml id="buy-now"].
-  
-  Renders as a clickable tracked link.
+- **Adding Links**: Enter keyword and URL in the dashboard form.
+- **Viewing Stats**: See click counts in the table (Pro: detailed analytics).
+- **On Site**: Keywords auto-link in post content. Use shortcode `[sal keyword="hosting"]` for manual placement.
+- **Pro Upgrade**: Unlock A/B testing (rotate links), geo-targeting, and CSV exports for profitability optimization.
 
-- **Reports**: Dashboard shows clicks per link, helping optimize high-performers.
-
-- **Pro Upgrade**: Visit the dashboard upgrade link for A/B features to boost commissions by testing links automatically.
-
-## Why Profitable?
-
-Affiliate marketing is a top WordPress monetization strategy[1][5]. This plugin simplifies cloaking/tracking, reducing cart abandonment and providing data to scale earnings. Freemium converts free users to Pro via demonstrated value.
-
-## Support
-
-Report issues on WordPress.org forums or email support@example.com.
+**Pro Tip**: Combine with content strategies for 40% higher conversions[6]. Supports high-traffic sites for passive income[2][5].
