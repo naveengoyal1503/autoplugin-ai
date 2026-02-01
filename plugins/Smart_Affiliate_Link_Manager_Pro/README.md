@@ -1,33 +1,45 @@
 # Smart Affiliate Link Manager Pro
 
-## Description
-Boost your affiliate earnings with **automatic link cloaking**, **click tracking**, and **analytics**. Free core version with powerful premium add-ons.
-
 ## Features
-- **Auto-cloak affiliate links** in posts/pages (detects aff, amazon, ref, etc.)
-- **Real-time click tracking** with admin dashboard
-- **[sam_link url="https://example.com/ref"]Click Here[/sam_link]** shortcode
-- **Mobile-responsive** and SEO-friendly redirects
-- **Free forever** core + Premium add-ons: A/B Testing ($29/yr), Analytics Pro ($49/yr), WooCommerce Bundle ($99/yr)
+
+**Free Version:**
+- Automatically detects and cloaks affiliate links from major networks (Amazon, ClickBank, etc.) in posts.
+- Click tracking via AJAX for privacy-compliant analytics.
+- Simple `[sam_link url="https://aff.link"]Click here[/sam_link]` shortcode.
+- Rel=nofollow on all links.
+
+**Pro Version ($49/year):**
+- **Advanced Analytics:** Real-time click stats, conversion tracking, top-performing links dashboard.
+- **A/B Testing:** Rotate link texts/CTAs automatically to optimize conversions.
+- **Auto-Optimization:** AI-suggested link placements and text improvements.
+- **Link Health Monitor:** Alerts for broken or low-performing links.
+- Priority email support and automatic updates.
 
 ## Installation
-1. Upload `smart-affiliate-manager-pro.php` to `/wp-content/plugins/`
-2. Activate via **Plugins > Installed Plugins**
-3. Links auto-cloak on frontend; view stats in **Settings > SAM Pro**
+
+1. Upload the `smart-affiliate-manager-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Links are auto-cloaked in content; use shortcode for manual links.
 
 ## Setup
-- No configuration needed for basic cloaking
-- Use shortcode: `[sam_link url="YOUR_AFF_LINK"]Your Text[/sam_link]`
-- Premium: Get API key from [pro site](https://example.com/pro)
+
+1. Go to **Settings > SAM Pro**.
+2. **Free:** Ready to use immediately.
+3. **Pro:** Enter your license key (purchase at example.com/buy-pro).
+4. Configure tracking ID if integrating with Google Analytics.
 
 ## Usage
-- Write posts with raw affiliate links – they auto-cloak
-- Track clicks in dashboard
-- **Upgrade to Pro** for A/B tests (boost conversions 20-40%), Woo integration, CSV exports
 
-## Changelog
-**1.0.0** - Initial release
+- **Auto-Cloaking:** Paste raw affiliate URLs in posts—they convert to tracked links.
+- **Shortcode:** `[sam_link url="https://amazon.com/product"]Buy Now[/sam_link]`.
+- **Dashboard:** View clicks under **Settings > SAM Pro** (Pro feature).
+- **Customization:** Style `.sam-link` CSS class in your theme.
+
+## FAQ
+
+**How does tracking work?** AJAX posts clicks server-side without cookies.
+**Is it GDPR compliant?** Yes, anonymized tracking.
+**Pro Trial?** 14-day money-back guarantee.
 
 ## Support
-Forum: [wordpress.org](https://wordpress.org/support/plugin/smart-affiliate-manager-pro)
-Pro: [example.com/support](https://example.com/support)
+Free: WordPress.org forums. Pro: Email support@examle.com.
