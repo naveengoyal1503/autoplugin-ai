@@ -2,97 +2,90 @@
 
 [![Contributors][contributors-shield]][contributors-url] [![Forks][forks-shield]][forks-url] [![Stargazers][stars-shield]][stars-url] [![Issues][issues-shield]][issues-url] [![MIT License][license-shield]][license-url] [![Activity][activity-shield]][activity-url]
 
-Automatically inserts **high-converting Amazon affiliate links** into your WordPress content using intelligent keyword matching. Boost your affiliate earnings without manual work!
+Boost your affiliate revenue automatically! **Smart Affiliate AutoInserter** scans your content and inserts relevant Amazon affiliate links seamlessly.
 
-## 🚀 **Free Features**
+## 🚀 **Why Choose Smart Affiliate AutoInserter?**
 
-- **Smart Keyword Detection**: Auto-links keywords like "laptop", "phone", "book", "coffee" to relevant Amazon products
-- **SEO-Friendly**: Uses `rel="nofollow sponsored"` and preserves content flow
-- **Randomized Insertion**: 20% chance per keyword prevents over-optimization
-- **Easy Settings**: Toggle on/off + custom Amazon affiliate tag
-- **Mobile Responsive**: Links work perfectly on all devices
+- **Automatic Insertion**: Detects keywords like "phone", "laptop" and adds affiliate links.
+- **Easy Setup**: Enter your Amazon tag once and go live.
+- **Mobile-Responsive**: Links work perfectly on all devices (premium: AI-optimized).
+- **Performance Optimized**: Lightweight with no bloat.
+- **Privacy Compliant**: GDPR-ready with no data collection.
 
-## 💎 **Pro Features** (Upgrade for $49/year)
+## 📦 **Free vs Pro Features**
 
-- **AI Keyword Analysis**: Finds 100+ high-converting keywords automatically
-- **WooCommerce Integration**: Syncs with your store products
-- **Analytics Dashboard**: Track clicks, conversions, and earnings
-- **Unlimited Products**: Custom Amazon/ASIN database
-- **Priority Support**: 24h email + chat support
+| Feature | Free | Pro ($49/yr) |
+|---------|-----|--------------|
+| Basic Keyword Matching | ✅ | ✅ |
+| Amazon Integration | ✅ | ✅ |
+| AI-Powered Keyword Detection | ❌ | ✅ |
+| Analytics Dashboard | ❌ | ✅ |
+| Multi-Network Support (ClickBank, etc.) | ❌ | ✅ |
+| Custom Link Templates | ❌ | ✅ |
+| Priority Support | ❌ | ✅ |
 
-## 📦 **Installation**
+**Get Pro**: [Upgrade Now](https://example.com/premium)
 
-1. Download and upload the plugin to `/wp-content/plugins/`
-2. **Network Activate** for multisite
-3. Go to **Settings → Smart Affiliate** and:
-   - Enable auto-insertion
-   - Enter your Amazon **Affiliate Tag** (replace `YOURAFFILIATEID`)
-4. **Done!** Links appear automatically in posts/pages
+## 🎨 **Demo**
+
+Watch how it works: [Live Demo Video](https://example.com/demo)
+
+## 🔧 **Installation**
+
+1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`
+2. Activate the plugin through **Plugins > Installed Plugins** in WordPress
+3. Go to **Settings > Affiliate AutoInserter** and enter your Amazon Affiliate Tag
+4. Enable auto-insertion and save
 
 ## ⚙️ **Setup**
 
-1. **Get Amazon Associates Account**: [Join Here](https://affiliate-program.amazon.com/)
-2. **Find Your Tag**: Looks like `yourstoreid-20`
-3. **Configure Plugin**:
-   php
-   // Example settings
-   Affiliate ID: myblog-20
-   Enable: ☑️ ON
-   Pro API Key: [Upgrade for AI]
-   
+1. **Get Amazon Affiliate Tag**: Sign up at [Amazon Associates](https://affiliate-program.amazon.com/)
+2. Paste your tag (e.g., `yourid-20`) in plugin settings
+3. Test on a post containing keywords like "best laptop"
+
+**Pro Tip**: Use specific keywords in content for best results.
 
 ## 📖 **Usage**
 
-### **Automatic Mode** (Recommended)
-Simply write content normally:
-markdown
-I love my new laptop for work. The coffee maker is amazing too!
-
-**Becomes:**
-html
-I love my new <a href="https://amazon.com/..." rel="nofollow sponsored">laptop</a> for work. The <a href="https://amazon.com/..." rel="nofollow sponsored">coffee maker</a> is amazing too!
-
-
-### **Customization**
-- Edit keyword/product pairs in future Pro version
-- Control insertion frequency (Pro)
-- Exclude specific posts/pages
-
-## 🎯 **Monetization Strategy**
-
-- **Free**: Basic keyword linking → Builds user base
-- **Pro Add-ons**:
-  | Add-on | Price | Features |
-  |--------|-------|----------|
-  | AI Optimizer | $49/yr | AI keywords + analytics |
-  | Woo Integration | $29/yr | Store sync |
-  | Bundle | $79/yr | Everything! |
+- **Automatic Mode**: Links insert on publish/update
+- **Supported Keywords** (Free): phone, laptop, book, headphones
+- **Pro Features**: Train AI on your niche, track clicks, A/B test links
 
 ## 🤝 **Support**
 
-- **Free**: WordPress.org forums
-- **Pro**: Priority email/chat (24h response)
+- Free: WordPress.org forums
+- Pro: Priority email + chat support
 
-## 📈 **Why It Converts**
+## 🚀 **Roadmap**
 
-- **Proven Model**: AffiliateWP earns $33K+/month [6]
-- **Passive Income**: Works 24/7 on your content
-- **Amazon's 300M+ Products**: Always relevant links
-- **20% Insert Rate**: Natural, non-spammy
+- [x] Basic auto-insertion
+- [x] Admin dashboard
+- [ ] WooCommerce integration (Pro)
+- [ ] Email capture upsell (Pro)
 
----
+See the [open issues](https://example.com/issues) for details.
 
-**Made with ❤️ for affiliate marketers** | [Upgrade to Pro](https://example.com/pro)
+## 🤗 **Contributing**
 
-[contributors-shield]: https://img.shields.io/github/contributors/example/repo.svg?style=for-the-badge
-[contributors-url]: https://github.com/example/repo/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/example/repo.svg?style=for-the-badge
-[forks-url]: https://github.com/example/repo/network/members
-[stars-shield]: https://img.shields.io/github/stars/example/repo.svg?style=for-the-badge
-[stars-url]: https://github.com/example/repo/stargazers
-[issues-shield]: https://img.shields.io/github/issues/example/repo.svg?style=for-the-badge
-[issues-url]: https://github.com/example/repo/issues
-[license-shield]: https://img.shields.io/github/license/example/repo.svg?style=for-the-badge
-[license-url]: https://github.com/example/repo/blob/master/LICENSE.txt
-[activity-shield]: https://img.shields.io/github/last-commit/example/repo.svg?style=for-the-badge
-[activity-url]: https://github.com/example/repo/commits/master
+Contributions welcome! See `CONTRIBUTING.md`.
+
+## 📄 **License**
+
+MIT License - see `LICENSE`.
+
+## 🙏 **Credits**
+
+Built with ❤️ for WordPress creators.
+
+[contributors-shield]: https://img.shields.io/github/contributors/example/smart-affiliate.svg?style=for-the-badge
+[contributors-url]: https://github.com/example/smart-affiliate/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/example/smart-affiliate.svg?style=for-the-badge
+[forks-url]: https://github.com/example/smart-affiliate/network/members
+[stars-shield]: https://img.shields.io/github/stars/example/smart-affiliate.svg?style=for-the-badge
+[stars-url]: https://github.com/example/smart-affiliate/stargazers
+[issues-shield]: https://img.shields.io/github/issues/example/smart-affiliate.svg?style=for-the-badge
+[issues-url]: https://github.com/example/smart-affiliate/issues
+[license-shield]: https://img.shields.io/github/license/example/smart-affiliate.svg?style=for-the-badge
+[license-url]: https://github.com/example/smart-affiliate/blob/master/LICENSE.txt
+[activity-shield]: https://img.shields.io/github/last-commit/example/smart-affiliate.svg?style=for-the-badge
+[activity-url]: https://github.com/example/smart-affiliate/commits/master
