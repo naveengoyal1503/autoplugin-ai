@@ -1,51 +1,52 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate revenue by inserting relevant links into posts and pages.**
+**AI-powered automatic Amazon affiliate link insertion for passive income.**
 
 ## Features
 
-- **Free Version:**
-  - Manual keyword-to-link mapping.
-  - Auto-inserts up to 1 affiliate link per post.
-  - Simple admin settings page.
-
-- **Premium Version ($9/month):**
-  - Unlimited links per post.
-  - AI-powered keyword suggestions.
-  - Click analytics and performance tracking.
-  - Advanced insertion rules (e.g., by post type, category).
-  - Priority support and regular updates.
+- **Automatic Link Insertion**: Scans your content and auto-links keywords to relevant Amazon products.
+- **Custom Keywords**: Define your own comma-separated keywords via settings.
+- **Amazon Associate Ready**: One-click setup with your affiliate ID.
+- **No-Follow & Sponsored**: Links include proper rel attributes for compliance.
+- **Mobile-Responsive**: Works perfectly on all devices.
+- **Pro Upgrade**: AI optimization (OpenAI integration), analytics dashboard, multiple networks, unlimited sites ($49/year).
 
 ## Installation
 
 1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' screen in WordPress admin.
-3. Go to **Settings > Affiliate Inserter** to configure keywords and links.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate AutoInserter** to configure.
 
 ## Setup
 
-1. In the settings page, enter keywords (one per line) in the first box.
-2. Enter corresponding affiliate links (one per line) in the second box.
-3. Set max links per post (free: 1).
-4. Save changes. Links will auto-insert on frontend content.
-
-**Example:**
-- Keyword: `WordPress`
-- Link: `https://your-affiliate-link.com/wordpress`
+1. Enter your **Amazon Associate ID** (e.g., yoursite-20).
+2. Add keywords like `laptop,phone,book` (default included).
+3. Save settings. Links auto-appear in new/existing posts!
+4. **Pro**: Add OpenAI API key for smart suggestions.
 
 ## Usage
 
-- Links are inserted automatically into post content where keywords match.
-- Links include `rel="nofollow"` and `target="_blank"` for best practices.
-- Works on single posts/pages; skips home, archives, searches.
-- **Upgrade Prompt:** Premium features teased in settings for easy upsell.
+- Write content with keywords (e.g., "I love my new **laptop**").
+- Plugin auto-wraps: "I love my new <a href='amazon-link'>laptop</a>".
+- View earnings in Amazon Associates dashboard.
+- Disable anytime in settings.
+
+## Pro Features
+
+| Feature | Free | Pro ($49/yr) |
+|---------|------|--------------|
+| Basic Auto-Linking | ✅ | ✅ |
+| Custom Keywords | ✅ | ✅ |
+| AI Keyword Suggestions | ❌ | ✅ |
+| Analytics Dashboard | ❌ | ✅ |
+| Unlimited Sites | ❌ | ✅ |
+| Premium Networks | ❌ | ✅ |
+
+**Upgrade now for recurring revenue boost!**
 
 ## Support
 
-- Free version: WordPress.org forums.
-- Premium: Dedicated support portal.
+- [Documentation](https://example.com/docs)
+- [Contact](mailto:support@example.com)
 
-## Changelog
-
-**1.0.0**
-- Initial release with core auto-insertion.
+**Generate passive income effortlessly! 🚀**
