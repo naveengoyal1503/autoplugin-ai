@@ -2,44 +2,43 @@
 
 ## Features
 
-- **Free Tier**: Instant content analysis for word count, readability score (Flesch-Kincaid), basic SEO score, and optimization tips.
-- **Premium Tier** ($9.99/month): AI-powered keyword suggestions, content rewriting, unlimited analyses, priority support.
-- One-click analysis in post editor sidebar.
-- Settings page for license activation.
-- Fully self-contained, lightweight (no external dependencies).
-
-**Why Profitable?** Freemium model hooks users with value, upsells to subscription via feature gating. Targets 40% freemium conversion potential[5].
+- **Real-time AI Analysis**: Get instant SEO, readability, and engagement scores for your posts and pages.
+- **One-Click Optimization**: AI suggests and applies improvements (Pro feature).
+- **Keyword Insights**: Automatically detects and recommends relevant keywords.
+- **Readability Scoring**: Ensures content is accessible to all readers.
+- **Engagement Boost**: Adds optimized sections to increase time-on-page.
+- **Freemium Model**: Basic analysis free, unlimited Pro optimizations for $49/year.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Access settings at **Settings > AI Optimizer**.
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > AI Optimizer** to enter your API key (Pro users).
 
 ## Setup
 
-1. For free use: No setup needed – analyze posts immediately.
-2. For premium:
-   - Visit [premium checkout](https://example.com/upgrade).
-   - Enter license key in settings.
-   - Enjoy AI features.
+1. **Free Version**: Works out-of-the-box with simulated AI analysis.
+2. **Pro Upgrade**: Purchase at [example.com/pro](https://example.com/pro), enter license key in settings.
+3. Optional: Integrate with OpenAI API for advanced features (API key in settings).
 
 ## Usage
 
-1. Edit any post/page.
-2. In the sidebar, click **Analyze Content**.
-3. Review scores and tips.
-4. **Premium users**: Get AI keywords and rewritten content.
+1. Edit any **Post** or **Page**.
+2. Look for the **AI Content Optimizer** meta box in the sidebar.
+3. Click **Analyze & Optimize** to get scores and suggestions.
+4. **Pro**: Auto-applies optimizations; review and publish.
 
-### Example Output
-- **SEO Score**: 85/100
-- **Readability**: 65 (Plain English)
-- **Suggestions**: Add headings for better engagement.
-
-## Changelog
-
-- 1.0.0: Initial release.
+### Example Scores
+- **SEO Score**: 85% (based on keywords, length, title).
+- **Readability**: 92% (Flesch-Kincaid analysis).
+- **Engagement**: 78% (structure, CTAs).
 
 ## Support
 
-Free support via WordPress.org forums. Premium: Email support@yourdomain.com.
+- Free support via WordPress forums.
+- Pro users: Priority email support at support@example.com.
+
+## Changelog
+
+**1.0.0**
+- Initial release with core AI analysis and Pro upsell.
