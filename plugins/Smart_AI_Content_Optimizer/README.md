@@ -2,38 +2,33 @@
 
 ## Features
 
-- **AI-Powered Analysis**: Get instant SEO, readability, and engagement scores for your posts/pages.
-- **Actionable Suggestions**: Basic tips to improve content (premium: advanced AI rewrites & keywords).
-- **Sidebar Integration**: Easy access in post editor without leaving your workflow.
-- **Freemium Ready**: Teases premium features to drive upgrades.
-- **Lightweight & Self-Contained**: No external dependencies, single-file plugin.
-
-**Premium Features (Upsell)**: Unlimited analyses, AI content rewriting, keyword suggestions, bulk optimization ($9.99/mo).
+- **Free Version**: Basic content analysis for SEO score, readability, and overall quality. Limited to 5 scans/day per user.
+- **Premium ($4.99/mo)**: Unlimited scans, AI-powered suggestions, one-click auto-optimizations, keyword research integration, and priority support.
+- Real-time analysis in post editor sidebar.
+- Improves engagement and search rankings with data-driven insights.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Edit any post/page to see the optimizer in the sidebar.
+1. Upload the `smart-ai-content-optimizer` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Edit any post/page to see the AI Optimizer meta box.
 
 ## Setup
 
-- No configuration needed for basic use.
-- Premium: Purchase at example.com/premium and enter license key (future update).
+- **Free**: Click 'Analyze Content' in the sidebar (limit applies).
+- **Premium**: Visit **Settings > AI Optimizer** to enter your key after purchase at [example.com/premium](https://example.com/premium).
 
 ## Usage
 
-1. Edit a post or page.
-2. In the **Smart AI Content Optimizer** sidebar, click **Analyze Content**.
-3. Review your **AI Score** (0-100) and suggestions.
-4. Optimize based on feedback.
-5. **Upgrade** for pro features like AI rewriting.
+1. Create or edit a Post/Page.
+2. In the sidebar, click **Analyze Content**.
+3. Review scores and suggestions.
+4. Premium users: Enable auto-fix for instant improvements.
+
+## Monetization
+
+Freemium model encourages upgrades. Track conversions via premium activations. Affiliate potential with SEO tools.
 
 ## Support
 
-Report issues via WordPress.org forums or email support@example.com.
-
-## Changelog
-
-**1.0.0**: Initial release with basic AI analysis.
+Contact support@example.com. Premium users get 24h response.
