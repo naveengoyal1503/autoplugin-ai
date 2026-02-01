@@ -1,44 +1,40 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into your content.**
+**Automatically boosts your affiliate earnings by inserting relevant links into posts and pages based on keyword matching.**
 
 ## Features
-- **Smart Auto-Insertion**: Detects keywords in posts/pages and replaces them with your Amazon affiliate links.
-- **Easy Setup**: Add your Amazon tag and keyword:ASIN pairs via simple textarea.
-- **SEO-Friendly**: Links use `nofollow sponsored` attributes.
-- **Freemium Model**: Free core features; Pro unlocks AI suggestions, analytics, A/B testing ($49/year).
-- **Lightweight**: Single-file plugin, no bloat.
+
+- **Smart Auto-Insertion**: Scans post content for keywords and inserts affiliate links seamlessly.
+- **Unlimited Link Management**: Add, edit, or remove affiliate links via intuitive dashboard (Pro: unlimited).
+- **Customizable Limits**: Control max links per post to maintain user experience.
+- **Mobile-Responsive**: Links work perfectly on all devices.
+- **Pro Features**: AI-powered matching, click analytics, A/B testing, and priority support.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress Admin: Plugins > Add New > Upload Plugin.
-3. Activate the plugin.
-4. Go to Settings > Affiliate Inserter to configure.
+
+1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Inserter** to configure your links.
 
 ## Setup
-1. Sign up for [Amazon Associates](https://affiliate-program.amazon.com/) and get your **Associate Tag**.
-2. In plugin settings:
-   - Enable auto-insertion.
-   - Enter your Amazon tag (e.g., `yourid-20`).
-   - Add keywords and ASINs (e.g., `wireless headphones: B08N5WRWNW`).
-3. Save changes. Links auto-appear in content!
+
+1. In the settings page, click **Add New Link**.
+2. Enter a **Keyword** (e.g., "WordPress"), **Link URL** (your affiliate link), and **Link Text** (optional display text).
+3. Set **Max Links Per Post** (default: 3).
+4. Save changes. Links auto-insert on frontend posts/pages.
+
+**Pro Upgrade**: Unlock unlimited links and analytics at [example.com/pro](https://example.com/pro) ($49/year).
 
 ## Usage
-- Write posts with natural keywords (e.g., "best wireless headphones").
-- Plugin scans and inserts `<a href="amazon-link">wireless headphones</a>`.
-- Earn commissions on clicks/sales.
-- Test on a staging site first. Monitor earnings in Amazon dashboard.
 
-## Pro Version
-Upgrade for:
-- AI keyword research from your content.
-- Click/impression analytics.
-- A/B link testing.
-- Priority support.
+- Links insert after matching keywords in post content.
+- All links open in new tabs with `nofollow` for SEO safety.
+- Test on a staging site first.
+- Free version limits: 10 links total; Pro removes all limits.
 
 ## Support
-- [WordPress.org Forum](https://wordpress.org/support/plugin/smart-affiliate-autoinserter)
-- Report issues via email: support@example.com
 
-## Changelog
-**1.0.0** - Initial release.
+- [Documentation](https://example.com/docs)
+- [Submit a Ticket](https://example.com/support)
+
+**Earn more with less effort!**
