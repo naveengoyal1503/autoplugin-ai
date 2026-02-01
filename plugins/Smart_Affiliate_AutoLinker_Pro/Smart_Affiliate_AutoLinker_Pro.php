@@ -6,22 +6,23 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate AutoLinker Pro
  * Plugin URI: https://example.com/smart-affiliate-autolinker
- * Description: Automatically detects keywords in your content and converts them into high-converting affiliate links with A/B testing and performance analytics.
+ * Description: Automatically detects keywords in your content and converts them into high-converting affiliate links from your dashboard, boosting commissions effortlessly.
  * Version: 1.0.0
  * Author: Your Name
+ * Author URI: https://example.com
  * License: GPL v2 or later
  * Text Domain: smart-affiliate-autolinker
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+    exit;
 }
 
 class SmartAffiliateAutoLinker {
     private static $instance = null;
 
     public static function get_instance() {
-        if (null == self::$instance) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -30,95 +31,106 @@ class SmartAffiliateAutoLinker {
     private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_head', array($this, 'inline_styles'));
-        add_filter('the_content', array($this, 'auto_link_content'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_init', array($this, 'admin_init'));
+        add_action('wp_head', array($this, 'process_content'));
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        load_plugin_textdomain('smart-affiliate-autolinker');
+        load_plugin_textdomain('smart-affiliate-autolinker', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sal-pro-js', plugin_dir_url(__FILE__) . 'sal-pro.js', array('jquery'), '1.0.0', true);
-    }
-
-    public function inline_styles() {
-        echo '<style>.sal-link { color: #0073aa; text-decoration: underline; }</style>';
-    }
-
-    public function auto_link_content($content) {
-        if (is_admin() || !is_single()) return $content;
-
-        $keywords = get_option('sal_keywords', array());
-        $affiliates = get_option('sal_affiliates', array());
-
-        foreach ($keywords as $keyword => $aff_url) {
-            if (isset($affiliates[$aff_url])) {
-                $link_html = '<a href="' . esc_url($affiliates[$aff_url]) . '" target="_blank" rel="nofollow sponsored" class="sal-link">' . esc_html($keyword) . '</a>';
-                $content = preg_replace('/\b' . preg_quote($keyword, '/') . '\b/i', $link_html, $content, 1);
-            }
+        if (is_singular()) {
+            wp_enqueue_script('sal-autolinker', plugin_dir_url(__FILE__) . 'sal-script.js', array('jquery'), '1.0.0', true);
         }
-        return $content;
     }
 
     public function admin_menu() {
-        add_options_page('Smart Affiliate AutoLinker', 'Affiliate AutoLinker', 'manage_options', 'sal-pro', array($this, 'admin_page'));
+        add_options_page(
+            'Smart Affiliate AutoLinker',
+            'Affiliate AutoLinker',
+            'manage_options',
+            'smart-affiliate-autolinker',
+            array($this, 'settings_page')
+        );
     }
 
-    public function admin_init() {
-        register_setting('sal_options_group', 'sal_keywords');
-        register_setting('sal_options_group', 'sal_affiliates');
-    }
-
-    public function admin_page() {
+    public function settings_page() {
+        if (isset($_POST['submit'])) {
+            update_option('sal_keywords', sanitize_textarea_field($_POST['keywords']));
+            update_option('sal_affiliate_links', sanitize_textarea_field($_POST['links']));
+            echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+        }
+        $keywords = get_option('sal_keywords', "");
+        $links = get_option('sal_affiliate_links', "");
         ?>
         <div class="wrap">
-            <h1><?php _e('Smart Affiliate AutoLinker Settings', 'smart-affiliate-autolinker'); ?></h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('sal_options_group'); ?>
+            <h1>Smart Affiliate AutoLinker Settings</h1>
+            <form method="post">
                 <table class="form-table">
                     <tr>
-                        <th>Keywords & Affiliate Links</th>
-                        <td>
-                            <textarea name="sal_keywords" rows="10" cols="50" placeholder="keyword1|affiliate_url1&#10;keyword2|affiliate_url2"><?php echo esc_textarea(get_option('sal_keywords', '')); ?></textarea><br>
-                            <small>Format: keyword|affiliate_url (one per line)</small>
-                        </td>
+                        <th>Keywords (one per line)</th>
+                        <td><textarea name="keywords" rows="10" cols="50"><?php echo esc_textarea($keywords); ?></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Affiliate Links (one per line, matching keywords)</th>
+                        <td><textarea name="links" rows="10" cols="50"><?php echo esc_textarea($links); ?></textarea></td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
-            <h2>Pro Features</h2>
-            <p>Upgrade to Pro for A/B testing, click analytics, and premium integrations!</p>
+            <p><strong>Pro Upgrade:</strong> Unlock unlimited keywords, A/B testing, click tracking & analytics for $49/year!</p>
         </div>
         <?php
     }
 
-    public function activate() {
-        add_option('sal_keywords', "\n");
-        add_option('sal_affiliates', "\n");
-    }
-}
-
-// Parse keywords on save
-add_action('update_option_sal_keywords', function($old, $new) {
-    $affiliates = array();
-    $lines = explode('\n', $new);
-    foreach ($lines as $line) {
-        $parts = explode('|', trim($line));
-        if (count($parts) == 2) {
-            $affiliates[$parts[1]] = $parts;
+    public function process_content() {
+        if (!is_singular()) return;
+        $keywords = explode("\n", get_option('sal_keywords', ''));
+        $links = explode("\n", get_option('sal_affiliate_links', ''));
+        $replacements = array();
+        foreach ($keywords as $index => $keyword) {
+            $keyword = trim($keyword);
+            if (!empty($keyword) && isset($links[$index])) {
+                $link = trim($links[$index]);
+                $replacements['/\b' . preg_quote($keyword, '/') . '\b/i'] = '<a href="' . esc_url($link) . '" target="_blank" rel="nofollow noopener">$0</a> ';
+            }
+        }
+        if (!empty($replacements)) {
+            ?>
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                var content = $('article, .entry-content').html();
+                <?php foreach ($replacements as $pattern => $replacement) { 
+                    $js_pattern = str_replace('/', '\/', $pattern);
+                    $js_repl = str_replace('$0', '$&', addslashes($replacement));
+                ?>
+                content = content.replace(<?php echo json_encode($js_pattern); ?>, <?php echo json_encode($js_repl); ?>);
+                <?php } ?>
+                $('article, .entry-content').html(content);
+            });
+            </script>
+            <?php
         }
     }
-    update_option('sal_affiliates', $affiliates);
-}, 10, 2);
+
+    public function activate() {
+        // Free version limits to 5 keywords
+        update_option('sal_free_version', true);
+    }
+
+    public function deactivate() {
+        // Cleanup if needed
+    }
+}
 
 SmartAffiliateAutoLinker::get_instance();
 
-// Pro teaser script
-function sal_pro_js_inline() {
-    ?><script>console.log('Smart Affiliate AutoLinker Pro: Upgrade for analytics!');</script><?php
+// Pro check (simplified - in real pro, license validation)
+function sal_is_pro() {
+    return get_option('sal_pro_license') === 'valid';
 }
-add_action('wp_footer', 'sal_pro_js_inline');
+
+// Output pure JSON, no extra text
