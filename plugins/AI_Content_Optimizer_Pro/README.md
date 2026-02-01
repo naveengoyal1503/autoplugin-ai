@@ -3,39 +3,38 @@
 ## Features
 
 - **Free Version**:
-  - Analyzes post readability and SEO score using a smart algorithm.
-  - Displays score in post editor sidebar.
-  - One-click analysis button.
+  - Basic content analysis for SEO score, readability, and keyword suggestions.
+  - Simple dashboard to paste and analyze post content.
 
-- **Pro Version** ($4.99/month):
-  - AI-powered content rewriting for better engagement.
-  - Bulk optimization for multiple posts/pages.
-  - Advanced SEO suggestions (keywords, meta).
-  - Priority email support and regular updates.
+- **Premium Version** ($4.99/month):
+  - AI-powered content rewriting and optimization.
+  - Bulk post optimization.
+  - Advanced metrics and priority support.
+  - Feature gating for pro users only.
 
 ## Installation
 
-1. Download the plugin ZIP.
-2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate.
-4. Access settings via **Settings > AI Content Optimizer**.
+1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Navigate to **Settings > AI Optimizer** to use.
 
 ## Setup
 
-- Free version works immediately on post edit screens.
-- For Pro: Enter license key in settings (simulated upgrade button for demo).
+- Free version ready immediately.
+- Upgrade to Pro via the dashboard button (simulated; integrate real payment like Stripe in production).
 
 ## Usage
 
-1. Edit any post/page.
-2. In the sidebar, click **Analyze** for instant readability score.
-3. **Pro**: Click **AI Optimize** to rewrite content automatically.
-4. Scores update on save; aim for 80+ for optimal SEO/readability.
+1. Go to **Settings > AI Optimizer**.
+2. Paste your post content into the textarea.
+3. Click **Analyze Content (Free)** for basic insights.
+4. Pro users: Click **AI Optimize (Pro)** for advanced features.
+5. Apply suggestions to improve SEO and engagement.
 
-## Upgrade to Pro
+## Monetization
 
-Click **Upgrade Now** in settings for premium features. Recurring revenue model ensures ongoing value[1][2].
+Freemium model encourages upgrades. In production, replace simulated upgrade with Stripe/PayPal integration for real subscriptions.
 
 ## Support
 
-Free support via WordPress forums. Pro users get priority email support.
+Contact support@example.com for help.
