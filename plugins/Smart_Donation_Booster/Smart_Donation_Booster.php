@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Donation Booster
  * Plugin URI: https://example.com/smart-donation-booster
- * Description: Boost donations with customizable buttons, goals, and PayPal integration.
+ * Description: Boost donations with progress bars, PayPal buttons, and goal tracking.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -27,138 +27,134 @@ class SmartDonationBooster {
     private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_shortcode('sdb_donate', array($this, 'donate_shortcode'));
-        add_shortcode('sdb_goal', array($this, 'goal_shortcode'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
+        add_shortcode('donation_goal', array($this, 'donation_goal_shortcode'));
+        add_action('wp_ajax_sdb_donate', array($this, 'handle_donation'));
+        add_action('wp_ajax_nopriv_sdb_donate', array($this, 'handle_donation'));
     }
 
     public function init() {
-        if (is_admin()) {
-            add_action('admin_init', array($this, 'admin_init'));
+        if (get_option('sdb_goal') === false) {
+            add_option('sdb_goal', 1000);
+            add_option('sdb_current', 0);
+            add_option('sdb_currency', 'USD');
         }
     }
 
     public function enqueue_scripts() {
         wp_enqueue_script('sdb-script', plugin_dir_url(__FILE__) . 'sdb-script.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('sdb-style', plugin_dir_url(__FILE__) . 'sdb-style.css', array(), '1.0.0');
         wp_localize_script('sdb-script', 'sdb_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sdb_nonce')));
+        wp_enqueue_style('sdb-style', plugin_dir_url(__FILE__) . 'sdb-style.css', array(), '1.0.0');
     }
 
-    public function admin_menu() {
-        add_options_page('Smart Donation Booster', 'Donation Booster', 'manage_options', 'sdb-settings', array($this, 'settings_page'));
-    }
+    public function donation_goal_shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'id' => 'default'
+        ), $atts);
 
-    public function admin_init() {
-        register_setting('sdb_settings', 'sdb_options');
-        add_settings_section('sdb_main', 'Main Settings', null, 'sdb');
-        add_settings_field('sdb_paypal_email', 'PayPal Email', array($this, 'paypal_field'), 'sdb', 'sdb_main');
-        add_settings_field('sdb_goal_amount', 'Donation Goal ($)', array($this, 'goal_field'), 'sdb', 'sdb_main');
-        add_settings_field('sdb_button_text', 'Button Text', array($this, 'button_text_field'), 'sdb', 'sdb_main');
-    }
+        $goal = get_option('sdb_goal', 1000);
+        $current = get_option('sdb_current', 0);
+        $currency = get_option('sdb_currency', 'USD');
+        $percent = min(100, ($current / $goal) * 100);
 
-    public function paypal_field() {
-        $options = get_option('sdb_options');
-        echo '<input type="email" name="sdb_options[paypal_email]" value="' . esc_attr($options['paypal_email'] ?? '') . '" />';
-    }
-
-    public function goal_field() {
-        $options = get_option('sdb_options');
-        echo '<input type="number" name="sdb_options[goal_amount]" value="' . esc_attr($options['goal_amount'] ?? '100') . '" step="0.01" />';
-    }
-
-    public function button_text_field() {
-        $options = get_option('sdb_options');
-        echo '<input type="text" name="sdb_options[button_text]" value="' . esc_attr($options['button_text'] ?? 'Donate Now') . '" />';
-    }
-
-    public function settings_page() {
+        ob_start();
         ?>
-        <div class="wrap">
-            <h1>Smart Donation Booster Settings</h1>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('sdb_settings');
-                do_settings_sections('sdb');
-                submit_button();
-                ?>
-            </form>
+        <div class="sdb-container">
+            <h3>Support Our Work!</h3>
+            <div class="sdb-progress" style="width: 100%; height: 20px; background: #f0f0f0; border-radius: 10px; overflow: hidden;">
+                <div class="sdb-progress-bar" style="height: 100%; background: #4CAF50; width: <?php echo $percent; ?>%; transition: width 0.5s;"></div>
+            </div>
+            <p><strong><?php echo $currency . number_format($current); ?></strong> raised of <?php echo $currency . number_format($goal); ?> goal</p>
+            <button id="sdb-donate-btn" class="sdb-donate-btn">Donate Now</button>
+            <div id="sdb-paypal" style="display:none;">
+                <div class="sdb-paypal-button" data-amount="10"></div>
+                <small>Or enter custom amount: $<input type="number" id="sdb-custom-amount" min="1" max="1000" value="10">
+                <button id="sdb-paypal-btn">Pay with PayPal</button>
+            </div>
         </div>
+        <script>
+        jQuery(document).ready(function($) {
+            $('#sdb-donate-btn').click(function() {
+                $('#sdb-paypal').toggle();
+            });
+            $('#sdb-paypal-btn').click(function() {
+                var amount = $('#sdb-custom-amount').val();
+                window.location.href = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=YOUR_PAYPAL_EMAIL&amount=' + amount + '&item_name=Donation';
+            });
+        });
+        </script>
         <?php
+        return ob_get_clean();
     }
 
-    public function donate_shortcode($atts) {
-        $options = get_option('sdb_options');
-        $amounts = array('5', '10', '25', '50', '100');
-        $output = '<div class="sdb-donate-container">';
-        $output .= '<h3>Support This Site</h3>';
-        foreach ($amounts as $amt) {
-            $output .= '<button class="sdb-donate-btn" data-amount="' . $amt . '">' . $options['button_text'] ?? 'Donate $' . $amt . '</button>';
-        }
-        $output .= '<form class="sdb-paypal-form" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">';
-        $output .= '<input type="hidden" name="cmd" value="_s-xclick">';
-        $output .= '<input type="hidden" name="hosted_button_id" value="">';
-        $output .= '<input type="hidden" name="business" value="' . esc_attr($options['paypal_email'] ?? '') . '">';
-        $output .= '<input type="hidden" name="currency_code" value="USD">';
-        $output .= '<input type="hidden" name="amount" id="sdb-amount" value="">';
-        $output .= '<input type="submit" value="Pay with PayPal">';
-        $output .= '</form></div>';
-        return $output;
+    public function handle_donation() {
+        check_ajax_referer('sdb_nonce', 'nonce');
+        $amount = floatval($_POST['amount']);
+        $current = get_option('sdb_current', 0);
+        update_option('sdb_current', $current + $amount);
+        wp_send_json_success('Thank you for your donation!');
     }
+}
 
-    public function goal_shortcode($atts) {
-        $options = get_option('sdb_options');
-        $goal = floatval($options['goal_amount'] ?? 100);
-        $donated = get_option('sdb_total_donated', 0);
-        $percent = min(100, ($donated / $goal) * 100);
-        $output = '<div class="sdb-goal-container">';
-        $output .= '<p>Goal: $' . number_format($goal) . ' | Raised: $' . number_format($donated) . ' (' . round($percent) . '%)</p>';
-        $output .= '<div class="sdb-progress-bar"><div class="sdb-progress-fill" style="width: ' . $percent . '%;"></div></div>';
-        $output .= '</div>';
-        return $output;
-    }
+// Admin settings page
+if (is_admin()) {
+    add_action('admin_menu', function() {
+        add_options_page('Donation Booster', 'Donation Booster', 'manage_options', 'sdb-settings', 'sdb_settings_page');
+    });
+}
 
-    public function activate() {
-        add_option('sdb_options', array('goal_amount' => 100, 'button_text' => 'Donate Now'));
+function sdb_settings_page() {
+    if (isset($_POST['sdb_goal'])) {
+        update_option('sdb_goal', floatval($_POST['sdb_goal']));
+        update_option('sdb_current', floatval($_POST['sdb_current']));
+        update_option('sdb_currency', sanitize_text_field($_POST['sdb_currency']));
+        echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
     }
+    $goal = get_option('sdb_goal', 1000);
+    $current = get_option('sdb_current', 0);
+    $currency = get_option('sdb_currency', 'USD');
+    ?>
+    <div class="wrap">
+        <h1>Smart Donation Booster Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr>
+                    <th>Goal Amount</th>
+                    <td><input type="number" name="sdb_goal" value="<?php echo $goal; ?>" /></td>
+                </tr>
+                <tr>
+                    <th>Current Amount</th>
+                    <td><input type="number" name="sdb_current" value="<?php echo $current; ?>" /></td>
+                </tr>
+                <tr>
+                    <th>Currency</th>
+                    <td>
+                        <select name="sdb_currency">
+                            <option value="USD" <?php selected($currency, 'USD'); ?>>USD</option>
+                            <option value="EUR" <?php selected($currency, 'EUR'); ?>>EUR</option>
+                            <option value="GBP" <?php selected($currency, 'GBP'); ?>>GBP</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <p class="submit"><input type="submit" class="button-primary" value="Save Settings" /></p>
+        </form>
+        <p>Use shortcode: <code>[donation_goal]</code></p>
+        <p><strong>Pro Upgrade:</strong> Multiple goals, analytics, custom themes - <a href="https://example.com/pro">Get Pro</a></p>
+    </div>
+    <?php
 }
 
 SmartDonationBooster::get_instance();
 
-add_action('wp_ajax_sdb_update_donated', 'sdb_update_donated');
-add_action('wp_ajax_nopriv_sdb_update_donated', 'sdb_update_donated');
-
-function sdb_update_donated() {
-    check_ajax_referer('sdb_nonce', 'nonce');
-    $amount = floatval($_POST['amount']);
-    $total = get_option('sdb_total_donated', 0) + $amount;
-    update_option('sdb_total_donated', $total);
-    wp_send_json_success(array('total' => $total));
-}
-
-// Inline scripts and styles
-add_action('wp_head', 'sdb_inline_styles');
-function sdb_inline_styles() {
+// Inline styles and JS for self-contained
+add_action('wp_head', function() {
     echo '<style>
-.sdb-donate-container { text-align: center; padding: 20px; background: #f9f9f9; border-radius: 8px; }
-.sdb-donate-btn { background: #007cba; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
-.sdb-donate-btn:hover { background: #005a87; }
-.sdb-paypal-form { margin-top: 10px; }
-.sdb-goal-container { text-align: center; padding: 20px; }
-.sdb-progress-bar { background: #ddd; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
-.sdb-progress-fill { background: #28a745; height: 100%; transition: width 0.3s; }
+    .sdb-container { max-width: 400px; margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 10px; text-align: center; background: #f9f9f9; }
+    .sdb-donate-btn { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    .sdb-donate-btn:hover { background: #005a87; }
     </style>';
-}
+    echo '<script>jQuery(document).ready(function($){ /* Additional JS if needed */ });</script>';
+});
 
-add_action('wp_footer', 'sdb_inline_script');
-function sdb_inline_script() {
-    ?>
-    <script>jQuery(document).ready(function($) {
-        $('.sdb-donate-btn').click(function() {
-            var amount = $(this).data('amount');
-            $('#sdb-amount').val(amount);
-            $('.sdb-paypal-form').submit();
-        });
-    });</script>
-    <?php
-}
+// Replace YOUR_PAYPAL_EMAIL with actual email in production
+?>
