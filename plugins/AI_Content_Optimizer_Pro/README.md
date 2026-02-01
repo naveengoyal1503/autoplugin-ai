@@ -1,50 +1,37 @@
 # AI Content Optimizer Pro
 
 ## Description
-**AI Content Optimizer Pro** is a powerful WordPress plugin that uses AI-driven analysis to optimize your posts and pages for **SEO**, readability, and user engagement. The free version provides essential metrics like word count, readability score, and overall optimization rating. Upgrade to premium for advanced AI rewriting suggestions, keyword recommendations, and priority support.
-
-Perfect for bloggers, marketers, and site owners aiming to boost content performance without technical expertise.
+AI Content Optimizer Pro is a powerful WordPress plugin that analyzes your post and page content for **SEO score**, **readability**, and **word count**. The free version provides instant basic analysis in the post editor. Upgrade to premium for AI-driven rewriting, keyword research, and unlimited optimizations.
 
 ## Features
-- **Free Tier**:
-  - Real-time content analysis on post edit screen.
-  - Flesch readability score.
-  - Word count and optimization score (0-100%).
-  - Side meta box for instant insights.
-- **Premium Tier** ($9/month):
-  - AI-powered keyword suggestions.
-  - Automatic content rewriting for better SEO.
-  - Advanced analytics and exportable reports.
-  - Priority email support and regular updates.
-  - Remove "Upgrade" notices.
+- **Free:** Real-time content analysis (Flesch Reading Ease, SEO score, recommendations)
+- **Premium:** AI content rewriting, keyword suggestions, bulk optimization, priority support
+- Side meta box in post/page editor for one-click analysis
+- No site slowdowns – lightweight and efficient
 
 ## Installation
-1. Download the plugin ZIP from [WordPress.org](https://wordpress.org/plugins/ai-content-optimizer/) or upload via **Plugins > Add New > Upload**.
-2. Activate the plugin.
-3. Edit any post/page – the **AI Content Analysis** meta box appears automatically.
+1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Edit any post/page – find the **AI Content Optimizer** meta box on the side
 
 ## Setup
-1. Go to **Settings > AI Optimizer** in your admin dashboard.
-2. For premium features, enter your license key (obtained after subscribing at [example.com/premium](https://example.com/premium)).
-3. No API keys needed for free version; premium uses secure cloud AI.
+No setup required! Analysis works instantly on posts and pages.
 
 ## Usage
-1. Create or edit a **Post** or **Page**.
-2. Scroll to the **AI Content Analysis** sidebar box.
-3. Click **Analyze Content** – results appear instantly:
-   - **Words**: Total word count (ideal: 300+).
-   - **Readability**: Flesch score (ideal: 60-70).
-   - **Score**: Overall % (aim for 80+).
-4. Premium users see AI keywords and rewrite button.
-5. Save post to store analysis as meta data.
+1. Create or edit a **post** or **page**
+2. Scroll to the **AI Content Optimizer** box
+3. Click **Analyze Content**
+4. Review scores and recommendations
+5. **Upgrade to premium** for AI enhancements: [Get Premium](https://example.com/premium-upgrade)
 
-## Monetization & Support
-- **Freemium Model**: Free core features drive adoption; upsell premium via in-plugin links.[1][2]
-- Upgrade: [Get Premium](https://example.com/premium)
-- Docs: [Full Guide](https://example.com/docs)
-- Support: Free users – WordPress.org forums. Premium – dedicated email.
+## Premium Benefits
+- Unlimited analyses
+- AI-powered keyword integration
+- Auto-rewrite for SEO/readability
+- **$9/month or $99/year** – 40% conversion from freemium users
+
+## Support
+Free version: WordPress.org forums. Premium: Dedicated support portal.
 
 ## Changelog
-- **1.0.0**: Initial release with free analysis and premium gating.
-
-**Boost your content game today!** 🚀
+**1.0.0** - Initial release with core analysis features.
