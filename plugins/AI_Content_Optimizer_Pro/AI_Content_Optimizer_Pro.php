@@ -6,135 +6,190 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: AI Content Optimizer Pro
  * Plugin URI: https://example.com/ai-content-optimizer
- * Description: Automatically optimizes WordPress content for SEO using AI-powered analysis. Free version with basics; premium for advanced features.
+ * Description: AI-powered content analysis and optimization for better SEO and engagement.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: ai-content-optimizer
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class AIContentOptimizerPro {
-    private $is_premium = false;
+class AIContentOptimizer {
+    private static $instance = null;
 
-    public function __construct() {
-        $this->is_premium = $this->check_premium();
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        add_action('init', array($this, 'init'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('wp_ajax_optimize_content', array($this, 'ajax_optimize_content'));
         add_action('add_meta_boxes', array($this, 'add_meta_box'));
-        add_action('save_post', array($this, 'save_meta'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('wp_ajax_optimize_content', array($this, 'ajax_optimize'));
+        add_action('save_post', array($this, 'save_post_optimization'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
 
-    private function check_premium() {
-        // Simulate premium check; in real, verify license key
-        return get_option('ai_optimizer_premium_key') !== false;
+    public function init() {
+        load_plugin_textdomain('ai-content-optimizer', false, dirname(plugin_basename(__FILE__)) . '/languages');
+        if (is_admin()) {
+            wp_enqueue_script('ai-optimizer-js', plugin_dir_url(__FILE__) . 'assets/optimizer.js', array('jquery'), '1.0.0', true);
+            wp_enqueue_style('ai-optimizer-css', plugin_dir_url(__FILE__) . 'assets/optimizer.css', array(), '1.0.0');
+        }
     }
 
-    public function activate() {
-        add_option('ai_optimizer_usage_count', 0);
+    public function add_admin_menu() {
+        add_options_page(
+            'AI Content Optimizer',
+            'AI Optimizer',
+            'manage_options',
+            'ai-content-optimizer',
+            array($this, 'settings_page')
+        );
     }
 
-    public function enqueue_scripts($hook) {
-        if ($hook !== 'post.php' && $hook !== 'post-new.php') return;
-        wp_enqueue_script('ai-optimizer-js', plugin_dir_url(__FILE__) . 'optimizer.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('ai-optimizer-js', 'ai_optimizer', array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ai_optimizer_nonce'),
-            'is_premium' => $this->is_premium,
-            'upgrade_url' => 'https://example.com/premium'
-        ));
+    public function settings_page() {
+        if (isset($_POST['ai_optimizer_license'])) {
+            update_option('ai_optimizer_license', sanitize_text_field($_POST['ai_optimizer_license']));
+            echo '<div class="notice notice-success"><p>License updated!</p></div>';
+        }
+        $license = get_option('ai_optimizer_license', '');
+        ?>
+        <div class="wrap">
+            <h1>AI Content Optimizer Pro Settings</h1>
+            <form method="post">
+                <table class="form-table">
+                    <tr>
+                        <th>Premium License Key</th>
+                        <td>
+                            <input type="text" name="ai_optimizer_license" value="<?php echo esc_attr($license); ?>" class="regular-text" />
+                            <p class="description">Enter your premium license for AI rewriting features. <a href="https://example.com/pricing" target="_blank">Get Premium</a></p>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+            <h2>Quick Analysis</h2>
+            <textarea id="content-input" rows="10" cols="50" placeholder="Paste your content here..."></textarea>
+            <button id="analyze-btn" class="button button-primary">Analyze Free</button>
+            <button id="optimize-btn" class="button button-secondary" style="display:none;">Upgrade to Optimize with AI</button>
+            <div id="analysis-results"></div>
+        </div>
+        <?php
     }
 
     public function add_meta_box() {
-        add_meta_box('ai-content-optimizer', 'AI Content Optimizer', array($this, 'meta_box_html'), 'post', 'side');
+        add_meta_box(
+            'ai_content_optimizer',
+            'AI Content Optimizer',
+            array($this, 'meta_box_callback'),
+            'post',
+            'side',
+            'high'
+        );
     }
 
-    public function meta_box_html($post) {
-        wp_nonce_field('ai_optimizer_meta', 'ai_optimizer_nonce');
-        $optimized = get_post_meta($post->ID, '_ai_optimized', true);
-        echo '<p><strong>Status:</strong> ' . ($optimized ? 'Optimized' : 'Not Optimized') . '</p>';
-        echo '<button id="ai-optimize-btn" class="button button-primary">Optimize Content</button>';
-        if (!$this->is_premium) {
-            echo '<p><small><a href="https://example.com/premium" target="_blank">Go Premium for Advanced AI & Unlimited Optimizations</a></small></p>';
+    public function meta_box_callback($post) {
+        wp_nonce_field('ai_optimizer_nonce', 'ai_optimizer_nonce');
+        $score = get_post_meta($post->ID, '_ai_optimizer_score', true);
+        echo '<p><strong>Optimization Score:</strong> ' . ($score ? esc_html($score) : 'Not analyzed') . '%</p>';
+        echo '<button class="button analyze-post" data-post-id="' . $post->ID . '">Analyze</button>';
+        if (get_option('ai_optimizer_license')) {
+            echo '<button class="button button-primary optimize-post" data-post-id="' . $post->ID . '" style="display:none;">AI Optimize</button>';
+        } else {
+            echo '<p><a href="' . admin_url('options-general.php?page=ai-content-optimizer') . '">Upgrade for AI features</a></p>';
         }
     }
 
-    public function save_meta($post_id) {
-        if (!isset($_POST['ai_optimizer_nonce']) || !wp_verify_nonce($_POST['ai_optimizer_nonce'], 'ai_optimizer_meta')) return;
+    public function ajax_optimize_content() {
+        check_ajax_referer('ai_optimizer_nonce', 'nonce');
+        $content = sanitize_textarea_field($_POST['content']);
+        $license = get_option('ai_optimizer_license');
+
+        // Free basic analysis
+        $score = $this->calculate_readability_score($content);
+        $tips = $this->generate_tips($content, $score);
+
+        if ($license && $_POST['action'] === 'optimize') {
+            // Simulate AI optimization (premium feature)
+            $optimized = $this->mock_ai_optimize($content);
+            wp_send_json_success(array('score' => 95, 'tips' => 'Optimized!', 'content' => $optimized));
+        } else {
+            wp_send_json_success(array('score' => $score, 'tips' => $tips));
+        }
+    }
+
+    private function calculate_readability_score($content) {
+        $word_count = str_word_count(strip_tags($content));
+        $sentence_count = preg_match_all('/[.!?]+/', $content);
+        $avg_sentence = $sentence_count ? $word_count / $sentence_count : 0;
+        $score = 100;
+        if ($avg_sentence > 25) $score -= 20;
+        if ($word_count < 300) $score -= 15;
+        return max(0, $score);
+    }
+
+    private function generate_tips($content, $score) {
+        $tips = array();
+        if ($score < 80) $tips[] = 'Shorten sentences for better readability.';
+        if (strlen($content) < 1000) $tips[] = 'Add more content for engagement.';
+        return implode(' ', $tips);
+    }
+
+    private function mock_ai_optimize($content) {
+        // Mock AI: improve sentences, add keywords
+        $improved = preg_replace('/\b(sentence)\b/', '$1 structure', $content);
+        return $improved . '\n\nOptimized for SEO and readability.';
+    }
+
+    public function save_post_optimization($post_id) {
+        if (!isset($_POST['ai_optimizer_nonce']) || !wp_verify_nonce($_POST['ai_optimizer_nonce'], 'ai_optimizer_nonce')) return;
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
         if (!current_user_can('edit_post', $post_id)) return;
+
+        if (isset($_POST['ai_optimizer_score'])) {
+            update_post_meta($post_id, '_ai_optimizer_score', intval($_POST['ai_optimizer_score']));
+        }
     }
 
-    public function ajax_optimize() {
-        check_ajax_referer('ai_optimizer_nonce', 'nonce');
-        if (!current_user_can('edit_posts')) wp_die();
-
-        $post_id = intval($_POST['post_id']);
-        $usage = get_option('ai_optimizer_usage_count', 0);
-
-        if (!$this->is_premium && $usage >= 5) {
-            wp_send_json_error('Upgrade to premium for unlimited optimizations.');
-        }
-
-        $content = get_post_field('post_content', $post_id);
-        $title = get_post_field('post_title', $post_id);
-
-        // Simulate AI optimization
-        $suggestions = $this->simulate_ai_optimize($title, $content);
-
-        update_post_meta($post_id, '_ai_optimized', true);
-        if (!$this->is_premium) {
-            update_option('ai_optimizer_usage_count', $usage + 1);
-        }
-
-        wp_send_json_success($suggestions);
-    }
-
-    private function simulate_ai_optimize($title, $content) {
-        // Basic free optimization
-        $suggestions = array(
-            'title' => 'Optimized: ' . $title . ' (Added keywords: SEO, WordPress)',
-            'content' => substr($content, 0, 100) . '... Optimized with meta keywords and readability score 85/100.',
-            'score' => $this->is_premium ? '95/100 (Premium AI)' : '75/100 (Basic)'
-        );
-        if ($this->is_premium) {
-            $suggestions['advanced'] = 'Premium: Auto-generated meta description, LSI keywords, and schema markup added.';
-        }
-        return $suggestions;
+    public function activate() {
+        add_option('ai_optimizer_license', '');
     }
 }
 
-new AIContentOptimizerPro();
+AIContentOptimizer::get_instance();
 
-// Premium activation hook
-add_action('admin_init', function() {
-    if (isset($_POST['ai_premium_key'])) {
-        if ($_POST['ai_premium_key'] === 'premium123') { // Demo key
-            update_option('ai_optimizer_premium_key', true);
-            wp_redirect(admin_url('plugins.php?page=ai-optimizer'));
-        }
+// Enqueue assets only if not exists
+add_action('wp_enqueue_scripts', function() {
+    if (!file_exists(plugin_dir_path(__FILE__) . 'assets/optimizer.js')) {
+        // Inline JS for self-contained
+        wp_add_inline_script('jquery', "
+            jQuery(document).ready(function($) {
+                $('.analyze-post, #analyze-btn').click(function() {
+                    var postId = $(this).data('post-id') || 0;
+                    var content = postId ? $('#postdivrich').find('iframe').contents().find('#tinymce').val() || $('#content').val() : $('#content-input').val();
+                    if (!content) return;
+                    $.post(ajaxurl, {
+                        action: 'optimize_content',
+                        content: content,
+                        nonce: 'fake_nonce_for_demo'
+                    }, function(res) {
+                        if (res.success) {
+                            $('#analysis-results').html('<p><strong>Score:</strong> ' + res.data.score + '%<br>' + res.data.tips + '</p>');
+                            if (postId) $('.optimize-post').show();
+                        }
+                    });
+                });
+                $('.optimize-post, #optimize-btn').click(function() {
+                    alert('Premium feature: Enter license in settings for AI optimization!');
+                });
+            });
+        ");
     }
 });
-
-// Note: Create a simple optimizer.js file with this content and place in plugin dir:
-/*
-$(document).ready(function() {
-    $('#ai-optimize-btn').click(function() {
-        $.post(ai_optimizer.ajaxurl, {
-            action: 'optimize_content',
-            post_id: $('#post_ID').val(),
-            nonce: ai_optimizer.nonce
-        }, function(response) {
-            if (response.success) {
-                alert('Optimization complete: ' + JSON.stringify(response.data));
-            } else {
-                alert('Error: ' + response.data);
-            }
-        });
-    });
-});
-*/
-?>
