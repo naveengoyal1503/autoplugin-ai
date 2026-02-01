@@ -2,39 +2,42 @@
 
 ## Features
 
-- **Auto-Linking**: Automatically replaces keywords in posts/pages with cloaked affiliate links.
-- **Click Tracking**: Real-time stats on clicks per keyword/link.
-- **Easy Setup**: Add keywords and affiliate URLs via simple dashboard.
-- **SEO-Friendly**: Nofollow links preserve site SEO.
-- **Freemium Model**: Free for up to 5 links; Pro unlocks unlimited + analytics.
-
-**Pro Features**: A/B testing, geo-targeting, detailed reports ($49/year).
+- **Automatic Link Cloaking**: Replace keywords in posts with cloaked affiliate links.
+- **Click Tracking**: Monitor clicks and performance in real-time (free).
+- **Easy Setup**: JSON-based link mapping via settings page.
+- **Premium Features**: A/B testing, advanced analytics, custom redirects ($49/year).
+- **SEO-Friendly**: Nofollow attributes and 301 redirects.
+- **Mobile Responsive**: Works on all devices.
 
 ## Installation
 
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Go to **Settings > Affiliate Links** to add your first keyword + URL.
+1. Upload the `smart-affiliate-manager` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Manager** to configure links.
 
 ## Setup
 
-1. In the dashboard, enter a **keyword** (e.g., "best hosting").
-2. Paste your **affiliate URL** (e.g., Amazon/partner link).
-3. Save. Keywords auto-link in new/existing content.
-
-**Limits**: Free tier: 5 links max. Upgrade for more.
+1. In the settings page, add your affiliate links in JSON format:
+   
+   {
+     "buy now": "https://affiliate.com/product?ref=123",
+     "check it out": "https://example.com/offer"
+   }
+   
+2. Save changes. Keywords in posts will auto-cloak.
+3. View stats on the settings page.
 
 ## Usage
 
-- Links appear as `<a class="sam-link">keyword</a>` in content.
-- Clicks redirect via tracker to your affiliate URL.
-- View stats: Clicks per link in dashboard.
-- **Customization**: Style `.sam-link` in CSS (e.g., underline on hover).
+- Edit posts and include keywords like "buy now".
+- Links auto-convert to tracked cloaks.
+- Premium: Unlock A/B variants and API integrations via upgrade link.
 
 ## Support
 
-Report issues on WordPress.org forums. Pro support via email.
+Free support via WordPress forums. Premium support included with upgrade.
 
 ## Changelog
 
-**1.0.0**: Initial release with auto-linking and tracking.
+**1.0.0**
+- Initial release.
