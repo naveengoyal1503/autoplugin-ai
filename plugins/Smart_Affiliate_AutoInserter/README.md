@@ -1,47 +1,41 @@
 # Smart Affiliate AutoInserter
 
-**Automatically monetize your WordPress site by inserting relevant Amazon affiliate links into posts and pages.**
+**Automatically boosts your affiliate earnings by inserting relevant links into content using smart keyword matching.**
 
 ## Features
-- **Auto-insertion**: Detects keywords in content and replaces them with affiliate links.
-- **Easy setup**: Enter your Amazon API key and affiliate tag in settings.
-- **Safe & compliant**: Adds `rel="nofollow sponsored"` to links.
-- **Freemium model**: Free for basic use; Pro unlocks A/B testing, analytics, custom keywords, and unlimited links.
-- **Performance optimized**: Lightweight and doesn't slow down your site.
+
+- **Automatic Link Insertion**: Scans posts and inserts affiliate links based on keywords (up to 3 per post in free version).
+- **Easy Setup**: Add keywords, link text, and URLs via intuitive dashboard.
+- **Non-Intrusive**: Randomized insertion prevents spammy feel (33% chance per match).
+- **Mobile-Responsive**: Works seamlessly on all devices.
+- **Pro Features**: AI-powered keyword suggestions, unlimited links/sites, click analytics, A/B testing, and premium integrations (Amazon, ClickBank, etc.).
 
 ## Installation
-1. Download the plugin ZIP file.
-2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
-3. Upload and activate the plugin.
-4. Go to **Settings > Affiliate AutoInserter** to configure.
+
+1. Upload the `smart-affiliate-autoinserter` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Go to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
-1. Sign up for [Amazon Associates](https://affiliate-program.amazon.com/) to get your **Affiliate Tag**.
-2. Get an [Amazon Product Advertising API key](https://affiliate-program.amazon.com/) (Pro feature for dynamic products).
-3. Enter your API Key and Affiliate Tag in the plugin settings.
-4. Enable the plugin.
-5. Test on a post containing keywords like 'iphone', 'laptop', etc.
+
+1. In the dashboard, set **Max Links per Post** (default: 3).
+2. Click **Add Affiliate** and enter:
+   - **Keyword**: e.g., "best laptop"
+   - **Link Text**: e.g., "top laptop deals"
+   - **Affiliate URL**: Your affiliate link
+3. Save changes. Links auto-insert on published posts.
 
 ## Usage
-- Write normal content with product-related keywords.
-- The plugin automatically turns keywords into affiliate links (one per keyword per post).
-- **Pro Tips**: Upgrade for click tracking, revenue stats, and AI-suggested products.
 
-## Pro Version
-- A/B test link placements.
-- Detailed analytics dashboard.
-- Custom keyword lists.
-- Dynamic product suggestions via Amazon API.
-- Priority support.
+- Works on single posts automatically.
+- Test on a staging site first.
+- Monitor earnings; upgrade to Pro for analytics.
+- **Pro Tip**: Use high-converting keywords for best results.
 
-**Upgrade for $49/year: [Get Pro](#)**
+## Upgrade to Pro
 
-## FAQ
-**Does it slow my site?** No, it's optimized and runs only on frontend content display.
+Unlock AI optimization and more for $9/month or $99/year. [Get Pro](#)
 
-**Supported networks?** Starts with Amazon; Pro adds more.
+## Support
 
-**Privacy compliant?** Yes, no user data collected.
-
-## Changelog
-**1.0.0** - Initial release.
+Report issues via WordPress.org forums.
