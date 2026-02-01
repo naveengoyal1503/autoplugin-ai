@@ -1,50 +1,55 @@
 # Smart Affiliate AutoInserter
 
-**Automatically monetize your WordPress site by inserting relevant Amazon affiliate links into posts and pages using smart keyword matching.**
+**Automatically monetize your WordPress content by inserting relevant Amazon affiliate links based on keywords.**
 
 ## Features
-- **Auto-Insert Links**: Scans content for keywords and replaces them with your Amazon affiliate links.
-- **Easy Setup**: Add keyword:ASIN pairs in settings (e.g., `laptop:B08N5WRWNW`).
-- **Performance Limits**: Free version limits to 3 links per post; **Pro: Unlimited**.
-- **Mobile-Responsive**: Links work perfectly on all devices.
-- **Pro Features** (Upgrade for $49/year):
-  - Unlimited links per post.
-  - Click tracking and analytics dashboard.
-  - A/B testing for link styles.
-  - Support for other networks (e.g., custom URLs).
-  - Priority support.
+
+- **Smart Keyword Matching**: Automatically detects keywords in posts/pages and inserts matching affiliate links.
+- **Customizable Limits**: Set max links per post to avoid over-optimization.
+- **Easy Setup**: Configure your Amazon Affiliate tag and keyword-ASIN pairs in seconds.
+- **Mobile-Responsive**: Links render perfectly on all devices.
+- **Freemium Model**: Free version for basics; **Pro** adds API integration, click tracking, A/B testing, and analytics dashboard.
+- **SEO-Friendly**: Uses `nofollow` and `noopener` for compliance.
+
+**Pro Features (Upgrade for $49/year)**:
+- Real Amazon Product API lookups for dynamic titles/images.
+- Performance analytics and revenue tracking.
+- Advanced targeting (page-specific, post-type filters).
+- Unlimited keyword pairs and A/B link testing.
 
 ## Installation
-1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > Affiliate AutoInserter** to configure.
+
+1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Go to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
-1. **Get Amazon Associates ID**: Sign up at [affiliate-program.amazon.com](https://affiliate-program.amazon.com) and note your tag (e.g., `yourid-20`).
-2. **Add Link Rules**: In settings, enter keywords and ASINs:
-   
-laptop:B08N5WRWNW
-phone:B07RF1XD5K
-shoes:B01M0L9V2Q
-   
-3. Set **Max Links** (default: 3).
-4. Save. Links auto-appear in new/existing posts!
+
+1. **Get Amazon Affiliate Tag**: Sign up at [Amazon Associates](https://affiliate-program.amazon.com/) and grab your tag (e.g., `yourid-20`).
+2. **Add Keywords & ASINs**: In settings, enter pairs like `earbuds -> B08N5WRWNW`.
+3. **Set Max Links**: Default 3 per post.
+4. **Save & Test**: Publish a post with keywords to see links auto-insert.
+
+**Example**:
+- Keyword: `smartwatch`
+- ASIN: `B07RF1XD36`
+- Generates: `<a href="https://amazon.com/dp/B07RF1XD36?tag=yourid-20">Smartwatch</a>`
 
 ## Usage
-- Write content with keywords like "laptop".
-- Plugin auto-replaces with affiliate link: `<a href="https://amazon.com/dp/B08N5WRWNW?tag=yourid-20">Laptop</a>`.
-- Earn commissions on clicks/sales.
-- Test on a staging site first.
-- **Pro Tip**: Use high-volume keywords from your analytics for max revenue.
+
+- Write content naturally with target keywords.
+- Links insert automatically in `the_content`.
+- **Pro Tip**: Use tiered pricing psychology like $9.99 links for higher conversions.
+- Monitor earnings in Amazon Associates dashboard.
 
 ## FAQ
-**Does it slow my site?** No, lightweight and uses WordPress filters.
-**Safe for Amazon ToS?** Yes, uses standard affiliate links with `nofollow sponsored`.
-**Upgrade?** Visit [example.com/pro](https://example.com/pro) for Pro.
 
-## Support
-- Free support via WordPress forums.
-- Pro: Email support@yourdomain.com.
+**Does it slow my site?** No, lightweight with no external calls in free version.
+**Works with Gutenberg/Classic?** Yes, filters `the_content` universally.
+**Support?** Free users: WordPress.org forums. Pro: Priority email support.
 
-*Boost your affiliate earnings today!*
+## Changelog
+
+**1.0.0** - Initial release.
+
+**Upgrade to Pro today for 40% higher conversions with dynamic content!**
