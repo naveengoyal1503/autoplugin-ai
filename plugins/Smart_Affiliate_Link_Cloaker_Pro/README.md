@@ -1,42 +1,35 @@
 # Smart Affiliate Link Cloaker Pro
 
-## Features
+## Description
+Boost your affiliate earnings with automatic link cloaking, click tracking, and analytics. Free version includes basic cloaking and stats; Pro unlocks A/B testing, conversions, and unlimited links.
 
-- **Automatic Link Cloaking**: Converts raw affiliate URLs into branded, trackable links.
-- **Click Tracking**: Free version tracks total clicks; Pro provides per-link analytics[2][4].
-- **Shortcode Support**: Easy integration with `[sac_link url="" text="" id=""]`.
-- **Pro Features**: A/B testing, detailed analytics dashboard, unlimited links, no branding ($9/month)[1].
-- **SEO-Friendly**: Adds `rel="nofollow"` and custom redirects.
-- **Conversion Boost**: Monitors performance to optimize earnings.
+## Features
+- **Link Cloaking**: Secure, pretty URLs for affiliate links (e.g., `/go-amazon`).
+- **Click Tracking**: Logs IP, time, and link ID in WordPress database.
+- **Shortcode Support**: Use `[sac_link id="0"]` to embed cloaked links.
+- **Admin Dashboard**: Manage links via JSON, view real-time stats.
+- **Pro Features**: A/B testing, conversion tracking, premium support ($49/year).
 
 ## Installation
-
-1. Download and upload the plugin ZIP to `/wp-content/plugins/`.
-2. Activate via **Plugins > Installed Plugins**.
-3. Flush permalinks: **Settings > Permalinks > Save**.
+1. Upload the plugin ZIP to `/wp-content/plugins/` or install via WordPress dashboard.
+2. Activate the plugin.
+3. Go to **Settings > Affiliate Cloaker** to configure.
 
 ## Setup
-
-1. Go to **Settings > SAC Cloaker**.
-2. Free: Use shortcodes immediately.
-3. Pro: Enter license key to unlock advanced features.
+1. In the admin page, enter links as JSON array:
+   
+   [
+     {"name":"Amazon Deal","url":"https://amazon.com/affiliate-link"},
+     {"name":"Course","url":"https://udemy.com/aff-link"}
+   ]
+   
+2. Save. Use shortcodes like `[sac_link id="0"]` in posts/pages.
+3. Clicks redirect and log automatically.
 
 ## Usage
+- Embed shortcodes in content.
+- View stats in dashboard.
+- **Pro Upgrade**: Contact for A/B splits and API integrations.
 
-### Basic Shortcode
-
-[sac_link url="https://affiliate.com/product?ref=123" text="Get 50% Off" id="promo1"]
-
-
-- `url`: Affiliate link.
-- `text`: Link display text.
-- `id`: Unique tracker ID (optional).
-
-### Pro Dashboard
-View clicks, conversion rates, and A/B test results.
-
-## Monetization Potential
-Freemium model hooks users with free tracking, upsells Pro for analytics. Expected revenue: 10% conversion at $9/mo[1][3].
-
-## Support
-Contact support@example.com for Pro upgrades.
+## Freemium Model
+Free: Up to 10 links, basic stats. Pro: $49/year for unlimited + advanced tools.
