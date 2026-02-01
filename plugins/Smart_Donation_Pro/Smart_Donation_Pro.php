@@ -6,7 +6,7 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Donation Pro
  * Plugin URI: https://example.com/smart-donation-pro
- * Description: Add customizable donation buttons and progress bars to monetize your WordPress site.
+ * Description: Collect donations easily with customizable buttons, progress bars, and payment integrations.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
@@ -20,70 +20,40 @@ class SmartDonationPro {
     public function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_shortcode('smart_donation', array($this, 'donation_shortcode'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_sdp_donate', array($this, 'handle_donation'));
-        add_action('wp_ajax_nopriv_sdp_donate', array($this, 'handle_donation'));
+        add_shortcode('smart_donation', array($this, 'donation_shortcode'));
+        add_action('wp_ajax_smart_donation_process', array($this, 'process_donation'));
+        add_action('wp_ajax_nopriv_smart_donation_process', array($this, 'process_donation'));
     }
 
     public function init() {
-        if (get_option('sdp_paypal_email')) {
-            // Plugin is set up
-        }
+        $this->options = get_option('smart_donation_options', array(
+            'paypal_email' => '',
+            'amount' => '10',
+            'button_text' => 'Donate Now',
+            'goal_amount' => '1000',
+            'current_amount' => '0',
+            'currency' => 'USD',
+            'thank_you_message' => 'Thank you for your donation!'
+        ));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('sdp-script', plugin_dir_url(__FILE__) . 'sdp.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('sdp-style', plugin_dir_url(__FILE__) . 'sdp.css', array(), '1.0.0');
-        wp_localize_script('sdp-script', 'sdp_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sdp_nonce')));
-    }
-
-    public function donation_shortcode($atts) {
-        $atts = shortcode_atts(array(
-            'amount' => '10',
-            'button_text' => 'Donate Now',
-            'goal' => '1000',
-            'currency' => '$'
-        ), $atts);
-
-        $paypal_email = get_option('sdp_paypal_email');
-        if (!$paypal_email) {
-            return '<p>Please set up PayPal email in plugin settings.</p>';
-        }
-
-        $current = get_option('sdp_current_amount', 0);
-        $progress = min(100, ($current / $atts['goal']) * 100);
-
-        ob_start();
-        ?>
-        <div class="sdp-container">
-            <div class="sdp-progress-bar">
-                <div class="sdp-progress" style="width: <?php echo $progress; ?>%;"></div>
-            </div>
-            <p><?php echo $atts['currency']; ?><?php echo number_format($current, 0); ?> / <?php echo $atts['currency']; ?><?php echo $atts['goal']; ?> raised</p>
-            <form class="sdp-donate-form" method="post" action="https://www.paypal.com/cgi-bin/webscr">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value="<?php echo esc_attr($paypal_email); ?>">
-                <input type="hidden" name="item_name" value="Donation to <?php echo get_bloginfo('name'); ?>">
-                <input type="hidden" name="currency_code" value="USD">
-                <input type="number" name="amount" value="<?php echo esc_attr($atts['amount']); ?>" min="1" step="0.01" required>
-                <input type="hidden" name="return" value="<?php echo home_url(); ?>">
-                <button type="submit" class="sdp-button"><?php echo esc_html($atts['button_text']); ?></button>
-            </form>
-        </div>
-        <?php
-        return ob_get_clean();
+        wp_enqueue_script('jquery');
+        wp_add_inline_script('jquery', 'jQuery(document).ready(function($) { $(".donate-btn").click(function(e) { e.preventDefault(); $("#donation-form").slideToggle(); }); });');
+        wp_enqueue_style('smart-donation-style', plugin_dir_url(__FILE__) . 'style.css', array(), '1.0.0');
     }
 
     public function admin_menu() {
-        add_options_page('Smart Donation Pro', 'Donation Pro', 'manage_options', 'sdp-settings', array($this, 'settings_page'));
+        add_options_page('Smart Donation Pro', 'Donation Settings', 'manage_options', 'smart-donation', array($this, 'settings_page'));
     }
 
     public function settings_page() {
-        if (isset($_POST['sdp_paypal_email'])) {
-            update_option('sdp_paypal_email', sanitize_email($_POST['sdp_paypal_email']));
+        if (isset($_POST['submit'])) {
+            update_option('smart_donation_options', $_POST['options']);
             echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
         }
+        $options = $this->options;
         ?>
         <div class="wrap">
             <h1>Smart Donation Pro Settings</h1>
@@ -91,57 +61,106 @@ class SmartDonationPro {
                 <table class="form-table">
                     <tr>
                         <th>PayPal Email</th>
-                        <td><input type="email" name="sdp_paypal_email" value="<?php echo esc_attr(get_option('sdp_paypal_email')); ?>" class="regular-text" required></td>
+                        <td><input type="email" name="options[paypal_email]" value="<?php echo esc_attr($options['paypal_email']); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Default Amount</th>
+                        <td><input type="number" name="options[amount]" value="<?php echo esc_attr($options['amount']); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Button Text</th>
+                        <td><input type="text" name="options[button_text]" value="<?php echo esc_attr($options['button_text']); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Goal Amount</th>
+                        <td><input type="number" name="options[goal_amount]" value="<?php echo esc_attr($options['goal_amount']); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Current Amount</th>
+                        <td><input type="number" name="options[current_amount]" value="<?php echo esc_attr($options['current_amount']); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Currency</th>
+                        <td><input type="text" name="options[currency]" value="<?php echo esc_attr($options['currency']); ?>" /></td>
+                    </tr>
+                    <tr>
+                        <th>Thank You Message</th>
+                        <td><textarea name="options[thank_you_message]"><?php echo esc_textarea($options['thank_you_message']); ?></textarea></td>
                     </tr>
                 </table>
-                <?php submit_button(); ?>
+                <p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Settings" /></p>
             </form>
-            <p>Use shortcode: <code>[smart_donation amount="10" goal="1000"]</code></p>
+            <p><strong>Upgrade to Pro:</strong> Unlock recurring donations, Stripe, analytics, and custom themes for $29/year!</p>
         </div>
         <?php
     }
 
-    public function handle_donation() {
-        if (!wp_verify_nonce($_POST['nonce'], 'sdp_nonce')) {
-            wp_die('Security check failed');
+    public function donation_shortcode($atts) {
+        $atts = shortcode_atts(array('id' => 'default'), $atts);
+        $progress = ($this->options['current_amount'] / $this->options['goal_amount']) * 100;
+        ob_start();
+        ?>
+        <div class="smart-donation-widget">
+            <h3>Support Us!</h3>
+            <div class="progress-bar">
+                <div class="progress" style="width: <?php echo min(100, $progress); ?>%;"></div>
+            </div>
+            <p><?php echo $this->options['currency']; ?> <?php echo $this->options['current_amount']; ?> / <?php echo $this->options['goal_amount']; ?> raised</p>
+            <button class="donate-btn button-primary"><?php echo $this->options['button_text']; ?></button>
+            <form id="donation-form" style="display:none;">
+                <input type="number" id="donation-amount" value="<?php echo $this->options['amount']; ?>" min="1" step="0.01" />
+                <input type="hidden" name="action" value="smart_donation_process" />
+                <?php wp_nonce_field('smart_donation_nonce'); ?>
+                <button type="button" onclick="processDonation()" class="button-primary">Pay with PayPal</button>
+            </form>
+            <div id="donation-message"></div>
+        </div>
+        <script>
+        function processDonation() {
+            var amount = jQuery('#donation-amount').val();
+            var nonce = jQuery('#smart_donation_nonce').val();
+            jQuery.post('<?php echo admin_url('admin-ajax.php'); ?>', {
+                action: 'smart_donation_process',
+                amount: amount,
+                nonce: nonce
+            }, function(response) {
+                if (response.success) {
+                    jQuery('#donation-message').html('<?php echo addslashes($this->options['thank_you_message']); ?>');
+                    window.location.href = response.data.paypal_url;
+                } else {
+                    jQuery('#donation-message').html('Error: ' + response.data);
+                }
+            });
         }
-        $amount = floatval($_POST['amount']);
-        $current = get_option('sdp_current_amount', 0) + $amount;
-        update_option('sdp_current_amount', $current);
-        wp_send_json_success('Thank you for your donation!');
+        </script>
+        <?php
+        return ob_get_clean();
+    }
+
+    public function process_donation() {
+        check_ajax_referer('smart_donation_nonce', 'nonce');
+        $amount = sanitize_text_field($_POST['amount']);
+        $paypal_url = 'https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=' . urlencode($this->options['paypal_email']) . '&amount=' . urlencode($amount) . '&currency_code=' . urlencode($this->options['currency']) . '&return=' . urlencode(get_site_url()) . '&notify_url=' . urlencode(get_site_url() . '/?smart_donation_ipn=1';
+        // Simulate updating current amount (in pro: real IPN handling)
+        $current = floatval($this->options['current_amount']) + floatval($amount);
+        $this->options['current_amount'] = strval(min($current, $this->options['goal_amount']));
+        update_option('smart_donation_options', $this->options);
+        wp_send_json_success(array('paypal_url' => $paypal_url));
     }
 }
 
 new SmartDonationPro();
 
-// Inline CSS
-add_action('wp_head', function() {
-    echo '<style>
-    .sdp-container { max-width: 400px; margin: 20px 0; text-align: center; }
-    .sdp-progress-bar { background: #f0f0f0; height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
-    .sdp-progress { background: #28a745; height: 100%; transition: width 0.3s; }
-    .sdp-donate-form input[type=number] { padding: 10px; margin-right: 10px; }
-    .sdp-button { background: #007cba; color: white; border: none; padding: 12px 24px; cursor: pointer; border-radius: 5px; }
-    .sdp-button:hover { background: #005a87; }
-    </style>';
-});
+// Minimal CSS
 
-// Inline JS
-add_action('wp_footer', function() {
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        $('.sdp-button').on('click', function() {
-            var amount = $(this).siblings('input[name=amount]').val();
-            $.post(sdp_ajax.ajax_url, {
-                action: 'sdp_donate',
-                amount: amount,
-                nonce: sdp_ajax.nonce
-            }, function(res) {
-                if (res.success) alert(res.data);
-            });
-        });
-    });
-    </script>
-    <?php
-});
+function smart_donation_css() {
+    echo '<style>
+.smart-donation-widget { border: 1px solid #ddd; padding: 20px; border-radius: 5px; text-align: center; background: #f9f9f9; }
+.progress-bar { background: #eee; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+.progress { background: #0073aa; height: 100%; transition: width 0.3s; }
+.donate-btn { background: #0073aa; color: white; border: none; padding: 10px 20px; border-radius: 3px; cursor: pointer; }
+#donation-form { margin-top: 15px; }
+#donation-form input { margin: 5px; padding: 8px; }
+    </style>';
+}
+add_action('wp_head', 'smart_donation_css');
