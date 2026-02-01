@@ -1,41 +1,42 @@
 # AI Content Optimizer Pro
 
-## Description
-AI Content Optimizer Pro is a powerful WordPress plugin that automatically analyzes and optimizes your post content for better SEO performance. It calculates readability scores, provides actionable suggestions, and enhances content with AI-driven insights (premium).
-
 ## Features
-- **Free Version:**
-  - Real-time readability scoring using Flesch-Kincaid formula.
-  - Basic SEO suggestions (word count, keyword placement).
-  - Content optimization notice on frontend.
-  - Admin dashboard integration.
 
-- **Premium Version ($4.99/month):**
-  - AI-powered keyword research and suggestions.
-  - Bulk post optimization.
-  - Auto-insertion of meta tags and schema.
-  - Priority support and regular updates.
+- **Free Version:**
+  - Real-time readability analysis using Flesch score.
+  - Basic optimization tips (sentence length, word complexity, subheadings).
+  - Sidebar meta box in post editor.
+
+- **Premium Version (Upgrade Now):** [Upgrade Link](https://example.com/premium-upgrade)
+  - AI-powered content rewriting for better engagement.
+  - Advanced SEO keyword suggestions and integration.
+  - Bulk optimization for multiple posts/pages.
+  - Priority email support and regular updates.
+  - Remove branding and unlock unlimited analyses.
 
 ## Installation
+
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Visit **Settings > AI Optimizer** to configure.
+3. Edit any post to see the optimizer sidebar.
 
 ## Setup
-1. After activation, edit any post to see the **AI Content Optimizer** meta box on the side.
-2. Click **Optimize Now** for free basic optimization.
-3. Enter your premium license key in **Settings > AI Optimizer** to unlock advanced features.
+
+No setup required for free version. Click 'Analyze Content' on post edit screen.
+
+Premium: Purchase subscription, enter license key in **Settings > AI Content Optimizer**.
 
 ## Usage
-- **On Post Edit Screen:** Use the meta box to view scores and click optimize buttons.
-- **Frontend:** Low-score posts show improvement notices.
-- **Bulk Optimization (Premium):** Available in Tools menu after upgrade.
-- **Upgrade:** Visit [example.com/premium](https://example.com/premium) for subscription.
+
+1. Edit a post or page.
+2. In the right sidebar, click **Analyze Content**.
+3. Review score and tips.
+4. **Upgrade to Pro** for AI enhancements.
 
 ## Support
-- Free support via WordPress.org forums.
-- Premium users: dedicated email support.
+
+Free support via WordPress.org forums. Premium support included with subscription.
 
 ## Changelog
-**1.0.0**
-- Initial release with core optimization features.
+
+**1.0.0** - Initial release.
