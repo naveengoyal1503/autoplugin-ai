@@ -1,46 +1,44 @@
 # Smart Affiliate Link Manager
 
-## Description
-**Smart Affiliate Link Manager** automatically detects affiliate links in your posts, cloaks them for better tracking, logs clicks with IP and analytics, and provides a dashboard for stats. Free version includes basic cloaking and 7-day click stats. Premium adds A/B testing, conversion tracking, auto-optimization, and more.
-
 ## Features
-- **Automatic Link Detection & Cloaking**: Finds Amazon, ClickBank, and custom affiliate links in content and replaces with trackable cloaked versions.
-- **Click Tracking**: Logs clicks with IP, user agent, and timestamps in a secure database.
-- **Admin Dashboard**: View recent stats and manage settings.
-- **Freemium Ready**: Premium upsell with API key gating for advanced features like A/B testing.
-- **SEO-Friendly**: Maintains nofollow and target blank attributes.
-- **Lightweight**: Single-file plugin, no dependencies.
 
-**Premium Features** (via subscription):
-- A/B link testing
-- Conversion rate analytics
-- Auto-optimization suggestions
-- Exportable reports
-- Priority support
+- **Automatic Link Cloaking**: Detects and cloaks affiliate links in posts and pages for better UX and tracking.
+- **Click Tracking**: Logs clicks with IP, user agent, and timestamp (stored in custom DB table).
+- **Shortcode Support**: Use `[salmlink url="https://affiliate-link.com"]` for manual links.
+- **Admin Dashboard**: Configure affiliate keywords (e.g., amazon, clickbank) and view basic stats.
+- **Free Forever**: Core features are free.
+
+**Premium Add-ons (coming soon)**:
+- Advanced analytics dashboard with charts.
+- A/B link testing.
+- Integrations: WooCommerce, Amazon Associates, Pretty Links.
+- Unlimited links and custom domains.
 
 ## Installation
-1. Upload the `smart-affiliate-link-manager.php` file to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Visit **Settings > Affiliate Manager** to configure.
+
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Configure in **Settings > Affiliate Links**.
 
 ## Setup
-1. Go to **Settings > Affiliate Manager**.
-2. (Optional) Enter Premium API Key from [example.com/premium](https://example.com/premium).
-3. Add affiliate links to your posts—they auto-cloak on frontend.
-4. View click stats in the dashboard.
+
+1. Go to **Settings > Affiliate Links**.
+2. Add comma-separated keywords for auto-detection (e.g., `amazon,clickbank,commission`).
+3. Save changes.
+4. Add affiliate links to posts; they auto-cloak on frontend.
 
 ## Usage
-- Write posts with raw affiliate URLs (e.g., `https://amazon.com/product123`).
-- Plugin converts to `/go/?salml=...` cloaked links.
-- Clicks redirect to original URL after logging.
-- Stats show daily clicks (free) or advanced metrics (premium).
 
-## Screenshots
-*(Add screenshots in production: dashboard, cloaked link example)*
+- **Automatic**: Write affiliate URLs in content; they convert to trackable cloaked links.
+- **Manual**: `[salmlink url="https://example.com/aff?ref=123"]`.
 
-## Changelog
-**1.0.0**
-- Initial release with cloaking, tracking, and freemium setup.
+Clicks redirect after logging. View raw data in DB or upgrade for dashboard.
 
-## Upgrade to Premium
-Subscribe at [example.com/premium](https://example.com/premium) for $9/month and enter your API key to unlock pro features.
+## Support
+
+Report issues on GitHub or contact support@example.com.
+
+## Upgrade to Pro
+
+Unlock premium features for $49/year at [example.com/pro](https://example.com/pro).
