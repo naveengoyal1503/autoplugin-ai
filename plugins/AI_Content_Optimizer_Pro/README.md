@@ -1,32 +1,50 @@
 # AI Content Optimizer Pro
 
-## Description
-**AI Content Optimizer Pro** is a powerful WordPress plugin that uses AI to analyze your post content for **SEO**, **readability**, and **engagement**. Get instant scores, suggestions, and premium AI rewriting to boost your site's performance.[1][3]
-
 ## Features
-- **Free Tier**: Basic content analysis (word count, readability score, SEO score, quick tips).
-- **Premium Tier** ($9.99/mo or $99/yr): AI-powered content rewriting, bulk optimization, advanced keyword suggestions, export reports[1][2][5].
-- Side meta box for easy access in post editor.
-- No site slowdown – lightweight and optimized.
-- Automatic updates and priority support for premium users.
+
+- **AI-Powered SEO Analysis**: Automatically scans content for keywords, readability, and optimization opportunities.
+- **Real-Time Suggestions**: Generates improved titles, meta descriptions, and keyword lists.
+- **One-Click Optimization**: Apply suggestions directly from the post editor.
+- **Readability Scoring**: Ensures content is engaging and SEO-friendly.
+- **Freemium Model**: Basic features free; Pro unlocks advanced AI (OpenAI integration), bulk optimization, and analytics.
+
+**Pro Features (Upgrade for $49/year)**:
+- True AI content rewriting.
+- Competitor analysis.
+- Unlimited sites and A/B testing.
 
 ## Installation
+
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit any post/page – find the **AI Content Optimizer** box on the side.
+3. Edit any post/page; find the 'AI Content Optimizer' meta box in the sidebar.
 
 ## Setup
-1. Go to **Settings > AI Optimizer** to enter your premium license key (if purchased).
-2. For premium: Visit [example.com/premium](https://example.com/premium) to subscribe and get your key.
+
+1. Enable optimization per post/page via checkbox.
+2. Click **Optimize Now** for instant analysis.
+3. Copy-paste suggestions or upgrade to Pro for auto-apply.
+
+**Pro Setup**: Enter your OpenAI API key in Settings > AI Optimizer.
 
 ## Usage
-1. Open a post/page editor.
-2. Click **Analyze Now (Free)** in the AI Content Optimizer box.
-3. View scores and suggestions instantly.
-4. **Premium only**: Unlock AI rewrite and advanced tools.
 
-## Monetization Potential
-Freemium model converts ~40% to paid[5]. Target bloggers/SEOs for recurring revenue via subscriptions[1][2].
+1. Create or edit a post/page.
+2. Check 'Enable AI Optimization'.
+3. Click **Optimize Now** to get suggestions.
+4. Manually apply or upgrade for automation.
+
+**Example Output**:
+- Suggested Title: "Your Post Title - Key1, Key2"
+- Keywords: key1, key2, key3
+- Readability: 85%
 
 ## Support
-Free users: WordPress forums. Premium: Dedicated email support.
+
+- Free version: WordPress.org forums.
+- Pro: Dedicated support portal after upgrade.
+
+## Changelog
+
+**1.0.0**
+- Initial release with core optimization features.
