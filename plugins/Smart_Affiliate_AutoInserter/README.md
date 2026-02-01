@@ -1,59 +1,47 @@
 # Smart Affiliate AutoInserter
 
-**Automatically boosts your affiliate earnings by inserting relevant Amazon links into posts based on keywords. Passive income made simple!**
+**Automatically boosts your affiliate earnings by inserting relevant links into posts based on keywords.**
 
 ## Features
 
-- **Smart Auto-Insertion**: Matches keywords in content to Amazon ASINs and inserts affiliate links automatically.
-- **Free Tier**: Up to 3 links per post.
-- **Pro Features** (Upgrade for $29/year):
-  - Unlimited links per post.
-  - Advanced analytics dashboard.
-  - A/B testing for link placements.
-  - Amazon Product Advertising API integration for dynamic suggestions.
-  - Custom link templates and styling.
-- **Performance Tracking**: View clicks and earnings (Pro).
-- **Mobile-Responsive**: Links adapt to all devices.
-- **Easy Setup**: No coding required.
+- **AI-like Keyword Matching**: Automatically detects keywords in your content and replaces them with affiliate links.
+- **Customizable Limits**: Set max links per post to avoid over-optimization.
+- **Easy Setup**: Configure keywords and links via simple admin panel.
+- **SEO-Friendly**: Adds `rel="nofollow sponsored"` and opens in new tab.
+- **Freemium Model**: Free for basics; Pro unlocks unlimited features, analytics, A/B testing.
 
 ## Installation
 
 1. Download the plugin ZIP.
-2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Settings > Affiliate AutoInserter** to configure.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Go to **Settings > Affiliate Inserter** to configure.
 
 ## Setup
 
-1. Sign up for [Amazon Associates](https://affiliate-program.amazon.com/) and get your **Affiliate Tag** (e.g., `yourtag-20`).
-2. In plugin settings:
-   - Enter your **Affiliate Tag**.
-   - Add keywords and ASINs (e.g., `best laptop:B07H8Q1T4V` one per line).
-   - (Pro) Enter Amazon API key for dynamic products.
-3. Save settings. Links auto-appear in new and existing posts!
-
-**Example Keywords:**
-
-laptop:B07H8Q1T4V
-headphones:B08N5WRWNW
-coffee maker:B01MRVDZ8X
-
+1. **Enable** the plugin in settings.
+2. Add **Keywords** (one per line, e.g., `best laptop`, `WordPress hosting`).
+3. Add **Affiliate Links** (format: `keyword=https://aff.link`, one per line).
+4. Set **Max Links per Post** (default: 3).
+5. Save and test on a post.
 
 ## Usage
 
-- Write posts with keywords like "best laptop" – links insert automatically after the keyword.
-- Links appear as: `keyword (Amazon)` with nofollow/sponsored attributes for compliance.
-- **Free Limit**: 3 links/post. Upgrade to Pro for unlimited.
-- View stats in dashboard (Pro).
-- Customize CSS: `.aff-link a { color: #ff9900; }`
+- Write content with target keywords naturally.
+- Plugin auto-inserts links on frontend.
+- Works on posts only (extendable via hooks).
+- **Pro Tip**: Use high-converting affiliates like Amazon Associates or high-ticket offers.
 
 ## Pro Upgrade
 
-Unlock full potential: [Get Pro Now](https://example.com/pro) – One-time $29/year, money-back guarantee.
+- Unlimited keywords & advanced networks.
+- Click analytics dashboard.
+- A/B testing for link placements.
+- Priority support.
 
-## Support
+**Upgrade for $49/year** – [Get Pro](#).
 
-- [Documentation](https://example.com/docs)
-- [Submit Ticket](https://example.com/support)
+## Changelog
 
-**Start earning passive income today! 🚀**
+**1.0.0**
+- Initial release.
