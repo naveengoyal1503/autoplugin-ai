@@ -1,45 +1,37 @@
 # AI Content Optimizer Lite
 
 ## Description
-**AI Content Optimizer Lite** is a powerful WordPress plugin that helps you analyze and optimize your blog posts for better **SEO** and **readability**. Using simulated AI insights (premium uses real AI APIs), it provides instant scores, suggestions, and tips to improve your content.
-
-Perfect for bloggers and site owners looking to boost search rankings without complexity.
+**AI Content Optimizer Lite** is a powerful **freemium WordPress plugin** that provides **basic SEO and readability analysis** for your posts directly in the editor. Get instant insights on word count, readability scores, and upgrade prompts for premium AI features.
 
 ## Features
-- **SEO Score Calculation**: Get an instant score based on content length and structure.
-- **Readability Analysis**: Assess if your content is engaging and easy to read.
-- **Actionable Suggestions**: Practical tips to enhance your posts.
-- **Free Tier**: Analyze up to **5 posts per month** at no cost.
-- **Upsell Integration**: Seamless prompts to upgrade for unlimited access.
-
-**Premium Features** (coming soon): Real AI integration (OpenAI/Gemini), bulk analysis, auto-optimizations, and more.
+- **Basic Content Analysis**: Real-time word count and Flesch readability score.
+- **Editor Integration**: Side meta box for quick scans on post edit screens.
+- **Premium Upsell**: Teasers for advanced AI keyword suggestions, bulk optimization, and auto-fixes (subscription $4.99/month).
+- **Lightweight & Self-Contained**: Single-file plugin, no dependencies.
 
 ## Installation
 1. Download the plugin ZIP.
-2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
 3. Upload and activate.
-4. Head to **Posts > Edit any post** to see the meta box in action.
+4. Edit any post to see the **AI Content Optimizer** meta box.
 
 ## Setup
-- No setup required for free version!
-- Check **Settings > AI Content Optimizer** for usage stats and upgrade links.
+No configuration needed! The plugin works out-of-the-box on post edit screens.
 
 ## Usage
 1. Edit or create a **Post**.
 2. In the sidebar, click **Analyze Content**.
-3. Review results: **SEO Score**, **Readability**, **Word Count**, and **Suggestions**.
-4. Apply suggestions manually.
-5. **Upgrade** for unlimited analyses and advanced AI.
+3. View **basic results** (words, readability score).
+4. **Upgrade to Premium** for AI-powered optimizations: [Get Premium](https://example.com/premium).
 
-## Screenshots
-*(Add screenshots in premium repo)*
-
-## Changelog
-**1.0.0**
-- Initial release with core analysis features.
-
-## Upgrade to Premium
-Unlock **unlimited analyses**, **real AI suggestions**, and **priority support** for $49/year. [Get Premium](https://example.com/premium)
+## Premium Features
+- AI-generated keyword suggestions.
+- Auto-optimization tools.
+- Bulk analysis for multiple posts.
+- Priority support.
 
 ## Support
-Submit issues via WordPress.org forums (free version only).
+Report issues via WordPress.org forums. Premium support available.
+
+## Changelog
+**1.0.0** - Initial release.
