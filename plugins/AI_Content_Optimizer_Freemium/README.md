@@ -1,71 +1,61 @@
 # AI Content Optimizer Freemium
 
-[![WordPress plugin](https://img.shields.io/wordpress/plugin/downloads/ai-content-optimizer.svg)](https://wordpress.org/plugins/ai-content-optimizer/)
+[![WordPress plugin](https://img.shields.io/wordpress/plugin/downloads/ai-content-optimizer.svg)](https://wordpress.org/plugins/ai-content-optimizer/) [![Tested up to WP 6.6](https://img.shields.io/wordpress/v/ai-content-optimizer.svg)](https://wordpress.org/plugins/ai-content-optimizer/)
 
-A powerful **freemium** WordPress plugin that uses AI to analyze and optimize your post content for **SEO**, **readability**, and engagement. Get instant scores and actionable suggestions.
+A powerful **freemium** WordPress plugin that uses AI-driven analysis to optimize your content for SEO. Get instant suggestions on readability, keywords, headings, and more. Upgrade to premium for unlimited access and advanced features.
 
 ## Features
 
 ### Free Version
-- **Content Analysis**: Readability score (Flesch Reading Ease), word count, SEO score.
-- **Improvement Suggestions**: Practical tips for better content.
-- **Usage Limit**: 5 analyses per month.
+- **Basic SEO Analysis**: Analyze up to **5 posts per month** for word count, headings, readability score.
+- **Keyword Suggestions**: Simple keyword ideas based on content.
+- **Meta Box Integration**: One-click analysis in post editor sidebar.
 
-### Premium Features ($9/month or $99/year)
-- **Unlimited Analyses**: No limits on usage.
-- **AI Rewrite Suggestions**: Auto-generated improved versions of your text.
-- **Advanced SEO Insights**: Keyword density, LSI keywords, meta optimization.
-- **Bulk Analysis**: Optimize entire posts/pages at once.
-- **Priority Email Support**.
+### Premium Version ($4.99/month or $49/year)
+- **Unlimited Optimizations**: No limits on usage.
+- **Advanced AI Suggestions**: Competitor keyword analysis, readability fixes.
+- **Auto-Optimization**: One-click auto-fix for SEO issues.
+- **Priority Support**: Email support within 24 hours.
+- **Export Reports**: Download optimization reports.
 
 ## Installation
 
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Tools > AI Content Optimizer** to start analyzing.
+2. Activate the plugin through the **Plugins** menu in WordPress admin.
+3. Go to **Settings > AI Optimizer** to view usage and upgrade.
 
 ## Setup
 
-1. **Free Setup**: Paste content into the analyzer and click **Analyze**.
-2. **Premium Activation**:
-   - Purchase at [premium.example.com](https://example.com/premium).
-   - Enter your license key in the plugin settings.
-   - Enjoy unlimited features!
+1. After activation, edit any **Post** – you'll see the **AI Content Optimizer** sidebar box.
+2. Click **Analyze Content** for instant suggestions.
+3. Free users: Limited to 5 analyses/month. Premium users: Unlimited.
 
 ## Usage
 
-1. Navigate to **Tools > AI Content Optimizer**.
-2. Paste your post or page content into the textarea.
-3. Click **Analyze Content**.
-4. Review scores and apply suggestions:
-   - **Readability**: Aim for 60-70 score (standard reading level).
-   - **SEO Score**: Target 80+ for optimal ranking.
-   - Follow suggestion list to improve.
+1. **In Post Editor**:
+   - Open a post.
+   - Click **Analyze Content** in the sidebar.
+   - Review suggestions and apply manually (premium: auto-apply).
 
-### Example Output
-- Word Count: 1,247
-- Readability: 65.2 (Standard)
-- SEO Score: 82
-- Suggestions: Add subheadings, include 2-3 internal links.
+2. **Dashboard Settings**:
+   - Navigate to **Settings > AI Optimizer**.
+   - Track usage, upgrade to premium.
 
 ## Freemium Model
 
-- **Free**: Perfect for casual users (5/month limit).
-- **Premium**: For serious content creators – unlimited + advanced AI tools.
+- **Free**: Taste the power with basic features.
+- **Premium**: Unlock full potential. [Upgrade Now](https://example.com/premium)
 
 ## Support
 
-- Free: WordPress.org forums.
-- Premium: Dedicated email support (48h response).
+- Free support via WordPress.org forums.
+- Premium: Submit tickets at example.com/support.
 
 ## Changelog
 
-**1.0.0** (2026-02-01)
-- Initial release with core analysis features.
+### 1.0.0
+- Initial release with freemium SEO optimizer.
 
-## Upgrade to Premium
+## License
 
-[Get Premium Now](https://example.com/premium) – Unlock unlimited power!
-
----
-*AI Content Optimizer is built for WordPress 6.0+. No setup required beyond activation.*
+GPL v2 or later. See [GNU GPL](https://www.gnu.org/licenses/gpl-2.0.html).
