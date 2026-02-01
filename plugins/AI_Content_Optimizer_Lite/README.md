@@ -1,44 +1,38 @@
 # AI Content Optimizer Lite
 
 ## Description
-AI Content Optimizer Lite is a powerful WordPress plugin that uses AI to analyze your post content and provide SEO optimization suggestions. The free version offers basic analysis for up to 5 posts per month. Upgrade to premium for unlimited usage, advanced rewrites, and more.
+AI Content Optimizer Lite is a powerful **freemium WordPress plugin** that uses AI to analyze your post content for **SEO performance**. Get instant scores, tips, and basic optimizations in the free version. Upgrade to premium for unlimited scans, full AI rewrites, and auto-optimization.
 
 ## Features
-- **Free Tier**: AI-powered SEO analysis for up to 5 posts/month
-- **Content Analysis**: Detects keyword opportunities, readability issues, and structure improvements
-- **One-Click Optimization**: Get suggestions directly in your admin dashboard
-- **Premium Features** (paid upgrade):
-  - Unlimited optimizations
-  - Full AI content rewriting
-  - Meta title/description generator
-  - Integration with Yoast/RankMath
-  - Priority support
-  - Export reports
+- **SEO Score Calculation**: Analyzes word count, headings, and keywords.
+- **Content Tips**: Actionable suggestions to improve SEO.
+- **Sidebar Meta Box**: One-click analysis in post editor.
+- **Premium Upsell**: Unlimited optimizations, AI rewrites, auto-apply on frontend (subscription $4.99/mo).
+- **Lightweight & Self-Contained**: Single PHP file, no dependencies.
 
 ## Installation
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Go to **Settings > AI Optimizer** to start optimizing
+1. Download the plugin ZIP.
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Upload and activate.
+4. Edit any post to see the **AI Content Optimizer** meta box.
 
 ## Setup
-1. Navigate to **Settings > AI Optimizer** in your WordPress admin
-2. Paste your content into the textarea
-3. Click **Optimize Content** to receive AI suggestions
-4. Free users: Limited to 5 optimizations/month
+- No configuration needed for free version.
+- **Premium**: Purchase at [example.com/premium](https://example.com/premium), enter license key in plugin settings (future update).
 
 ## Usage
-- **Basic Optimization**: Paste content, optimize, and apply suggestions manually
-- **Track Usage**: Monitor your monthly limit in the settings page
-- **Upgrade Prompt**: When limit reached, upgrade links appear
-- **Admin Integration**: Works seamlessly in WordPress dashboard
+1. Edit or create a post.
+2. In the sidebar, click **Analyze Content**.
+3. View **SEO Score**, tips, and preview.
+4. Save post to store score.
+5. Premium users get auto-optimization on published posts.
 
-## Premium Upgrade
-For unlimited access and advanced features, purchase premium at [example.com/premium](https://example.com/premium). Supports subscription model ($9.99/month).
+## Freemium Model
+- **Free**: 5 scans/day, basic tips.
+- **Premium**: Unlimited, AI rewrites, support. [Upgrade Now](https://example.com/premium)
 
 ## Support
-- Free version support via WordPress.org forums
-- Premium: Dedicated email support
+Report issues on WordPress.org forums. Premium users get priority email support.
 
 ## Changelog
-**1.0.0**
-- Initial release with freemium model
+**1.0.0**: Initial release.
