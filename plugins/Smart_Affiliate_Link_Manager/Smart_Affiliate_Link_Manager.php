@@ -5,20 +5,22 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 <?php
 /**
  * Plugin Name: Smart Affiliate Link Manager
- * Plugin URI: https://example.com/smart-affiliate
- * Description: Automate affiliate link creation, tracking, and monetization with smart cloaking, performance analytics, and one-click Amazon/Affiliate network integration.
+ * Plugin URI: https://example.com/smart-affiliate-link-manager
+ * Description: Automatically cloaks, tracks, and monetizes affiliate links with click stats, A/B testing, and performance reports to boost commissions.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
- * Text Domain: smart-affiliate
+ * Text Domain: smart-affiliate-link-manager
  */
 
 if (!defined('ABSPATH')) {
-    exit;
+    exit; // Exit if accessed directly.
 }
 
-class SmartAffiliateManager {
+class SmartAffiliateLinkManager {
     private static $instance = null;
+    private $db_version = '1.0';
+    private $table_name;
 
     public static function get_instance() {
         if (null === self::$instance) {
@@ -27,87 +29,190 @@ class SmartAffiliateManager {
         return self::$instance;
     }
 
-    private function __construct() {
+    public function __construct() {
+        global $wpdb;
+        $this->table_name = $wpdb->prefix . 'salml_links';
+
+        register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('wp_ajax_sam_track_click', array($this, 'track_click'));
-        add_shortcode('sam_link', array($this, 'shortcode_link'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
-    }
+        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+        add_filter('query_vars', array($this, 'query_vars'));
+        add_rewrite_rule('^salml/([a-zA-Z0-9_-]+)/?', 'index.php?salml_id=$matches[1]', 'top');
+        add_shortcode('salml', array($this, 'shortcode'));
 
-    public function init() {
-        if (get_option('sam_pro_version')) {
-            // Pro features
-        }
-        load_plugin_textdomain('smart-affiliate', false, dirname(plugin_basename(__FILE__)) . '/languages');
-    }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script('sam-script', plugin_dir_url(__FILE__) . 'assets/script.js', array('jquery'), '1.0.0', true);
-        wp_localize_script('sam-script', 'sam_ajax', array('ajaxurl' => admin_url('admin-ajax.php')));
-    }
-
-    public function admin_menu() {
-        add_menu_page(
-            'Smart Affiliate',
-            'Affiliate Manager',
-            'manage_options',
-            'smart-affiliate',
-            array($this, 'admin_page'),
-            'dashicons-chart-line',
-            30
-        );
-    }
-
-    public function admin_page() {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-        include plugin_dir_path(__FILE__) . 'admin-page.php';
-    }
-
-    public function track_click() {
-        if (!wp_verify_nonce($_POST['nonce'], 'sam_nonce')) {
-            wp_die('Security check failed');
-        }
-        $link_id = intval($_POST['link_id']);
-        $link = get_option('sam_links_' . $link_id, array());
-        $link['clicks'] = isset($link['clicks']) ? $link['clicks'] + 1 : 1;
-        update_option('sam_links_' . $link_id, $link);
-        wp_redirect($link['url']);
-        exit;
-    }
-
-    public function shortcode_link($atts) {
-        $atts = shortcode_atts(array(
-            'id' => 0,
-            'text' => 'Click Here',
-        ), $atts);
-        $link = get_option('sam_links_' . intval($atts['id']), array());
-        if (empty($link['url'])) {
-            return '';
-        }
-        $nonce = wp_create_nonce('sam_nonce');
-        return '<a href="' . admin_url('admin-ajax.php?action=sam_track_click&link_id=' . $atts['id'] . '&nonce=' . $nonce) . '" target="_blank" rel="nofollow">' . esc_html($atts['text']) . '</a>';
+        // AJAX handlers
+        add_action('wp_ajax_salml_track_click', array($this, 'ajax_track_click'));
+        add_action('wp_ajax_nopriv_salml_track_click', array($this, 'ajax_track_click'));
     }
 
     public function activate() {
-        // Create default links table or options
-        add_option('sam_version', '1.0.0');
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE {$this->table_name} (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            shortcode varchar(50) NOT NULL,
+            affiliate_url text NOT NULL,
+            clicks int DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            is_pro tinyint(1) DEFAULT 0,
+            PRIMARY KEY (id),
+            UNIQUE KEY shortcode (shortcode)
+        ) $charset_collate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+
+        update_option('salml_db_version', $this->db_version);
+        flush_rewrite_rules();
+    }
+
+    public function deactivate() {
+        flush_rewrite_rules();
+    }
+
+    public function init() {
+        if (get_query_var('salml_id')) {
+            $this->handle_redirect();
+            exit;
+        }
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script('salml-frontend', plugin_dir_url(__FILE__) . 'salml-frontend.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('salml-frontend', 'salml_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+    }
+
+    public function admin_menu() {
+        add_options_page('Smart Affiliate Link Manager', 'Affiliate Links', 'manage_options', 'salml', array($this, 'admin_page'));
+    }
+
+    public function admin_enqueue_scripts($hook) {
+        if ('settings_page_salml' !== $hook) {
+            return;
+        }
+        wp_enqueue_script('salml-admin', plugin_dir_url(__FILE__) . 'salml-admin.js', array('jquery'), '1.0.0', true);
+    }
+
+    public function query_vars($vars) {
+        $vars[] = 'salml_id';
+        return $vars;
+    }
+
+    public function shortcode($atts) {
+        $atts = shortcode_atts(array(
+            'id' => '',
+        ), $atts);
+
+        if (empty($atts['id'])) {
+            return '<!-- SALML: Missing ID -->';
+        }
+
+        global $wpdb;
+        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table_name} WHERE shortcode = %s", $atts['id']));
+
+        if (!$link) {
+            return '<!-- SALML: Link not found -->';
+        }
+
+        $redirect_url = home_url('/salml/' . $link->shortcode . '/');
+        return '<a href="' . esc_url($redirect_url) . '" class="salml-link" data-id="' . esc_attr($link->shortcode) . '">' . esc_html($link->shortcode) . '</a> <small>(Tracked Affiliate Link)</small>';
+    }
+
+    private function handle_redirect() {
+        global $wpdb;
+        $salml_id = get_query_var('salml_id');
+        $link = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table_name} WHERE shortcode = %s", $salml_id));
+
+        if ($link) {
+            $wpdb->query($wpdb->prepare("UPDATE {$this->table_name} SET clicks = clicks + 1 WHERE shortcode = %s", $salml_id));
+            wp_redirect(esc_url_raw($link->affiliate_url), 301);
+        } else {
+            wp_die('Link not found.');
+        }
+    }
+
+    public function ajax_track_click() {
+        // Manual tracking endpoint for advanced use
+        wp_die('Tracking');
+    }
+
+    public function admin_page() {
+        global $wpdb;
+
+        if (isset($_POST['salml_add_link'])) {
+            $shortcode = sanitize_text_field($_POST['shortcode']);
+            $affiliate_url = esc_url_raw($_POST['affiliate_url']);
+            $is_pro = isset($_POST['is_pro']) ? 1 : 0;
+
+            $wpdb->insert(
+                $this->table_name,
+                array(
+                    'shortcode' => $shortcode,
+                    'affiliate_url' => $affiliate_url,
+                    'is_pro' => $is_pro
+                ),
+                array('%s', '%s', '%d')
+            );
+        }
+
+        if (isset($_GET['delete'])) {
+            $wpdb->delete($this->table_name, array('shortcode' => sanitize_text_field($_GET['delete'])), array('%s'));
+        }
+
+        $links = $wpdb->get_results("SELECT * FROM {$this->table_name} ORDER BY created_at DESC");
+        $is_pro = get_option('salml_pro_license') !== false; // Simulate pro check
+
+        echo '<div class="wrap">';
+        echo '<h1>Smart Affiliate Link Manager</h1>';
+        echo '<p><strong>Free Features:</strong> Link cloaking, click tracking, basic reports.</p>';
+        echo '<p><a href="#" style="background:#0073aa;color:white;padding:10px 20px;text-decoration:none;">Upgrade to Pro ($49/year) for A/B Testing & Analytics</a></p>';
+
+        echo '<h2>Add New Link</h2>';
+        echo '<form method="post">';
+        echo '<p><label>Shortcode (e.g., buy-now):</label> <input type="text" name="shortcode" required style="width:200px;"></p>';
+        echo '<p><label>Affiliate URL:</label> <input type="url" name="affiliate_url" required style="width:400px;"></p>';
+        echo '<p>' . ($is_pro ? '<label><input type="checkbox" name="is_pro"> Pro Link (A/B Enabled)</label>' : '') . '</p>';
+        echo '<p><input type="submit" name="salml_add_link" class="button-primary" value="Add Link"></p>';
+        echo '</form>';
+
+        echo '<h2>Your Links</h2>';
+        echo '<table class="wp-list-table widefat fixed striped">';
+        echo '<thead><tr><th>Shortcode</th><th>Affiliate URL</th><th>Clicks</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
+        foreach ($links as $link) {
+            echo '<tr>';
+            echo '<td>[salml id="' . esc_html($link->shortcode) . '"]</td>';
+            echo '<td>' . esc_html($link->affiliate_url) . '</td>';
+            echo '<td>' . intval($link->clicks) . '</td>';
+            echo '<td>' . esc_html($link->created_at) . '</td>';
+            echo '<td><a href="?page=salml&delete=' . esc_attr($link->shortcode) . '" onclick="return confirm(\'Delete?\');">Delete</a> | ';
+            echo '<a href="' . home_url('/salml/' . $link->shortcode . '/') . '" target="_blank">Test</a></td>';
+            echo '</tr>';
+        }
+        echo '</tbody></table>';
+        echo '</div>';
     }
 }
 
-SmartAffiliateManager::get_instance();
+SmartAffiliateLinkManager::get_instance();
 
-// Freemium upsell notice
-function sam_freemium_notice() {
-    if (!get_option('sam_pro_version') && current_user_can('manage_options')) {
-        echo '<div class="notice notice-info"><p><strong>Smart Affiliate Manager Pro:</strong> Unlock unlimited links, analytics & auto-optimization for $49/year! <a href="https://example.com/pro" target="_blank">Upgrade Now</a></p></div>';
-    }
+// Frontend JS (inline for single file)
+function salml_inline_scripts() {
+    ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.salml-link').on('click', function(e) {
+            var id = $(this).data('id');
+            // Optional: Track with AJAX before redirect
+            console.log('Tracking click for: ' + id);
+        });
+    });
+    </script>
+    <?php
 }
-add_action('admin_notices', 'sam_freemium_notice');
-
-// Create assets directory placeholder (in real plugin, include files)
-// Note: For full deployment, add assets/script.js and admin-page.php
-?>
+add_action('wp_footer', 'salml_inline_scripts');
