@@ -2,35 +2,33 @@
 
 ## Features
 
-- **Free Version**: Basic content analysis (word count, readability score, SEO score) in post editor meta box.
-- **Premium Features** ($4.99/month): AI-powered content rewriting, keyword suggestions, unlimited optimizations, advanced SEO insights.
-- One-click optimization button.
-- Mobile-responsive admin interface.
-- Freemium upsell with admin notices.
+- **Free Version**: Instant content score, word count, and basic readability analysis directly in post editor.
+- **Premium ($9.99/month)**: AI-powered suggestions, auto-optimization, keyword integration, unlimited scans, and priority support.
+- SEO-focused metrics to boost rankings and engagement.
+- Lightweight and compatible with Gutenberg, Classic Editor.
 
 ## Installation
 
-1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' screen in WordPress admin.
-3. Edit any post/page to see the optimizer meta box.
+1. Upload `ai-content-optimizer-pro.php` to `/wp-content/plugins/`.
+2. Activate via **Plugins > Installed Plugins**.
+3. Edit any post/page; find the **AI Content Optimizer** meta box in the sidebar.
 
 ## Setup
 
-- Free features work immediately.
-- For premium: [Upgrade here](https://example.com/premium) (simulated link; integrate Stripe/PayPal in production).
-- Enter license key in plugin settings (extend for production).
+- **Free**: Click **Analyze Content** for instant basic insights.
+- **Premium**: [Upgrade here](https://example.com/upgrade) (enter license key in plugin settings after purchase).
 
 ## Usage
 
 1. Open a post/page editor.
-2. View **AI Content Optimizer** sidebar: scores update automatically.
-3. **Free**: Check scores.
-4. **Premium**: Click **AI Optimize** to rewrite content with AI enhancements.
-
-## Support
-
-Contact support@example.com. Frequent updates based on feedback.
+2. Click **Analyze Content**.
+3. View score and tips in the meta box.
+4. **Pro**: Apply AI suggestions with one click.
 
 ## Changelog
 
-**1.0.0**: Initial release with freemium model.
+- 1.0.0: Initial release with freemium model.
+
+## Support
+
+Free support via WordPress.org. Premium: Email support@yourdomain.com.
