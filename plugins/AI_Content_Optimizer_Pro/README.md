@@ -1,36 +1,36 @@
 # AI Content Optimizer Pro
 
 ## Description
-AI Content Optimizer Pro is a powerful WordPress plugin that analyzes your posts for **readability**, **SEO**, and **engagement** using simulated AI metrics. The free version provides basic scoring; upgrade to Pro for AI-powered rewriting, bulk processing, and more.
+**AI Content Optimizer Pro** is a powerful WordPress plugin that analyzes and optimizes your posts and pages for better SEO, readability, and engagement. The free version provides basic scoring and analysis, while premium unlocks AI-driven suggestions, bulk optimization, and advanced features.
 
 ## Features
-- **Basic Analysis (Free)**: Get instant scores for readability, SEO, and engagement on post edit screen.
-- **Side Meta Box**: Easy access without leaving your editor.
-- **Premium Features** (subscription $9.99/mo):
-  - AI content rewriting suggestions.
-  - Bulk optimize entire site.
-  - Export reports.
-  - Priority support.
+- **Free:** Real-time SEO score, word count, Flesch readability index on post edit screen.
+- **Free:** One-click optimization preview.
+- **Premium ($49/year):** AI-powered content suggestions (OpenAI integration), bulk optimize entire site, keyword research, export reports, priority support.
+- **Premium:** Remove nags, unlimited usage, automatic updates.
 
 ## Installation
 1. Upload the `ai-content-optimizer` folder to `/wp-content/plugins/`.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Edit any post to see the optimizer meta box.
+3. Edit any post/page to see the optimizer metabox.
 
 ## Setup
-No setup required for free version. For Pro:
-1. Purchase at [example.com/pro](https://example.com/pro).
-2. Enter license key in **Settings > AI Content Optimizer**.
+- No setup required for free version.
+- **Premium:** Purchase at [example.com/premium](https://example.com/premium), enter license key in WP Admin > Settings > AI Content Optimizer.
 
 ## Usage
-1. Edit a post.
-2. In the side meta box, click **Analyze Content**.
-3. Review scores and tips.
-4. **Pro users**: Click 'Rewrite with AI' for suggestions.
+1. Edit a post or page.
+2. In the sidebar, click **Optimize Content** for instant analysis.
+3. Review score and suggestions.
+4. **Premium users:** Enable AI mode for rewrite suggestions.
+5. Save post to store optimization data.
+
+## Screenshots
+*(Imagine: Metabox showing SEO score 85/100, suggestions list, upgrade button)*
 
 ## Changelog
 **1.0.0**
-- Initial release with basic analysis.
+- Initial release with freemium model.
 
-## Support
-Free support via WordPress forums. Pro users get email support.
+## Upgrade to Pro
+[Get Premium Now](https://example.com/premium) - 50% off first year!
