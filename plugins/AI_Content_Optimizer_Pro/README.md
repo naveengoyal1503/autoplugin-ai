@@ -1,35 +1,47 @@
 # AI Content Optimizer Pro
 
 ## Description
-AI Content Optimizer Pro uses simulated AI to analyze your posts and pages for **readability**, **SEO**, and **engagement**. Get instant scores and suggestions to improve your content.
+
+**AI Content Optimizer Pro** is a powerful WordPress plugin that provides instant AI-driven analysis of your post and page content. It scores your content on SEO, readability, and engagement factors, offering actionable suggestions to improve performance. Perfect for bloggers and site owners aiming to rank higher on search engines.[1][4]
 
 ## Features
-- **Free**: Basic analysis (word count, readability score, overall rating)
-- **Premium** ($9/month): AI-powered suggestions, bulk optimization, SEO keyword tips, auto-apply fixes, export reports
-- Real-time analysis in post editor
-- No external APIs needed (self-contained)
+
+- **Instant Content Scoring**: Get a 0-100 SEO score based on key metrics like word count, headings, images, and links.
+- **Smart Suggestions**: Receive specific, heuristic-based recommendations to optimize content.
+- **Sidebar Integration**: Easy-to-use meta box in post/page editor.
+- **Freemium Model**: Basic analysis free; premium unlocks advanced AI, bulk optimization, and integrations.
+- **Lightweight & Self-Contained**: No external dependencies for core functionality.
 
 ## Installation
-1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`
-2. Activate via **Plugins > Installed Plugins**
-3. Edit any post/page – find the sidebar optimizer box
+
+1. Upload the `ai-content-optimizer-pro` folder to `/wp-content/plugins/`.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. (Premium) Enter your API key in Settings > AI Content Optimizer.
 
 ## Setup
-- **Free version**: Ready immediately!
-- **Premium**: Visit [example.com/premium](https://example.com/premium) to subscribe and activate key
+
+- No configuration needed for basic use.
+- For premium features, purchase a license at example.com and add your key.
 
 ## Usage
-1. Edit a **Post** or **Page**
-2. Click **Analyze Content** in the sidebar
-3. View **score** and free metrics
-4. Upgrade for **AI suggestions** like adding headings or shortening sentences
 
-## Screenshots
-*(Imagine: Post editor sidebar with score badge and suggestion list)*
+1. Edit any post or page.
+2. In the sidebar, click **Analyze Content**.
+3. View your **SEO Score** and suggestions.
+4. Implement suggestions and re-analyze.
+
+## Premium Features
+
+- Advanced NLP analysis.
+- Auto-optimization buttons.
+- Google Analytics integration.
+- Support for WooCommerce products.[5][7]
 
 ## Changelog
+
 **1.0.0**
-- Initial release
+- Initial release with core analysis engine.
 
 ## Support
-Report issues at [example.com/support](https://example.com/support)
+
+Visit example.com/support for help.
