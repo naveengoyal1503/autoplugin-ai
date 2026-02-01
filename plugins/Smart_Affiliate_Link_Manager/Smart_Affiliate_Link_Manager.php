@@ -6,177 +6,178 @@ Author URI: https://automation.bhandarum.in/generated-plugins/tracker.php?plugin
 /**
  * Plugin Name: Smart Affiliate Link Manager
  * Plugin URI: https://example.com/smart-affiliate-link-manager
- * Description: Automatically cloaks, tracks, and optimizes affiliate links with analytics. Freemium model.
+ * Description: Automatically cloaks, tracks, and optimizes affiliate links with A/B testing and analytics.
  * Version: 1.0.0
  * Author: Your Name
  * License: GPL v2 or later
+ * Text Domain: smart-affiliate-link-manager
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// Define plugin constants
-define('SALM_VERSION', '1.0.0');
-define('SALM_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('SALM_PLUGIN_PATH', plugin_dir_path(__FILE__));
-
-// Free features
-$free_features = true;
-
-// Check for premium (simulate with option; in real, use license check)
-$premium_active = get_option('salm_premium_active', false);
-
 class SmartAffiliateLinkManager {
-    public function __construct() {
+    private static $instance = null;
+
+    public static function get_instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('admin_menu', array($this, 'admin_menu'));
-        add_action('admin_init', array($this, 'admin_init'));
-        add_filter('the_content', array($this, 'cloak_links'));
+        add_action('wp_ajax_sal_track_click', array($this, 'track_click'));
+        add_action('wp_ajax_nopriv_sal_track_click', array($this, 'track_click'));
+        add_shortcode('sal_link', array($this, 'sal_link_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
+        register_deactivation_hook(__FILE__, array($this, 'deactivate'));
     }
 
     public function init() {
-        // Rewrite rule for tracking
-        add_rewrite_rule('^track/([^/]+)/([0-9]+)/?$', 'index.php?salmlink=$matches[1]&clickid=$matches[2]', 'top');
-        flush_rewrite_rules();
+        if (get_option('sal_enabled') !== 'yes') return;
+
+        // Auto-replace affiliate links
+        add_filter('the_content', array($this, 'replace_affiliate_links'));
+        add_filter('widget_text', array($this, 'replace_affiliate_links'));
     }
 
     public function enqueue_scripts() {
-        wp_enqueue_script('salmlm-script', SALM_PLUGIN_URL . 'assets/script.js', array('jquery'), SALM_VERSION, true);
-        wp_enqueue_style('salmlm-style', SALM_PLUGIN_URL . 'assets/style.css', array(), SALM_VERSION);
+        if (!get_option('sal_enabled')) return;
+        wp_enqueue_script('sal-tracker', plugin_dir_url(__FILE__) . 'sal-tracker.js', array('jquery'), '1.0.0', true);
+        wp_localize_script('sal-tracker', 'sal_ajax', array('ajax_url' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('sal_nonce')));
     }
 
-    public function cloak_links($content) {
-        if (is_admin() || !$free_features) return $content;
+    public function replace_affiliate_links($content) {
+        if (!get_option('sal_enabled')) return $content;
 
-        // Simple regex to find affiliate links (e.g., containing 'aff', 'ref', or specific domains)
-        $pattern = '/<a[^>]+href=["\']([^"\']*(?:aff|ref|amazon|clickbank)[^"\']*["\'][^>]*>(.*?)</a>/i';
-        $content = preg_replace_callback($pattern, array($this, 'replace_link'), $content);
+        $patterns = array(
+            '/\bhttps?:\/\/(?:[a-zA-Z0-9-\.]+\.)?(amazon|clickbank|shareasale|commissionjunction|impact|partnerstack)\b[^\s<>"\']*/i',
+            '/\b(?:aff|ref|tag)=[a-zA-Z0-9-]+/i'
+        );
+
+        foreach ($patterns as $pattern) {
+            preg_match_all($pattern, $content, $matches);
+            foreach ($matches as $match) {
+                $shortcode = '[sal_link url="' . esc_attr($match) . '"]';
+                $content = str_replace($match, $shortcode, $content);
+            }
+        }
         return $content;
     }
 
-    private function replace_link($matches) {
-        $url = $matches[1];
-        $text = $matches[2];
-        $id = uniqid('salmlink_');
-        update_option('salmlink_' . $id, $url, false);
+    public function sal_link_shortcode($atts) {
+        $atts = shortcode_atts(array('url' => ''), $atts);
+        if (empty($atts['url'])) return '';
 
-        return '<a href="' . home_url('/track/' . $id . '/1/') . '" data-salm-id="' . $id . '" class="salm-link">' . $text . '</a>';
-    }
+        $id = uniqid('sal_');
+        $cloaked = add_query_arg('sal', $id, home_url('/go/'));
 
-    public function admin_menu() {
-        add_options_page('Smart Affiliate Link Manager', 'Affiliate Manager', 'manage_options', 'salm', array($this, 'settings_page'));
-    }
-
-    public function admin_init() {
-        register_setting('salm_options', 'salm_options');
-        register_setting('salm_options', 'salm_premium_active');
-    }
-
-    public function settings_page() {
-        if (isset($_POST['salm_upgrade'])) {
-            // Simulate premium activation (in real: API call)
-            update_option('salm_premium_active', true);
-            echo '<div class="notice notice-success"><p>Premium activated! (Demo)</p></div>';
-        }
+        ob_start();
         ?>
-        <div class="wrap">
-            <h1>Smart Affiliate Link Manager</h1>
-            <form method="post" action="options.php">
-                <?php settings_fields('salm_options'); ?>
-                <table class="form-table">
-                    <tr>
-                        <th>Free Features</th>
-                        <td>Link cloaking and basic tracking active.</td>
-                    </tr>
-                    <?php if (!$premium_active): ?>
-                    <tr>
-                        <th>Upgrade to Premium</th>
-                        <td>
-                            <p>Unlock A/B testing, auto-optimization, detailed analytics for $9/month.</p>
-                            <form method="post">
-                                <input type="submit" name="salm_upgrade" class="button-primary" value="Activate Premium (Demo)">
-                            </form>
-                        </td>
-                    </tr>
-                    <?php else: ?>
-                    <tr>
-                        <th>Premium Features</th>
-                        <td>Active! Enjoy advanced tools.</td>
-                    </tr>
-                    <?php endif; ?>
-                </table>
-                <?php submit_button(); ?>
-            </form>
-            <h2>Analytics</h2>
-            <div id="salm-analytics">Loading...</div>
-        </div>
+        <a href="<?php echo esc_url($cloaked); ?>" class="sal-link" data-sal-original="<?php echo esc_attr($atts['url']); ?>" data-sal-id="<?php echo esc_attr($id); ?>"><?php echo esc_html($atts['url']); ?></a>
         <?php
+        return ob_get_clean();
+    }
+
+    public function track_click() {
+        check_ajax_referer('sal_nonce', 'nonce');
+        $original = sanitize_url($_POST['original'] ?? '');
+        $id = sanitize_text_field($_POST['id'] ?? '');
+
+        // Log click (free version: simple count)
+        $clicks = get_option('sal_clicks', array());
+        $clicks[$id] = ($clicks[$id] ?? 0) + 1;
+        update_option('sal_clicks', $clicks);
+
+        // Premium: advanced analytics
+        if (get_option('sal_premium') === 'yes') {
+            // Simulate A/B testing redirect
+            $variants = explode(',', get_option('sal_ab_variants', $original));
+            $redirect = $variants[array_rand($variants)];
+        } else {
+            $redirect = $original;
+        }
+
+        wp_redirect($redirect, 302);
+        exit;
     }
 
     public function activate() {
-        flush_rewrite_rules();
+        add_option('sal_enabled', 'yes');
+        add_option('sal_clicks', array());
+    }
+
+    public function deactivate() {
+        // Do not delete data
     }
 }
 
-// Track clicks
-add_action('init', function() {
-    global $wp_query;
-    if (get_query_var('salmlink')) {
-        $id = get_query_var('salmlink');
-        $clickid = get_query_var('clickid');
-        $url = get_option('salmlink_' . $id);
-        if ($url) {
-            // Log click (simple option increment)
-            $stats = get_option('salm_stats', array());
-            $stats[$id] = isset($stats[$id]) ? $stats[$id] + 1 : 1;
-            update_option('salm_stats', $stats);
-            wp_redirect($url, 301);
-            exit;
-        }
-    }
-});
-
-// AJAX for analytics
-add_action('wp_ajax_salm_get_stats', function() {
-    $stats = get_option('salm_stats', array());
-    wp_send_json($stats);
-});
-
-new SmartAffiliateLinkManager();
-
-// Create assets dir placeholder (in real plugin, include files)
-if (!file_exists(SALM_PLUGIN_PATH . 'assets')) {
-    mkdir(SALM_PLUGIN_PATH . 'assets', 0755, true);
-}
-
-// Sample JS (inline for single file)
+// Asset files would be separate, but for single-file, inline JS
 add_action('wp_footer', function() {
-    if (is_admin()) return;
+    if (!get_option('sal_enabled')) return;
     ?>
     <script>
     jQuery(document).ready(function($) {
-        $('.salm-link').click(function() {
-            var id = $(this).data('salm-id');
-            // Track click
-        });
-        if (typeof salmAdmin !== 'undefined') {
-            $.get(ajaxurl, {action: 'salm_get_stats'}, function(data) {
-                $('#salm-analytics').html(JSON.stringify(data, null, 2));
+        $('.sal-link').on('click', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            var original = $this.data('sal-original');
+            var id = $this.data('sal-id');
+            $.post(sal_ajax.ajax_url, {
+                action: 'sal_track_click',
+                nonce: sal_ajax.nonce,
+                original: original,
+                id: id
+            }, function() {
+                window.location = $this.attr('href');
             });
-        }
+        });
     });
     </script>
-    <style>
-    .salm-link { text-decoration: none; }
-    .salm-link:hover { text-decoration: underline; }
-    </style>
     <?php
 });
 
-// Premium feature stub
-if ($premium_active) {
-    // Add A/B testing logic here in full version
+SmartAffiliateLinkManager::get_instance();
+
+// Admin settings page
+add_action('admin_menu', function() {
+    add_options_page('Smart Affiliate Link Manager', 'SAL Manager', 'manage_options', 'sal-manager', 'sal_admin_page');
+});
+
+function sal_admin_page() {
+    if (isset($_POST['sal_save'])) {
+        update_option('sal_enabled', sanitize_text_field($_POST['sal_enabled']));
+        update_option('sal_premium', sanitize_text_field($_POST['sal_premium']));
+        echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
+    }
+
+    $clicks = get_option('sal_clicks', array());
+    $total_clicks = array_sum($clicks);
+    ?>
+    <div class="wrap">
+        <h1>Smart Affiliate Link Manager</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr>
+                    <th>Enable Plugin</th>
+                    <td><input type="checkbox" name="sal_enabled" value="yes" <?php checked(get_option('sal_enabled'), 'yes'); ?> /></td>
+                </tr>
+                <tr>
+                    <th>Premium Mode (Simulated)</th>
+                    <td><input type="checkbox" name="sal_premium" value="yes" <?php checked(get_option('sal_premium'), 'yes'); ?> /> Unlock A/B testing & analytics</td>
+                </tr>
+            </table>
+            <p><strong>Total Clicks Tracked: <?php echo $total_clicks; ?></strong></p>
+            <?php submit_button('Save Settings', 'primary', 'sal_save'); ?>
+        </form>
+        <h2>Upgrade to Premium</h2>
+        <p>Get advanced features like A/B testing, detailed analytics, auto-optimization for $49/year.</p>
+    </div>
+    <?php
 }
+
+?>
