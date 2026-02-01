@@ -1,41 +1,50 @@
 # Smart Affiliate Link Manager
 
-## Description
-**Smart Affiliate Link Manager** is a powerful WordPress plugin that automates affiliate link management, cloaking, tracking, and monetization. Perfect for bloggers and marketers to boost commissions from Amazon, CJ, ShareASale, and more.
-
 ## Features
-- **Easy Link Creation**: Add affiliate links with custom slugs, descriptions, and networks.
-- **Smart Cloaking**: Pretty URLs like `/go/amazon-product` redirect with tracking.
-- **Click Analytics**: Track clicks, unique visitors, and conversion rates (Pro).
-- **Shortcode Support**: `[sam_link id="1" text="Buy Now"]` for easy embedding.
-- **One-Click Integrations**: Amazon, PayPal, and popular networks.
-- **Freemium Model**: Free for basics; Pro unlocks unlimited links and advanced stats.
+
+- **Link Cloaking & Tracking**: Convert ugly affiliate URLs into clean, trackable shortcodes like `[salml id="buy-now"]`. Tracks every click with real-time stats.
+- **Easy Shortcodes**: Drop `[salml id="your-id"]` anywhere in posts/pages.
+- **Admin Dashboard**: View clicks, add/delete links, export reports (CSV coming in Pro).
+- **SEO-Friendly Redirects**: 301 redirects preserve link juice.
+- **Freemium Model**: Free for basics; **Pro ($49/year)** adds:
+  - A/B Testing (rotate multiple affiliate links automatically).
+  - Advanced Analytics (geolocation, device tracking, conversion estimates).
+  - Auto-Optimization (switch to highest-performing link).
+  - Unlimited links & priority support.
 
 ## Installation
-1. Upload the plugin files to `/wp-content/plugins/smart-affiliate-manager`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Visit **Affiliate Manager** in your admin dashboard to add links.
+
+1. Download the plugin ZIP.
+2. In WordPress Admin: **Plugins > Add New > Upload Plugin**.
+3. Activate the plugin.
+4. Go to **Settings > Affiliate Links** to add your first link.
 
 ## Setup
-1. Go to **Affiliate Manager > Add New Link**.
-2. Enter affiliate URL, custom slug (e.g., `amazon-deal`), and description.
-3. Save and use shortcode `[sam_link id="1"]` or copy cloaked URL.
-4. Upgrade to Pro for analytics dashboard.
+
+1. Navigate to **Settings > Affiliate Links**.
+2. Click **Add New Link**:
+   - Enter a unique **Shortcode** (e.g., `amazon-deal`).
+   - Paste your **Affiliate URL** (e.g., Amazon, ClickBank).
+   - Save.
+3. Use in content: `[salml id="amazon-deal"]`.
+4. Test the link via the **Test** button in dashboard.
 
 ## Usage
-- **In Posts**: Use shortcode `[sam_link id="1" text="Get 50% Off"]`.
-- **Manual Links**: Paste `/go/your-slug` anywhere on site.
-- **Tracking**: View stats in dashboard (Pro: Export CSV).
-- **Pro Features**: Auto-optimize links, A/B testing, email alerts on high clicks.
 
-## Pro Upgrade
-Unlock full potential for $49/year:
-- Unlimited links & campaigns
-- Advanced analytics & reports
-- Auto Amazon API integration
-- Priority support
+- **Basic Example**:
+  
+  Check out this [great deal][salml id="buy-now"].
+  
+  Renders as a clickable tracked link.
 
-[Upgrade to Pro](https://example.com/pro)
+- **Reports**: Dashboard shows clicks per link, helping optimize high-performers.
+
+- **Pro Upgrade**: Visit the dashboard upgrade link for A/B features to boost commissions by testing links automatically.
+
+## Why Profitable?
+
+Affiliate marketing is a top WordPress monetization strategy[1][5]. This plugin simplifies cloaking/tracking, reducing cart abandonment and providing data to scale earnings. Freemium converts free users to Pro via demonstrated value.
 
 ## Support
-Submit tickets via [support@example.com](mailto:support@example.com). Free users: Community forum.
+
+Report issues on WordPress.org forums or email support@example.com.
