@@ -1,44 +1,33 @@
 # Smart Affiliate Link Cloaker Pro
 
-**Boost your affiliate earnings with automatic link cloaking, click tracking, and premium optimization tools.**
-
 ## Features
-
-### Free Version
-- **Auto-cloak affiliate links**: Automatically detects and replaces Amazon, ClickBank, ShareASale, and other affiliate links in posts/pages.
-- **Click tracking**: Monitors clicks on cloaked links with basic stats dashboard.
-- **Customizable link text**: Set your preferred display text like "Check it out" or "Learn more".
-
-### Premium Features (Subscription Required)
-- **A/B testing**: Test multiple affiliate links automatically to find the highest converting variant.
-- **Advanced analytics**: Detailed reports on clicks, conversion estimates, and link performance.
-- **Link shortening**: Integrates with popular shorteners for cleaner URLs.
-- **Priority support & updates**: Ongoing improvements and dedicated help.
+- **Link Cloaking**: Securely mask affiliate URLs with `/go/ID/` shortlinks to protect commissions.
+- **Click Tracking**: Real-time analytics dashboard shows clicks per link.
+- **Smart Redirects**: Premium A/B testing rotates between primary and alternate URLs for higher conversions.
+- **Shortcode Support**: Use `[afflink id="1"]` to insert cloaked links anywhere.
+- **Freemium Upsell**: Unlock premium features like unlimited links and exports for $29/year.
+- **Mobile-Responsive**: Works seamlessly on all devices.
 
 ## Installation
-
-1. Upload the `smart-affiliate-link-cloaker-pro` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Go to **Settings > Affiliate Cloaker** to configure options.
+1. Upload the plugin ZIP to your WordPress admin > Plugins > Add New.
+2. Activate the plugin.
+3. Go to Settings > Affiliate Cloaker to add links.
+4. Flush permalinks (Settings > Permalinks > Save).
 
 ## Setup
-
-1. **Enable auto-cloaking** (free): Toggle on in settings to automatically convert affiliate links in content.
-2. **Set link text**: Customize how cloaked links appear (e.g., "Grab the Deal").
-3. **Manual shortcode**: Use `[salc_link url="https://your-affiliate-link.com"]Your Text[/salc_link]` anywhere.
-4. **Upgrade to Premium**: Enter your license key from [your purchase page](https://example.com/premium) to unlock pro features.
+1. In the admin page, add links in format: `id|Display Text|Affiliate URL|Alt URL` (one per line).
+   Example:
+  
+1|Buy Now|https://affiliate.com/product1|https://alt-affiliate.com/product1
+2|Best Deal|https://example.com/deal
+   
+2. Use shortcode `[afflink id="1"]` in posts/pages.
+3. Premium: Enable A/B testing via upgrade.
 
 ## Usage
+- Insert shortcodes in content for automatic cloaking.
+- View click stats in the dashboard.
+- Upgrade for pro features: contact support@example.com.
 
-- **Automatic**: Write posts with raw affiliate links; they're cloaked on publish.
-- **Manual**: Insert shortcodes for precise control.
-- **Stats**: View click counts in the settings page.
-- **Premium A/B**: Add variant URLs in pro settings; the plugin rotates them randomly.
-
-## Monetization & Support
-
-- **Free**: Core cloaking & tracking.
-- **Pro**: $9/month or $79/year via subscription.
-- Support: Free users - forums; Pro - email/tickets.
-
-**Start earning more from affiliates today!**
+## Support
+Visit our site or WordPress forums for help.
